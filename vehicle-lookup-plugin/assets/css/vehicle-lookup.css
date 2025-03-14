@@ -1,0 +1,60 @@
+.vehicle-lookup-container {
+    max-width: 600px;
+    margin: 2em auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.vehicle-lookup-form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.lookup-button {
+    background: #0073aa;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.lookup-button:hover {
+    background: #005177;
+}
+
+.vehicle-lookup-results {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.vehicle-lookup-error {
+    color: #dc3232;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #dc3232;
+    border-radius: 4px;
+    display: none;
+}
