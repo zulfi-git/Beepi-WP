@@ -1,0 +1,51 @@
+.beepi-vehicle-lookup-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.beepi-vehicle-lookup-container .card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.beepi-vehicle-lookup-container .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.beepi-vehicle-lookup-container .btn-primary {
+    min-width: 120px;
+}
+
+.beepi-vehicle-lookup-container .alert {
+    margin-top: 1rem;
+}
+
+#vehicle-results .card {
+    margin-top: 2rem;
+}
+
+#vehicle-results table {
+    margin-bottom: 0;
+}
+
+#vehicle-results th {
+    width: 30%;
+    background-color: #f8f9fa;
+}
+
+.spinner-border {
+    margin-right: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .beepi-vehicle-lookup-container {
+        margin: 1rem auto;
+    }
+    
+    #vehicle-results th {
+        width: 40%;
+    }
+}
