@@ -8,7 +8,7 @@ This plugin adds a vehicle lookup feature to your WordPress site, allowing users
 
 ## Installation
 
-1. Download the plugin zip file
+1. Download the plugin zip file or clone this repository
 2. Go to WordPress admin panel > Plugins > Add New
 3. Click "Upload Plugin" and select the downloaded zip file
 4. Click "Install Now" and then "Activate"
@@ -36,6 +36,15 @@ This plugin adds a vehicle lookup feature to your WordPress site, allowing users
 - Bootstrap styling
 - Error handling and user feedback
 - Integration with Cloudflare Worker API
+- Secure data transmission
+- Mobile-friendly design
+
+## Configuration
+
+The plugin is pre-configured to use the Cloudflare Worker endpoint at:
+```
+https://beepi.zhaiden.workers.dev
+```
 
 ## Support
 
