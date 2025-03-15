@@ -10,9 +10,9 @@ jQuery(document).ready(function($) {
         resultsDiv.hide();
         errorDiv.hide();
         
-        // Validate registration number
-        if (!regNumber || regNumber.length !== 17) {
-            errorDiv.html('Please enter a valid 17-character registration number').show();
+        // Validate Norwegian registration number
+        if (!regNumber || !/^[A-Z]{2}[0-9]{4,5}$/.test(regNumber)) {
+            errorDiv.html('Please enter a valid Norwegian registration number (e.g., AB12345)').show();
             return;
         }
         

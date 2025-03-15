@@ -18,9 +18,9 @@ class Vehicle_Lookup_Shortcode {
                 <div class="form-group">
                     <label for="regNumber">Enter Registration Number:</label>
                     <input type="text" id="regNumber" name="regNumber" required 
-                           minlength="17" maxlength="17" 
-                           pattern="[A-HJ-NPR-Z0-9]{17}"
-                           placeholder="17-character Registration Number">
+                           minlength="6" maxlength="7" 
+                           pattern="[A-Z]{2}[0-9]{4,5}"
+                           placeholder="Norwegian Registration Number (e.g., AB12345)">
                 </div>
                 <button type="submit" class="lookup-button">
                     Look Up Vehicle
