@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Vehicle Information Lookup
- * Plugin URI: https://github.com/zulfi-git/BeepiWorker
+ * Plugin URI: https://beepi.no
  * Description: A WordPress plugin that connects to BeepiWorker Cloudflare Worker for vehicle information lookup.
  * Version: 1.0.0
- * Author: Zulfi
- * Author URI: https://github.com/zulfi-git
+ * Author: Zulfiqar Haidari
+ * Author URI: https://beepi.no
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: vehicle-lookup
