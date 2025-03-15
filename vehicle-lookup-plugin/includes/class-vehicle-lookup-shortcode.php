@@ -16,11 +16,11 @@ class Vehicle_Lookup_Shortcode {
         <div class="vehicle-lookup-container">
             <form id="vehicle-lookup-form" class="vehicle-lookup-form">
                 <div class="form-group">
-                    <label for="vin">Enter Vehicle VIN:</label>
-                    <input type="text" id="vin" name="vin" required 
+                    <label for="regNumber">Enter Registration Number:</label>
+                    <input type="text" id="regNumber" name="regNumber" required 
                            minlength="17" maxlength="17" 
                            pattern="[A-HJ-NPR-Z0-9]{17}"
-                           placeholder="17-character VIN">
+                           placeholder="17-character Registration Number">
                 </div>
                 <button type="submit" class="lookup-button">
                     Look Up Vehicle

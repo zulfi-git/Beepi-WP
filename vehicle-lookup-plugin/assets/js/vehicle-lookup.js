@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
         
-        const vin = $('#vin').val().trim();
+        const regNumber = $('#regNumber').val().trim();
         const resultsDiv = $('#vehicle-lookup-results');
         const errorDiv = $('#vehicle-lookup-error');
         
@@ -10,9 +10,9 @@ jQuery(document).ready(function($) {
         resultsDiv.hide();
         errorDiv.hide();
         
-        // Validate VIN
-        if (!vin || vin.length !== 17) {
-            errorDiv.html('Please enter a valid 17-character VIN').show();
+        // Validate registration number
+        if (!regNumber || regNumber.length !== 17) {
+            errorDiv.html('Please enter a valid 17-character registration number').show();
             return;
         }
         
@@ -26,7 +26,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'vehicle_lookup',
                 nonce: vehicleLookupAjax.nonce,
-                vin: vin
+                regNumber: regNumber
             },
             dataType: 'json',
             contentType: 'application/x-www-form-urlencoded',

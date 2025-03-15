@@ -51,10 +51,10 @@ class Vehicle_Lookup {
     public function handle_lookup() {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
-        $vin = isset($_POST['vin']) ? sanitize_text_field($_POST['vin']) : '';
+        $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
         
-        if (empty($vin)) {
-            wp_send_json_error('VIN is required');
+        if (empty($regNumber)) {
+            wp_send_json_error('Registration number is required');
         }
 
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
@@ -62,7 +62,7 @@ class Vehicle_Lookup {
                 'Content-Type' => 'application/json',
             ),
             'body' => json_encode(array(
-                'registrationNumber' => $vin
+                'registrationNumber' => $regNumber
             ))
         ));
 
