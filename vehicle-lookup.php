@@ -14,6 +14,7 @@
 
 define('VEHICLE_LOOKUP_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('VEHICLE_LOOKUP_WORKER_URL', 'https://vehicle-lookup.your-worker.workers.dev');
 
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-shortcode.php';
