@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Vehicle Information Lookup
+ * Plugin Name: Beepi CF Connector
  * Plugin URI: https://beepi.no
  * Description: A WordPress plugin that connects to BeepiWorker Cloudflare Worker for vehicle information lookup.
  * Version: 1.0.0
