@@ -57,7 +57,14 @@ class Vehicle_Lookup {
             wp_send_json_error('VIN is required');
         }
 
-        $response = wp_remote_get(VEHICLE_LOOKUP_WORKER_URL . '?vin=' . urlencode($vin));
+        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+            ),
+            'body' => json_encode(array(
+                'registrationNumber' => $vin
+            ))
+        ));
 
         if (is_wp_error($response)) {
             wp_send_json_error('Failed to fetch vehicle information');

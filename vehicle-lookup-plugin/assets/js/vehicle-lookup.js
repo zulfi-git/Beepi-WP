@@ -28,6 +28,8 @@ jQuery(document).ready(function($) {
                 nonce: vehicleLookupAjax.nonce,
                 vin: vin
             },
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded',
             success: function(response) {
                 if (response.success && response.data) {
                     const data = response.data;
