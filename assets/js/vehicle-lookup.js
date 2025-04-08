@@ -159,7 +159,7 @@ jQuery(document).ready(function($) {
                     // Add status badge for all statuses
                     if (status) {
                         const statusClass = status.toLowerCase();
-                        $('.vehicle-subtitle').append(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
+                        $('.vehicle-subtitle').after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
                         
                         // Only show EU control status for registered vehicles
                         if (status === 'REGISTRERT' && euDeadline) {
@@ -180,7 +180,7 @@ jQuery(document).ready(function($) {
                             const year = deadline.getFullYear();
                             const formattedDate = `${day}-${month}-<strong>${year}</strong>`;
                             
-                            $('.vehicle-subtitle').append(`<p class="eu-status ${euStatusClass}">Frist EU-kontroll: ${formattedDate}</p>`);
+                            $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">Frist EU-kontroll: ${formattedDate}</p>`);
                         }
                     }
 

@@ -36,7 +36,7 @@ class Vehicle_Lookup_Shortcode {
                     <ul>
                         <li data-tab="general-info"><a href="#general-info">Generell</a></li>
                         <li data-tab="technical-info"><a href="#technical-info">Teknisk</a></li>
-                        <li data-tab="registration-info"><a href="#registration-info">EU-kontroll (PKK)</a></li>
+                        <li data-tab="registration-info"><a href="#registration-info">EU-kontroll</a></li>
                     </ul>
                 </nav>
                 

@@ -105,6 +105,7 @@
     font-size: 1.25rem;
     font-weight: 700;
     color: #333;
+    text-align: center;
 }
 
 .vehicle-subtitle {
@@ -118,6 +119,7 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.5rem;
+    justify-content: center;
 }
 
 .tag {
@@ -350,11 +352,11 @@
 
 .vehicle-status,
 .eu-status {
-    display: inline-block;
     margin: 4px 4px 4px 0;
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 0.9rem;
+    text-align: center;
 }
 
 /* Success state */
