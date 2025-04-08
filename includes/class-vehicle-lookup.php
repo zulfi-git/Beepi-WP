@@ -24,7 +24,7 @@ class Vehicle_Lookup {
             'vehicle-lookup-style',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/vehicle-lookup.css',
             array(),
-            VEHICLE_LOOKUP_VERSION
+            VEHICLE_LOOKUP_VERSION . '.' . time()
         );
 
         wp_enqueue_script(
