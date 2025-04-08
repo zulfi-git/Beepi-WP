@@ -1,7 +1,10 @@
 .vehicle-lookup-container {
-    max-width: 800px;
-    margin: 2em auto;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    max-width: 480px;
+    margin: auto;
 }
 
 .vehicle-lookup-form {
