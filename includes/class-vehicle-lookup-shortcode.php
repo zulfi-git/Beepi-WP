@@ -66,6 +66,12 @@ class Vehicle_Lookup_Shortcode {
                                     <table class="info-table size-weight-table"></table>
                                 </div>
                             </details>
+                            <details>
+                                <summary>Dekk og felg</summary>
+                                <div class="details-content">
+                                    <table class="info-table tire-info-table"></table>
+                                </div>
+                            </details>
                         </div>
                     </section>
 
