@@ -111,10 +111,10 @@ jQuery(document).ready(function($) {
                         // Add registration year if available
                         const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
                         if (regYear) {
-                            subtitle += ` ${regYear}`;
+                            subtitle += ` <strong>${regYear}</strong>`;
                         }
 
-                        $('.vehicle-subtitle').text(subtitle);
+                        $('.vehicle-subtitle').html(subtitle);
 
                         // Add vehicle tags
                         const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
@@ -175,11 +175,10 @@ jQuery(document).ready(function($) {
                             }
                             
                             // Format date as DD-MM-YYYY with bold year
-                            const formattedDate = deadline.toLocaleDateString('no-NO', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            }).replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$1-$2-<strong>$3</strong>');
+                            const day = deadline.getDate().toString().padStart(2, '0');
+                            const month = (deadline.getMonth() + 1).toString().padStart(2, '0');
+                            const year = deadline.getFullYear();
+                            const formattedDate = `${day}-${month}-<strong>${year}</strong>`;
                             
                             $('.vehicle-subtitle').append(`<p class="eu-status ${euStatusClass}">Frist EU-kontroll: ${formattedDate}</p>`);
                         }
