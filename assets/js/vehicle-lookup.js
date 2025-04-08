@@ -151,11 +151,8 @@ jQuery(document).ready(function($) {
                     renderTechnicalInfo(vehicleData);
                     renderRegistrationInfo(vehicleData);
                     
-                    // First close all details elements
-                    $('details').attr('open', false);
-                    
-                    // Then open only the default sections
-                    $('details:contains("Generell informasjon")').attr('open', true);
+                    // Keep all details elements open by default
+                    $('details').attr('open', true);
                     
                     // Initialize tabs
                     initializeTabs();
