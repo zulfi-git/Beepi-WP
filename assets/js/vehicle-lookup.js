@@ -108,6 +108,12 @@ jQuery(document).ready(function($) {
                             subtitle += generalData.handelsbetegnelse[0];
                         }
 
+                        // Add registration year if available
+                        const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
+                        if (regYear) {
+                            subtitle += ` ${regYear}`;
+                        }
+
                         $('.vehicle-subtitle').text(subtitle);
 
                         // Add vehicle tags
