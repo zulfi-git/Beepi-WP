@@ -95,20 +95,68 @@
 
 .vehicle-tags {
     display: flex;
-    gap: 8px;
     flex-wrap: wrap;
-    margin-top: 8px;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .tag {
-    background: #f1f5f9;
-    color: #475569;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background-color: #f1f5f9;
+    color: #374151;
+}
+
+/* Fuel type color styles */
+.tag.fuel.diesel {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.tag.fuel.bensin {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.tag.fuel.electric {
+    background-color: #ecfdf5;
+    color: #047857;
+}
+
+.tag.fuel.hybrid {
+    background-color: #f0fdf4;
+    color: #15803d;
+}
+
+.tag.fuel.plugin-hybrid {
+    background-color: #ede9fe;
+    color: #6b21a8;
+}
+
+.tag.fuel.hydrogen {
+    background-color: #e0f7fa;
+    color: #006064;
+}
+
+.tag.fuel.gas {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+/* Gearbox types */
+.tag.gearbox.manual {
+    background-color: #e2e8f0;
+    color: #334155;
+}
+
+.tag.gearbox.automatic {
+    background-color: #e0f2fe;
+    color: #1d4ed8;
 }
 
 .info-sections {

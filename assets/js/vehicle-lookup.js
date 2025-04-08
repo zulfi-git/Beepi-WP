@@ -120,16 +120,19 @@ jQuery(document).ready(function($) {
                                 'Bensin': '⛽',
                                 'Elektrisk': '⚡',
                                 'Hybrid': '🔋',
+                                'Plugin-hybrid': '🔌',
                                 'Hydrogen': '💨',
                                 'Gass': '💨'
                             }[fuelType] || '⛽';
                             
-                            tags += `<span class="tag">${fuelEmoji} ${fuelType}</span>`;
+                            const fuelClass = fuelType.toLowerCase().replace('-', '');
+                            tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
                         }
                         
                         // Transmission tag
                         if (transmission) {
-                            tags += `<span class="tag">⚙️ ${transmission}</span>`;
+                            const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
+                            tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
                         }
                         
                         $('.vehicle-info').append(`<div class="vehicle-tags">${tags}</div>`);
