@@ -64,15 +64,22 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
-                    if (!response.data.responser || response.data.responser.length === 0) {
-                        errorDiv.html('No data found for this registration number').show();
+                    // Log response for debugging
+                    console.log("API Response:", response.data);
+                    
+                    if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
+                        errorDiv.html('No valid vehicle data found for this registration number').show();
                         return;
                     }
                     
                     const vehicleData = response.data.responser[0].kjoretoydata;
                     
-                    // Set vehicle title and subtitle
-                    $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
+                    // Set vehicle title and subtitle with safe access
+                    if (vehicleData.kjoretoyId?.kjennemerke) {
+                        $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
+                    } else {
+                        $('.vehicle-title').text(regNumber);
+                    }
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
                         const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
                         let subtitle = '';
@@ -119,6 +126,8 @@ jQuery(document).ready(function($) {
     });
 
     function renderBasicInfo(vehicleData) {
+        if (!vehicleData) return;
+        
         const basicInfo = extractBasicInfo(vehicleData);
         $('.general-info-table').html(
             Object.entries(basicInfo)
@@ -127,13 +136,16 @@ jQuery(document).ready(function($) {
                 .join('')
         );
         
-        // Size and weight info
+        // Size and weight info with null checking
+        const dimensions = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner;
+        const vekter = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter;
+        
         const weightInfo = {
-            'Lengde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.lengde + ' mm',
-            'Bredde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.bredde + ' mm',
-            'Høyde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.hoyde + ' mm',
-            'Egenvekt': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter?.egenvekt + ' kg',
-            'Nyttelast': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter?.nyttelast + ' kg'
+            'Lengde': dimensions?.lengde ? dimensions.lengde + ' mm' : '',
+            'Bredde': dimensions?.bredde ? dimensions.bredde + ' mm' : '',
+            'Høyde': dimensions?.hoyde ? dimensions.hoyde + ' mm' : '',
+            'Egenvekt': vekter?.egenvekt ? vekter.egenvekt + ' kg' : '',
+            'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
         };
         
         $('.size-weight-table').html(
