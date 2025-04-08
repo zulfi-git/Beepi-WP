@@ -120,27 +120,60 @@ jQuery(document).ready(function($) {
 
     function renderBasicInfo(vehicleData) {
         const basicInfo = extractBasicInfo(vehicleData);
-        $('#basic-info .info-content').html(
+        $('.general-info-table').html(
             Object.entries(basicInfo)
-                .map(([label, value]) => createInfoItem(label, value))
+                .filter(([_, value]) => value)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .join('')
+        );
+        
+        // Size and weight info
+        const weightInfo = {
+            'Lengde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.lengde + ' mm',
+            'Bredde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.bredde + ' mm',
+            'Høyde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.hoyde + ' mm',
+            'Egenvekt': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter?.egenvekt + ' kg',
+            'Nyttelast': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter?.nyttelast + ' kg'
+        };
+        
+        $('.size-weight-table').html(
+            Object.entries(weightInfo)
+                .filter(([_, value]) => value)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
     }
 
     function renderTechnicalInfo(vehicleData) {
-        const technicalInfo = extractTechnicalInfo(vehicleData);
-        $('#technical-info .info-content').html(
-            Object.entries(technicalInfo)
-                .map(([label, value]) => createInfoItem(label, value))
+        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+        const engineInfo = {
+            'Motor': engineData?.motor?.[0]?.antallSylindre + ' sylindre',
+            'Drivstoff': engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse,
+            'Slagvolum': engineData?.motor?.[0]?.slagvolum + ' ccm',
+            'Effekt': engineData?.motor?.[0]?.drivstoff?.[0]?.maksNettoEffekt + ' kW',
+            'Girkasse': engineData?.girkassetype?.kodeBeskrivelse
+        };
+        
+        $('.engine-info-table').html(
+            Object.entries(engineInfo)
+                .filter(([_, value]) => value)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
     }
 
     function renderRegistrationInfo(vehicleData) {
-        const registrationInfo = extractRegistrationInfo(vehicleData);
-        $('#registration-info .info-content').html(
-            Object.entries(registrationInfo)
-                .map(([label, value]) => createInfoItem(label, value))
+        const regInfo = {
+            'Registreringsnummer': vehicleData.kjoretoyId?.kjennemerke,
+            'Første registrering': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+            'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
+            'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
+        };
+        
+        $('.registration-info-table').html(
+            Object.entries(regInfo)
+                .filter(([_, value]) => value)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
     }
@@ -152,7 +185,9 @@ jQuery(document).ready(function($) {
             'Understellsnummer': vehicleData.kjoretoyId?.understellsnummer,
             'Merke': tekniskeData?.generelt?.merke?.[0]?.merke,
             'Modell': tekniskeData?.generelt?.handelsbetegnelse?.[0],
-            'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse
+            'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse,
+            'Type': tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse,
+            'Antall seter': tekniskeData?.persontall?.sitteplasserTotalt
         };
     }
 
