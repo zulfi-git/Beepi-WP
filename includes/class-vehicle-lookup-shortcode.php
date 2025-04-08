@@ -9,15 +9,17 @@ class Vehicle_Lookup_Shortcode {
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
-            <form id="vehicle-lookup-form" class="vehicle-lookup-form">
-                <div class="form-group">
-                    <label for="regNumber">Registreringsnummer:</label>
-                    <input type="text" id="regNumber" name="regNumber" required 
-                           class="reg-input"
-                           placeholder="Tast inn registreringsnummer"
+            <form id="vehicle-lookup-form" class="plate-form">
+                <div class="plate-input-wrapper">
+                    <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
+                    <input type="text" id="regNumber" name="regNumber" required
+                           class="plate-input"
+                           placeholder="CU11262"
                            pattern="([A-Z]{2}\d{4,5}|E[KLVBCDE]\d{5}|CD\d{5}|\d{5}|[A-Z]\d{3}|[A-Z]{2}\d{3})">
+                    <button type="submit" class="plate-search-button" aria-label="Search">
+                        🔍
+                    </button>
                 </div>
-                <button type="submit" class="lookup-button">Søk</button>
             </form>
 
             <div id="vehicle-lookup-results" style="display: none;">
