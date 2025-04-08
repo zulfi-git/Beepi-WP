@@ -142,6 +142,20 @@ jQuery(document).ready(function($) {
                         $('.vehicle-info').append(`<div class="vehicle-tags">${tags}</div>`);
                     }
 
+                    // Add status display
+                    const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
+                    const statusText = vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || '';
+
+                    // Remove any existing status display
+                    $('.vehicle-status').remove();
+
+                    // Add status badge for all statuses
+                    if (status) {
+                        const statusClass = status.toLowerCase();
+                        $('.vehicle-subtitle').append(`<span class="vehicle-status ${statusClass}"> ${statusText}</span>`);
+                    }
+
+
                     // Parse and display data for each section
                     renderBasicInfo(vehicleData);
                     renderTechnicalInfo(vehicleData);
