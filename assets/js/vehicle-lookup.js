@@ -105,6 +105,34 @@ jQuery(document).ready(function($) {
                         }
                         
                         $('.vehicle-subtitle').text(subtitle);
+                        
+                        // Add vehicle tags
+                        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+                        const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
+                        const transmission = engineData?.girkassetype?.kodeBeskrivelse;
+                        
+                        let tags = '';
+                        
+                        // Fuel type tags
+                        if (fuelType) {
+                            const fuelEmoji = {
+                                'Diesel': '⛽',
+                                'Bensin': '⛽',
+                                'Elektrisk': '⚡',
+                                'Hybrid': '🔋',
+                                'Hydrogen': '💨',
+                                'Gass': '💨'
+                            }[fuelType] || '⛽';
+                            
+                            tags += `<span class="tag">${fuelEmoji} ${fuelType}</span>`;
+                        }
+                        
+                        // Transmission tag
+                        if (transmission) {
+                            tags += `<span class="tag">⚙️ ${transmission}</span>`;
+                        }
+                        
+                        $('.vehicle-info').append(`<div class="vehicle-tags">${tags}</div>`);
                     }
                     
                     // Parse and display data for each section
