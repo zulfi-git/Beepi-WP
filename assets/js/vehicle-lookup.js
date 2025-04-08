@@ -11,8 +11,18 @@ jQuery(document).ready(function($) {
         errorDiv.hide();
         
         // Validate Norwegian registration number
-        if (!regNumber || !/^[A-Z]{2}[0-9]{4,5}$/.test(regNumber)) {
-            errorDiv.html('Please enter a valid Norwegian registration number (e.g., AB12345)').show();
+        const validFormats = [
+            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
+            /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
+            /^CD\d{5}$/,                   // Diplomatic vehicles
+            /^\d{5}$/,                     // Temporary tourist plates
+            /^[A-Z]\d{3}$/,               // Antique vehicles
+            /^[A-Z]{2}\d{3}$/             // Provisional plates
+        ];
+        
+        const isValid = validFormats.some(format => format.test(regNumber));
+        if (!regNumber || !isValid) {
+            errorDiv.html('Please enter a valid Norwegian registration number').show();
             return;
         }
         

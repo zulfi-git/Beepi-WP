@@ -57,8 +57,25 @@ class Vehicle_Lookup {
             wp_send_json_error('Registration number is required');
         }
 
-        if (!preg_match('/^[A-Z]{2}[0-9]{4,5}$/', $regNumber)) {
-            wp_send_json_error('Invalid registration number format. Please use format like AB12345');
+        $valid_patterns = array(
+            '/^[A-Z]{2}\d{4,5}$/',         // Standard vehicles and others
+            '/^E[KLVBCDE]\d{5}$/',         // Electric vehicles
+            '/^CD\d{5}$/',                 // Diplomatic vehicles
+            '/^\d{5}$/',                   // Temporary tourist plates
+            '/^[A-Z]\d{3}$/',             // Antique vehicles
+            '/^[A-Z]{2}\d{3}$/'           // Provisional plates
+        );
+        
+        $is_valid = false;
+        foreach ($valid_patterns as $pattern) {
+            if (preg_match($pattern, $regNumber)) {
+                $is_valid = true;
+                break;
+            }
+        }
+        
+        if (!$is_valid) {
+            wp_send_json_error('Invalid registration number format');
         }
 
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
