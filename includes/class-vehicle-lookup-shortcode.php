@@ -1,4 +1,3 @@
-
 <?php
 class Vehicle_Lookup_Shortcode {
     public function init() {
@@ -11,14 +10,15 @@ class Vehicle_Lookup_Shortcode {
         <div class="vehicle-lookup-container">
             <form id="vehicle-lookup-form" class="vehicle-lookup-form">
                 <div class="form-group">
-                    <label for="regNumber">Enter Registration Number:</label>
+                    <label for="regNumber">Registreringsnummer:</label>
                     <input type="text" id="regNumber" name="regNumber" required 
-                           placeholder="Registration Number"
-                           class="reg-input">
+                           class="reg-input"
+                           placeholder="Tast inn registreringsnummer"
+                           pattern="([A-Z]{2}\d{4,5}|E[KLVBCDE]\d{5}|CD\d{5}|\d{5}|[A-Z]\d{3}|[A-Z]{2}\d{3})">
                 </div>
                 <button type="submit" class="lookup-button">Look Up Vehicle</button>
             </form>
-            
+
             <div id="vehicle-lookup-results" class="vehicle-results" style="display: none;">
                 <div class="vehicle-header">
                     <h2 class="vehicle-title"></h2>
@@ -42,7 +42,7 @@ class Vehicle_Lookup_Shortcode {
                     </section>
                 </div>
             </div>
-            
+
             <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
         </div>
         <?php
