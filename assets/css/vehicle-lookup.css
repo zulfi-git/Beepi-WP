@@ -50,6 +50,25 @@
     border-radius: 4px;
 }
 
+.vehicle-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.vehicle-info-table th,
+.vehicle-info-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.vehicle-info-table th {
+    font-weight: bold;
+    width: 40%;
+    background-color: #f8f9fa;
+}
+
 .vehicle-lookup-error {
     color: #dc3232;
     padding: 10px;

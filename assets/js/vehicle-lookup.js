@@ -43,21 +43,33 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
-                    if (Object.keys(response.data).length === 0) {
+                    if (!response.data || !response.data.responser || response.data.responser.length === 0) {
                         errorDiv.html('No data found for this registration number').show();
                         return;
                     }
-                    const data = response.data;
+                    
+                    const vehicleData = response.data.responser[0].kjoretoydata;
                     let html = '<table class="vehicle-info-table">';
                     
-                    // Display vehicle information
-                    for (const [key, value] of Object.entries(data)) {
-                        if (value && typeof value !== 'object') {
-                            html += `<tr>
-                                <th>${key.replace(/_/g, ' ').toUpperCase()}</th>
-                                <td>${value}</td>
-                            </tr>`;
-                        }
+                    // Basic vehicle info
+                    const basicInfo = {
+                        'Kjennemerke': vehicleData.kjoretoyId.kjennemerke,
+                        'Merke': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke,
+                        'Model': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.handelsbetegnelse[0],
+                        'Første registrering': vehicleData.forstegangsregistrering.registrertForstegangNorgeDato,
+                        'Farge': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.karosseriOgLasteplan.rFarge[0].kodeBeskrivelse,
+                        'Drivstoff': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.motorOgDrivverk.motor[0].arbeidsprinsipp.kodeBeskrivelse,
+                        'Girkasse': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.motorOgDrivverk.girkassetype.kodeBeskrivelse,
+                        'Antall seter': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.persontall.sitteplasserTotalt,
+                        'Egenvekt': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.vekter.egenvekt + ' kg',
+                        'Neste kontroll': vehicleData.periodiskKjoretoyKontroll.kontrollfrist
+                    };
+                    
+                    for (const [key, value] of Object.entries(basicInfo)) {
+                        html += `<tr>
+                            <th>${key}</th>
+                            <td>${value}</td>
+                        </tr>`;
                     }
                     
                     html += '</table>';
