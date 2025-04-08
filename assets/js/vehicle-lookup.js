@@ -47,8 +47,11 @@ jQuery(document).ready(function($) {
             return;
         }
         
-        // Show loading state
-        $(this).find('button').prop('disabled', true).text('Looking up...');
+        // Show loading state with spinner
+        const loadingSpinner = $('<div class="loading-spinner"></div>');
+        $(this).find('button').prop('disabled', true)
+            .text('Looking up...')
+            .prepend(loadingSpinner);
         
         // Make AJAX request
         $.ajax({
@@ -100,6 +103,11 @@ jQuery(document).ready(function($) {
                     renderTechnicalInfo(vehicleData);
                     renderRegistrationInfo(vehicleData);
                     
+                    // Open first details panel by default
+                    $('#general-info details:first').attr('open', true);
+                    
+                    // Initialize tabs
+                    initializeTabs();
                     resultsDiv.show();
                 } else {
                     errorDiv.html('Failed to retrieve vehicle information').show();
