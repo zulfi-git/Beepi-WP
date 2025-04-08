@@ -1,15 +1,10 @@
+
 <?php
 class Vehicle_Lookup_Shortcode {
-    /**
-     * Initialize the shortcode
-     */
     public function init() {
         add_shortcode('vehicle_lookup', array($this, 'render_shortcode'));
     }
 
-    /**
-     * Render the vehicle lookup form
-     */
     public function render_shortcode($atts) {
         ob_start();
         ?>
@@ -18,23 +13,40 @@ class Vehicle_Lookup_Shortcode {
                 <div class="form-group">
                     <label for="regNumber">Enter Registration Number:</label>
                     <input type="text" id="regNumber" name="regNumber" required 
-                           minlength="6" maxlength="7" 
-                           pattern="([A-Z]{2}\d{4,5}|E[KLVBCDE]\d{5}|CD\d{5}|\d{5}|[A-Z]\d{3}|[A-Z]{2}\d{3})"
-                           placeholder="Norwegian Registration Number (e.g., AB12345)">
+                           placeholder="Registration Number"
+                           class="reg-input">
                 </div>
-                <button type="submit" class="lookup-button">
-                    Look Up Vehicle
-                </button>
+                <button type="submit" class="lookup-button">Look Up Vehicle</button>
             </form>
             
-            <div id="vehicle-lookup-results" class="vehicle-lookup-results" style="display: none;">
-                <h3>Vehicle Information</h3>
-                <div class="results-content"></div>
+            <div id="vehicle-lookup-results" class="vehicle-results" style="display: none;">
+                <div class="vehicle-header">
+                    <h2 class="vehicle-title"></h2>
+                    <p class="vehicle-subtitle"></p>
+                </div>
+
+                <div class="info-sections">
+                    <section class="info-section" id="basic-info">
+                        <h3>Vehicle Information</h3>
+                        <div class="info-content"></div>
+                    </section>
+
+                    <section class="info-section" id="technical-info">
+                        <h3>Technical Details</h3>
+                        <div class="info-content"></div>
+                    </section>
+
+                    <section class="info-section" id="registration-info">
+                        <h3>Registration Details</h3>
+                        <div class="info-content"></div>
+                    </section>
+                </div>
             </div>
             
-            <div id="vehicle-lookup-error" class="vehicle-lookup-error" style="display: none;"></div>
+            <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
         </div>
         <?php
         return ob_get_clean();
     }
 }
+?>
