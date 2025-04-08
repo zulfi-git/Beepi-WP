@@ -17,7 +17,8 @@ class Vehicle_Lookup_Shortcode {
                            placeholder="CU11262"
                            pattern="([A-Z]{2}\d{4,5}|E[KLVBCDE]\d{5}|CD\d{5}|\d{5}|[A-Z]\d{3}|[A-Z]{2}\d{3})">
                     <button type="submit" class="plate-search-button" aria-label="Search">
-                        🔍
+                        <div class="loading-spinner"></div>
+                        <span class="search-icon">🔍</span>
                     </button>
                 </div>
             </form>

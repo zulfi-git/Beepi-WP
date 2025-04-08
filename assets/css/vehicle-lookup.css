@@ -296,14 +296,33 @@
 }
 
 .loading-spinner {
-    display: inline-block;
+    display: none;
     width: 16px;
     height: 16px;
     border: 2px solid #ffffff;
     border-radius: 50%;
     border-top-color: transparent;
-    margin-right: 8px;
     animation: spin 1s linear infinite;
+    position: absolute;
+}
+
+.plate-search-button.loading .loading-spinner {
+    display: inline-block;
+}
+
+.plate-search-button.loading .search-icon {
+    opacity: 0;
+}
+
+.plate-search-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-icon {
+    transition: opacity 0.2s;
 }
 
 @keyframes spin {

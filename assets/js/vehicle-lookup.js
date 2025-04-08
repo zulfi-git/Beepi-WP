@@ -52,11 +52,8 @@ jQuery(document).ready(function($) {
             return;
         }
         
-        // Show loading state with spinner
-        const loadingSpinner = $('<div class="loading-spinner"></div>');
-        $(this).find('button').prop('disabled', true)
-            .text('Looking up...')
-            .prepend(loadingSpinner);
+        // Show loading state
+        $(this).find('button').prop('disabled', true).addClass('loading');
         
         // Make AJAX request
         $.ajax({
@@ -176,7 +173,7 @@ jQuery(document).ready(function($) {
                 // Reset button state
                 $('#vehicle-lookup-form button')
                     .prop('disabled', false)
-                    .text('Look Up Vehicle');
+                    .removeClass('loading');
             }
         });
     });
