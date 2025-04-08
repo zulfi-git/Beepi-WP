@@ -143,8 +143,8 @@ jQuery(document).ready(function($) {
                     renderTechnicalInfo(vehicleData);
                     renderRegistrationInfo(vehicleData);
                     
-                    // Open engine, registration, and size/weight sections by default
-                    $('details:contains("Motor og drivverk"), details:contains("Registrering og kontroll"), details:contains("Størrelse og vekt")').attr('open', true);
+                    // Open general info, engine, registration, and size/weight sections by default
+                    $('details:contains("Generell informasjon"), details:contains("Motor og drivverk"), details:contains("Registrering og kontroll"), details:contains("Størrelse og vekt")').attr('open', true);
                     
                     // Initialize tabs
                     initializeTabs();
