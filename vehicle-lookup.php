@@ -14,7 +14,7 @@
 
 define('VEHICLE_LOOKUP_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('VEHICLE_LOOKUP_WORKER_URL', 'https://vehicle-lookup.your-worker.workers.dev');
+define('VEHICLE_LOOKUP_WORKER_URL', 'https://vehicle-lookup.beepi.workers.dev');
 define('VEHICLE_LOOKUP_VERSION', '1.0.0');
 
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
