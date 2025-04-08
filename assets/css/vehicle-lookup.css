@@ -169,16 +169,17 @@
 
 /* Accordion styles */
 .accordion details {
-    margin-bottom: 5px;
-    border: 1px solid #eee;
-    border-radius: 4px;
+    margin-top: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .accordion summary {
-    padding: 12px 15px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    background-color: #f8fafc;
     cursor: pointer;
-    background: #f9f9f9;
-    font-weight: 500;
     list-style: none;
     position: relative;
 }
@@ -187,39 +188,25 @@
     display: none;
 }
 
-.accordion summary::after {
-    content: '+';
-    position: absolute;
-    right: 15px;
-}
-
-.accordion details[open] summary::after {
-    content: '-';
-}
-
 .details-content {
-    padding: 15px;
+    padding: 1rem;
 }
 
 .info-table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.info-table tr:nth-child(even) {
-    background: #f9f9f9;
-}
-
-.info-table th, 
-.info-table td {
-    padding: 8px 12px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
 }
 
 .info-table th {
-    width: 40%;
+    text-align: left;
     color: #666;
+    padding: 6px 0;
+    width: 40%;
+}
+
+.info-table td {
+    padding: 6px 0;
 }
 
 .loading-spinner {
