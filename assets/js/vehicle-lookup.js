@@ -1,3 +1,4 @@
+
 jQuery(document).ready(function($) {
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
@@ -43,37 +44,35 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
-                    if (!response.data || !response.data.responser || response.data.responser.length === 0) {
+                    if (!response.data.responser || response.data.responser.length === 0) {
                         errorDiv.html('No data found for this registration number').show();
                         return;
                     }
                     
                     const vehicleData = response.data.responser[0].kjoretoydata;
-                    let html = '<table class="vehicle-info-table">';
                     
-                    // Basic vehicle info
-                    const basicInfo = {
-                        'Kjennemerke': vehicleData.kjoretoyId.kjennemerke,
-                        'Merke': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke,
-                        'Model': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.handelsbetegnelse[0],
-                        'Første registrering': vehicleData.forstegangsregistrering.registrertForstegangNorgeDato,
-                        'Farge': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.karosseriOgLasteplan.rFarge[0].kodeBeskrivelse,
-                        'Drivstoff': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.motorOgDrivverk.motor[0].arbeidsprinsipp.kodeBeskrivelse,
-                        'Girkasse': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.motorOgDrivverk.girkassetype.kodeBeskrivelse,
-                        'Antall seter': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.persontall.sitteplasserTotalt,
-                        'Egenvekt': vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.vekter.egenvekt + ' kg',
-                        'Neste kontroll': vehicleData.periodiskKjoretoyKontroll.kontrollfrist
-                    };
-                    
-                    for (const [key, value] of Object.entries(basicInfo)) {
-                        html += `<tr>
-                            <th>${key}</th>
-                            <td>${value}</td>
-                        </tr>`;
+                    // Set vehicle title and subtitle
+                    $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
+                    if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
+                        const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
+                        let subtitle = '';
+                        
+                        if (generalData.merke?.[0]?.merke) {
+                            subtitle += generalData.merke[0].merke + ' ';
+                        }
+                        
+                        if (generalData.handelsbetegnelse?.[0]) {
+                            subtitle += generalData.handelsbetegnelse[0];
+                        }
+                        
+                        $('.vehicle-subtitle').text(subtitle);
                     }
                     
-                    html += '</table>';
-                    resultsDiv.find('.results-content').html(html);
+                    // Parse and display data for each section
+                    renderBasicInfo(vehicleData);
+                    renderTechnicalInfo(vehicleData);
+                    renderRegistrationInfo(vehicleData);
+                    
                     resultsDiv.show();
                 } else {
                     errorDiv.html('Failed to retrieve vehicle information').show();
@@ -98,4 +97,68 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    function renderBasicInfo(vehicleData) {
+        const basicInfo = extractBasicInfo(vehicleData);
+        $('#basic-info .info-content').html(
+            Object.entries(basicInfo)
+                .map(([label, value]) => createInfoItem(label, value))
+                .join('')
+        );
+    }
+
+    function renderTechnicalInfo(vehicleData) {
+        const technicalInfo = extractTechnicalInfo(vehicleData);
+        $('#technical-info .info-content').html(
+            Object.entries(technicalInfo)
+                .map(([label, value]) => createInfoItem(label, value))
+                .join('')
+        );
+    }
+
+    function renderRegistrationInfo(vehicleData) {
+        const registrationInfo = extractRegistrationInfo(vehicleData);
+        $('#registration-info .info-content').html(
+            Object.entries(registrationInfo)
+                .map(([label, value]) => createInfoItem(label, value))
+                .join('')
+        );
+    }
+
+    function extractBasicInfo(vehicleData) {
+        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+        return {
+            'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke,
+            'Understellsnummer': vehicleData.kjoretoyId?.understellsnummer,
+            'Merke': tekniskeData?.generelt?.merke?.[0]?.merke,
+            'Modell': tekniskeData?.generelt?.handelsbetegnelse?.[0],
+            'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse
+        };
+    }
+
+    function extractTechnicalInfo(vehicleData) {
+        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+        return {
+            'Drivstoff': tekniskeData?.motorOgDrivverk?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse,
+            'Girkasse': tekniskeData?.motorOgDrivverk?.girkassetype?.kodeBeskrivelse,
+            'Antall seter': tekniskeData?.persontall?.sitteplasserTotalt,
+            'Egenvekt': tekniskeData?.vekter?.egenvekt ? `${tekniskeData.vekter.egenvekt} kg` : null,
+            'Totalvekt': tekniskeData?.vekter?.totalvekt ? `${tekniskeData.vekter.totalvekt} kg` : null
+        };
+    }
+
+    function extractRegistrationInfo(vehicleData) {
+        return {
+            'Første registrering': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+            'Neste kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist,
+            'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse
+        };
+    }
+
+    function createInfoItem(label, value) {
+        return `<div class="info-item">
+            <strong>${label}:</strong>
+            <span>${value || '-'}</span>
+        </div>`;
+    }
 });

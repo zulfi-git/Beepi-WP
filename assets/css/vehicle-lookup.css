@@ -90,6 +90,25 @@
     gap: 15px;
 }
 
+.info-item {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-item strong {
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.info-item span {
+    color: #212529;
+    font-size: 1.1em;
+}
+
 .error-message {
     background: #fff3f3;
     color: #dc3545;
