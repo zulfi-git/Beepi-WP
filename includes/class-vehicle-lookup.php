@@ -57,24 +57,39 @@ class Vehicle_Lookup {
             wp_send_json_error('Registration number is required');
         }
 
+        if (!preg_match('/^[A-Z]{2}[0-9]{4,5}$/', $regNumber)) {
+            wp_send_json_error('Invalid registration number format. Please use format like AB12345');
+        }
+
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
             'headers' => array(
                 'Content-Type' => 'application/json',
             ),
             'body' => json_encode(array(
                 'registrationNumber' => $regNumber
-            ))
+            )),
+            'timeout' => 15
         ));
 
         if (is_wp_error($response)) {
-            wp_send_json_error('Failed to fetch vehicle information');
+            $error_message = $response->get_error_message();
+            wp_send_json_error('Connection error: ' . $error_message);
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        if ($status_code !== 200) {
+            wp_send_json_error('Server returned error code: ' . $status_code);
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Invalid JSON response from server');
+        }
+
         if (empty($data)) {
-            wp_send_json_error('Invalid response from server');
+            wp_send_json_error('No vehicle information found for this registration number');
         }
 
         wp_send_json_success($data);

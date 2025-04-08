@@ -30,8 +30,13 @@ jQuery(document).ready(function($) {
             },
             dataType: 'json',
             contentType: 'application/x-www-form-urlencoded',
+            timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
+                    if (Object.keys(response.data).length === 0) {
+                        errorDiv.html('No data found for this registration number').show();
+                        return;
+                    }
                     const data = response.data;
                     let html = '<table class="vehicle-info-table">';
                     
@@ -52,8 +57,16 @@ jQuery(document).ready(function($) {
                     errorDiv.html('Failed to retrieve vehicle information').show();
                 }
             },
-            error: function() {
-                errorDiv.html('Error connecting to the server').show();
+            error: function(xhr, status, error) {
+                let errorMessage = 'An error occurred: ';
+                if (status === 'timeout') {
+                    errorMessage = 'Request timed out. Please try again.';
+                } else if (xhr.responseJSON && xhr.responseJSON.data) {
+                    errorMessage = xhr.responseJSON.data;
+                } else if (error) {
+                    errorMessage += error;
+                }
+                errorDiv.html(errorMessage).show();
             },
             complete: function() {
                 // Reset button state
