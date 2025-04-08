@@ -1,5 +1,25 @@
 
 jQuery(document).ready(function($) {
+    // Initialize tabs
+    function initializeTabs() {
+        $('.tabs li:first-child a').addClass('active');
+        $('.tab-panel:first-child').show().siblings('.tab-panel').hide();
+    }
+
+    // Handle tab clicks
+    $(document).on('click', '.tabs a', function(e) {
+        e.preventDefault();
+        const tabId = $(this).parent().data('tab');
+        
+        // Update active tab
+        $('.tabs a').removeClass('active');
+        $(this).addClass('active');
+        
+        // Show selected tab panel
+        $('.tab-panel').hide();
+        $('#' + tabId).show();
+    });
+
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
         
