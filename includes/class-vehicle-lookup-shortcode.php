@@ -36,7 +36,6 @@ class Vehicle_Lookup_Shortcode {
                     <ul>
                         <li data-tab="general-info"><a href="#general-info">Generell</a></li>
                         <li data-tab="technical-info"><a href="#technical-info">Teknisk</a></li>
-                        <li data-tab="registration-info"><a href="#registration-info">EU-kontroll</a></li>
                     </ul>
                 </nav>
                 
@@ -47,6 +46,12 @@ class Vehicle_Lookup_Shortcode {
                                 <summary>Generell informasjon</summary>
                                 <div class="details-content">
                                     <table class="info-table general-info-table"></table>
+                                </div>
+                            </details>
+                            <details>
+                                <summary>Registrering og kontroll</summary>
+                                <div class="details-content">
+                                    <table class="info-table registration-info-table"></table>
                                 </div>
                             </details>
                         </div>
@@ -70,17 +75,6 @@ class Vehicle_Lookup_Shortcode {
                                 <summary>Dekk og felg</summary>
                                 <div class="details-content">
                                     <table class="info-table tire-info-table"></table>
-                                </div>
-                            </details>
-                        </div>
-                    </section>
-
-                    <section id="registration-info" class="tab-panel">
-                        <div class="accordion">
-                            <details>
-                                <summary>Registrering og kontroll</summary>
-                                <div class="details-content">
-                                    <table class="info-table registration-info-table"></table>
                                 </div>
                             </details>
                         </div>
