@@ -32,6 +32,7 @@
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 0.75rem;
+    font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
 }
@@ -81,12 +82,14 @@
 
 .vehicle-title {
     margin: 0;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #333;
 }
 
 .vehicle-subtitle {
     margin: 5px 0 0;
+    font-size: 0.9rem;
     color: #666;
 }
 
@@ -101,6 +104,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
+    font-size: 0.85rem;
     font-weight: 500;
     padding: 0.35rem 0.75rem;
     border-radius: 999px;
@@ -164,6 +168,7 @@
 }
 
 .info-section h3 {
+    font-size: 18px;
     color: #333;
     margin-bottom: 15px;
 }
@@ -185,10 +190,12 @@
 
 .info-item strong {
     color: #495057;
+    font-size: 0.9em;
 }
 
 .info-item span {
     color: #212529;
+    font-size: 1.1em;
 }
 
 /* Tabs styles */
@@ -254,6 +261,7 @@
 .info-table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 0.95rem;
 }
 
 .info-table th {
