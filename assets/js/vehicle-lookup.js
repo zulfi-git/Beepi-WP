@@ -75,6 +75,9 @@ jQuery(document).ready(function($) {
                         return;
                     }
                     
+                    // Clear existing vehicle tags before adding new ones
+                    $('.vehicle-info .vehicle-tags').remove();
+                    
                     const vehicleData = response.data.responser[0].kjoretoydata;
                     
                     // Set vehicle title and subtitle with safe access
