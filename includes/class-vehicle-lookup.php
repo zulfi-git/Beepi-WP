@@ -31,7 +31,7 @@ class Vehicle_Lookup {
             'vehicle-lookup-script',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/vehicle-lookup.js',
             array('jquery'),
-            VEHICLE_LOOKUP_VERSION,
+            VEHICLE_LOOKUP_VERSION . '.' . time(),
             true
         );
 
