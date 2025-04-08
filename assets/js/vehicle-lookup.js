@@ -143,8 +143,8 @@ jQuery(document).ready(function($) {
                     renderTechnicalInfo(vehicleData);
                     renderRegistrationInfo(vehicleData);
                     
-                    // Open first details panel by default
-                    $('#general-info details:first').attr('open', true);
+                    // Open engine and registration sections by default
+                    $('details:contains("Motor og drivverk"), details:contains("Registrering og kontroll")').attr('open', true);
                     
                     // Initialize tabs
                     initializeTabs();
