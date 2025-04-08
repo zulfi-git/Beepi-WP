@@ -27,9 +27,14 @@ jQuery(document).ready(function($) {
         const resultsDiv = $('#vehicle-lookup-results');
         const errorDiv = $('#vehicle-lookup-error');
         
-        // Hide previous results/errors
+        // Reset all states
         resultsDiv.hide();
-        errorDiv.hide();
+        errorDiv.hide().empty();
+        $('.vehicle-tags').remove();
+        $('.vehicle-title').empty();
+        $('.vehicle-subtitle').empty();
+        $('.vehicle-logo').attr('src', '');
+        $('.info-table').empty();
         
         // Validate Norwegian registration number
         const validFormats = [
