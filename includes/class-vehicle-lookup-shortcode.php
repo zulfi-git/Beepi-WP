@@ -15,7 +15,7 @@ class Vehicle_Lookup_Shortcode {
                     <input type="text" id="regNumber" name="regNumber" required
                            class="plate-input"
                            placeholder="CU11262"
-                           pattern="([A-Z]{2}\d{4,5}|E[KLVBCDE]\d{5}|CD\d{5}|\d{5}|[A-Z]\d{3}|[A-Z]{2}\d{3})">
+                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <div class="loading-spinner"></div>
                         <span class="search-icon">🔍</span>

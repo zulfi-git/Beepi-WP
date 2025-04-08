@@ -58,12 +58,12 @@ class Vehicle_Lookup {
         }
 
         $valid_patterns = array(
-            '/^[A-Z]{2}\d{4,5}$/',         // Standard vehicles and others
-            '/^E[KLVBCDE]\d{5}$/',         // Electric vehicles
-            '/^CD\d{5}$/',                 // Diplomatic vehicles
-            '/^\d{5}$/',                   // Temporary tourist plates
-            '/^[A-Z]\d{3}$/',             // Antique vehicles
-            '/^[A-Z]{2}\d{3}$/'           // Provisional plates
+            '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
+            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
+            '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
+            '/^\d{5}$/',                      // Temporary tourist plates
+            '/^[A-Za-z]\d{3}$/',              // Antique vehicles
+            '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
         );
         
         $is_valid = false;
