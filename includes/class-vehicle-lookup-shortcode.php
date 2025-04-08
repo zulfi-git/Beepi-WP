@@ -49,13 +49,6 @@ class Vehicle_Lookup_Shortcode {
                                     <table class="info-table general-info-table"></table>
                                 </div>
                             </details>
-                            
-                            <details>
-                                <summary>Størrelse og vekt</summary>
-                                <div class="details-content">
-                                    <table class="info-table size-weight-table"></table>
-                                </div>
-                            </details>
                         </div>
                     </section>
                     
@@ -65,6 +58,12 @@ class Vehicle_Lookup_Shortcode {
                                 <summary>Motor og drivverk</summary>
                                 <div class="details-content">
                                     <table class="info-table engine-info-table"></table>
+                                </div>
+                            </details>
+                            <details>
+                                <summary>Størrelse og vekt</summary>
+                                <div class="details-content">
+                                    <table class="info-table size-weight-table"></table>
                                 </div>
                             </details>
                         </div>
