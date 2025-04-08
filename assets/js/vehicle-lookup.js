@@ -83,6 +83,15 @@ jQuery(document).ready(function($) {
                     } else {
                         $('.vehicle-title').text(regNumber);
                     }
+                    
+                    // Set manufacturer logo
+                    if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
+                        const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
+                        const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
+                        $('.vehicle-logo').attr('src', logoUrl).attr('alt', `${manufacturer} logo`);
+                    } else {
+                        $('.vehicle-logo').attr('src', '').attr('alt', 'No logo available');
+                    }
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
                         const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
                         let subtitle = '';

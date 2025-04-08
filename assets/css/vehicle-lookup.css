@@ -55,6 +55,19 @@
 .vehicle-header {
     padding: 20px;
     border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.vehicle-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.vehicle-info {
+    flex: 1;
 }
 
 .vehicle-title {
