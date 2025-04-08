@@ -145,14 +145,31 @@ jQuery(document).ready(function($) {
                     // Add status display
                     const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
                     const statusText = vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || '';
+                    const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
 
-                    // Remove any existing status display
-                    $('.vehicle-status').remove();
+                    // Remove any existing status displays
+                    $('.vehicle-status, .eu-status').remove();
 
                     // Add status badge for all statuses
                     if (status) {
                         const statusClass = status.toLowerCase();
                         $('.vehicle-subtitle').append(`<span class="vehicle-status ${statusClass}"> ${statusText}</span>`);
+                        
+                        // Only show EU control status for registered vehicles
+                        if (status === 'REGISTRERT' && euDeadline) {
+                            const today = new Date();
+                            const deadline = new Date(euDeadline);
+                            const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+                            
+                            let euStatusClass = '';
+                            if (daysUntilDeadline < 0) {
+                                euStatusClass = 'overdue';
+                            } else if (daysUntilDeadline <= 30) {
+                                euStatusClass = 'warning';
+                            }
+                            
+                            $('.vehicle-subtitle').append(`<span class="eu-status ${euStatusClass}">Frist EU-kontroll: ${euDeadline}</span>`);
+                        }
                     }
 
 

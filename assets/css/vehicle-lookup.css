@@ -365,3 +365,23 @@
     background-color: #198754;
     color: white;
 }
+
+.eu-status {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.eu-status.warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.eu-status.overdue {
+    background-color: #dc3545;
+    color: white;
+}
