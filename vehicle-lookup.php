@@ -1,10 +1,11 @@
 
 <?php
 /*
-Plugin Name: Vehicle Lookup
-Description: A plugin to lookup vehicle information using registration numbers
+Plugin Name: Beepi Vehicle Lookup
+Description: A plugin to lookup Norwegian vehicle information using registration numbers
 Version: 1.0.0
-Author: Your Name
+Author: Beepi
+Author URI: https://beepi.no
 */
 
 define('VEHICLE_LOOKUP_PLUGIN_DIR', dirname(__FILE__) . '/');
