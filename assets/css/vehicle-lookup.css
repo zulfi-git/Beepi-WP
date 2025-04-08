@@ -348,11 +348,19 @@
     }
 }
 
+.vehicle-status.avregistrert,
 .status-warning.avregistrert {
     background-color: #ffc107;
     color: #000;
 }
 
+.vehicle-status.vraket,
+.status-warning.vraket {
+    background-color: #dc3545;
+    color: white;
+}
+
+.vehicle-status.registrert,
 .status-warning.registrert {
     background-color: #198754;
     color: white;
