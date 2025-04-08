@@ -348,40 +348,41 @@
     }
 }
 
-.vehicle-status.avregistrert,
-.status-warning.avregistrert {
-    background-color: #ffc107;
-    color: #000;
+.vehicle-status,
+.eu-status {
+    display: inline-block;
+    margin: 4px 4px 4px 0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
 }
 
-.vehicle-status.vraket,
-.status-warning.vraket {
-    background-color: #dc3545;
-    color: white;
-}
-
-.vehicle-status.registrert,
-.status-warning.registrert {
+/* Success state */
+.vehicle-status.registrert {
     background-color: #198754;
     color: white;
 }
 
-.eu-status {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    background-color: #e9ecef;
-    color: #495057;
-}
-
+/* Warning state */
+.vehicle-status.avregistrert,
 .eu-status.warning {
     background-color: #ffc107;
     color: #000;
 }
 
+/* Danger state */
+.vehicle-status.vraket,
 .eu-status.overdue {
     background-color: #dc3545;
     color: white;
+}
+
+/* Default EU status */
+.eu-status:not(.warning):not(.overdue) {
+    background-color: #198754;
+    color: white;
+}
+
+.eu-status strong {
+    font-weight: 600;
 }
