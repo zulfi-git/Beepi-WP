@@ -347,3 +347,13 @@
         padding: 10px;
     }
 }
+
+.status-warning.avregistrert {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-warning.registrert {
+    background-color: #198754;
+    color: white;
+}
