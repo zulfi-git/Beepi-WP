@@ -1,4 +1,3 @@
-
 jQuery(document).ready(function($) {
     // Initialize tabs
     function initializeTabs() {
@@ -10,11 +9,11 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.tabs a', function(e) {
         e.preventDefault();
         const tabId = $(this).parent().data('tab');
-        
+
         // Update active tab
         $('.tabs a').removeClass('active');
         $(this).addClass('active');
-        
+
         // Show selected tab panel
         $('.tab-panel').hide();
         $('#' + tabId).show();
@@ -22,11 +21,11 @@ jQuery(document).ready(function($) {
 
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
-        
+
         const regNumber = $('#regNumber').val().trim();
         const resultsDiv = $('#vehicle-lookup-results');
         const errorDiv = $('#vehicle-lookup-error');
-        
+
         // Reset all states
         resultsDiv.hide();
         errorDiv.hide().empty();
@@ -35,7 +34,7 @@ jQuery(document).ready(function($) {
         $('.vehicle-subtitle').empty();
         $('.vehicle-logo').attr('src', '');
         $('.info-table').empty();
-        
+
         // Validate Norwegian registration number
         const validFormats = [
             /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
@@ -45,16 +44,16 @@ jQuery(document).ready(function($) {
             /^[A-Z]\d{3}$/,               // Antique vehicles
             /^[A-Z]{2}\d{3}$/             // Provisional plates
         ];
-        
+
         const isValid = validFormats.some(format => format.test(regNumber));
         if (!regNumber || !isValid) {
             errorDiv.html('Please enter a valid Norwegian registration number').show();
             return;
         }
-        
+
         // Show loading state
         $(this).find('button').prop('disabled', true).addClass('loading');
-        
+
         // Make AJAX request
         $.ajax({
             url: vehicleLookupAjax.ajaxurl,
@@ -71,24 +70,24 @@ jQuery(document).ready(function($) {
                 if (response.success && response.data) {
                     // Log response for debugging
                     console.log("API Response:", response.data);
-                    
+
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
                         errorDiv.html('No valid vehicle data found for this registration number').show();
                         return;
                     }
-                    
+
                     // Clear existing vehicle tags before adding new ones
                     $('.vehicle-info .vehicle-tags').remove();
-                    
+
                     const vehicleData = response.data.responser[0].kjoretoydata;
-                    
+
                     // Set vehicle title and subtitle with safe access
                     if (vehicleData.kjoretoyId?.kjennemerke) {
                         $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
                     } else {
                         $('.vehicle-title').text(regNumber);
                     }
-                    
+
                     // Set manufacturer logo
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
@@ -100,24 +99,24 @@ jQuery(document).ready(function($) {
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
                         const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
                         let subtitle = '';
-                        
+
                         if (generalData.merke?.[0]?.merke) {
                             subtitle += generalData.merke[0].merke + ' ';
                         }
-                        
+
                         if (generalData.handelsbetegnelse?.[0]) {
                             subtitle += generalData.handelsbetegnelse[0];
                         }
-                        
+
                         $('.vehicle-subtitle').text(subtitle);
-                        
+
                         // Add vehicle tags
                         const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
                         const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
                         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
-                        
+
                         let tags = '';
-                        
+
                         // Fuel type tags
                         if (fuelType) {
                             const fuelEmoji = {
@@ -129,28 +128,28 @@ jQuery(document).ready(function($) {
                                 'Hydrogen': '💨',
                                 'Gass': '💨'
                             }[fuelType] || '⛽';
-                            
+
                             const fuelClass = fuelType.toLowerCase().replace('-', '');
                             tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
                         }
-                        
+
                         // Transmission tag
                         if (transmission) {
                             const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
                             tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
                         }
-                        
+
                         $('.vehicle-info').append(`<div class="vehicle-tags">${tags}</div>`);
                     }
-                    
+
                     // Parse and display data for each section
                     renderBasicInfo(vehicleData);
                     renderTechnicalInfo(vehicleData);
                     renderRegistrationInfo(vehicleData);
-                    
+
                     // Keep all details elements open by default
                     $('details').attr('open', true);
-                    
+
                     // Initialize tabs
                     initializeTabs();
                     resultsDiv.show();
@@ -180,7 +179,7 @@ jQuery(document).ready(function($) {
 
     function renderBasicInfo(vehicleData) {
         if (!vehicleData) return;
-        
+
         const basicInfo = extractBasicInfo(vehicleData);
         $('.general-info-table').html(
             Object.entries(basicInfo)
@@ -188,11 +187,11 @@ jQuery(document).ready(function($) {
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
-        
+
         // Size and weight info with null checking
         const dimensions = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner;
         const vekter = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter;
-        
+
         const weightInfo = {
             'Lengde': dimensions?.lengde ? dimensions.lengde + ' mm' : '',
             'Bredde': dimensions?.bredde ? dimensions.bredde + ' mm' : '',
@@ -200,7 +199,7 @@ jQuery(document).ready(function($) {
             'Egenvekt': vekter?.egenvekt ? vekter.egenvekt + ' kg' : '',
             'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
         };
-        
+
         $('.size-weight-table').html(
             Object.entries(weightInfo)
                 .filter(([_, value]) => value)
@@ -210,7 +209,40 @@ jQuery(document).ready(function($) {
     }
 
     function renderTechnicalInfo(vehicleData) {
-        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+        const engineData = tekniskeData?.motorOgDrivverk;
+        const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelgKombinasjon?.[0]?.akselDekkOgFelg;
+
+        // Render tire info for front axle
+        const frontTire = dekkOgFelg?.find(axle => axle.akselId === 1);
+        const tireInfo = {
+            'Dekkdimensjon foran': frontTire?.dekkdimensjon,
+            'Felgdimensjon foran': frontTire?.felgdimensjon,
+            'Innpress foran': frontTire?.innpress ? frontTire.innpress + ' mm' : null,
+            'Belastningskode foran': frontTire?.belastningskodeDekk,
+            'Hastighetskode foran': frontTire?.hastighetskodeDekk
+        };
+
+        // Add rear axle info if available
+        const rearTire = dekkOgFelg?.find(axle => axle.akselId === 2);
+        if (rearTire) {
+            Object.assign(tireInfo, {
+                'Dekkdimensjon bak': rearTire.dekkdimensjon,
+                'Felgdimensjon bak': rearTire.felgdimensjon,
+                'Innpress bak': rearTire.innpress ? rearTire.innpress + ' mm' : null,
+                'Belastningskode bak': rearTire.belastningskodeDekk,
+                'Hastighetskode bak': rearTire.hastighetskodeDekk
+            });
+        }
+
+        $('.tire-info-table').html(
+            Object.entries(tireInfo)
+                .filter(([_, value]) => value)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .join('')
+        );
+
+
         const engineInfo = {
             'Motor': engineData?.motor?.[0]?.antallSylindre + ' sylindre',
             'Drivstoff': engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse,
@@ -218,7 +250,7 @@ jQuery(document).ready(function($) {
             'Effekt': engineData?.motor?.[0]?.drivstoff?.[0]?.maksNettoEffekt + ' kW',
             'Girkasse': engineData?.girkassetype?.kodeBeskrivelse
         };
-        
+
         $('.engine-info-table').html(
             Object.entries(engineInfo)
                 .filter(([_, value]) => value)
@@ -234,7 +266,7 @@ jQuery(document).ready(function($) {
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
             'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
         };
-        
+
         $('.registration-info-table').html(
             Object.entries(regInfo)
                 .filter(([_, value]) => value)
