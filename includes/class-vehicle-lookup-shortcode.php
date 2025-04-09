@@ -88,6 +88,7 @@ class Vehicle_Lookup_Shortcode {
             </div>
 
             <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
+            <div id="quota-display" class="quota-display" style="display: none;"></div>
         </div>
         <?php
         return ob_get_clean();

@@ -68,6 +68,13 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
+                    // Display remaining quota
+                    if (response.data.gjenstaendeKvote !== undefined) {
+                        $('#quota-display')
+                            .html(`Remaining quota: ${response.data.gjenstaendeKvote}`)
+                            .show();
+                    }
+                    
                     // Log response for debugging
                     console.log("API Response:", response.data);
 
