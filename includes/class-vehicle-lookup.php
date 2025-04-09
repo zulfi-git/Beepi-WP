@@ -54,9 +54,20 @@ class Vehicle_Lookup {
         // Get real client IP from Cloudflare
         $client_ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'];
 
+        // Get allowed IPs from beepi.no A record
+        $dns_records = dns_get_record('beepi.no', DNS_A);
+        $allowed_ips = array();
+        
+        if (!empty($dns_records)) {
+            foreach ($dns_records as $record) {
+                if ($record['type'] === 'A') {
+                    $allowed_ips[] = $record['ip'];
+                }
+            }
+        }
+
         // Check if IP is allowed
-        $allowed_ips = array('46.30.215.177');
-        if (!in_array($client_ip, $allowed_ips)) {
+        if (empty($allowed_ips) || !in_array($client_ip, $allowed_ips)) {
             wp_send_json_error('Access denied: Invalid IP address');
             return;
         }
