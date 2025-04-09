@@ -186,6 +186,7 @@ jQuery(document).ready(function($) {
 
 
                     // Parse and display data for each section
+                    renderOwnerInfo(vehicleData);
                     renderBasicInfo(vehicleData);
                     renderTechnicalInfo(vehicleData);
                     renderRegistrationInfo(vehicleData);
@@ -219,6 +220,24 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    function renderOwnerInfo(vehicleData) {
+        if (!vehicleData.eier) return;
+        
+        const ownerInfo = {
+            'Eier': vehicleData.eier?.navn,
+            'Adresse': vehicleData.eier?.adresse,
+            'Postnummer': vehicleData.eier?.postnummer,
+            'Poststed': vehicleData.eier?.poststed
+        };
+
+        $('.owner-info-table').html(
+            Object.entries(ownerInfo)
+                .filter(([_, value]) => value)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .join('')
+        );
+    }
 
     function renderBasicInfo(vehicleData) {
         if (!vehicleData) return;

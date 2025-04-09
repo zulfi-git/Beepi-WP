@@ -43,6 +43,12 @@ class Vehicle_Lookup_Shortcode {
                     <section id="general-info" class="tab-panel">
                         <div class="accordion">
                             <details>
+                                <summary>Eierinformasjon</summary>
+                                <div class="details-content">
+                                    <table class="info-table owner-info-table"></table>
+                                </div>
+                            </details>
+                            <details>
                                 <summary>Generell informasjon</summary>
                                 <div class="details-content">
                                     <table class="info-table general-info-table"></table>
