@@ -23,31 +23,14 @@ if (!$token) {
     if (!$token_data) {
         $error_message = 'Access token is invalid or expired';
     } else {
-        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/owner', array(
-            'headers' => array('Content-Type' => 'application/json'),
-            'body' => json_encode(array(
-                'registrationNumber' => $token_data->registration_number
-            )),
-            'timeout' => 15
-        ));
-
-        if (is_wp_error($response)) {
-            error_log('Owner lookup error: ' . $response->get_error_message());
-            $error_message = 'Failed to fetch owner information';
-        } else {
-            $body = wp_remote_retrieve_body($response);
-            $owner_data = json_decode($body, true);
-            
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('Owner lookup error: Invalid JSON response');
-                $error_message = 'Invalid response from server';
-            }
-        }
+        // Here we would make the API call to get owner information
+        // Implementation depends on your API structure
+        $owner_data = array(
+            'registration' => $token_data->registration_number,
+            'expiration' => $token_data->expiration_time,
+        );
     }
 }
-
-$expiration_time = isset($token_data->expiration_time) ? strtotime($token_data->expiration_time) : 0;
-$time_remaining = $expiration_time - time();
 ?>
 
 <div class="owner-info-container">
@@ -59,52 +42,14 @@ $time_remaining = $expiration_time - time();
         <div class="owner-info">
             <h2>Vehicle Owner Information</h2>
             <p class="access-note">This information is available for 24 hours from purchase.</p>
+            <p class="expires-in">Access expires: <?php echo esc_html(date('Y-m-d H:i:s', strtotime($owner_data['expiration']))); ?></p>
             
-            <?php if ($time_remaining > 0): ?>
-                <p class="expires-in">Access expires in: 
-                    <span class="countdown" data-expires="<?php echo esc_attr($expiration_time); ?>">
-                        <?php echo esc_html(human_time_diff(time(), $expiration_time)); ?>
-                    </span>
-                </p>
-            <?php endif; ?>
-            
+            <!-- Owner information display here -->
             <div class="owner-details">
-                <?php foreach ($owner_data as $key => $value): ?>
-                    <div class="owner-detail-item">
-                        <strong><?php echo esc_html(ucfirst($key)); ?>:</strong>
-                        <span><?php echo esc_html($value); ?></span>
-                    </div>
-                <?php endforeach; ?>
+                <!-- API response will be displayed here -->
             </div>
         </div>
     <?php endif; ?>
 </div>
-
-<script>
-function updateCountdown() {
-    const countdownElement = document.querySelector('.countdown');
-    if (!countdownElement) return;
-    
-    const expirationTime = parseInt(countdownElement.dataset.expires, 10) * 1000;
-    const now = new Date().getTime();
-    const timeLeft = expirationTime - now;
-    
-    if (timeLeft <= 0) {
-        location.reload();
-        return;
-    }
-    
-    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-    
-    countdownElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
-}
-
-if (document.querySelector('.countdown')) {
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-}
-</script>
 
 <?php get_footer(); ?>
