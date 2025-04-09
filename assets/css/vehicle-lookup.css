@@ -80,9 +80,6 @@
 }
 
 .vehicle-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-top: 1.5rem;
     padding: 20px;
     border-bottom: 1px solid #eee;
@@ -94,10 +91,12 @@
     border-radius: 50%;
     border: 1px solid #eee;
     object-fit: contain;
+    margin: 10px auto;
+    display: block;
 }
 
 .vehicle-info {
-    flex: 1;
+    text-align: center;
 }
 
 .vehicle-title {
