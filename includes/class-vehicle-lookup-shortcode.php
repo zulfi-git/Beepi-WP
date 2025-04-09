@@ -53,8 +53,8 @@ class Vehicle_Lookup_Shortcode {
                                 <div class="details-content">
                                     <table class="info-table registration-info-table"></table>
                                     <div class="owner-info-wrapper">
-                                        <button id="view-owner-info" class="owner-info-button" data-product="66">
-                                            🔒 Se eierinformasjon
+                                        <button class="owner-info-button" data-product="66" data-reg="">
+                                            🔒 Se eierinformasjon (<span class="product-price">...</span>)
                                         </button>
                                     </div>
                                 </div>

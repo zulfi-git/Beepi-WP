@@ -302,11 +302,38 @@ jQuery(document).ready(function($) {
         );
     }
 
-    function handleOwnerInfoClick(regNumber) {
-        const productId = $('#view-owner-info').data('product');
+    function initializeOwnerInfo(regNumber) {
+        const $button = $('.owner-info-button');
+        $button.data('reg', regNumber);
+        
+        // Get product price
+        $.ajax({
+            url: vehicleLookupAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'get_product_price',
+                product_id: $button.data('product')
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('.product-price').text(response.data.price);
+                }
+            }
+        });
+    }
+
+    $(document).on('click', '.owner-info-button', function(e) {
+        e.preventDefault();
+        const productId = $(this).data('product');
+        const regNumber = $(this).data('reg');
+        
+        if (!regNumber) {
+            return;
+        }
+        
         const checkoutUrl = `/checkout/?add-to-cart=${productId}&registration=${encodeURIComponent(regNumber)}`;
         window.location.href = checkoutUrl;
-    }
+    });
 
     function renderRegistrationInfo(vehicleData) {
         if (!vehicleData) return;
