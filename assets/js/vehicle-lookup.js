@@ -351,11 +351,25 @@ jQuery(document).ready(function($) {
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
-        // Add button to registration info section.  Product ID 66 is hardcoded here.
+        
         const regNumber = vehicleData.kjoretoyId?.kjennemerke;
-        $('.registration-info-table').append(`<tr><td colspan="2"><button id="view-owner-info" data-product="66" onclick="handleOwnerInfoClick('${regNumber}')">View Owner Information</button></td></tr>`);
-
+        if (regNumber) {
+            initializeOwnerInfo(regNumber);
+        }
     }
+
+$(document).on('click', '.owner-info-button', function(e) {
+    e.preventDefault();
+    const regNumber = $(this).data('reg');
+    const productId = $(this).data('product');
+    
+    if (!regNumber || !productId) {
+        console.error('Missing registration number or product ID');
+        return;
+    }
+    
+    window.location.href = `/checkout/?add-to-cart=${productId}&registration=${encodeURIComponent(regNumber)}`;
+});
 
     function extractBasicInfo(vehicleData) {
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;

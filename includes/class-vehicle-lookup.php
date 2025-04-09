@@ -9,6 +9,8 @@ class Vehicle_Lookup {
         add_action('woocommerce_thankyou', array($this, 'handle_successful_payment'));
         add_action('woocommerce_checkout_update_order_meta', array($this, 'save_registration_to_order'));
         add_action('init', array($this, 'install'));
+        add_action('wp_ajax_get_product_price', array($this, 'get_product_price'));
+        add_action('wp_ajax_nopriv_get_product_price', array($this, 'get_product_price'));
         
         // Initialize shortcode
         $shortcode = new Vehicle_Lookup_Shortcode();
@@ -17,6 +19,51 @@ class Vehicle_Lookup {
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
         add_action('wp_ajax_nopriv_vehicle_lookup', array($this, 'handle_lookup'));
+        
+        // Owner info page template
+        add_filter('template_include', array($this, 'owner_info_template'));
+    }
+
+    public function get_product_price() {
+        $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+        
+        if (!$product_id) {
+            wp_send_json_error('Invalid product ID');
+        }
+        
+        $product = wc_get_product($product_id);
+        if (!$product) {
+            wp_send_json_error('Product not found');
+        }
+        
+        wp_send_json_success(array(
+            'price' => strip_tags(wc_price($product->get_price()))
+        ));
+    }
+
+    public function install() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'vehicle_owner_tokens';
+        
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            registration_number varchar(10) NOT NULL,
+            token varchar(64) NOT NULL,
+            order_id bigint(20) NOT NULL,
+            expiration_time datetime NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY token (token),
+            KEY registration_number (registration_number),
+            KEY expiration_time (expiration_time)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function generate_secure_token($length = 32) {
+        return bin2hex(random_bytes($length));
     }
 
     /**
