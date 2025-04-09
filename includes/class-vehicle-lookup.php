@@ -6,11 +6,11 @@ class Vehicle_Lookup {
     public function init() {
         // Register scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-
+        
         // Initialize shortcode
         $shortcode = new Vehicle_Lookup_Shortcode();
         $shortcode->init();
-
+        
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
         add_action('wp_ajax_nopriv_vehicle_lookup', array($this, 'handle_lookup'));
@@ -51,29 +51,8 @@ class Vehicle_Lookup {
     public function handle_lookup() {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
-        // Get real client IP from Cloudflare
-        $client_ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'];
-
-        // Get allowed IPs from beepi.no A record
-        $dns_records = dns_get_record('beepi.no', DNS_A);
-        $allowed_ips = array();
-        
-        if (!empty($dns_records)) {
-            foreach ($dns_records as $record) {
-                if ($record['type'] === 'A') {
-                    $allowed_ips[] = $record['ip'];
-                }
-            }
-        }
-
-        // Check if IP is allowed
-        if (empty($allowed_ips) || !in_array($client_ip, $allowed_ips)) {
-            wp_send_json_error('Access denied: Invalid IP address');
-            return;
-        }
-
         $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
-
+        
         if (empty($regNumber)) {
             wp_send_json_error('Registration number is required');
         }
@@ -86,7 +65,7 @@ class Vehicle_Lookup {
             '/^[A-Za-z]\d{3}$/',              // Antique vehicles
             '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
         );
-
+        
         $is_valid = false;
         foreach ($valid_patterns as $pattern) {
             if (preg_match($pattern, $regNumber)) {
@@ -94,7 +73,7 @@ class Vehicle_Lookup {
                 break;
             }
         }
-
+        
         if (!$is_valid) {
             wp_send_json_error('Invalid registration number format');
         }
