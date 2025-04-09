@@ -222,13 +222,17 @@ jQuery(document).ready(function($) {
     });
 
     function renderOwnerInfo(vehicleData) {
-        if (!vehicleData.eier) return;
+        if (!vehicleData.eierskap?.eier) return;
+        
+        const eier = vehicleData.eierskap.eier;
+        const person = eier.person;
+        const adresse = eier.adresse;
         
         const ownerInfo = {
-            'Eier': vehicleData.eier?.navn,
-            'Adresse': vehicleData.eier?.adresse,
-            'Postnummer': vehicleData.eier?.postnummer,
-            'Poststed': vehicleData.eier?.poststed
+            'Eier': person ? `${person.fornavn} ${person.etternavn}` : '',
+            'Adresse': adresse?.adresselinje1 || '',
+            'Postnummer': adresse?.postnummer || '',
+            'Poststed': adresse?.poststed || ''
         };
 
         $('.owner-info-table').html(
