@@ -68,8 +68,8 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
-                    // Removed console.log for security
-                    //console.log("API Response:", response.data);
+                    // Log response for debugging
+                    console.log("API Response:", response.data);
 
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
                         errorDiv.html('No valid vehicle data found for this registration number').show();
@@ -160,26 +160,26 @@ jQuery(document).ready(function($) {
                     if (status) {
                         const statusClass = status.toLowerCase();
                         $('.vehicle-subtitle').after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
-
+                        
                         // Only show EU control status for registered vehicles
                         if (status === 'REGISTRERT' && euDeadline) {
                             const today = new Date();
                             const deadline = new Date(euDeadline);
                             const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
-
+                            
                             let euStatusClass = '';
                             if (daysUntilDeadline < 0) {
                                 euStatusClass = 'overdue';
                             } else if (daysUntilDeadline <= 30) {
                                 euStatusClass = 'warning';
                             }
-
+                            
                             // Format date as DD-MM-YYYY with bold year
                             const day = deadline.getDate().toString().padStart(2, '0');
                             const month = (deadline.getMonth() + 1).toString().padStart(2, '0');
                             const year = deadline.getFullYear();
                             const formattedDate = `${day}-${month}-<strong>${year}</strong>`;
-
+                            
                             $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">Frist EU-kontroll: ${formattedDate}</p>`);
                         }
                     }
@@ -302,42 +302,7 @@ jQuery(document).ready(function($) {
         );
     }
 
-    function initializeOwnerInfo(regNumber) {
-        const $button = $('.owner-info-button');
-        $button.data('reg', regNumber);
-        
-        // Get product price
-        $.ajax({
-            url: vehicleLookupAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'get_product_price',
-                product_id: $button.data('product')
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('.product-price').text(response.data.price);
-                }
-            }
-        });
-    }
-
-    $(document).on('click', '.owner-info-button', function(e) {
-        e.preventDefault();
-        const productId = $(this).data('product');
-        const regNumber = $(this).data('reg');
-        
-        if (!regNumber) {
-            return;
-        }
-        
-        const checkoutUrl = `/checkout/?add-to-cart=${productId}&registration=${encodeURIComponent(regNumber)}`;
-        window.location.href = checkoutUrl;
-    });
-
     function renderRegistrationInfo(vehicleData) {
-        if (!vehicleData) return;
-
         const regInfo = {
             'Registreringsnummer': vehicleData.kjoretoyId?.kjennemerke,
             'Første registrering': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
@@ -351,25 +316,7 @@ jQuery(document).ready(function($) {
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
-        
-        const regNumber = vehicleData.kjoretoyId?.kjennemerke;
-        if (regNumber) {
-            initializeOwnerInfo(regNumber);
-        }
     }
-
-$(document).on('click', '.owner-info-button', function(e) {
-    e.preventDefault();
-    const regNumber = $(this).data('reg');
-    const productId = $(this).data('product');
-    
-    if (!regNumber || !productId) {
-        console.error('Missing registration number or product ID');
-        return;
-    }
-    
-    window.location.href = `/checkout/?add-to-cart=${productId}&registration=${encodeURIComponent(regNumber)}`;
-});
 
     function extractBasicInfo(vehicleData) {
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
