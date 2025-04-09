@@ -81,6 +81,7 @@ class Vehicle_Lookup {
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
             'headers' => array(
                 'Content-Type' => 'application/json',
+                'Origin' => get_site_url()
             ),
             'body' => json_encode(array(
                 'registrationNumber' => $regNumber
