@@ -100,24 +100,13 @@ class Vehicle_Lookup {
         }
 
         $body = wp_remote_retrieve_body($response);
-        
-        // Always log the response with more detail
-        error_log("\n=== Vehicle Lookup Debug Info ===");
-        error_log('Registration Number: ' . $regNumber);
-        error_log('Response Status Code: ' . $status_code);
-        error_log('Response Headers: ' . print_r(wp_remote_retrieve_headers($response), true));
-        error_log('Response Body: ' . print_r(json_decode($body, true), true));
-        error_log("==============================\n");
-        
         $data = json_decode($body, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON Decode Error: ' . json_last_error_msg());
             wp_send_json_error('Invalid JSON response from server');
         }
 
         if (empty($data)) {
-            error_log('Empty Data Response for: ' . $regNumber);
             wp_send_json_error('No vehicle information found for this registration number');
         }
 

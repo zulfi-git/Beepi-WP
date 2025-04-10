@@ -349,13 +349,6 @@
     text-align: right;
 }
 
-.version-display {
-    margin-top: 5px;
-    font-size: 0.75rem;
-    color: #999;
-    text-align: right;
-}
-
 @media (max-width: 600px) {
     .info-content {
         grid-template-columns: 1fr;
@@ -404,34 +397,3 @@
 .eu-status strong {
     font-weight: 600;
 }
-
-.purchase-button {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-top: 16px;
-    width: 100%;
-    transition: background-color 0.2s ease;
-}
-
-.purchase-button:hover {
-    background-color: #1d4ed8;
-}
-
-#owner-info-purchase {
-    text-align: center;
-    padding: 16px;
-    border-radius: 8px;
-    background-color: #f8fafc;
-    margin-top: 16px;
-}
-
-#owner-info-purchase p {
-    margin-bottom: 12px;
-    color: #64748b;
-}
-
