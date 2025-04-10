@@ -90,12 +90,6 @@ class Vehicle_Lookup_Shortcode {
             <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             <div id="quota-display" class="quota-display" style="display: none;"></div>
             <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
-            <div class="logging-toggle">
-                <label>
-                    <input type="checkbox" id="enable-logging" checked>
-                    Enable Response Logging
-                </label>
-            </div>
         </div>
         <?php
         return ob_get_clean();

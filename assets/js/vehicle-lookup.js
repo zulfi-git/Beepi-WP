@@ -61,8 +61,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'vehicle_lookup',
                 nonce: vehicleLookupAjax.nonce,
-                regNumber: regNumber,
-                enable_logging: $('#enable-logging').is(':checked')
+                regNumber: regNumber
             },
             dataType: 'json',
             contentType: 'application/x-www-form-urlencoded',
