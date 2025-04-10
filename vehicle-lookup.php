@@ -1,4 +1,3 @@
-
 <?php
 /*
 Plugin Name: Beepi Vehicle Lookup
@@ -29,7 +28,7 @@ function vehicle_lookup_load_files() {
 function vehicle_lookup_init() {
     try {
         vehicle_lookup_load_files();
-        
+
         $vehicle_lookup = new Vehicle_Lookup();
         $vehicle_lookup->init();
 
