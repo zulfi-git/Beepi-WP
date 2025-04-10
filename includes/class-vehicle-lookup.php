@@ -100,13 +100,30 @@ class Vehicle_Lookup {
         }
 
         $body = wp_remote_retrieve_body($response);
+        
+        // Get logging preference from request
+        $enable_logging = isset($_POST['enable_logging']) ? filter_var($_POST['enable_logging'], FILTER_VALIDATE_BOOLEAN) : false;
+        
+        if ($enable_logging) {
+            error_log('Vehicle Lookup Request for: ' . $regNumber);
+            error_log('Response Status Code: ' . $status_code);
+            error_log('Response Headers: ' . print_r(wp_remote_retrieve_headers($response), true));
+            error_log('Response Body: ' . $body);
+        }
+        
         $data = json_decode($body, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
+            if ($enable_logging) {
+                error_log('JSON Decode Error: ' . json_last_error_msg());
+            }
             wp_send_json_error('Invalid JSON response from server');
         }
 
         if (empty($data)) {
+            if ($enable_logging) {
+                error_log('Empty Data Response for: ' . $regNumber);
+            }
             wp_send_json_error('No vehicle information found for this registration number');
         }
 
