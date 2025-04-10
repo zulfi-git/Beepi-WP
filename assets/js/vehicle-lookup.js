@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
 
-        const regNumber = $('#regNumber').val().trim();
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
         const resultsDiv = $('#vehicle-lookup-results');
         const errorDiv = $('#vehicle-lookup-error');
 
