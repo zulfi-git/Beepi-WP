@@ -10,7 +10,7 @@ Author URI: https://beepi.no
 define('VEHICLE_LOOKUP_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VEHICLE_LOOKUP_WORKER_URL', 'https://lookup.beepi.no');
-define('VEHICLE_LOOKUP_VERSION', '1.0.0');
+define('VEHICLE_LOOKUP_VERSION', '1.0.1');
 
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-shortcode.php';

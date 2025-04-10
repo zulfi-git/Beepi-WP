@@ -349,6 +349,13 @@
     text-align: right;
 }
 
+.version-display {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: #999;
+    text-align: right;
+}
+
 @media (max-width: 600px) {
     .info-content {
         grid-template-columns: 1fr;
