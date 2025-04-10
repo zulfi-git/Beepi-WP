@@ -14,6 +14,12 @@ define('VEHICLE_LOOKUP_VERSION', '1.1.0');
 
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-shortcode.php';
+require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-woocommerce.php';
 
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
+
+if (class_exists('WooCommerce')) {
+    $vehicle_lookup_wc = new Vehicle_Lookup_WooCommerce();
+    $vehicle_lookup_wc->init();
+}
