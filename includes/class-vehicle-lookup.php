@@ -101,11 +101,13 @@ class Vehicle_Lookup {
 
         $body = wp_remote_retrieve_body($response);
         
-        // Always log the response
-        error_log('Vehicle Lookup Request for: ' . $regNumber);
+        // Always log the response with more detail
+        error_log("\n=== Vehicle Lookup Debug Info ===");
+        error_log('Registration Number: ' . $regNumber);
         error_log('Response Status Code: ' . $status_code);
         error_log('Response Headers: ' . print_r(wp_remote_retrieve_headers($response), true));
-        error_log('Response Body: ' . $body);
+        error_log('Response Body: ' . print_r(json_decode($body, true), true));
+        error_log("==============================\n");
         
         $data = json_decode($body, true);
 

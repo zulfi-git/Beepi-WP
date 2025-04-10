@@ -75,10 +75,12 @@ jQuery(document).ready(function($) {
                             .show();
                     }
                     
-                    // Log response if logging is enabled
-                    if ($('#enable-logging').is(':checked')) {
-                        console.log("API Response:", response.data);
-                    }
+                    // Always log response for debugging
+                    console.log("=== Vehicle Lookup Response ===");
+                    console.log("Registration Number:", regNumber);
+                    console.log("Full Response:", response);
+                    console.log("Response Data:", response.data);
+                    console.log("=============================");
 
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
                         errorDiv.html('No valid vehicle data found for this registration number').show();
