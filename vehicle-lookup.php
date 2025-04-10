@@ -19,7 +19,13 @@ require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-woocomme
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
 
-if (class_exists('WooCommerce')) {
-    $vehicle_lookup_wc = new Vehicle_Lookup_WooCommerce();
-    $vehicle_lookup_wc->init();
+try {
+    if (class_exists('WooCommerce')) {
+        $vehicle_lookup_wc = new Vehicle_Lookup_WooCommerce();
+        $vehicle_lookup_wc->init();
+    } else {
+        error_log('WooCommerce not active - Vehicle Lookup WooCommerce integration skipped');
+    }
+} catch (Exception $e) {
+    error_log('Failed to initialize Vehicle Lookup WooCommerce integration: ' . $e->getMessage());
 }

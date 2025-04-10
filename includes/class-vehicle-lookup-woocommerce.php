@@ -2,14 +2,22 @@
 <?php
 class Vehicle_Lookup_WooCommerce {
     public function init() {
-        // Save registration number as order meta
-        add_action('woocommerce_checkout_create_order', array($this, 'save_reg_number_to_order'), 10, 2);
-        
-        // Add registration number to thank you page
-        add_action('woocommerce_thankyou', array($this, 'display_reg_number_on_thankyou'), 10, 1);
-        
-        // Generate access token after successful payment
-        add_action('woocommerce_payment_complete', array($this, 'generate_owner_access_token'), 10, 1);
+        try {
+            // Save registration number as order meta
+            add_action('woocommerce_checkout_create_order', array($this, 'save_reg_number_to_order'), 10, 2);
+            
+            // Add registration number to thank you page
+            add_action('woocommerce_thankyou', array($this, 'display_reg_number_on_thankyou'), 10, 1);
+            
+            // Generate access token after successful payment
+            add_action('woocommerce_payment_complete', array($this, 'generate_owner_access_token'), 10, 1);
+            
+            if (WP_DEBUG) {
+                error_log('Vehicle Lookup WooCommerce integration initialized successfully');
+            }
+        } catch (Exception $e) {
+            error_log('Vehicle Lookup WooCommerce integration error: ' . $e->getMessage());
+        }
     }
 
     public function save_reg_number_to_order($order, $data) {
