@@ -258,6 +258,19 @@ class Order_Confirmation_Shortcode {
                             $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
                         }
 
+                        // Set vehicle subtitle
+                        if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
+                            const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
+                            let subtitle = '';
+                            if (generalData.merke?.[0]?.merke) {
+                                subtitle += generalData.merke[0].merke + ' ';
+                            }
+                            if (generalData.handelsbetegnelse?.[0]) {
+                                subtitle += generalData.handelsbetegnelse[0];
+                            }
+                            $('.vehicle-subtitle').html(subtitle);
+                        }
+
                         // Set manufacturer logo
                         if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                             const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
@@ -265,11 +278,17 @@ class Order_Confirmation_Shortcode {
                             $('.vehicle-logo').attr('src', logoUrl);
                         }
 
-                        // Display vehicle data
-                        renderOwnerInfo(vehicleData);
-                        renderBasicInfo(vehicleData);
-                        renderTechnicalInfo(vehicleData);
-                        renderRegistrationInfo(vehicleData);
+                        // Import rendering functions from main script
+                        const mainScript = document.querySelector('script[src*="vehicle-lookup.js"]');
+                        if (mainScript) {
+                            jQuery.getScript(mainScript.src, function() {
+                                // Display vehicle data using imported functions
+                                renderOwnerInfo(vehicleData);
+                                renderBasicInfo(vehicleData);
+                                renderTechnicalInfo(vehicleData);
+                                renderRegistrationInfo(vehicleData);
+                            });
+                        }
 
                         // Initialize tabs
                         initializeTabs();
