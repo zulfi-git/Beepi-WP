@@ -61,14 +61,21 @@ class Order_Confirmation_Shortcode {
         $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number'];
         $reg_number = '';
 
-        // Debug log all meta data with clear visibility
-        error_log("\n\n=== DEBUG: ORDER META DATA START ===");
+        // Enhanced debug logging
+        error_log("\n\n=== DEBUG: DETAILED ORDER DATA START ===");
         error_log("Order ID: " . $order_id);
+        error_log("Order Key: " . $order_key);
         error_log("Order Status: " . $order->get_status());
-        error_log("Order Meta Data: " . print_r($order->get_meta_data(), true));
-        error_log("POST Data: " . print_r($_POST, true));
-        error_log("GET Data: " . print_r($_GET, true));
-        error_log("=== DEBUG: ORDER META DATA END ===\n\n");
+        error_log("All Order Items: " . print_r($order->get_items(), true));
+        error_log("All Meta Data Raw: " . print_r($order->get_meta_data(), true));
+        error_log("Direct Meta Access:");
+        foreach ($reg_fields as $field) {
+            error_log("- Field '{$field}' direct get_meta(): " . print_r($order->get_meta($field), true));
+        }
+        error_log("Request Data:");
+        error_log("- POST: " . print_r($_POST, true));
+        error_log("- GET: " . print_r($_GET, true));
+        error_log("=== DEBUG: DETAILED ORDER DATA END ===\n\n");
 
         foreach ($reg_fields as $field) {
             $value = $order->get_meta($field);
