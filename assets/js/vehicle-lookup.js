@@ -274,12 +274,12 @@ jQuery(document).ready(function($) {
 
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('payment_success') && urlParams.get('reg_number')) {
-        const regNumber = urlParams.get('reg_number');
-        const expiry = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
-        localStorage.setItem(`owner_access_${regNumber}`, JSON.stringify({
-            expiry: expiry
-        }));
+    const orderKey = urlParams.get('key');
+    const orderId = window.location.pathname.match(/order-received\/(\d+)/)?.[1];
+    
+    if (orderId && orderKey) {
+        // Redirect to the dedicated success page
+        window.location.href = `/success-page/?order=${orderId}&key=${orderKey}`;
     }
 
     // Add purchase button handler
@@ -287,8 +287,8 @@ jQuery(document).ready(function($) {
         const productId = $(this).data('product');
         const regNumber = $('.vehicle-title').text();
         
-        // Redirect to Vipps Express Checkout
-        window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${regNumber}`;
+        // Redirect to Vipps Express Checkout with metadata
+        window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${regNumber}&custom_reg=${regNumber}`;
     });
 
     function renderBasicInfo(vehicleData) {
