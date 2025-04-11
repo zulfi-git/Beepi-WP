@@ -259,7 +259,7 @@ jQuery(document).ready(function($) {
             );
             $purchaseDiv.hide();
         } else {
-            $ownerTable.html('<tr><td colspan="2">Owner information requires purchase</td></tr>');
+            $ownerTable.html('');
             $purchaseDiv.show();
         }
     }

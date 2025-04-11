@@ -432,8 +432,16 @@
     font-weight: 600;
 }
 
+.purchase-features {
+    display: flex;
+    justify-content: space-around;
+    margin: 16px 0;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
 .purchase-button {
-    background-color: #2563eb;
+    background-color: #ff5b24;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -446,7 +454,7 @@
 }
 
 .purchase-button:hover {
-    background-color: #1d4ed8;
+    background-color: #ff4400;
 }
 
 #owner-info-purchase {

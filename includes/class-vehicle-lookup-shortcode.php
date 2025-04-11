@@ -47,13 +47,18 @@ class Vehicle_Lookup_Shortcode {
                                     <div id="owner-info-container">
                                         <table class="info-table owner-info-table"></table>
                                         <div id="owner-info-purchase" style="display: none;">
-                                            <p>Access owner information for 24 hours</p>
+                                            <p>Hvem eier bilen?</p>
+                                            <div class="purchase-features">
+                                                <div>✨ Enkelt</div>
+                                                <div>🔒 100% Anonymt</div>
+                                                <div>⚡ Raskt</div>
+                                            </div>
                                             <?php 
                                             $product = wc_get_product(62);
                                             $price = $product ? $product->get_price() : '39';
                                             ?>
                                             <button class="purchase-button" data-product="62">
-                                                View Owner Information (<span class="price"><?php echo esc_html($price); ?></span> kr)
+                                                Kjøp med vipps!
                                             </button>
                                         </div>
                                     </div>
