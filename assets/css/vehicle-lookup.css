@@ -10,7 +10,7 @@
 .plate-form {
     display: flex;
     justify-content: center;
-    margin: 2rem auto;
+    margin: 1rem auto;
 }
 
 .plate-input-wrapper {
@@ -86,11 +86,11 @@
 }
 
 .vehicle-logo {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: contain;
-    margin: 10px auto;
+    margin: 0 auto 10px;
     display: block;
 }
 
