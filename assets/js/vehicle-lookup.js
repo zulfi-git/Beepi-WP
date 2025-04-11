@@ -288,7 +288,7 @@ jQuery(document).ready(function($) {
         const regNumber = $('.vehicle-title').text();
         
         // Redirect to Vipps Express Checkout
-        window.location.href = `/vipps-express-checkout/?add-to-cart=${productId}&reg_number=${regNumber}`;
+        window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${regNumber}`;
     });
 
     function renderBasicInfo(vehicleData) {
