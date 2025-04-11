@@ -274,12 +274,39 @@ class Order_Confirmation_Shortcode {
                         }
 
                         // Display vehicle data
-                        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+                        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+                        const engineData = tekniskeData?.motorOgDrivverk;
                         const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelgKombinasjon?.[0]?.akselDekkOgFelg;
                         const frontTire = dekkOgFelg?.find(axle => axle.akselId === 1);
                         const rearTire = dekkOgFelg?.find(axle => axle.akselId === 2);
-                        const dimensions = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner;
-                        const vekter = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter;
+                        const dimensions = tekniskeData?.dimensjoner;
+                        const vekter = tekniskeData?.vekter;
+
+                        // Prepare tire info
+                        const tireInfo = {
+                            'Dekkdimensjon foran': frontTire?.dekkdimensjon,
+                            'Felgdimensjon foran': frontTire?.felgdimensjon,
+                            'Innpress foran': frontTire?.innpress ? frontTire.innpress + ' mm' : null,
+                            'Belastningskode foran': frontTire?.belastningskodeDekk,
+                            'Hastighetskode foran': frontTire?.hastighetskodeDekk
+                        };
+
+                        if (rearTire) {
+                            Object.assign(tireInfo, {
+                                'Dekkdimensjon bak': rearTire.dekkdimensjon,
+                                'Felgdimensjon bak': rearTire.felgdimensjon,
+                                'Innpress bak': rearTire.innpress ? rearTire.innpress + ' mm' : null,
+                                'Belastningskode bak': rearTire.belastningskodeDekk,
+                                'Hastighetskode bak': rearTire.hastighetskodeDekk
+                            });
+                        }
+
+                        $('.tire-info-table').html(
+                            Object.entries(tireInfo)
+                                .filter(([_, value]) => value)
+                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                .join('')
+                        );
 
                         // Owner info
                         if (vehicleData.eierskap?.eier) {
