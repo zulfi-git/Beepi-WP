@@ -57,9 +57,29 @@ class Order_Confirmation_Shortcode {
             return '<p>Order does not contain vehicle lookup product.</p>';
         }
 
-        // Try multiple meta fields where reg number could be stored
-        $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number'];
+        // Get registration number from WooCommerce order meta
         $reg_number = '';
+        $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number', 'regNumber'];
+        
+        // First try direct meta access
+        foreach ($reg_fields as $field) {
+            $reg_number = get_post_meta($order_id, $field, true);
+            if (!empty($reg_number)) {
+                error_log("Found registration number in post meta {$field}: {$reg_number}");
+                break;
+            }
+        }
+        
+        // If not found, try WC meta
+        if (empty($reg_number)) {
+            foreach ($reg_fields as $field) {
+                $reg_number = $order->get_meta($field);
+                if (!empty($reg_number)) {
+                    error_log("Found registration number in WC meta {$field}: {$reg_number}");
+                    break;
+                }
+            }
+        }
 
         // Enhanced debug logging with all possible data sources
         error_log("\n\n=== DEBUG: COMPLETE ORDER DATA ===");

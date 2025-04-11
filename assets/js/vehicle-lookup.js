@@ -74,7 +74,7 @@ jQuery(document).ready(function($) {
                             .html(`Remaining quota: ${response.data.gjenstaendeKvote}`)
                             .show();
                     }
-                    
+
                     // Always log response for debugging
                     console.log("=== Vehicle Lookup Response ===");
                     console.log("Registration Number:", regNumber);
@@ -171,26 +171,26 @@ jQuery(document).ready(function($) {
                     if (status) {
                         const statusClass = status.toLowerCase();
                         $('.vehicle-subtitle').after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
-                        
+
                         // Only show EU control status for registered vehicles
                         if (status === 'REGISTRERT' && euDeadline) {
                             const today = new Date();
                             const deadline = new Date(euDeadline);
                             const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
-                            
+
                             let euStatusClass = '';
                             if (daysUntilDeadline < 0) {
                                 euStatusClass = 'overdue';
                             } else if (daysUntilDeadline <= 30) {
                                 euStatusClass = 'warning';
                             }
-                            
+
                             // Format date as DD-MM-YYYY with bold year
                             const day = deadline.getDate().toString().padStart(2, '0');
                             const month = (deadline.getMonth() + 1).toString().padStart(2, '0');
                             const year = deadline.getFullYear();
                             const formattedDate = `${day}-${month}-<strong>${year}</strong>`;
-                            
+
                             $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">Frist EU-kontroll: ${formattedDate}</p>`);
                         }
                     }
@@ -234,16 +234,16 @@ jQuery(document).ready(function($) {
 
     function renderOwnerInfo(vehicleData) {
         if (!vehicleData.eierskap?.eier) return;
-        
+
         const hasAccess = checkOwnerAccessToken(vehicleData.kjoretoyId?.kjennemerke);
         const $ownerTable = $('.owner-info-table');
         const $purchaseDiv = $('#owner-info-purchase');
-        
+
         if (hasAccess) {
             const eier = vehicleData.eierskap.eier;
             const person = eier.person;
             const adresse = eier.adresse;
-            
+
             const ownerInfo = {
                 'Eier': person ? `${person.fornavn} ${person.etternavn}` : '',
                 'Adresse': adresse?.adresselinje1 || '',
@@ -267,7 +267,7 @@ jQuery(document).ready(function($) {
     function checkOwnerAccessToken(regNumber) {
         const token = localStorage.getItem(`owner_access_${regNumber}`);
         if (!token) return false;
-        
+
         const tokenData = JSON.parse(token);
         return tokenData.expiry > Date.now();
     }
@@ -276,7 +276,7 @@ jQuery(document).ready(function($) {
     const urlParams = new URLSearchParams(window.location.search);
     const orderKey = urlParams.get('key');
     const orderId = window.location.pathname.match(/order-received\/(\d+)/)?.[1];
-    
+
     if (orderId && orderKey) {
         // Redirect to page ID 588
         window.location.href = `/?page_id=588&order=${orderId}&key=${orderKey}`;
@@ -288,12 +288,12 @@ jQuery(document).ready(function($) {
         const displayedReg = $('.vehicle-title').text().trim();
         const inputReg = $('#regNumber').val().trim().toUpperCase();
         const regNumber = displayedReg || inputReg;
-        
+
         if (!regNumber) {
             console.error('No registration number found');
             return;
         }
-        
+
         // Redirect to Vipps Express Checkout with metadata
         window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
     });
