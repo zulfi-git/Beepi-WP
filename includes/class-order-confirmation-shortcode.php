@@ -60,7 +60,7 @@ class Order_Confirmation_Shortcode {
         // Get registration number from WooCommerce order meta
         $reg_number = '';
         $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number', 'regNumber'];
-        
+
         // First try direct meta access
         foreach ($reg_fields as $field) {
             $reg_number = get_post_meta($order_id, $field, true);
@@ -69,7 +69,7 @@ class Order_Confirmation_Shortcode {
                 break;
             }
         }
-        
+
         // If not found, try WC meta
         if (empty($reg_number)) {
             foreach ($reg_fields as $field) {
@@ -88,20 +88,20 @@ class Order_Confirmation_Shortcode {
         error_log("- Order Key: " . $order_key);
         error_log("- Order Status: " . $order->get_status());
         error_log("- Payment Method: " . $order->get_payment_method());
-        
+
         error_log("\nOrder Items:");
         foreach ($order->get_items() as $item) {
             error_log("- Product ID: " . $item->get_product_id());
             error_log("  Name: " . $item->get_name());
             error_log("  Quantity: " . $item->get_quantity());
         }
-        
+
         error_log("\nOrder Meta Data:");
         foreach ($order->get_meta_data() as $meta) {
             error_log("- Key: '" . $meta->key . "'");
             error_log("  Value: '" . print_r($meta->value, true) . "'");
         }
-        
+
         error_log("\nDirectly Checking Registration Fields:");
         foreach ($reg_fields as $field) {
             error_log("- Checking '" . $field . "': '" . $order->get_meta($field) . "'");
@@ -162,14 +162,14 @@ class Order_Confirmation_Shortcode {
                         <p class="vehicle-subtitle"></p>
                     </div>
                 </div>
-                
+
                 <nav class="tabs">
                     <ul>
                         <li data-tab="general-info"><a href="#general-info">Generell</a></li>
                         <li data-tab="technical-info"><a href="#technical-info">Teknisk</a></li>
                     </ul>
                 </nav>
-                
+
                 <div class="tab-content">
                     <section id="general-info" class="tab-panel">
                         <div class="accordion">
@@ -195,7 +195,7 @@ class Order_Confirmation_Shortcode {
                             </details>
                         </div>
                     </section>
-                    
+
                     <section id="technical-info" class="tab-panel">
                         <div class="accordion">
                             <details open>
@@ -224,7 +224,7 @@ class Order_Confirmation_Shortcode {
         <script>
         jQuery(document).ready(function($) {
             const regNumber = '<?php echo esc_js($reg_number); ?>';
-            
+
             // Initialize tabs
             function initializeTabs() {
                 $('.tabs li:first-child a').addClass('active');
@@ -252,7 +252,8 @@ class Order_Confirmation_Shortcode {
                 success: function(response) {
                     if (response.success && response.data) {
                         const vehicleData = response.data.responser[0].kjoretoydata;
-                        
+                        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt;
+
                         // Set vehicle title and subtitle
                         if (vehicleData.kjoretoyId?.kjennemerke) {
                             $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
@@ -278,17 +279,125 @@ class Order_Confirmation_Shortcode {
                             $('.vehicle-logo').attr('src', logoUrl);
                         }
 
-                        // Import rendering functions from main script
-                        const mainScript = document.querySelector('script[src*="vehicle-lookup.js"]');
-                        if (mainScript) {
-                            jQuery.getScript(mainScript.src, function() {
-                                // Display vehicle data using imported functions
-                                renderOwnerInfo(vehicleData);
-                                renderBasicInfo(vehicleData);
-                                renderTechnicalInfo(vehicleData);
-                                renderRegistrationInfo(vehicleData);
+                        // Display vehicle data
+                        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+                        const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelgKombinasjon?.[0]?.akselDekkOgFelg;
+                        const frontTire = dekkOgFelg?.find(axle => axle.akselId === 1);
+                        const rearTire = dekkOgFelg?.find(axle => axle.akselId === 2);
+                        const dimensions = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner;
+                        const vekter = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter;
+
+                        // Owner info
+                        if (vehicleData.eierskap?.eier) {
+                            const eier = vehicleData.eierskap.eier;
+                            const person = eier.person;
+                            const adresse = eier.adresse;
+
+                            const ownerInfo = {
+                                'Eier': person ? `${person.fornavn} ${person.etternavn}` : '',
+                                'Adresse': adresse?.adresselinje1 || '',
+                                'Postnummer': adresse?.postnummer || '',
+                                'Poststed': adresse?.poststed || ''
+                            };
+
+                            $('.owner-info-table').html(
+                                Object.entries(ownerInfo)
+                                    .filter(([_, value]) => value)
+                                    .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                    .join('')
+                            );
+                        }
+
+                        // Basic info
+                        const basicInfo = {
+                            'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke,
+                            'Understellsnummer': vehicleData.kjoretoyId?.understellsnummer,
+                            'Merke': tekniskeData?.merke?.[0]?.merke,
+                            'Modell': tekniskeData?.handelsbetegnelse?.[0],
+                            'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse,
+                            'Type': tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse,
+                            'Antall seter': tekniskeData?.persontall?.sitteplasserTotalt
+                        };
+
+                        $('.general-info-table').html(
+                            Object.entries(basicInfo)
+                                .filter(([_, value]) => value)
+                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                .join('')
+                        );
+
+                        // Registration info
+                        const regInfo = {
+                            'Registreringsnummer': vehicleData.kjoretoyId?.kjennemerke,
+                            'Første registrering': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+                            'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
+                            'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
+                        };
+
+                        $('.registration-info-table').html(
+                            Object.entries(regInfo)
+                                .filter(([_, value]) => value)
+                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                .join('')
+                        );
+
+                        // Engine info
+                        const engineInfo = {
+                            'Motor': engineData?.motor?.[0]?.antallSylindre + ' sylindre',
+                            'Drivstoff': engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse,
+                            'Slagvolum': engineData?.motor?.[0]?.slagvolum + ' ccm',
+                            'Effekt': engineData?.motor?.[0]?.drivstoff?.[0]?.maksNettoEffekt + ' kW',
+                            'Girkasse': engineData?.girkassetype?.kodeBeskrivelse
+                        };
+
+                        $('.engine-info-table').html(
+                            Object.entries(engineInfo)
+                                .filter(([_, value]) => value)
+                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                .join('')
+                        );
+
+                        // Size and weight info
+                        const weightInfo = {
+                            'Lengde': dimensions?.lengde ? dimensions.lengde + ' mm' : '',
+                            'Bredde': dimensions?.bredde ? dimensions.bredde + ' mm' : '',
+                            'Høyde': dimensions?.hoyde ? dimensions.hoyde + ' mm' : '',
+                            'Egenvekt': vekter?.egenvekt ? vekter.egenvekt + ' kg' : '',
+                            'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
+                        };
+
+                        $('.size-weight-table').html(
+                            Object.entries(weightInfo)
+                                .filter(([_, value]) => value)
+                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                .join('')
+                        );
+
+                        // Tire info
+                        const tireInfo = {
+                            'Dekkdimensjon foran': frontTire?.dekkdimensjon,
+                            'Felgdimensjon foran': frontTire?.felgdimensjon,
+                            'Innpress foran': frontTire?.innpress ? frontTire.innpress + ' mm' : null,
+                            'Belastningskode foran': frontTire?.belastningskodeDekk,
+                            'Hastighetskode foran': frontTire?.hastighetskodeDekk
+                        };
+
+                        if (rearTire) {
+                            Object.assign(tireInfo, {
+                                'Dekkdimensjon bak': rearTire.dekkdimensjon,
+                                'Felgdimensjon bak': rearTire.felgdimensjon,
+                                'Innpress bak': rearTire.innpress ? rearTire.innpress + ' mm' : null,
+                                'Belastningskode bak': rearTire.belastningskodeDekk,
+                                'Hastighetskode bak': rearTire.hastighetskodeDekk
                             });
                         }
+
+                        $('.tire-info-table').html(
+                            Object.entries(tireInfo)
+                                .filter(([_, value]) => value)
+                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                                .join('')
+                        );
 
                         // Initialize tabs
                         initializeTabs();
