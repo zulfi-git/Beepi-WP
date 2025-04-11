@@ -25,8 +25,8 @@ class Vehicle_Lookup_Shortcode {
             <div id="vehicle-lookup-results" style="display: none;">
                 <div class="vehicle-header">
                     <div class="vehicle-info">
-                        <h2 class="vehicle-title"></h2>
                         <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                        <h2 class="vehicle-title"></h2>
                         <p class="vehicle-subtitle"></p>
                     </div>
                 </div>

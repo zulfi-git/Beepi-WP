@@ -349,11 +349,11 @@ jQuery(document).ready(function($) {
         // Render tire info for front axle
         const frontTire = dekkOgFelg?.find(axle => axle.akselId === 1);
         const tireInfo = {
-            'Dekkdimensjon foran': frontTire?.dekkdimensjon,
-            'Felgdimensjon foran': frontTire?.felgdimensjon,
-            'Innpress foran': frontTire?.innpress ? frontTire.innpress + ' mm' : null,
-            'Belastningskode foran': frontTire?.belastningskodeDekk,
-            'Hastighetskode foran': frontTire?.hastighetskodeDekk
+            'Dekk dim. front': frontTire?.dekkdimensjon,
+            'Felg dim. front': frontTire?.felgdimensjon,
+            'Innp. front': frontTire?.innpress ? frontTire.innpress + ' mm' : null,
+            'Last. kode front': frontTire?.belastningskodeDekk,
+            'Hast. kode front': frontTire?.hastighetskodeDekk
         };
 
         // Add rear axle info if available
@@ -411,13 +411,13 @@ jQuery(document).ready(function($) {
     function extractBasicInfo(vehicleData) {
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
         return {
-            'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke,
-            'Understellsnummer': vehicleData.kjoretoyId?.understellsnummer,
+            'Reg.nr': vehicleData.kjoretoyId?.kjennemerke,
+            'Chassis nr': vehicleData.kjoretoyId?.understellsnummer,
             'Merke': tekniskeData?.generelt?.merke?.[0]?.merke,
             'Modell': tekniskeData?.generelt?.handelsbetegnelse?.[0],
             'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse,
             'Type': tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse,
-            'Antall seter': tekniskeData?.persontall?.sitteplasserTotalt
+            'Seter': tekniskeData?.persontall?.sitteplasserTotalt
         };
     }
 
