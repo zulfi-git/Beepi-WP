@@ -70,13 +70,13 @@ class Vehicle_Lookup_Shortcode {
                     <section id="general-info" class="tab-panel">
                         <div class="accordion">
                             <details>
-                                <summary>📋 Generell informasjon</summary>
+                                <summary><span>Generell informasjon</span><span>📋</span></summary>
                                 <div class="details-content">
                                     <table class="info-table general-info-table"></table>
                                 </div>
                             </details>
                             <details>
-                                <summary>🔍 Reg. og kontroll</summary>
+                                <summary><span>Reg. og kontroll</span><span>🔍</span></summary>
                                 <div class="details-content">
                                     <table class="info-table registration-info-table"></table>
                                 </div>
@@ -87,19 +87,19 @@ class Vehicle_Lookup_Shortcode {
                     <section id="technical-info" class="tab-panel">
                         <div class="accordion">
                             <details>
-                                <summary>🔧 Motor og drivverk</summary>
+                                <summary><span>Motor og drivverk</span><span>🔧</span></summary>
                                 <div class="details-content">
                                     <table class="info-table engine-info-table"></table>
                                 </div>
                             </details>
                             <details>
-                                <summary>⚖️ Størrelse og vekt</summary>
+                                <summary><span>Størrelse og vekt</span><span>⚖️</span></summary>
                                 <div class="details-content">
                                     <table class="info-table size-weight-table"></table>
                                 </div>
                             </details>
                             <details>
-                                <summary>🛞 Dekk og felg</summary>
+                                <summary><span>Dekk og felg</span><span>🛞</span></summary>
                                 <div class="details-content">
                                     <table class="info-table tire-info-table"></table>
                                 </div>

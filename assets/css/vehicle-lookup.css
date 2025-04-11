@@ -90,7 +90,7 @@
     height: 80px;
     border-radius: 50%;
     object-fit: contain;
-    margin: 0 auto 10px;
+    margin: 0 auto 5px;
     display: block;
 }
 
@@ -345,6 +345,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
+}
+
+.accordion summary span:first-child {
+    flex: 1;
 }
 
 .accordion summary::-webkit-details-marker {
