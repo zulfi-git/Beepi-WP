@@ -32,7 +32,6 @@ class Vehicle_Lookup_Shortcode {
                 </div>
                 
                 <div class="owner-section">
-                    <h3>Eierinformasjon</h3>
                     <div id="owner-info-container">
                         <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
