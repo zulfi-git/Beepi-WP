@@ -360,11 +360,11 @@ jQuery(document).ready(function($) {
         const rearTire = dekkOgFelg?.find(axle => axle.akselId === 2);
         if (rearTire) {
             Object.assign(tireInfo, {
-                'Dekkdimensjon bak': rearTire.dekkdimensjon,
-                'Felgdimensjon bak': rearTire.felgdimensjon,
-                'Innpress bak': rearTire.innpress ? rearTire.innpress + ' mm' : null,
-                'Belastningskode bak': rearTire.belastningskodeDekk,
-                'Hastighetskode bak': rearTire.hastighetskodeDekk
+                'Dekk dim. bak': rearTire.dekkdimensjon,
+                'Felg dim. bak': rearTire.felgdimensjon,
+                'Innp. bak': rearTire.innpress ? rearTire.innpress + ' mm' : null,
+                'Last. kode bak': rearTire.belastningskodeDekk,
+                'Hast. kode bak': rearTire.hastighetskodeDekk
             });
         }
 
