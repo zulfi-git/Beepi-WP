@@ -58,7 +58,7 @@ class Vehicle_Lookup_Shortcode {
                                             $price = $product ? $product->get_price() : '39';
                                             ?>
                                             <button class="purchase-button" data-product="62">
-                                                Kjøp med vipps!
+                                                Kjøp med vipps! (<span class="price"><?php echo esc_html($price); ?></span> kr)
                                             </button>
                                         </div>
                                     </div>
