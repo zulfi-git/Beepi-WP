@@ -276,7 +276,6 @@ class Order_Confirmation_Shortcode {
                         }
 
                         // Display vehicle data
-                        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
                         const engineData = tekniskeData?.motorOgDrivverk;
                         const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelgKombinasjon?.[0]?.akselDekkOgFelg;
                         const frontTire = dekkOgFelg?.find(axle => axle.akselId === 1);
