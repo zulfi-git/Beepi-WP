@@ -144,11 +144,17 @@ class Order_Confirmation_Shortcode {
 
         ob_start();
         ?>
-        <div class="order-confirmation-container">
-            <h2>Order Confirmation</h2>
-            <p>Your payment has been processed successfully.</p>
-            <p>Registration number: <strong><?php echo esc_html($reg_number); ?></strong></p>
-            <div id="vehicle-lookup-results"></div>
+        <div class="vehicle-lookup-container order-confirmation-container">
+            <h2>✅ Bestilling bekreftet</h2>
+            <p>Betalingen er gjennomført</p>
+            <div class="plate-display">
+                <div class="plate-flag">
+                    <span>N</span>
+                    <span class="plate-country">NORGE</span>
+                </div>
+                <strong class="plate-number"><?php echo esc_html($reg_number); ?></strong>
+            </div>
+            <div id="vehicle-lookup-results" class="results-wrapper"></div>
         </div>
         <script>
         jQuery(document).ready(function($) {
