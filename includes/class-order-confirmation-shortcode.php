@@ -52,7 +52,11 @@ class Order_Confirmation_Shortcode {
             return '<p>Order does not contain vehicle lookup product.</p>';
         }
 
-        $reg_number = $order->get_meta('reg_number');
+        $reg_number = $order->get_meta('custom_reg');
+        if (empty($reg_number)) {
+            $reg_number = $order->get_meta('reg_number');
+        }
+        
         if (empty($reg_number)) {
             return '<p>No registration number found for this order.</p>';
         }
