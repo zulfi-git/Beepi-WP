@@ -1,4 +1,3 @@
-
 <?php
 class Order_Confirmation_Shortcode {
     public function init() {
