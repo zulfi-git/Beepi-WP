@@ -224,6 +224,23 @@ class Order_Confirmation_Shortcode {
         <script>
         jQuery(document).ready(function($) {
             const regNumber = '<?php echo esc_js($reg_number); ?>';
+            
+            // Initialize tabs
+            function initializeTabs() {
+                $('.tabs li:first-child a').addClass('active');
+                $('.tab-panel:first-child').show().siblings('.tab-panel').hide();
+            }
+
+            // Handle tab clicks
+            $(document).on('click', '.tabs a', function(e) {
+                e.preventDefault();
+                const tabId = $(this).parent().data('tab');
+                $('.tabs a').removeClass('active');
+                $(this).addClass('active');
+                $('.tab-panel').hide();
+                $('#' + tabId).show();
+            });
+
             $.ajax({
                 url: vehicleLookupAjax.ajaxurl,
                 type: 'POST',
@@ -233,10 +250,30 @@ class Order_Confirmation_Shortcode {
                     regNumber: regNumber
                 },
                 success: function(response) {
-                    if (response.success) {
+                    if (response.success && response.data) {
+                        const vehicleData = response.data.responser[0].kjoretoydata;
+                        
+                        // Set vehicle title and subtitle
+                        if (vehicleData.kjoretoyId?.kjennemerke) {
+                            $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
+                        }
+
+                        // Set manufacturer logo
+                        if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
+                            const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
+                            const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
+                            $('.vehicle-logo').attr('src', logoUrl);
+                        }
+
+                        // Display vehicle data
+                        renderOwnerInfo(vehicleData);
+                        renderBasicInfo(vehicleData);
+                        renderTechnicalInfo(vehicleData);
+                        renderRegistrationInfo(vehicleData);
+
+                        // Initialize tabs
+                        initializeTabs();
                         $('#vehicle-lookup-results').show();
-                        // Trigger the existing vehicle lookup display logic
-                        $(document).trigger('vehicleLookupComplete', [response.data]);
                     }
                 }
             });
