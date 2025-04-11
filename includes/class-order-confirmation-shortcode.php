@@ -9,12 +9,12 @@ class Order_Confirmation_Shortcode {
     public function handle_payment_complete($order_id) {
         $order = wc_get_order($order_id);
         $reg_number = $order->get_meta('custom_reg') ?: $order->get_meta('reg_number');
-        
+
         if (empty($reg_number)) {
             error_log('Payment complete but no registration number found for order: ' . $order_id);
             return;
         }
-        
+
         if ($reg_number && $this->validate_order_has_lookup($order)) {
             $transient_key = 'owner_access_' . $reg_number;
             set_transient($transient_key, true, 24 * HOUR_IN_SECONDS);
@@ -27,7 +27,7 @@ class Order_Confirmation_Shortcode {
 
     private function validate_order_has_lookup($order) {
         $lookup_product_id = 62; // Hardcoded product ID from vehicle-lookup.js
-        
+
         foreach ($order->get_items() as $item) {
             if ($item->get_product_id() == $lookup_product_id) {
                 return true;
@@ -39,7 +39,7 @@ class Order_Confirmation_Shortcode {
     public function render_shortcode($atts) {
         $order_id = isset($_GET['order']) ? sanitize_text_field($_GET['order']) : '';
         $order_key = isset($_GET['key']) ? sanitize_text_field($_GET['key']) : '';
-        
+
         if (empty($order_id) || empty($order_key)) {
             return '<p>Invalid order information.</p>';
         }
@@ -60,10 +60,16 @@ class Order_Confirmation_Shortcode {
         // Try multiple meta fields where reg number could be stored
         $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number'];
         $reg_number = '';
-        
-        // Debug log all meta data
-        error_log('Order ' . $order_id . ' - All meta data: ' . print_r($order->get_meta_data(), true));
-        
+
+        // Debug log all meta data with clear visibility
+        error_log("\n\n=== DEBUG: ORDER META DATA START ===");
+        error_log("Order ID: " . $order_id);
+        error_log("Order Status: " . $order->get_status());
+        error_log("Order Meta Data: " . print_r($order->get_meta_data(), true));
+        error_log("POST Data: " . print_r($_POST, true));
+        error_log("GET Data: " . print_r($_GET, true));
+        error_log("=== DEBUG: ORDER META DATA END ===\n\n");
+
         foreach ($reg_fields as $field) {
             $value = $order->get_meta($field);
             error_log('Order ' . $order_id . ' - Checking field ' . $field . ': ' . var_export($value, true));
@@ -72,7 +78,7 @@ class Order_Confirmation_Shortcode {
                 break;
             }
         }
-        
+
         if (empty($reg_number)) {
             error_log('Order ' . $order_id . ': No registration number found in meta fields: ' . implode(', ', $reg_fields));
             return '<p>Ingen registreringsnummer funnet for denne ordren. Vennligst kontakt support.</p>';
