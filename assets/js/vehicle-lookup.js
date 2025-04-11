@@ -278,8 +278,8 @@ jQuery(document).ready(function($) {
     const orderId = window.location.pathname.match(/order-received\/(\d+)/)?.[1];
     
     if (orderId && orderKey) {
-        // Redirect to the dedicated success page
-        window.location.href = `/success-page/?order=${orderId}&key=${orderKey}`;
+        // Redirect to page ID 588
+        window.location.href = `/?page_id=588&order=${orderId}&key=${orderKey}`;
     }
 
     // Add purchase button handler
