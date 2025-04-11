@@ -285,10 +285,15 @@ jQuery(document).ready(function($) {
     // Add purchase button handler
     $(document).on('click', '.purchase-button', function() {
         const productId = $(this).data('product');
-        const regNumber = $('.vehicle-title').text();
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        
+        if (!regNumber) {
+            console.error('No registration number found');
+            return;
+        }
         
         // Redirect to Vipps Express Checkout with metadata
-        window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${regNumber}&custom_reg=${regNumber}`;
+        window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
     });
 
     function renderBasicInfo(vehicleData) {
