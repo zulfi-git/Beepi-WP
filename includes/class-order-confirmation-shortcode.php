@@ -148,9 +148,29 @@ class Order_Confirmation_Shortcode {
             <h2>Order Confirmation</h2>
             <p>Your payment has been processed successfully.</p>
             <p>Registration number: <strong><?php echo esc_html($reg_number); ?></strong></p>
-            <p>Click below to view the owner information:</p>
-            <a href="/#" class="view-info-button" onclick="window.location.reload()">View Owner Information</a>
+            <div id="vehicle-lookup-results"></div>
         </div>
+        <script>
+        jQuery(document).ready(function($) {
+            const regNumber = '<?php echo esc_js($reg_number); ?>';
+            $.ajax({
+                url: vehicleLookupAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vehicle_lookup',
+                    nonce: vehicleLookupAjax.nonce,
+                    regNumber: regNumber
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#vehicle-lookup-results').show();
+                        // Trigger the existing vehicle lookup display logic
+                        $(document).trigger('vehicleLookupComplete', [response.data]);
+                    }
+                }
+            });
+        });
+        </script>
         <?php
         return ob_get_clean();
     }
