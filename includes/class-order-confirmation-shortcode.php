@@ -395,25 +395,6 @@ class Order_Confirmation_Shortcode {
                                 .join('')
                         );
 
-                        // Tire info
-                        const tireInfo = {
-                            'Dekkdimensjon foran': frontTire?.dekkdimensjon,
-                            'Felgdimensjon foran': frontTire?.felgdimensjon,
-                            'Innpress foran': frontTire?.innpress ? frontTire.innpress + ' mm' : null,
-                            'Belastningskode foran': frontTire?.belastningskodeDekk,
-                            'Hastighetskode foran': frontTire?.hastighetskodeDekk
-                        };
-
-                        if (rearTire) {
-                            Object.assign(tireInfo, {
-                                'Dekkdimensjon bak': rearTire.dekkdimensjon,
-                                'Felgdimensjon bak': rearTire.felgdimensjon,
-                                'Innpress bak': rearTire.innpress ? rearTire.innpress + ' mm' : null,
-                                'Belastningskode bak': rearTire.belastningskodeDekk,
-                                'Hastighetskode bak': rearTire.hastighetskodeDekk
-                            });
-                        }
-
                         $('.tire-info-table').html(
                             Object.entries(tireInfo)
                                 .filter(([_, value]) => value)
