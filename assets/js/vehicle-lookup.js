@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
 
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        const regNumber = $('#regNumber').val().trim();
         const resultsDiv = $('#vehicle-lookup-results');
         const errorDiv = $('#vehicle-lookup-error');
 
@@ -75,8 +75,12 @@ jQuery(document).ready(function($) {
                             .show();
                     }
                     
-                    // Log response for debugging
-                    console.log("API Response:", response.data);
+                    // Always log response for debugging
+                    console.log("=== Vehicle Lookup Response ===");
+                    console.log("Registration Number:", regNumber);
+                    console.log("Full Response:", response);
+                    console.log("Response Data:", response.data);
+                    console.log("=============================");
 
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
                         errorDiv.html('No valid vehicle data found for this registration number').show();
@@ -231,24 +235,51 @@ jQuery(document).ready(function($) {
     function renderOwnerInfo(vehicleData) {
         if (!vehicleData.eierskap?.eier) return;
         
-        const eier = vehicleData.eierskap.eier;
-        const person = eier.person;
-        const adresse = eier.adresse;
+        const hasAccess = checkOwnerAccessToken(vehicleData.kjoretoyId?.kjennemerke);
+        const $ownerTable = $('.owner-info-table');
+        const $purchaseDiv = $('#owner-info-purchase');
         
-        const ownerInfo = {
-            'Eier': person ? `${person.fornavn} ${person.etternavn}` : '',
-            'Adresse': adresse?.adresselinje1 || '',
-            'Postnummer': adresse?.postnummer || '',
-            'Poststed': adresse?.poststed || ''
-        };
+        if (hasAccess) {
+            const eier = vehicleData.eierskap.eier;
+            const person = eier.person;
+            const adresse = eier.adresse;
+            
+            const ownerInfo = {
+                'Eier': person ? `${person.fornavn} ${person.etternavn}` : '',
+                'Adresse': adresse?.adresselinje1 || '',
+                'Postnummer': adresse?.postnummer || '',
+                'Poststed': adresse?.poststed || ''
+            };
 
-        $('.owner-info-table').html(
-            Object.entries(ownerInfo)
-                .filter(([_, value]) => value)
-                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
-                .join('')
-        );
+            $ownerTable.html(
+                Object.entries(ownerInfo)
+                    .filter(([_, value]) => value)
+                    .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                    .join('')
+            );
+            $purchaseDiv.hide();
+        } else {
+            $ownerTable.html('<tr><td colspan="2">Owner information requires purchase</td></tr>');
+            $purchaseDiv.show();
+        }
     }
+
+    function checkOwnerAccessToken(regNumber) {
+        const token = localStorage.getItem(`owner_access_${regNumber}`);
+        if (!token) return false;
+        
+        const tokenData = JSON.parse(token);
+        return tokenData.expiry > Date.now();
+    }
+
+    // Add purchase button handler
+    $(document).on('click', '.purchase-button', function() {
+        const productId = $(this).data('product');
+        const regNumber = $('.vehicle-title').text();
+        
+        // Redirect to WooCommerce checkout with the product
+        window.location.href = `/checkout/?add-to-cart=${productId}&reg_number=${regNumber}`;
+    });
 
     function renderBasicInfo(vehicleData) {
         if (!vehicleData) return;

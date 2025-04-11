@@ -44,7 +44,15 @@ class Vehicle_Lookup_Shortcode {
                             <details>
                                 <summary>Eierinformasjon</summary>
                                 <div class="details-content">
-                                    <table class="info-table owner-info-table"></table>
+                                    <div id="owner-info-container">
+                                        <table class="info-table owner-info-table"></table>
+                                        <div id="owner-info-purchase" style="display: none;">
+                                            <p>Access owner information for 24 hours</p>
+                                            <button class="purchase-button" data-product="66">
+                                                View Owner Information (<span class="price">99</span> kr)
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </details>
                             <details>
@@ -89,6 +97,7 @@ class Vehicle_Lookup_Shortcode {
 
             <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             <div id="quota-display" class="quota-display" style="display: none;"></div>
+            <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
         </div>
         <?php
         return ob_get_clean();
