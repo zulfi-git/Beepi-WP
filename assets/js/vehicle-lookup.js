@@ -285,7 +285,9 @@ jQuery(document).ready(function($) {
     // Add purchase button handler
     $(document).on('click', '.purchase-button', function() {
         const productId = $(this).data('product');
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        const displayedReg = $('.vehicle-title').text().trim();
+        const inputReg = $('#regNumber').val().trim().toUpperCase();
+        const regNumber = displayedReg || inputReg;
         
         if (!regNumber) {
             console.error('No registration number found');

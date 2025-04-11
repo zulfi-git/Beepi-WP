@@ -8,7 +8,12 @@ class Order_Confirmation_Shortcode {
 
     public function handle_payment_complete($order_id) {
         $order = wc_get_order($order_id);
-        $reg_number = $order->get_meta('reg_number');
+        $reg_number = $order->get_meta('custom_reg') ?: $order->get_meta('reg_number');
+        
+        if (empty($reg_number)) {
+            error_log('Payment complete but no registration number found for order: ' . $order_id);
+            return;
+        }
         
         if ($reg_number && $this->validate_order_has_lookup($order)) {
             $transient_key = 'owner_access_' . $reg_number;
@@ -75,10 +80,12 @@ class Order_Confirmation_Shortcode {
             return '<p>Invalid order information.</p>';
         }
 
-        // Create transient for owner access
+        // Check if transient already exists before creating
         $transient_key = 'owner_access_' . $reg_number;
-        $expiry = 24 * HOUR_IN_SECONDS; // 24 hours
-        set_transient($transient_key, true, $expiry);
+        if (false === get_transient($transient_key)) {
+            $expiry = 24 * HOUR_IN_SECONDS; // 24 hours
+            set_transient($transient_key, true, $expiry);
+        }
 
         ob_start();
         ?>
