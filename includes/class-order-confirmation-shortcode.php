@@ -145,8 +145,8 @@ class Order_Confirmation_Shortcode {
         ob_start();
         ?>
         <div class="vehicle-lookup-container order-confirmation-container">
-            <h2>✅ Bestilling bekreftet</h2>
-            <p>Betalingen er gjennomført</p>
+            <h2 style="text-align: center;">✅ Bestilling bekreftet</h2>
+            <p style="text-align: center;">Betalingen er gjennomført. Se informasjon under</p>
             
             <div id="vehicle-lookup-results" class="results-wrapper">
                 <div class="vehicle-header">
