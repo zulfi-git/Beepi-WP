@@ -13,6 +13,17 @@ class Order_Confirmation_Shortcode {
             return '<p>Invalid order information.</p>';
         }
 
+        // Verify order exists and is valid
+        $order = wc_get_order($order_id);
+        if (!$order || $order->get_order_key() !== $order_key) {
+            return '<p>Invalid order information.</p>';
+        }
+
+        // Create transient for owner access
+        $transient_key = 'owner_access_' . $reg_number;
+        $expiry = 24 * HOUR_IN_SECONDS; // 24 hours
+        set_transient($transient_key, true, $expiry);
+
         ob_start();
         ?>
         <div class="order-confirmation-container">
