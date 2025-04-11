@@ -248,7 +248,8 @@ class Order_Confirmation_Shortcode {
                     console.log('API Response:', response); // Debug log
                     if (response.success && response.data && response.data.responser && response.data.responser[0]) {
                         const vehicleData = response.data.responser[0].kjoretoydata;
-                        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt;
+                        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+                        const generalData = tekniskeData?.generelt;
 
                         // Set vehicle title and subtitle
                         if (vehicleData.kjoretoyId?.kjennemerke) {
@@ -256,8 +257,7 @@ class Order_Confirmation_Shortcode {
                         }
 
                         // Set vehicle subtitle
-                        if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
-                            const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
+                        if (generalData) {
                             let subtitle = '';
                             if (generalData.merke?.[0]?.merke) {
                                 subtitle += generalData.merke[0].merke + ' ';
@@ -269,8 +269,8 @@ class Order_Confirmation_Shortcode {
                         }
 
                         // Set manufacturer logo
-                        if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
-                            const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
+                        if (generalData?.merke?.[0]?.merke) {
+                            const manufacturer = generalData.merke[0].merke.toLowerCase();
                             const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
                             $('.vehicle-logo').attr('src', logoUrl);
                         }
@@ -390,13 +390,6 @@ class Order_Confirmation_Shortcode {
 
                         $('.size-weight-table').html(
                             Object.entries(weightInfo)
-                                .filter(([_, value]) => value)
-                                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
-                                .join('')
-                        );
-
-                        $('.tire-info-table').html(
-                            Object.entries(tireInfo)
                                 .filter(([_, value]) => value)
                                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                                 .join('')
