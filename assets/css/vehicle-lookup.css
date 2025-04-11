@@ -503,6 +503,23 @@
     background-color: #ff4400;
 }
 
+.price-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.regular-price {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: line-through;
+    font-size: 0.9em;
+}
+
+.sale-price {
+    color: white;
+    font-weight: 700;
+}
+
 #owner-info-purchase {
     text-align: center;
     padding: 16px;
