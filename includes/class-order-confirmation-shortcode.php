@@ -52,13 +52,21 @@ class Order_Confirmation_Shortcode {
             return '<p>Order does not contain vehicle lookup product.</p>';
         }
 
-        $reg_number = $order->get_meta('custom_reg');
-        if (empty($reg_number)) {
-            $reg_number = $order->get_meta('reg_number');
+        // Try multiple meta fields where reg number could be stored
+        $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number'];
+        $reg_number = '';
+        
+        foreach ($reg_fields as $field) {
+            $value = $order->get_meta($field);
+            if (!empty($value)) {
+                $reg_number = $value;
+                break;
+            }
         }
         
         if (empty($reg_number)) {
-            return '<p>No registration number found for this order.</p>';
+            error_log('Order ' . $order_id . ': No registration number found in meta fields: ' . implode(', ', $reg_fields));
+            return '<p>Ingen registreringsnummer funnet for denne ordren.</p>';
         }
 
         // Verify order exists and is valid
