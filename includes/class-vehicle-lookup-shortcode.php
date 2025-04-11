@@ -45,8 +45,7 @@ class Vehicle_Lookup_Shortcode {
                                 <summary>Eierinformasjon</summary>
                                 <div class="details-content">
                                     <div id="owner-info-container">
-                                        <table class="info-table owner-info-table"></table>
-                                        <div id="owner-info-purchase" style="display: none;">
+                                        <div id="owner-info-purchase">
                                             <p>Hvem eier bilen?</p>
                                             <div class="purchase-features">
                                                 <div>✨ Enkelt</div>

@@ -238,8 +238,9 @@ jQuery(document).ready(function($) {
         const hasAccess = checkOwnerAccessToken(vehicleData.kjoretoyId?.kjennemerke);
         const $ownerTable = $('.owner-info-table');
         const $purchaseDiv = $('#owner-info-purchase');
+        const isConfirmationPage = $('.order-confirmation-container').length > 0;
 
-        if (hasAccess) {
+        if (hasAccess || isConfirmationPage) {
             const eier = vehicleData.eierskap.eier;
             const person = eier.person;
             const adresse = eier.adresse;
