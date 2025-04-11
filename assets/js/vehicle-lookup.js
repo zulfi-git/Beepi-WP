@@ -272,6 +272,16 @@ jQuery(document).ready(function($) {
         return tokenData.expiry > Date.now();
     }
 
+    // Check URL parameters for successful payment
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment_success') && urlParams.get('reg_number')) {
+        const regNumber = urlParams.get('reg_number');
+        const expiry = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+        localStorage.setItem(`owner_access_${regNumber}`, JSON.stringify({
+            expiry: expiry
+        }));
+    }
+
     // Add purchase button handler
     $(document).on('click', '.purchase-button', function() {
         const productId = $(this).data('product');
