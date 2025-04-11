@@ -43,10 +43,18 @@ class Vehicle_Lookup_Shortcode {
                             </div>
                             <?php 
                             $product = wc_get_product(62);
-                            $price = $product ? $product->get_price() : '39';
+                            $regular_price = $product ? $product->get_regular_price() : '39';
+                            $sale_price = $product ? $product->get_sale_price() : null;
+                            $final_price = $sale_price ? $sale_price : $regular_price;
                             ?>
                             <button class="purchase-button" data-product="62">
-                                Kjøp med vipps! (<span class="price"><?php echo esc_html($price); ?></span> kr)
+                                Kjøp med vipps! 
+                                <div class="price-wrapper">
+                                    <?php if ($sale_price): ?>
+                                        <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
+                                    <?php endif; ?>
+                                    <span class="price"><?php echo esc_html($final_price); ?> kr</span>
+                                </div>
                             </button>
                         </div>
                     </div>
