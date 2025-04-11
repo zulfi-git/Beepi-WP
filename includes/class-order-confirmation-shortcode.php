@@ -61,8 +61,12 @@ class Order_Confirmation_Shortcode {
         $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number'];
         $reg_number = '';
         
+        // Debug log all meta data
+        error_log('Order ' . $order_id . ' - All meta data: ' . print_r($order->get_meta_data(), true));
+        
         foreach ($reg_fields as $field) {
             $value = $order->get_meta($field);
+            error_log('Order ' . $order_id . ' - Checking field ' . $field . ': ' . var_export($value, true));
             if (!empty($value)) {
                 $reg_number = $value;
                 break;
@@ -71,7 +75,7 @@ class Order_Confirmation_Shortcode {
         
         if (empty($reg_number)) {
             error_log('Order ' . $order_id . ': No registration number found in meta fields: ' . implode(', ', $reg_fields));
-            return '<p>Ingen registreringsnummer funnet for denne ordren.</p>';
+            return '<p>Ingen registreringsnummer funnet for denne ordren. Vennligst kontakt support.</p>';
         }
 
         // Verify order exists and is valid
