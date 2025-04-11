@@ -197,6 +197,33 @@
 .info-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+.order-confirmation-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.view-info-button {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.view-info-button:hover {
+    background-color: #1d4ed8;
+}
+
     gap: 15px;
 }
 

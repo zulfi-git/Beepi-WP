@@ -14,6 +14,10 @@ define('VEHICLE_LOOKUP_VERSION', '1.1.0');
 
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-shortcode.php';
+require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-order-confirmation-shortcode.php';
+
+$order_confirmation = new Order_Confirmation_Shortcode();
+$order_confirmation->init();
 
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
