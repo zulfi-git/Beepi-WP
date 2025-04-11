@@ -21,7 +21,7 @@ class Order_Confirmation_Shortcode {
     }
 
     private function validate_order_has_lookup($order) {
-        $lookup_product_id = get_option('vehicle_lookup_product_id', 0);
+        $lookup_product_id = 62; // Hardcoded product ID from vehicle-lookup.js
         
         foreach ($order->get_items() as $item) {
             if ($item->get_product_id() == $lookup_product_id) {
