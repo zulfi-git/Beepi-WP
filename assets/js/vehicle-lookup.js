@@ -397,7 +397,7 @@ jQuery(document).ready(function($) {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
             'Første reg.': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
-            'Neste kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
+            'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
         };
 
         $('.registration-info-table').html(
