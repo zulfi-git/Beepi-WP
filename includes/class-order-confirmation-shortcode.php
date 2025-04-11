@@ -61,13 +61,31 @@ class Order_Confirmation_Shortcode {
         $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number'];
         $reg_number = '';
 
-        // Enhanced debug logging
-        error_log("\n\n=== DEBUG: DETAILED ORDER DATA START ===");
-        error_log("Order ID: " . $order_id);
-        error_log("Order Key: " . $order_key);
-        error_log("Order Status: " . $order->get_status());
-        error_log("All Order Items: " . print_r($order->get_items(), true));
-        error_log("All Meta Data Raw: " . print_r($order->get_meta_data(), true));
+        // Enhanced debug logging with all possible data sources
+        error_log("\n\n=== DEBUG: COMPLETE ORDER DATA ===");
+        error_log("Basic Order Info:");
+        error_log("- Order ID: " . $order_id);
+        error_log("- Order Key: " . $order_key);
+        error_log("- Order Status: " . $order->get_status());
+        error_log("- Payment Method: " . $order->get_payment_method());
+        
+        error_log("\nOrder Items:");
+        foreach ($order->get_items() as $item) {
+            error_log("- Product ID: " . $item->get_product_id());
+            error_log("  Name: " . $item->get_name());
+            error_log("  Quantity: " . $item->get_quantity());
+        }
+        
+        error_log("\nOrder Meta Data:");
+        foreach ($order->get_meta_data() as $meta) {
+            error_log("- Key: '" . $meta->key . "'");
+            error_log("  Value: '" . print_r($meta->value, true) . "'");
+        }
+        
+        error_log("\nDirectly Checking Registration Fields:");
+        foreach ($reg_fields as $field) {
+            error_log("- Checking '" . $field . "': '" . $order->get_meta($field) . "'");
+        }
         error_log("Direct Meta Access:");
         foreach ($reg_fields as $field) {
             error_log("- Field '{$field}' direct get_meta(): " . print_r($order->get_meta($field), true));
