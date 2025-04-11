@@ -212,19 +212,18 @@
     margin-bottom: 2rem;
 }
 
-.plate-display {
-    display: inline-flex;
+.plate {
+    display: flex;
     align-items: center;
     background-color: white;
     border: 2px solid #999;
     border-radius: 6px;
     padding: 10px 20px;
-    font-family: 'Arial Black', sans-serif;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     margin: 1rem 0 2rem;
 }
 
-.plate-flag {
+.blue-strip {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -237,13 +236,18 @@
     border-bottom-left-radius: 4px;
 }
 
-.plate-flag img {
+.blue-strip img {
     width: 28px;
     height: 20px;
     margin-bottom: 6px;
 }
 
-.plate-number {
+.blue-strip .country {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.reg-number {
     font-size: 48px;
     color: black;
     letter-spacing: 6px;

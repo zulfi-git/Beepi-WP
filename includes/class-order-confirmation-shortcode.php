@@ -147,12 +147,12 @@ class Order_Confirmation_Shortcode {
         <div class="vehicle-lookup-container order-confirmation-container">
             <h2>✅ Bestilling bekreftet</h2>
             <p>Betalingen er gjennomført</p>
-            <div class="plate-display">
-                <div class="plate-flag">
+            <div class="plate">
+                <div class="blue-strip">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg" alt="Norwegian Flag">
                     <div class="country">N</div>
                 </div>
-                <div class="plate-number"><?php echo esc_html($reg_number); ?></div>
+                <div class="reg-number"><?php echo esc_html($reg_number); ?></div>
             </div>
             <div id="vehicle-lookup-results" class="results-wrapper"></div>
         </div>
