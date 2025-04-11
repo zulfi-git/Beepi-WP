@@ -277,8 +277,8 @@ jQuery(document).ready(function($) {
         const productId = $(this).data('product');
         const regNumber = $('.vehicle-title').text();
         
-        // Redirect to WooCommerce checkout with the product
-        window.location.href = `/checkout/?add-to-cart=${productId}&reg_number=${regNumber}`;
+        // Redirect to Vipps Express Checkout
+        window.location.href = `/vipps-express-checkout/?add-to-cart=${productId}&reg_number=${regNumber}`;
     });
 
     function renderBasicInfo(vehicleData) {
