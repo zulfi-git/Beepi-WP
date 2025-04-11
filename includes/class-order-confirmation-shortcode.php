@@ -175,13 +175,13 @@ class Order_Confirmation_Shortcode {
                                     </div>
                                 </div>
                             </details>
-                            <details open>
+                            <details>
                                 <summary>Generell informasjon</summary>
                                 <div class="details-content">
                                     <table class="info-table general-info-table"></table>
                                 </div>
                             </details>
-                            <details open>
+                            <details>
                                 <summary>Registrering og kontroll</summary>
                                 <div class="details-content">
                                     <table class="info-table registration-info-table"></table>
