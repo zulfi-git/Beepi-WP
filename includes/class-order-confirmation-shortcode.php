@@ -149,10 +149,10 @@ class Order_Confirmation_Shortcode {
             <p>Betalingen er gjennomført</p>
             <div class="plate-display">
                 <div class="plate-flag">
-                    <span>N</span>
-                    <span class="plate-country">NORGE</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg" alt="Norwegian Flag">
+                    <div class="country">N</div>
                 </div>
-                <strong class="plate-number"><?php echo esc_html($reg_number); ?></strong>
+                <div class="plate-number"><?php echo esc_html($reg_number); ?></div>
             </div>
             <div id="vehicle-lookup-results" class="results-wrapper"></div>
         </div>
