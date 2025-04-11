@@ -31,6 +31,31 @@ class Vehicle_Lookup_Shortcode {
                     </div>
                 </div>
                 
+                <div class="accordion owner-section">
+                    <details>
+                        <summary>Eierinformasjon</summary>
+                        <div class="details-content">
+                            <div id="owner-info-container">
+                                <div id="owner-info-purchase">
+                                    <p>Hvem eier bilen?</p>
+                                    <div class="purchase-features">
+                                        <div>✨ Enkelt</div>
+                                        <div>🔒 100% Anonymt</div>
+                                        <div>⚡ Raskt</div>
+                                    </div>
+                                    <?php 
+                                    $product = wc_get_product(62);
+                                    $price = $product ? $product->get_price() : '39';
+                                    ?>
+                                    <button class="purchase-button" data-product="62">
+                                        Kjøp med vipps! (<span class="price"><?php echo esc_html($price); ?></span> kr)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
                 <nav class="tabs">
                     <ul>
                         <li data-tab="general-info"><a href="#general-info">Generell</a></li>
@@ -41,28 +66,6 @@ class Vehicle_Lookup_Shortcode {
                 <div class="tab-content">
                     <section id="general-info" class="tab-panel">
                         <div class="accordion">
-                            <details>
-                                <summary>Eierinformasjon</summary>
-                                <div class="details-content">
-                                    <div id="owner-info-container">
-                                        <div id="owner-info-purchase">
-                                            <p>Hvem eier bilen?</p>
-                                            <div class="purchase-features">
-                                                <div>✨ Enkelt</div>
-                                                <div>🔒 100% Anonymt</div>
-                                                <div>⚡ Raskt</div>
-                                            </div>
-                                            <?php 
-                                            $product = wc_get_product(62);
-                                            $price = $product ? $product->get_price() : '39';
-                                            ?>
-                                            <button class="purchase-button" data-product="62">
-                                                Kjøp med vipps! (<span class="price"><?php echo esc_html($price); ?></span> kr)
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </details>
                             <details>
                                 <summary>Generell informasjon</summary>
                                 <div class="details-content">
