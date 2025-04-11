@@ -91,51 +91,6 @@ jQuery(document).ready(function($) {
                     $('.vehicle-info .vehicle-tags').remove();
 
                     const vehicleData = response.data.responser[0].kjoretoydata;
-                    const resultsDiv = $('#vehicle-lookup-results');
-
-                    // Create tabs structure
-                    resultsDiv.html(`
-                        <div class="vehicle-header">
-                            <div class="vehicle-info">
-                                <h2 class="vehicle-title">${vehicleData.kjoretoyId?.kjennemerke || regNumber}</h2>
-                                <img class="vehicle-logo" src="" alt="">
-                                <p class="vehicle-subtitle"></p>
-                            </div>
-                        </div>
-
-                        <nav class="tabs">
-                            <ul>
-                                <li data-tab="general-info"><a href="#general-info">Generell</a></li>
-                                <li data-tab="technical-info"><a href="#technical-info">Teknisk</a></li>
-                            </ul>
-                        </nav>
-
-                        <div class="tab-content">
-                            <section id="general-info" class="tab-panel">
-                                <div class="accordion">
-                                    <details>
-                                        <summary>Eierinformasjon</summary>
-                                        <div class="details-content">
-                                            <div id="owner-info-container">
-                                                <table class="info-table owner-info-table"></table>
-                                            </div>
-                                        </div>
-                                    </details>
-                                </div>
-                            </section>
-                            <section id="technical-info" class="tab-panel">
-                                <div class="accordion">
-                                    <details>
-                                        <summary>Teknisk Informasjon</summary>
-                                        <div class="details-content">
-                                            <table class="info-table tire-info-table"></table>
-                                            <table class="info-table engine-info-table"></table>
-                                        </div>
-                                    </details>
-                                </div>
-                            </section>
-                        </div>
-                    `);
 
                     // Set vehicle title and subtitle with safe access
                     if (vehicleData.kjoretoyId?.kjennemerke) {
