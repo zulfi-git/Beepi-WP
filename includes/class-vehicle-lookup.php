@@ -101,13 +101,24 @@ class Vehicle_Lookup {
 
         $body = wp_remote_retrieve_body($response);
         
-        // Always log the response with more detail
+        // Enhanced debug logging for vehicle lookup
         error_log("\n=== Vehicle Lookup Debug Info ===");
-        error_log('Registration Number: ' . $regNumber);
-        error_log('Response Status Code: ' . $status_code);
-        error_log('Response Headers: ' . print_r(wp_remote_retrieve_headers($response), true));
-        error_log('Response Body: ' . print_r(json_decode($body, true), true));
-        error_log("==============================\n");
+        error_log('Request Details:');
+        error_log('- Registration Number: ' . $regNumber);
+        error_log('- Request Time: ' . date('Y-m-d H:i:s'));
+        error_log('- Origin URL: ' . get_site_url());
+        
+        error_log('\nResponse Details:');
+        error_log('- Status Code: ' . $status_code);
+        error_log('- Response Time: ' . round(microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"], 3) . 's');
+        error_log('- Headers: ' . print_r(wp_remote_retrieve_headers($response), true));
+        
+        $decoded_body = json_decode($body, true);
+        error_log('\nResponse Data:');
+        error_log('- Valid JSON: ' . (json_last_error() === JSON_ERROR_NONE ? 'Yes' : 'No'));
+        error_log('- Data Present: ' . (!empty($decoded_body) ? 'Yes' : 'No'));
+        error_log('- Full Response: ' . print_r($decoded_body, true));
+        error_log("\n==============================\n");
         
         $data = json_decode($body, true);
 
