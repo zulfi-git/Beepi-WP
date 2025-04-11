@@ -394,10 +394,10 @@ jQuery(document).ready(function($) {
 
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {
-            'Registreringsnummer': vehicleData.kjoretoyId?.kjennemerke,
-            'Første registrering': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+            'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
+            'Første reg.': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
-            'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
+            'Neste kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
         };
 
         $('.registration-info-table').html(
