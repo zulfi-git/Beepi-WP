@@ -342,6 +342,9 @@
     cursor: pointer;
     list-style: none;
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .accordion summary::-webkit-details-marker {
