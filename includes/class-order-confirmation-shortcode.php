@@ -154,7 +154,72 @@ class Order_Confirmation_Shortcode {
                 </div>
                 <div class="reg-number"><?php echo esc_html($reg_number); ?></div>
             </div>
-            <div id="vehicle-lookup-results" class="results-wrapper"></div>
+            <div id="vehicle-lookup-results" class="results-wrapper">
+                <div class="vehicle-header">
+                    <div class="vehicle-info">
+                        <h2 class="vehicle-title"></h2>
+                        <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                        <p class="vehicle-subtitle"></p>
+                    </div>
+                </div>
+                
+                <nav class="tabs">
+                    <ul>
+                        <li data-tab="general-info"><a href="#general-info">Generell</a></li>
+                        <li data-tab="technical-info"><a href="#technical-info">Teknisk</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="tab-content">
+                    <section id="general-info" class="tab-panel">
+                        <div class="accordion">
+                            <details open>
+                                <summary>Eierinformasjon</summary>
+                                <div class="details-content">
+                                    <div id="owner-info-container">
+                                        <table class="info-table owner-info-table"></table>
+                                    </div>
+                                </div>
+                            </details>
+                            <details open>
+                                <summary>Generell informasjon</summary>
+                                <div class="details-content">
+                                    <table class="info-table general-info-table"></table>
+                                </div>
+                            </details>
+                            <details open>
+                                <summary>Registrering og kontroll</summary>
+                                <div class="details-content">
+                                    <table class="info-table registration-info-table"></table>
+                                </div>
+                            </details>
+                        </div>
+                    </section>
+                    
+                    <section id="technical-info" class="tab-panel">
+                        <div class="accordion">
+                            <details open>
+                                <summary>Motor og drivverk</summary>
+                                <div class="details-content">
+                                    <table class="info-table engine-info-table"></table>
+                                </div>
+                            </details>
+                            <details open>
+                                <summary>Størrelse og vekt</summary>
+                                <div class="details-content">
+                                    <table class="info-table size-weight-table"></table>
+                                </div>
+                            </details>
+                            <details open>
+                                <summary>Dekk og felg</summary>
+                                <div class="details-content">
+                                    <table class="info-table tire-info-table"></table>
+                                </div>
+                            </details>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
         <script>
         jQuery(document).ready(function($) {
