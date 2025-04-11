@@ -14,6 +14,26 @@ class Vehicle_Lookup {
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
         add_action('wp_ajax_nopriv_vehicle_lookup', array($this, 'handle_lookup'));
+        
+        // WooCommerce hooks
+        add_action('woocommerce_checkout_create_order', array($this, 'save_registration_to_order'), 10, 2);
+        add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
+    }
+
+    public function save_registration_to_order($order, $data) {
+        if (isset($_COOKIE['vehicle_reg_number'])) {
+            $reg_number = sanitize_text_field($_COOKIE['vehicle_reg_number']);
+            $order->update_meta_data('reg_number', $reg_number);
+            $order->update_meta_data('_reg_number', $reg_number);
+        }
+    }
+
+    public function update_order_meta($order_id) {
+        if (isset($_COOKIE['vehicle_reg_number'])) {
+            $reg_number = sanitize_text_field($_COOKIE['vehicle_reg_number']);
+            update_post_meta($order_id, 'reg_number', $reg_number);
+            update_post_meta($order_id, '_reg_number', $reg_number);
+        }
     }
 
     /**

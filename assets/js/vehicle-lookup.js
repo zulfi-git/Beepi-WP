@@ -272,6 +272,17 @@ jQuery(document).ready(function($) {
         return tokenData.expiry > Date.now();
     }
 
+    function setRegNumberCookie(regNumber) {
+        document.cookie = `vehicle_reg_number=${regNumber};path=/;max-age=3600`;
+    }
+
+    // Update form submit handler to save cookie
+    $('#vehicle-lookup-form').on('submit', function(e) {
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        setRegNumberCookie(regNumber);
+        // ... rest of the existing submit handler
+    });
+
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
     const orderKey = urlParams.get('key');
