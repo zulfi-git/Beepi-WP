@@ -217,7 +217,8 @@ class Order_Confirmation_Shortcode {
         </div>
         <script>
         jQuery(document).ready(function($) {
-            const regNumber = '<?php echo esc_js($reg_number); ?>';
+            const regNumber = '<?php echo esc_js(trim($reg_number)); ?>';
+            console.log('Registration number:', regNumber); // Debug log
 
             // Initialize tabs
             function initializeTabs() {
@@ -244,7 +245,8 @@ class Order_Confirmation_Shortcode {
                     regNumber: regNumber
                 },
                 success: function(response) {
-                    if (response.success && response.data) {
+                    console.log('API Response:', response); // Debug log
+                    if (response.success && response.data && response.data.responser && response.data.responser[0]) {
                         const vehicleData = response.data.responser[0].kjoretoydata;
                         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt;
 
