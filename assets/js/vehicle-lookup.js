@@ -306,8 +306,8 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        // Redirect to Vipps Express Checkout with metadata
-        window.location.href = `/vipps_checkout/?add-to-cart=${productId}&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
+        // Redirect to Vipps product purchase URL
+        window.location.href = `https://beepi.no/vipps-buy-product/?pr=fd8b7cd7&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
     });
 
     function renderBasicInfo(vehicleData) {
