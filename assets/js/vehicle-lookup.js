@@ -199,7 +199,7 @@ jQuery(document).ready(function($) {
                             tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
                         }
 
-                        $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${tags}</div>`);
+                        $('.vehicle-basic-info').append(`<div class="vehicle-tags">${tags}</div>`);
                     }
 
                     // Add status display

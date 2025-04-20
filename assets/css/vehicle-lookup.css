@@ -172,8 +172,8 @@
     color: #2D3748;
 }
 
-.vehicle-info-right .vehicle-tags {
-    justify-content: flex-end;
+.vehicle-basic-info .vehicle-tags {
+    justify-content: flex-start;
     margin-top: 8px;
 }
 
