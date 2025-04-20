@@ -178,7 +178,6 @@ jQuery(document).ready(function($) {
                         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
 
                         let tags = '';
-                        let newTags = ''; // Initialize newTags variable
 
                         if (fuelType) {
                             const fuelEmoji = {
@@ -192,22 +191,15 @@ jQuery(document).ready(function($) {
                             }[fuelType] || '⛽';
 
                             const fuelClass = fuelType.toLowerCase().replace('-', '');
-                            newTags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
+                            tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
                         }
 
                         if (transmission) {
                             const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
-                            newTags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
+                            tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
                         }
 
-                        $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${newTags}</div>`);
-                        const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
-                        const transmission = engineData?.girkassetype?.kodeBeskrivelse;
-
-                        tags = ''; // Re-initialize tags variable
-
-                        // Fuel type tags
-                        if (fuelType) {
+                        $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${tags}</div>`);
                             const fuelEmoji = {
                                 'Diesel': '⛽',
                                 'Bensin': '⛽',
