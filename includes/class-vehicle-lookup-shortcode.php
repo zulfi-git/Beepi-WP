@@ -44,11 +44,6 @@ class Vehicle_Lookup_Shortcode {
                     <div id="owner-info-container">
                         <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
-                            <div class="purchase-features">
-                                <div>✨ Enkelt</div>
-                                <div>🔒 100% Anonymt</div>
-                                <div>⚡ Raskt</div>
-                            </div>
                             <?php 
                             $product = wc_get_product(62);
                             $regular_price = $product ? $product->get_regular_price() : '39';
@@ -65,7 +60,7 @@ class Vehicle_Lookup_Shortcode {
                                 </div>
                             </button>
                             <div class="trust-signals">
-                                🔒 Sikker betaling • ⚡ Umiddelbar tilgang • 💯 100% anonymt
+                                ✨ Enkelt • 🔒 100% Anonymt • ⚡ Umiddelbar tilgang
                             </div>
                         </div>
                     </div>
