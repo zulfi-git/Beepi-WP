@@ -153,7 +153,8 @@ jQuery(document).ready(function($) {
                         let datesHtml = '<div class="registration-dates">';
                         Object.entries(regDates).forEach(([label, date]) => {
                             if (date) {
-                                const formattedDate = date.split('T')[0];
+                                const [year, month, day] = date.split('T')[0].split('-');
+                                const formattedDate = `${day}.${month}.<strong>${year}</strong>`;
                                 datesHtml += `<div class="date-item"><span class="date-label">${label}:</span><span class="date-value">${formattedDate}</span></div>`;
                             }
                         });
