@@ -23,12 +23,24 @@ class Vehicle_Lookup_Shortcode {
             </form>
 
             <div id="vehicle-lookup-results" style="display: none;">
-                <div class="vehicle-header">
-                    <div class="vehicle-info">
-                        <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                        <h2 class="vehicle-title"></h2>
-                        <p class="vehicle-subtitle"></p>
+                <div class="vehicle-card">
+                    <div class="vehicle-header">
+                        <div class="vehicle-info">
+                            <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                            <div class="vehicle-title-group">
+                                <h2 class="vehicle-brand">Bilmerke</h2>
+                                <p class="vehicle-model"></p>
+                                <p class="vehicle-year"></p>
+                            </div>
+                        </div>
+                        <div class="vehicle-status-group">
+                            <div class="car-icon">🚗</div>
+                            <div class="status-label">Registrert</div>
+                            <div class="status-button">Registrert</div>
+                            <div class="status-date"></div>
+                        </div>
                     </div>
+                    <div class="vehicle-tags"></div>
                 </div>
                 
                 <div class="owner-section">
