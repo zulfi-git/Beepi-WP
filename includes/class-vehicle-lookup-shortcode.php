@@ -24,19 +24,10 @@ class Vehicle_Lookup_Shortcode {
 
             <div id="vehicle-lookup-results" style="display: none;">
                 <div class="vehicle-header">
-                    <div class="vehicle-info-left">
+                    <div class="vehicle-info">
                         <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                        <div class="vehicle-basic-info">
-                            <div class="brand-name"></div>
-                            <div class="model-name"></div>
-                            <div class="reg-year"></div>
-                        </div>
-                    </div>
-                    <div class="vehicle-info-right">
-                        <div class="registration-info">
-                            <div class="reg-status"></div>
-                            <div class="reg-date"></div>
-                        </div>
+                        <h2 class="vehicle-title"></h2>
+                        <p class="vehicle-subtitle"></p>
                     </div>
                 </div>
                 
@@ -44,6 +35,11 @@ class Vehicle_Lookup_Shortcode {
                     <div id="owner-info-container">
                         <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
+                            <div class="purchase-features">
+                                <div>✨ Enkelt</div>
+                                <div>🔒 100% Anonymt</div>
+                                <div>⚡ Raskt</div>
+                            </div>
                             <?php 
                             $product = wc_get_product(62);
                             $regular_price = $product ? $product->get_regular_price() : '39';
@@ -51,7 +47,7 @@ class Vehicle_Lookup_Shortcode {
                             $final_price = $sale_price ? $sale_price : $regular_price;
                             ?>
                             <button class="purchase-button" data-product="62">
-                                Få tilgang nå med Vipps!
+                                Kjøp med vipps! 
                                 <div class="price-wrapper">
                                     <?php if ($sale_price): ?>
                                         <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
@@ -59,9 +55,6 @@ class Vehicle_Lookup_Shortcode {
                                     <span class="price"><?php echo esc_html($final_price); ?> kr</span>
                                 </div>
                             </button>
-                            <div class="trust-signals">
-                                ✨ Enkelt • 🔒 100% Anonymt • ⚡ Umiddelbar tilgang
-                            </div>
                         </div>
                     </div>
                 </div>

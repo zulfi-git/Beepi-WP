@@ -68,21 +68,11 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
-                    // Debug logging
-                    console.log('Response received:', response);
-
                     // Display remaining quota
                     if (response.data.gjenstaendeKvote !== undefined) {
                         $('#quota-display')
                             .html(`Remaining quota: ${response.data.gjenstaendeKvote}`)
                             .show();
-                    }
-
-                    // Check if we have valid vehicle data
-                    if (!response.data.responser) {
-                        console.log('No responser array in data');
-                        errorDiv.html('Ingen kjøretøydata funnet').show();
-                        return;
                     }
 
                     // Always log response for debugging
@@ -103,85 +93,48 @@ jQuery(document).ready(function($) {
                     const vehicleData = response.data.responser[0].kjoretoydata;
 
                     // Set vehicle title and subtitle with safe access
+                    if (vehicleData.kjoretoyId?.kjennemerke) {
+                        $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
+                    } else {
+                        $('.vehicle-title').text(regNumber);
+                    }
 
-                    // Set manufacturer logo with fallback
+                    // Set manufacturer logo
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
-                        const fallbackUrl = 'https://beepi.no/wp-content/uploads/2024/01/car-placeholder.png';
-
-                        $('.vehicle-logo')
-                            .attr('src', logoUrl)
-                            .attr('alt', `${manufacturer} logo`)
-                            .on('error', function() {
-                                $(this)
-                                    .attr('src', fallbackUrl)
-                                    .attr('alt', 'Generic car icon')
-                                    .addClass('fallback-logo');
-                            });
+                        $('.vehicle-logo').attr('src', logoUrl).attr('alt', `${manufacturer} logo`);
                     } else {
-                        $('.vehicle-logo')
-                            .attr('src', 'https://beepi.no/wp-content/uploads/2024/01/car-placeholder.png')
-                            .attr('alt', 'Generic car icon')
-                            .addClass('fallback-logo');
+                        $('.vehicle-logo').attr('src', '').attr('alt', 'No logo available');
                     }
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
                         const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
+                        let subtitle = '';
 
-                        // Set brand, model and year
-                        if (generalData) {
-                            if (generalData.merke?.[0]?.merke) {
-                                $('.brand-name').text(generalData.merke[0].merke);
-                            }
-                            if (generalData.handelsbetegnelse?.[0]) {
-                                $('.model-name').text(generalData.handelsbetegnelse[0]);
-                            }
+                        if (generalData.merke?.[0]?.merke) {
+                            subtitle += generalData.merke[0].merke + ' ';
                         }
 
-                        // Set registration year
-                        if (vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato) {
-                            const regYear = vehicleData.forstegangsregistrering.registrertForstegangNorgeDato.split('-')[0];
-                            $('.reg-year').text(regYear);
+                        if (generalData.handelsbetegnelse?.[0]) {
+                            subtitle += generalData.handelsbetegnelse[0];
                         }
 
-                        // Set classification and registration status
-                        if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse) {
-                            $('.classification-desc').text(vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.tekniskKode.kodeBeskrivelse);
+                        // Add registration year if available
+                        const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
+                        if (regYear) {
+                            subtitle += ` <strong>${regYear}</strong>`;
                         }
 
-                        if (vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse) {
-                            $('.reg-status').text(vehicleData.registrering.registreringsstatus.kodeBeskrivelse);
-                        }
+                        $('.vehicle-subtitle').html(subtitle);
 
-                        // Registration dates
-                        const regDates = {
-                            'Registrert første gang': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
-                            'Neste frist for EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist,
-                            'Sist EU-godkjent': vehicleData.periodiskKjoretoyKontroll?.sistGodkjent
-                        };
-
-                        // Clear existing registration dates
-                        $('.registration-info .registration-dates').remove();
-
-                        let datesHtml = '<div class="registration-dates">';
-                        Object.entries(regDates).forEach(([label, date]) => {
-                            if (date) {
-                                const [year, month, day] = date.split('T')[0].split('-');
-                                const formattedDate = `${day}.${month}.<strong>${year}</strong>`;
-                                datesHtml += `<div class="date-item"><span class="date-label">${label}:</span><span class="date-value">${formattedDate}</span></div>`;
-                            }
-                        });
-                        datesHtml += '</div>';
-
-                        $('.registration-info').append(datesHtml);
-
-                        // Add vehicle tags after reg-date
+                        // Add vehicle tags
                         const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
                         const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
                         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
 
                         let tags = '';
 
+                        // Fuel type tags
                         if (fuelType) {
                             const fuelEmoji = {
                                 'Diesel': '⛽',
@@ -197,12 +150,13 @@ jQuery(document).ready(function($) {
                             tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
                         }
 
+                        // Transmission tag
                         if (transmission) {
                             const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
                             tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
                         }
 
-                        $('.vehicle-basic-info').append(`<div class="vehicle-tags">${tags}</div>`);
+                        $('.vehicle-info').append(`<div class="vehicle-tags">${tags}</div>`);
                     }
 
                     // Add status display

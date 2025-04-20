@@ -80,101 +80,22 @@
 }
 
 .vehicle-header {
-    margin-top: 0;
-    padding: 20px;
+    margin-top: 0; /* Removed margin */
+    padding: 10px; /* Added padding */
     border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-.vehicle-info-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
 }
 
 .vehicle-logo {
-    max-width: 100px;
-    height: auto;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
     object-fit: contain;
+    margin: 0 auto 5px;
+    display: block;
 }
 
-.vehicle-logo.fallback-logo {
-    opacity: 0.7;
-    max-width: 80px;
-}
-
-.vehicle-basic-info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.brand-name {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: #1a1a1a;
-    letter-spacing: -0.02em;
-}
-
-.model-name {
-    font-size: 1rem;
-    color: #4a5568;
-    font-weight: 500;
-}
-
-.reg-year {
-    font-size: 0.9rem;
-    color: #718096;
-    font-weight: 400;
-}
-
-.vehicle-info-right {
-    text-align: right;
-}
-
-.registration-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.reg-status {
-    font-weight: 500;
-    color: #1a1a1a;
-}
-
-.reg-date {
-    font-size: 0.9rem;
-    color: #718096;
-    margin-bottom: 8px;
-}
-
-.registration-dates {
-    margin-top: 12px;
-    font-size: 0.9rem;
-}
-
-.date-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    color: #4A5568;
-}
-
-.date-label {
-    font-weight: 500;
-}
-
-.date-value {
-    color: #2D3748;
-}
-
-.vehicle-basic-info .vehicle-tags {
-    justify-content: flex-start;
-    margin-top: 8px;
+.vehicle-info {
+    text-align: center;
 }
 
 .vehicle-title {
@@ -308,10 +229,10 @@
     justify-content: space-around;
     background-color: #f1f5f9;
     border-radius: 12px;
-    padding: 0.35rem;
-    margin: 1.25rem 0;
+    padding: 0.25rem;
+    margin-top: 1rem;
     list-style: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    margin: 0;
 }
 
 .tabs li {
@@ -536,117 +457,14 @@
 
 #owner-info-purchase {
     text-align: center;
-    padding: 24px;
-    border-radius: 12px;
-    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #f8fafc;
     margin-top: 16px;
-    border: 2px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0; /* Added border */
 }
 
 #owner-info-purchase p {
-    margin-bottom: 16px;
-    color: #000;
-    font-size: 1.2rem;
-    font-weight: 600;
+    margin-bottom: 12px;
+    color: #000; /* Changed text color to black */
 }
-
-.purchase-features {
-    display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
-    padding: 12px;
-    background: #f8fafc;
-    border-radius: 8px;
-}
-
-.purchase-features div {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-    color: #334155;
-}
-
-.purchase-button {
-    background-color: #ff5b24;
-    color: white;
-    border: none;
-    padding: 16px 28px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-top: 20px;
-    width: 100%;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.purchase-button:hover {
-    background-color: #ff4400;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255,91,36,0.2);
-}
-
-.purchase-button:active {
-    transform: translateY(0);
-}
-
-.price-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.regular-price {
-    color: rgba(255,255,255,0.8);
-    text-decoration: line-through;
-    font-size: 0.9em;
-}
-
-.sale-price {
-    color: white;
-    font-weight: 800;
-}
-
-.trust-signals {
-    margin-top: 16px;
-    font-size: 0.9rem;
-    color: #64748b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-}
-
-.trust-signals svg {
-    width: 16px;
-    height: 16px;
-    fill: currentColor;
-}
-
-<script>
-  //  This is a minimal example.  Robust error handling would be needed in a production environment.
-  const vehicleLogo = document.querySelector('.vehicle-logo');
-  const logoUrl = 'path/to/your/logo.png'; //Replace with your logo fetch logic.
-
-  fetch(logoUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.blob();
-    })
-    .then(blob => {
-        const objectURL = URL.createObjectURL(blob);
-        vehicleLogo.src = objectURL;
-    })
-    .catch(error => {
-        console.error('Error loading logo:', error);
-        vehicleLogo.src = 'path/to/fallback/logo.png'; // Replace with your fallback image URL
-        vehicleLogo.classList.add('fallback-logo');
-    });
-</script>
