@@ -160,6 +160,9 @@ jQuery(document).ready(function($) {
                             'Sist EU-godkjent': vehicleData.periodiskKjoretoyKontroll?.sistGodkjent
                         };
 
+                        // Clear existing registration dates
+                        $('.registration-info .registration-dates').remove();
+
                         let datesHtml = '<div class="registration-dates">';
                         Object.entries(regDates).forEach(([label, date]) => {
                             if (date) {
