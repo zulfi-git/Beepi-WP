@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
                         const fallbackUrl = 'https://beepi.no/wp-content/uploads/2024/01/car-placeholder.png';
-                        
+
                         $('.vehicle-logo')
                             .attr('src', logoUrl)
                             .attr('alt', `${manufacturer} logo`)
@@ -144,7 +144,7 @@ jQuery(document).ready(function($) {
                         }
 
                         if (vehicleData.registrering?.fomTidspunkt) {
-                            $('.reg-date').text('Registrering: ' + vehicleData.registrering.fomTidspunkt.split('T')[0]);
+                            $('.reg-date').text(vehicleData.registrering.fomTidspunkt.split('T')[0]);
                         }
 
                         // Add vehicle tags
