@@ -200,9 +200,6 @@ jQuery(document).ready(function($) {
                         }
 
                         $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${tags}</div>`);
-
-                        // Add vehicle tags
-                        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
                         const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
                         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
 
