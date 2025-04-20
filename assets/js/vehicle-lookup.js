@@ -70,7 +70,7 @@ jQuery(document).ready(function($) {
                 if (response.success && response.data) {
                     // Debug logging
                     console.log('Response received:', response);
-                    
+
                     // Display remaining quota
                     if (response.data.gjenstaendeKvote !== undefined) {
                         $('#quota-display')
@@ -169,7 +169,7 @@ jQuery(document).ready(function($) {
                             }
                         });
                         datesHtml += '</div>';
-                        
+
                         $('.registration-info').append(datesHtml);
 
                         // Add vehicle tags after reg-date
@@ -178,6 +178,7 @@ jQuery(document).ready(function($) {
                         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
 
                         let tags = '';
+                        let newTags = ''; // Initialize newTags variable
 
                         if (fuelType) {
                             const fuelEmoji = {
@@ -191,19 +192,19 @@ jQuery(document).ready(function($) {
                             }[fuelType] || '⛽';
 
                             const fuelClass = fuelType.toLowerCase().replace('-', '');
-                            tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
+                            newTags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
                         }
 
                         if (transmission) {
                             const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
-                            tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
+                            newTags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
                         }
 
-                        $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${tags}</div>`);
+                        $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${newTags}</div>`);
                         const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
                         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
 
-                        let tags = '';
+                        tags = ''; // Re-initialize tags variable
 
                         // Fuel type tags
                         if (fuelType) {
