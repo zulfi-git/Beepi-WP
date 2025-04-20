@@ -149,6 +149,12 @@
 .reg-date {
     font-size: 0.9rem;
     color: #718096;
+    margin-bottom: 8px;
+}
+
+.vehicle-info-right .vehicle-tags {
+    justify-content: flex-end;
+    margin-top: 8px;
 }
 
 .vehicle-title {

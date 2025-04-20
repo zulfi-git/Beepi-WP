@@ -147,6 +147,35 @@ jQuery(document).ready(function($) {
                             $('.reg-date').text(vehicleData.registrering.fomTidspunkt.split('T')[0]);
                         }
 
+                        // Add vehicle tags after reg-date
+                        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+                        const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
+                        const transmission = engineData?.girkassetype?.kodeBeskrivelse;
+
+                        let tags = '';
+
+                        if (fuelType) {
+                            const fuelEmoji = {
+                                'Diesel': '⛽',
+                                'Bensin': '⛽',
+                                'Elektrisk': '⚡',
+                                'Hybrid': '🔋',
+                                'Plugin-hybrid': '🔌',
+                                'Hydrogen': '💨',
+                                'Gass': '💨'
+                            }[fuelType] || '⛽';
+
+                            const fuelClass = fuelType.toLowerCase().replace('-', '');
+                            tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
+                        }
+
+                        if (transmission) {
+                            const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
+                            tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
+                        }
+
+                        $('.vehicle-info-right .registration-info').append(`<div class="vehicle-tags">${tags}</div>`);
+
                         // Add vehicle tags
                         const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
                         const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
