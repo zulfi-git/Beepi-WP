@@ -94,13 +94,26 @@ jQuery(document).ready(function($) {
 
                     // Set vehicle title and subtitle with safe access
 
-                    // Set manufacturer logo
+                    // Set manufacturer logo with fallback
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
-                        $('.vehicle-logo').attr('src', logoUrl).attr('alt', `${manufacturer} logo`);
+                        const fallbackUrl = 'https://beepi.no/wp-content/uploads/2024/01/car-placeholder.png';
+                        
+                        $('.vehicle-logo')
+                            .attr('src', logoUrl)
+                            .attr('alt', `${manufacturer} logo`)
+                            .on('error', function() {
+                                $(this)
+                                    .attr('src', fallbackUrl)
+                                    .attr('alt', 'Generic car icon')
+                                    .addClass('fallback-logo');
+                            });
                     } else {
-                        $('.vehicle-logo').attr('src', '').attr('alt', 'No logo available');
+                        $('.vehicle-logo')
+                            .attr('src', 'https://beepi.no/wp-content/uploads/2024/01/car-placeholder.png')
+                            .attr('alt', 'Generic car icon')
+                            .addClass('fallback-logo');
                     }
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
                         const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;

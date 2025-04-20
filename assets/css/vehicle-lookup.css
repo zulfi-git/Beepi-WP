@@ -96,10 +96,14 @@
 }
 
 .vehicle-logo {
-    width: 60px;
-    height: 60px;
+    max-width: 100px;
+    height: auto;
     object-fit: contain;
-    margin-top: 5px;
+}
+
+.vehicle-logo.fallback-logo {
+    opacity: 0.7;
+    max-width: 80px;
 }
 
 .vehicle-basic-info {
@@ -597,3 +601,26 @@
     height: 16px;
     fill: currentColor;
 }
+
+<script>
+  //  This is a minimal example.  Robust error handling would be needed in a production environment.
+  const vehicleLogo = document.querySelector('.vehicle-logo');
+  const logoUrl = 'path/to/your/logo.png'; //Replace with your logo fetch logic.
+
+  fetch(logoUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.blob();
+    })
+    .then(blob => {
+        const objectURL = URL.createObjectURL(blob);
+        vehicleLogo.src = objectURL;
+    })
+    .catch(error => {
+        console.error('Error loading logo:', error);
+        vehicleLogo.src = 'path/to/fallback/logo.png'; // Replace with your fallback image URL
+        vehicleLogo.classList.add('fallback-logo');
+    });
+</script>
