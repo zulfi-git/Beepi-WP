@@ -506,14 +506,94 @@
 
 #owner-info-purchase {
     text-align: center;
-    padding: 16px;
-    border-radius: 8px;
-    background-color: #f8fafc;
+    padding: 24px;
+    border-radius: 12px;
+    background-color: #ffffff;
     margin-top: 16px;
-    border: 1px solid #e2e8f0; /* Added border */
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 #owner-info-purchase p {
-    margin-bottom: 12px;
-    color: #000; /* Changed text color to black */
+    margin-bottom: 16px;
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.purchase-features {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.purchase-features div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.purchase-button {
+    background-color: #ff5b24;
+    color: white;
+    border: none;
+    padding: 16px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    width: 100%;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.purchase-button:hover {
+    background-color: #ff4400;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255,91,36,0.2);
+}
+
+.purchase-button:active {
+    transform: translateY(0);
+}
+
+.price-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.regular-price {
+    color: rgba(255,255,255,0.8);
+    text-decoration: line-through;
+    font-size: 0.9em;
+}
+
+.sale-price {
+    color: white;
+    font-weight: 800;
+}
+
+.trust-signals {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    color: #64748b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.trust-signals svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
 }

@@ -56,7 +56,7 @@ class Vehicle_Lookup_Shortcode {
                             $final_price = $sale_price ? $sale_price : $regular_price;
                             ?>
                             <button class="purchase-button" data-product="62">
-                                Kjøp med vipps! 
+                                Få tilgang nå med Vipps!
                                 <div class="price-wrapper">
                                     <?php if ($sale_price): ?>
                                         <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
@@ -64,6 +64,9 @@ class Vehicle_Lookup_Shortcode {
                                     <span class="price"><?php echo esc_html($final_price); ?> kr</span>
                                 </div>
                             </button>
+                            <div class="trust-signals">
+                                🔒 Sikker betaling • ⚡ Umiddelbar tilgang • 💯 100% anonymt
+                            </div>
                         </div>
                     </div>
                 </div>
