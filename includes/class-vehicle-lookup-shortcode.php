@@ -34,13 +34,24 @@ class Vehicle_Lookup_Shortcode {
                             </div>
                         </div>
                         <div class="vehicle-status-group">
-                            <div class="car-icon">🚗</div>
-                            <div class="status-label">Registrert</div>
-                            <div class="status-button">Registrert</div>
-                            <div class="status-date"></div>
+                        <div class="car-icon">🚗</div>
+                        <div class="status-details">
+                            <div class="status-row">
+                                <span class="status-label">Registreringsstatus:</span>
+                                <span class="registration-status"></span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">Førstegangsregistrering:</span>
+                                <span class="first-registration"></span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">Kjøretøyklassifisering:</span>
+                                <span class="vehicle-classification"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="vehicle-tags"></div>
+                </div>
+                <div class="vehicle-tags"></div>
                 </div>
                 
                 <div class="owner-section">

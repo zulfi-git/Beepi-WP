@@ -128,12 +128,36 @@
 }
 
 .vehicle-status-group {
-    text-align: center;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .car-icon {
     font-size: 24px;
-    margin-bottom: 8px;
+}
+
+.status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.status-row {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.status-label {
+    font-weight: 500;
+}
+
+.registration-status,
+.first-registration,
+.vehicle-classification {
+    color: #2d3748;
 }
 
 .status-label {
