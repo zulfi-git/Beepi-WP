@@ -92,6 +92,8 @@
     object-fit: contain;
     margin: 0 auto 5px;
     display: block;
+    background-color: #f8f9fa;
+    padding: 8px;
 }
 
 .vehicle-info {

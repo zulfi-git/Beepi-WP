@@ -103,7 +103,13 @@ jQuery(document).ready(function($) {
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
-                        $('.vehicle-logo').attr('src', logoUrl).attr('alt', `${manufacturer} logo`);
+                        const defaultLogoUrl = 'https://cdn-icons-png.flaticon.com/512/741/741407.png';
+
+                        $('.vehicle-logo')
+                            .attr('src', logoUrl)
+                            .on('error', function() {
+                                $(this).attr('src', defaultLogoUrl);
+                            });
                     } else {
                         $('.vehicle-logo').attr('src', '').attr('alt', 'No logo available');
                     }
