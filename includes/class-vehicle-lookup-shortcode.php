@@ -33,10 +33,6 @@ class Vehicle_Lookup_Shortcode {
                         </div>
                     </div>
                     <div class="vehicle-info-right">
-                        <div class="vehicle-classification">
-                            <div class="classification-title">Kjøretøyklassifisering</div>
-                            <div class="classification-desc"></div>
-                        </div>
                         <div class="registration-info">
                             <div class="reg-status"></div>
                             <div class="reg-date"></div>

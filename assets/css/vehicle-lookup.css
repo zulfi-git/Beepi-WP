@@ -127,21 +127,6 @@
     text-align: right;
 }
 
-.vehicle-classification {
-    margin-bottom: 12px;
-}
-
-.classification-title {
-    font-size: 0.9rem;
-    color: #718096;
-    margin-bottom: 4px;
-}
-
-.classification-desc {
-    font-weight: 500;
-    color: #1a1a1a;
-}
-
 .registration-info {
     display: flex;
     flex-direction: column;
