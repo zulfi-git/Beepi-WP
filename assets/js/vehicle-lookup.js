@@ -143,9 +143,23 @@ jQuery(document).ready(function($) {
                             $('.reg-status').text(vehicleData.registrering.registreringsstatus.kodeBeskrivelse);
                         }
 
-                        if (vehicleData.registrering?.fomTidspunkt) {
-                            $('.reg-date').text(vehicleData.registrering.fomTidspunkt.split('T')[0]);
-                        }
+                        // Registration dates
+                        const regDates = {
+                            'Registrert første gang': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+                            'Neste frist for EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist,
+                            'Sist EU-godkjent': vehicleData.periodiskKjoretoyKontroll?.sistGodkjent
+                        };
+
+                        let datesHtml = '<div class="registration-dates">';
+                        Object.entries(regDates).forEach(([label, date]) => {
+                            if (date) {
+                                const formattedDate = date.split('T')[0];
+                                datesHtml += `<div class="date-item"><span class="date-label">${label}:</span><span class="date-value">${formattedDate}</span></div>`;
+                            }
+                        });
+                        datesHtml += '</div>';
+                        
+                        $('.registration-info').append(datesHtml);
 
                         // Add vehicle tags after reg-date
                         const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;

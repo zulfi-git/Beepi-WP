@@ -152,6 +152,26 @@
     margin-bottom: 8px;
 }
 
+.registration-dates {
+    margin-top: 12px;
+    font-size: 0.9rem;
+}
+
+.date-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: #4A5568;
+}
+
+.date-label {
+    font-weight: 500;
+}
+
+.date-value {
+    color: #2D3748;
+}
+
 .vehicle-info-right .vehicle-tags {
     justify-content: flex-end;
     margin-top: 8px;
