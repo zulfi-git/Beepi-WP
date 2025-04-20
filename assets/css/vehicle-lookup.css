@@ -80,22 +80,82 @@
 }
 
 .vehicle-header {
-    margin-top: 0; /* Removed margin */
-    padding: 10px; /* Added padding */
+    margin-top: 0;
+    padding: 20px;
     border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.vehicle-info-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
 }
 
 .vehicle-logo {
     width: 80px;
     height: 80px;
-    border-radius: 50%;
     object-fit: contain;
-    margin: 0 auto 5px;
-    display: block;
 }
 
-.vehicle-info {
-    text-align: center;
+.vehicle-basic-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+}
+
+.model-name {
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+.reg-year {
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.vehicle-info-right {
+    text-align: right;
+}
+
+.vehicle-classification {
+    margin-bottom: 12px;
+}
+
+.classification-title {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 4px;
+}
+
+.classification-desc {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.registration-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.reg-status {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.reg-date {
+    font-size: 0.9rem;
+    color: #718096;
 }
 
 .vehicle-title {

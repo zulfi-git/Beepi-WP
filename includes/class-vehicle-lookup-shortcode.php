@@ -24,10 +24,23 @@ class Vehicle_Lookup_Shortcode {
 
             <div id="vehicle-lookup-results" style="display: none;">
                 <div class="vehicle-header">
-                    <div class="vehicle-info">
+                    <div class="vehicle-info-left">
                         <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                        <h2 class="vehicle-title"></h2>
-                        <p class="vehicle-subtitle"></p>
+                        <div class="vehicle-basic-info">
+                            <div class="brand-name"></div>
+                            <div class="model-name"></div>
+                            <div class="reg-year"></div>
+                        </div>
+                    </div>
+                    <div class="vehicle-info-right">
+                        <div class="vehicle-classification">
+                            <div class="classification-title">Kjøretøyklassifisering</div>
+                            <div class="classification-desc"></div>
+                        </div>
+                        <div class="registration-info">
+                            <div class="reg-status"></div>
+                            <div class="reg-date"></div>
+                        </div>
                     </div>
                 </div>
                 

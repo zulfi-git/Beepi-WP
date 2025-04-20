@@ -93,11 +93,6 @@ jQuery(document).ready(function($) {
                     const vehicleData = response.data.responser[0].kjoretoydata;
 
                     // Set vehicle title and subtitle with safe access
-                    if (vehicleData.kjoretoyId?.kjennemerke) {
-                        $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
-                    } else {
-                        $('.vehicle-title').text(regNumber);
-                    }
 
                     // Set manufacturer logo
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
@@ -109,23 +104,35 @@ jQuery(document).ready(function($) {
                     }
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
                         const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
-                        let subtitle = '';
 
-                        if (generalData.merke?.[0]?.merke) {
-                            subtitle += generalData.merke[0].merke + ' ';
+                        // Set brand, model and year
+                        if (generalData) {
+                            if (generalData.merke?.[0]?.merke) {
+                                $('.brand-name').text(generalData.merke[0].merke);
+                            }
+                            if (generalData.handelsbetegnelse?.[0]) {
+                                $('.model-name').text(generalData.handelsbetegnelse[0]);
+                            }
                         }
 
-                        if (generalData.handelsbetegnelse?.[0]) {
-                            subtitle += generalData.handelsbetegnelse[0];
+                        // Set registration year
+                        if (vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato) {
+                            const regYear = vehicleData.forstegangsregistrering.registrertForstegangNorgeDato.split('-')[0];
+                            $('.reg-year').text(regYear);
                         }
 
-                        // Add registration year if available
-                        const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
-                        if (regYear) {
-                            subtitle += ` <strong>${regYear}</strong>`;
+                        // Set classification and registration status
+                        if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse) {
+                            $('.classification-desc').text(vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.tekniskKode.kodeBeskrivelse);
                         }
 
-                        $('.vehicle-subtitle').html(subtitle);
+                        if (vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse) {
+                            $('.reg-status').text(vehicleData.registrering.registreringsstatus.kodeBeskrivelse);
+                        }
+
+                        if (vehicleData.registrering?.fomTidspunkt) {
+                            $('.reg-date').text('Registrering: ' + vehicleData.registrering.fomTidspunkt.split('T')[0]);
+                        }
 
                         // Add vehicle tags
                         const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
