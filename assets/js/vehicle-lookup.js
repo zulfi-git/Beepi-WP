@@ -68,11 +68,21 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
+                    // Debug logging
+                    console.log('Response received:', response);
+                    
                     // Display remaining quota
                     if (response.data.gjenstaendeKvote !== undefined) {
                         $('#quota-display')
                             .html(`Remaining quota: ${response.data.gjenstaendeKvote}`)
                             .show();
+                    }
+
+                    // Check if we have valid vehicle data
+                    if (!response.data.responser) {
+                        console.log('No responser array in data');
+                        errorDiv.html('Ingen kjøretøydata funnet').show();
+                        return;
                     }
 
                     // Always log response for debugging
