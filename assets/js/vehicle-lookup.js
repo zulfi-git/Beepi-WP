@@ -170,10 +170,7 @@ jQuery(document).ready(function($) {
                     // Add status badge for all statuses
                     if (status) {
                         const statusClass = status.toLowerCase();
-                        $('.registration-status').text(statusText);
-                        $('.first-registration').text(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato || '-');
-                        $('.vehicle-classification').text(vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse || '-');
-
+                        $('.vehicle-subtitle').after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
 
                         // Only show EU control status for registered vehicles
                         if (status === 'REGISTRERT' && euDeadline) {

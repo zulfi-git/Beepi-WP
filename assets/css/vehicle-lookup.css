@@ -79,122 +79,31 @@
     margin-top: 20px;
 }
 
-.vehicle-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-}
-
 .vehicle-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.vehicle-info {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+    margin-top: 0; /* Removed margin */
+    padding: 10px; /* Added padding */
+    border-bottom: 1px solid #eee;
 }
 
 .vehicle-logo {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
     object-fit: contain;
+    margin: 0 auto 5px;
+    display: block;
 }
 
-.vehicle-title-group {
-    text-align: left;
+.vehicle-info {
+    text-align: center;
 }
 
-.vehicle-brand {
-    font-size: 24px;
-    font-weight: bold;
+.vehicle-title {
     margin: 0;
-}
-
-.vehicle-model {
-    font-size: 20px;
-    margin: 4px 0;
-}
-
-.vehicle-year {
-    font-size: 16px;
-    color: #666;
-    margin: 0;
-}
-
-.vehicle-status-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.car-icon {
-    font-size: 24px;
-}
-
-.status-details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.status-row {
-    display: flex;
-    gap: 8px;
-    font-size: 14px;
-    color: #4a5568;
-}
-
-.status-label {
-    font-weight: 500;
-}
-
-.registration-status,
-.first-registration,
-.vehicle-classification {
-    color: #2d3748;
-}
-
-.status-label {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 4px;
-}
-
-.status-button {
-    background: #00C853;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-
-.status-date {
-    font-size: 14px;
-    padding: 4px 12px;
-    background: #E0E0E0;
-    border-radius: 12px;
-}
-
-.vehicle-tags {
-    display: flex;
-    gap: 8px;
-}
-
-.tag {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #F5F5F5;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
 }
 
 .vehicle-subtitle {
@@ -509,7 +418,7 @@
     justify-content: space-around;
     margin: 16px 0;
     font-size: 0.9rem;
-    color: #000; 
+    color: #000; /* Changed text color to black */
 }
 
 .purchase-button {
@@ -552,10 +461,10 @@
     border-radius: 8px;
     background-color: #f8fafc;
     margin-top: 16px;
-    border: 1px solid #e2e8f0; 
+    border: 1px solid #e2e8f0; /* Added border */
 }
 
 #owner-info-purchase p {
     margin-bottom: 12px;
-    color: #000; 
+    color: #000; /* Changed text color to black */
 }

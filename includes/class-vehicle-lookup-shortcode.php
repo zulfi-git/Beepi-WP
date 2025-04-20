@@ -23,35 +23,12 @@ class Vehicle_Lookup_Shortcode {
             </form>
 
             <div id="vehicle-lookup-results" style="display: none;">
-                <div class="vehicle-card">
-                    <div class="vehicle-header">
-                        <div class="vehicle-info">
-                            <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                            <div class="vehicle-title-group">
-                                <h2 class="vehicle-brand">Bilmerke</h2>
-                                <p class="vehicle-model"></p>
-                                <p class="vehicle-year"></p>
-                            </div>
-                        </div>
-                        <div class="vehicle-status-group">
-                        <div class="car-icon">🚗</div>
-                        <div class="status-details">
-                            <div class="status-row">
-                                <span class="status-label">Registreringsstatus:</span>
-                                <span class="registration-status"></span>
-                            </div>
-                            <div class="status-row">
-                                <span class="status-label">Førstegangsregistrering:</span>
-                                <span class="first-registration"></span>
-                            </div>
-                            <div class="status-row">
-                                <span class="status-label">Kjøretøyklassifisering:</span>
-                                <span class="vehicle-classification"></span>
-                            </div>
-                        </div>
+                <div class="vehicle-header">
+                    <div class="vehicle-info">
+                        <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                        <h2 class="vehicle-title"></h2>
+                        <p class="vehicle-subtitle"></p>
                     </div>
-                </div>
-                <div class="vehicle-tags"></div>
                 </div>
                 
                 <div class="owner-section">
