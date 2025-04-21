@@ -53,13 +53,20 @@ class Vehicle_Lookup_Shortcode {
                             $sale_price = $product ? $product->get_sale_price() : null;
                             $final_price = $sale_price ? $sale_price : $regular_price;
                             ?>
-                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
-                            <div class="price-wrapper">
+                            <div class="price-display">
                                 <?php if ($sale_price): ?>
+                                    <div class="discount-badge">Tilbud!</div>
+                                    <div class="price-wrapper">
                                         <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
-                                    <?php endif; ?>
-                                    <span class="price"><?php echo esc_html($final_price); ?> kr</span>
-                                </div>
+                                        <span class="sale-price"><?php echo esc_html($sale_price); ?> kr</span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="price-wrapper">
+                                        <span class="regular-price-only"><?php echo esc_html($regular_price); ?> kr</span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
                             </button>
                             <div class="trust-indicators">
                                 <div>🔐 Data hentes fra Statens vegvesen</div>

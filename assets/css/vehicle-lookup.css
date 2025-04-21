@@ -472,22 +472,45 @@ details summary {
     background-color: #ff4400;
 }
 
-.price-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 8px;
+.price-display {
+    margin: 1rem 0;
+    text-align: center;
 }
 
-.regular-price {
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: line-through;
+.discount-badge {
+    display: inline-block;
+    background-color: #ff5b24;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-weight: 600;
     font-size: 0.9em;
 }
 
+.price-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.regular-price {
+    color: #666;
+    text-decoration: line-through;
+    font-size: 1.1em;
+}
+
+.regular-price-only {
+    color: #333;
+    font-size: 1.4em;
+    font-weight: 600;
+}
+
 .sale-price {
-    color: white;
-    font-weight: 700;
+    color: #ff5b24;
+    font-size: 1.4em;
+    font-weight: 600;
 }
 
 #owner-info-purchase {
