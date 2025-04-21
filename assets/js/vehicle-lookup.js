@@ -415,6 +415,7 @@ jQuery(document).ready(function($) {
             'Reg i Norge': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
             'Reg på eier': vehicleData.forstegangsregistrering?.registrertEierDato,
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
+            'Siste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.sistGodkjent,
             'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
         };
 
