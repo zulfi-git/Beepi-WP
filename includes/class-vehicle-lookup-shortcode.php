@@ -112,7 +112,7 @@ class Vehicle_Lookup_Shortcode {
             <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             <div id="quota-display" class="quota-display" style="display: none;"></div>
             <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
-            <div class="powered-by">Powered by <a href="https://beepi.no" target="_blank">Beepi</a></div>
+            <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
         </div>
         <?php
         return ob_get_clean();
