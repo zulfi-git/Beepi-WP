@@ -420,9 +420,9 @@ jQuery(document).ready(function($) {
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
-            'Reg første gang': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangDato),
+            'Reg første gang': formatDate(vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato),
             'Reg i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
-            'Reg på eier': formatDate(vehicleData.forstegangsregistrering?.registrertEierDato),
+            'Reg på eier': formatDate(vehicleData.registrering?.registrertForstegangPaEierskap),
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
             'EU-kontroller': '',  // Spacer for visual grouping
             'Siste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.sistGodkjent),
