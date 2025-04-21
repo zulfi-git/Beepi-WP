@@ -60,7 +60,8 @@ class Vehicle_Lookup {
             'vehicleLookupAjax',
             array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('vehicle_lookup_nonce')
+                'nonce' => wp_create_nonce('vehicle_lookup_nonce'),
+                'plugin_url' => plugins_url('', dirname(__FILE__))
             )
         );
     }
