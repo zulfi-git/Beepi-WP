@@ -36,9 +36,9 @@ class Vehicle_Lookup_Shortcode {
                         <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
                             <div class="purchase-features">
-                                <div>✨ Instant Access</div>
-                                <div>🔒 100% Private & Secure</div>
-                                <div>⚡ Real-time Updates</div>
+                                <div>✨ Direkte tilgang</div>
+                                <div>🔒 100% Privat & Sikkert</div>
+                                <div>⚡ Sanntidsoppdateringer</div>
                             </div>
                             <?php 
                             $product = wc_get_product(62);
