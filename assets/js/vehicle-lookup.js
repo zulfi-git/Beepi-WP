@@ -100,7 +100,7 @@ jQuery(document).ready(function($) {
                     }
 
                     // Set manufacturer logo
-                    const defaultLogoUrl = plugin_url + '/assets/images/car.png';
+                    const defaultLogoUrl = vehicleLookupAjax.plugin_url + '/assets/images/car.png';
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
