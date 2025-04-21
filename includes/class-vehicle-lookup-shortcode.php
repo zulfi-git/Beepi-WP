@@ -15,12 +15,15 @@ class Vehicle_Lookup_Shortcode {
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
+            <h1 class="lookup-title">Søk på kjøretøy</h1>
+            <p class="lookup-description">Finn informasjon om norske kjøretøy ved å søke på registreringsnummer</p>
+            
             <form id="vehicle-lookup-form" class="plate-form">
                 <div class="plate-input-wrapper">
                     <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
                     <input type="text" id="regNumber" name="regNumber" required
                            class="plate-input"
-                           placeholder="CU11262"
+                           placeholder="AB12345"
                            pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <div class="loading-spinner"></div>
@@ -28,6 +31,12 @@ class Vehicle_Lookup_Shortcode {
                     </button>
                 </div>
             </form>
+            
+            <div class="lookup-features">
+                <div class="feature-item">✨ Direkte tilgang til kjøretøydata</div>
+                <div class="feature-item">🔐 Data fra Statens vegvesen</div>
+                <div class="feature-item">⚡ Live oppdateringer</div>
+            </div>
 
             <div id="vehicle-lookup-results" style="display: none;">
                 <div class="vehicle-header">
