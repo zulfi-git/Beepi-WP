@@ -100,7 +100,7 @@ jQuery(document).ready(function($) {
                     }
 
                     // Set manufacturer logo
-                    const defaultLogoUrl = '/wp-content/plugins/vehicle-lookup/assets/images/car-fallback.svg';
+                    const defaultLogoUrl = '/wp-content/plugins/vehicle-lookup/assets/images/car.png';
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
