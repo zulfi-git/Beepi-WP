@@ -323,7 +323,8 @@ jQuery(document).ready(function($) {
         }
 
         // Redirect to Vipps product purchase URL
-        window.location.href = `https://beepi.no/vipps-buy-product/?pr=fd8b7cd7&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
+        const vippsId = $(this).data('vipps-id');
+        window.location.href = `https://beepi.no/vipps-buy-product/?pr=${vippsId}&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
     });
 
     function renderBasicInfo(vehicleData) {
