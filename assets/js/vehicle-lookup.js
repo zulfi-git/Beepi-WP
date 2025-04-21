@@ -420,7 +420,7 @@ jQuery(document).ready(function($) {
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
-            'Første reg.': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangDato),
+            'Reg første gang': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangDato),
             'Reg i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
             'Reg på eier': formatDate(vehicleData.forstegangsregistrering?.registrertEierDato),
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
