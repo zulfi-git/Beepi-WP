@@ -411,7 +411,9 @@ jQuery(document).ready(function($) {
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
-            'Første reg.': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+            'Første reg.': vehicleData.forstegangsregistrering?.registrertForstegangDato,
+            'Reg i Norge': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
+            'Reg på eier': vehicleData.forstegangsregistrering?.registrertEierDato,
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
             'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
         };
