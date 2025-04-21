@@ -36,9 +36,9 @@ class Vehicle_Lookup_Shortcode {
                         <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
                             <div class="purchase-features">
-                                <div>✨ Enkelt</div>
-                                <div>🔒 100% Anonymt</div>
-                                <div>⚡ Raskt</div>
+                                <div>✨ Instant Access</div>
+                                <div>🔒 100% Private & Secure</div>
+                                <div>⚡ Real-time Updates</div>
                             </div>
                             <?php 
                             $product = wc_get_product(62);
@@ -112,6 +112,7 @@ class Vehicle_Lookup_Shortcode {
             <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             <div id="quota-display" class="quota-display" style="display: none;"></div>
             <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
+            <div class="powered-by">Powered by <a href="https://beepi.no" target="_blank">Beepi</a></div>
         </div>
         <?php
         return ob_get_clean();

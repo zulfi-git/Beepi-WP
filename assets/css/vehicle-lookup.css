@@ -366,6 +366,38 @@
     text-align: right;
 }
 
+.powered-by {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.powered-by a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* Improve tap targets */
+.tabs a,
+.purchase-button,
+.plate-search-button,
+details summary {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.purchase-features > div {
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
 @media (max-width: 600px) {
     .info-content {
         grid-template-columns: 1fr;
