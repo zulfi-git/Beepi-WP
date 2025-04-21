@@ -2,6 +2,14 @@ jQuery(document).ready(function($) {
     // Initialize tabs
     function initializeTabs() {
         $('.tabs li:first-child a').addClass('active');
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('no-NO');
+}
+
+
         $('.tab-panel:first-child').show().siblings('.tab-panel').hide();
     }
 
@@ -411,12 +419,12 @@ jQuery(document).ready(function($) {
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
-            'Første reg.': vehicleData.forstegangsregistrering?.registrertForstegangDato,
-            'Reg i Norge': vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato,
-            'Reg på eier': vehicleData.forstegangsregistrering?.registrertEierDato,
+            'Første reg.': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangDato),
+            'Reg i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
+            'Reg på eier': formatDate(vehicleData.forstegangsregistrering?.registrertEierDato),
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
-            'Siste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.sistGodkjent,
-            'Neste EU-kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist
+            'Siste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.sistGodkjent),
+            'Neste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.kontrollfrist)
         };
 
         $('.registration-info-table').html(
