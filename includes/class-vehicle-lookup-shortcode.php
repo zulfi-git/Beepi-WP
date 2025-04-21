@@ -38,7 +38,7 @@ class Vehicle_Lookup_Shortcode {
                             <div class="purchase-features">
                                 <div>✨ Direkte tilgang</div>
                                 <div>🎯 Enkelt</div>
-                                <div>⚡ Sanntidsoppdateringer</div>
+                                <div>⚡ Live data</div>
                             </div>
                             <?php 
                             $product = wc_get_product(62);
