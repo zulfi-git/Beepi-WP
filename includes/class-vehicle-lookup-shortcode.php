@@ -5,6 +5,13 @@ class Vehicle_Lookup_Shortcode {
     }
 
     public function render_shortcode($atts) {
+        // Extract and sanitize product_id from shortcode attributes
+        $atts = shortcode_atts(array(
+            'product_id' => '62' // Default product ID
+        ), $atts);
+        
+        $product_id = absint($atts['product_id']);
+        
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
@@ -41,12 +48,12 @@ class Vehicle_Lookup_Shortcode {
                                 <div>⚡ Live data</div>
                             </div>
                             <?php 
-                            $product = wc_get_product(62);
+                            $product = wc_get_product($product_id);
                             $regular_price = $product ? $product->get_regular_price() : '39';
                             $sale_price = $product ? $product->get_sale_price() : null;
                             $final_price = $sale_price ? $sale_price : $regular_price;
                             ?>
-                            <button class="purchase-button" data-product="62">
+                            <button class="purchase-button" data-product="<?php echo esc_attr($product_id); ?>">
                                 Kjøp med vipps! 
                                 <div class="price-wrapper">
                                     <?php if ($sale_price): ?>
