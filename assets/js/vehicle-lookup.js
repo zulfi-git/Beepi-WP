@@ -427,13 +427,20 @@ jQuery(document).ready(function($) {
     function extractBasicInfo(vehicleData) {
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
         return {
-            'Reg.nr': vehicleData.kjoretoyId?.kjennemerke,
-            'Chassis nr': vehicleData.kjoretoyId?.understellsnummer,
-            'Merke': tekniskeData?.generelt?.merke?.[0]?.merke,
-            'Modell': tekniskeData?.generelt?.handelsbetegnelse?.[0],
+            'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke,
+            'Understellsnummer': vehicleData.kjoretoyId?.understellsnummer,
+            'Merke': tekniskeData?.merke?.[0]?.merke,
+            'Modell': tekniskeData?.handelsbetegnelse?.[0],
             'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse,
             'Type': tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse,
-            'Seter': tekniskeData?.persontall?.sitteplasserTotalt
+            'Antall seter': tekniskeData?.persontall?.sitteplasserTotalt,
+            'Ombygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OMBYGGET')?.merknadTekst || '---',
+            'Oppbygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OPPBYGGET')?.merknadTekst || '---',
+            'Bruktimportert': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BRUKTIMPORTERT')?.merknadTekst || '---',
+            'Bevaringsverdig': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BEVARINGSVERDIG')?.merknadTekst || '---',
+            'Fabrikant': tekniskeData?.generelt?.fabrikant?.[0]?.fabrikant || '---',
+            'Kjøring art': tekniskeData?.generelt?.kjoeringArt?.kodeBeskrivelse || '---',
+            'Kjøretøymerknad': tekniskeData?.generelt?.merknad || '---'
         };
     }
 
