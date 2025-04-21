@@ -20,20 +20,22 @@ class Vehicle_Lookup {
         add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
     }
 
-    public function save_registration_to_order($order, $data) {
+    private function get_registration_number() {
         if (isset($_COOKIE['vehicle_reg_number'])) {
-            $reg_number = sanitize_text_field($_COOKIE['vehicle_reg_number']);
+            return sanitize_text_field($_COOKIE['vehicle_reg_number']);
+        }
+        return false;
+    }
+
+    public function save_registration_to_order($order, $data) {
+        if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
-            $order->update_meta_data('_reg_number', $reg_number);
         }
     }
 
     public function update_order_meta($order_id) {
-        if (isset($_COOKIE['vehicle_reg_number'])) {
-            $reg_number = sanitize_text_field($_COOKIE['vehicle_reg_number']);
-            update_post_meta($order_id, 'reg_number', $reg_number);
-            update_post_meta($order_id, '_reg_number', $reg_number);
-        }
+        // This method is now redundant since we save during order creation
+        return;
     }
 
     /**
