@@ -104,7 +104,7 @@ jQuery(document).ready(function($) {
                     if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
                         const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
                         const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
-                        
+
                         $('.vehicle-logo')
                             .attr('src', logoUrl)
                             .attr('alt', `${manufacturer} logo`)
@@ -218,7 +218,12 @@ jQuery(document).ready(function($) {
 
                     // Initialize tabs
                     initializeTabs();
-                    resultsDiv.show();
+                    $('#vehicle-lookup-results').show();
+
+                    // Smooth scroll to results
+                    $('html, body').animate({
+                        scrollTop: $('.vehicle-lookup-container').offset().top - 20
+                    }, 500);
                 } else {
                     errorDiv.html('Failed to retrieve vehicle information').show();
                 }

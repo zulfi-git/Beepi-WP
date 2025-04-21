@@ -55,6 +55,10 @@ class Vehicle_Lookup_Shortcode {
                                     <span class="price"><?php echo esc_html($final_price); ?> kr</span>
                                 </div>
                             </button>
+                            <div class="trust-indicators">
+                                <div>🔐 Data hentes fra Statens vegvesen</div>
+                                <div>⏱️ Svar på noen få sekunder</div>
+                            </div>
                         </div>
                     </div>
                 </div>

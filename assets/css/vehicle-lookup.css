@@ -502,3 +502,14 @@ details summary {
     margin-bottom: 12px;
     color: #000; /* Changed text color to black */
 }
+
+.trust-indicators {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+.trust-indicators div {
+    margin: 6px 0;
+}
