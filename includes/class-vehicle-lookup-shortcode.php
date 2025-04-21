@@ -37,7 +37,7 @@ class Vehicle_Lookup_Shortcode {
                             <p>Hvem eier bilen?</p>
                             <div class="purchase-features">
                                 <div>✨ Direkte tilgang</div>
-                                <div>🔒 100% Privat & Sikkert</div>
+                                <div>🎯 Enkelt</div>
                                 <div>⚡ Sanntidsoppdateringer</div>
                             </div>
                             <?php 
