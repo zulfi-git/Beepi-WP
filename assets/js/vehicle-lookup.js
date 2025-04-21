@@ -330,18 +330,6 @@ jQuery(document).ready(function($) {
         if (!vehicleData) return;
 
         const basicInfo = extractBasicInfo(vehicleData);
-
-        // Add import information if available
-        const importInfo = vehicleData.godkjenning?.forstegangsGodkjenning?.bruktimport;
-        if (importInfo) {
-            Object.assign(basicInfo, {
-                'Importland': importInfo.importland?.landNavn,
-                'Kilometerstand ved import': importInfo.kilometerstand ? importInfo.kilometerstand + ' km' : '',
-                'Tidligere reg.nr': importInfo.tidligereUtenlandskKjennemerke,
-                'Tidligere vognkort': importInfo.tidligereUtenlandskVognkortNummer
-            });
-        }
-
         $('.general-info-table').html(
             Object.entries(basicInfo)
                 .filter(([_, value]) => value)
