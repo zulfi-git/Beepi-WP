@@ -53,12 +53,9 @@ class Vehicle_Lookup_Shortcode {
                             $sale_price = $product ? $product->get_sale_price() : null;
                             $final_price = $sale_price ? $sale_price : $regular_price;
                             ?>
-                            <button class="purchase-button" 
-                                data-product="<?php echo esc_attr($product_id); ?>"
-                                data-vipps-id="fd8b7cd7">
-                                Kjøp med vipps! 
-                                <div class="price-wrapper">
-                                    <?php if ($sale_price): ?>
+                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
+                            <div class="price-wrapper">
+                                <?php if ($sale_price): ?>
                                         <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
                                     <?php endif; ?>
                                     <span class="price"><?php echo esc_html($final_price); ?> kr</span>

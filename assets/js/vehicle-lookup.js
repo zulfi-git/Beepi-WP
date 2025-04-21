@@ -322,9 +322,8 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        // Redirect to Vipps product purchase URL
-        const vippsId = $(this).data('vipps-id');
-        window.location.href = `https://beepi.no/vipps-buy-product/?pr=${vippsId}&reg_number=${encodeURIComponent(regNumber)}&custom_reg=${encodeURIComponent(regNumber)}`;
+        // Registration number handling is now managed by WooCommerce Vipps plugin
+        console.log('Registration number:', regNumber);
     });
 
     function renderBasicInfo(vehicleData) {
