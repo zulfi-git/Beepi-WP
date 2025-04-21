@@ -21,7 +21,6 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     border: 2px solid #2563eb;
     font-family: 'Inter', sans-serif;
-    border-radius: 6px; /* Added border-radius for smoother look */
 }
 
 .plate-flag {
@@ -67,7 +66,6 @@
     justify-content: center;
     transition: background-color 0.2s ease;
     height: 100%;
-    border-radius: 6px; /* Added border-radius for smoother look */
 }
 
 .plate-search-button:hover {
@@ -82,8 +80,8 @@
 }
 
 .vehicle-header {
-    margin-top: 0; 
-    padding: 10px; 
+    margin-top: 0; /* Removed margin */
+    padding: 10px; /* Added padding */
     border-bottom: 1px solid #eee;
 }
 
@@ -251,23 +249,11 @@
     color: #333;
     font-weight: 500;
     text-decoration: none;
-    transition: background-color 0.3s ease; /* Added transition */
 }
 
 .tabs a.active {
     background-color: #2563eb;
     color: white;
-}
-
-.tab-panel {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.tab-panel.active {
-    display: block;
-    opacity: 1;
 }
 
 /* Accordion styles */
@@ -397,16 +383,12 @@
     border-radius: 6px;
     font-size: 0.9rem;
     text-align: center;
-    transform: translateY(0);
-    transition: transform 0.3s ease, background-color 0.3s ease; /* Added transition */
-    margin: 1rem 0; /* Added margin for better spacing */
 }
 
 /* Success state */
 .vehicle-status.registrert {
     background-color: #198754;
     color: white;
-    animation: slideIn 0.5s ease; /* Added animation */
 }
 
 /* Warning state */
@@ -438,7 +420,7 @@
     justify-content: space-around;
     margin: 16px 0;
     font-size: 0.9rem;
-    color: #000; 
+    color: #000; /* Changed text color to black */
 }
 
 .purchase-button {
@@ -481,21 +463,10 @@
     border-radius: 8px;
     background-color: #f8fafc;
     margin-top: 16px;
-    border: 1px solid #e2e8f0; 
+    border: 1px solid #e2e8f0; /* Added border */
 }
 
 #owner-info-purchase p {
     margin-bottom: 12px;
-    color: #000; 
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-10px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    color: #000; /* Changed text color to black */
 }
