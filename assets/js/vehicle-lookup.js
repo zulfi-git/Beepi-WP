@@ -424,6 +424,7 @@ jQuery(document).ready(function($) {
             'Reg i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
             'Reg på eier': formatDate(vehicleData.forstegangsregistrering?.registrertEierDato),
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
+            'EU-kontroller': '',  // Spacer for visual grouping
             'Siste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.sistGodkjent),
             'Neste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.kontrollfrist)
         };
