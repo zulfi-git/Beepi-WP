@@ -1,315 +1,18 @@
-.vehicle-lookup-container {
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    background-color: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-    max-width: 600px;
-    margin: auto;
+body.loading {
+    cursor: wait;
+    pointer-events: none;
+    opacity: 0.7;
 }
 
-.plate-form {
-    display: flex;
-    justify-content: center;
-    margin: 1rem auto;
-}
-
-.plate-input-wrapper {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 2px solid #2563eb;
-    font-family: 'Inter', sans-serif;
-}
-
-.plate-flag {
-    background-color: #00205b;
-    color: white;
-    font-size: 1.5rem;
-    padding: 0.5rem 0.75rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
-.plate-country {
-    font-size: 0.75rem;
-    margin-top: -4px;
-}
-
-.plate-input {
-    border: none;
-    font-size: 1.75rem;
-    padding: 0.4rem 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15rem;
-    width: 150px;
-    text-align: center;
-    outline: none;
-    font-weight: 600;
-    color: #2e2e2e;
-    font-family: 'Inter', sans-serif;
-}
-
-.plate-search-button {
-    background-color: #00205b;
-    border: none;
-    color: white;
-    padding: 0.75rem 1rem;
-    font-size: 1.25rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease;
-    height: 100%;
-}
-
-.plate-search-button:hover {
-    background-color: #001842;
-}
-
-.vehicle-results {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: 20px;
-}
-
-.vehicle-header {
-    margin-top: 0; /* Removed margin */
-    padding: 10px; /* Added padding */
-    border-bottom: 1px solid #eee;
-}
-
-.vehicle-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: contain;
-    margin: 0 auto 5px;
-    display: block;
-    background-color: #f8f9fa;
-    padding: 8px;
-}
-
-.vehicle-info {
-    text-align: center;
-}
-
-.vehicle-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #333;
-    text-align: center;
-}
-
-.vehicle-subtitle {
-    margin: 5px 0 0;
-    font-size: 0.9rem;
-    color: #666;
-    text-align: center;
-}
-
-.vehicle-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    justify-content: center;
-}
-
-.tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.35rem 0.75rem;
-    border-radius: 999px;
-    background-color: #f1f5f9;
-    color: #374151;
-}
-
-/* Fuel type color styles */
-.tag.fuel.diesel {
-    background-color: #fef3c7;
-    color: #92400e;
-}
-
-.tag.fuel.bensin {
-    background-color: #e0f2fe;
-    color: #0369a1;
-}
-
-.tag.fuel.electric {
-    background-color: #ecfdf5;
-    color: #047857;
-}
-
-.tag.fuel.hybrid {
-    background-color: #f0fdf4;
-    color: #15803d;
-}
-
-.tag.fuel.plugin-hybrid {
-    background-color: #ede9fe;
-    color: #6b21a8;
-}
-
-.tag.fuel.hydrogen {
-    background-color: #e0f7fa;
-    color: #006064;
-}
-
-.tag.fuel.gas {
-    background-color: #fef2f2;
-    color: #991b1b;
-}
-
-/* Gearbox types */
-.tag.gearbox.manual {
-    background-color: #e2e8f0;
-    color: #334155;
-}
-
-.tag.gearbox.automatic {
-    background-color: #e0f2fe;
-    color: #1d4ed8;
-}
-
-.info-sections {
-    padding: 20px;
-}
-
-.info-section {
-    margin-bottom: 30px;
-}
-
-.info-section h3 {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 15px;
-}
-
-.info-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.info-item {
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.info-item strong {
-    color: #495057;
-    font-size: 0.9em;
-}
-
-.info-item span {
-    color: #212529;
-    font-size: 1.1em;
-}
-
-/* Tabs styles */
-.tabs {
-    margin-top: 20px;
-}
-
-.tabs ul {
-    display: flex;
-    justify-content: space-around;
-    background-color: #f1f5f9;
-    border-radius: 12px;
-    padding: 0.25rem;
-    margin-top: 1rem;
-    list-style: none;
-    margin: 0;
-}
-
-.tabs li {
-    flex: 1;
-    text-align: center;
-}
-
-.tabs a {
-    display: block;
-    padding: 0.5rem;
-    border-radius: 10px;
-    color: #333;
-    font-weight: 500;
-    text-decoration: none;
-}
-
-.tabs a.active {
-    background-color: #2563eb;
-    color: white;
-}
-
-/* Accordion styles */
-.accordion {
-    margin-top: 2.5rem;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 1.5rem;
-}
-
-.accordion details {
-    margin-top: 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.accordion summary {
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    background-color: #f8fafc;
-    cursor: pointer;
-    list-style: none;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-}
-
-.accordion summary span:first-child {
-    flex: 1;
-}
-
-.accordion summary::-webkit-details-marker {
-    display: none;
-}
-
-.details-content {
-    padding: 1rem;
-}
-
-.info-table {
+body.loading:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-}
-
-.info-table th {
-    text-align: left;
-    color: #666;
-    padding: 6px 0;
-    width: 40%;
-}
-
-.info-table td {
-    padding: 6px 0;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    z-index: 1000;
 }
 
 .loading-spinner {
@@ -644,4 +347,355 @@ details summary {
     font-size: 0.75em;
     margin-top: 2px;
     font-weight: 500;
+}
+
+.vehicle-lookup-container {
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    max-width: 600px;
+    margin: auto;
+}
+
+.plate-form {
+    display: flex;
+    justify-content: center;
+    margin: 1rem auto;
+}
+
+.plate-input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 2px solid #2563eb;
+    font-family: 'Inter', sans-serif;
+}
+
+.plate-flag {
+    background-color: #00205b;
+    color: white;
+    font-size: 1.5rem;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.plate-country {
+    font-size: 0.75rem;
+    margin-top: -4px;
+}
+
+.plate-input {
+    border: none;
+    font-size: 1.75rem;
+    padding: 0.4rem 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    width: 150px;
+    text-align: center;
+    outline: none;
+    font-weight: 600;
+    color: #2e2e2e;
+    font-family: 'Inter', sans-serif;
+}
+
+.plate-search-button {
+    background-color: #00205b;
+    border: none;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    height: 100%;
+}
+
+.plate-search-button:hover {
+    background-color: #001842;
+}
+
+.vehicle-results {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.vehicle-header {
+    margin-top: 0; /* Removed margin */
+    padding: 10px; /* Added padding */
+    border-bottom: 1px solid #eee;
+}
+
+.vehicle-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: contain;
+    margin: 0 auto 5px;
+    display: block;
+    background-color: #f8f9fa;
+    padding: 8px;
+}
+
+.vehicle-info {
+    text-align: center;
+}
+
+.vehicle-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+}
+
+.vehicle-subtitle {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+.vehicle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background-color: #f1f5f9;
+    color: #374151;
+}
+
+/* Fuel type color styles */
+.tag.fuel.diesel {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.tag.fuel.bensin {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.tag.fuel.electric {
+    background-color: #ecfdf5;
+    color: #047857;
+}
+
+.tag.fuel.hybrid {
+    background-color: #f0fdf4;
+    color: #15803d;
+}
+
+.tag.fuel.plugin-hybrid {
+    background-color: #ede9fe;
+    color: #6b21a8;
+}
+
+.tag.fuel.hydrogen {
+    background-color: #e0f7fa;
+    color: #006064;
+}
+
+.tag.fuel.gas {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+/* Gearbox types */
+.tag.gearbox.manual {
+    background-color: #e2e8f0;
+    color: #334155;
+}
+
+.tag.gearbox.automatic {
+    background-color: #e0f2fe;
+    color: #1d4ed8;
+}
+
+.info-sections {
+    padding: 20px;
+}
+
+.info-section {
+    margin-bottom: 30px;
+}
+
+.info-section h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.info-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.info-item {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-item strong {
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.info-item span {
+    color: #212529;
+    font-size: 1.1em;
+}
+
+/* Tabs styles */
+.tabs {
+    margin-top: 20px;
+}
+
+.tabs ul {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f1f5f9;
+    border-radius: 12px;
+    padding: 0.25rem;
+    margin-top: 1rem;
+    list-style: none;
+    margin: 0;
+}
+
+.tabs li {
+    flex: 1;
+    text-align: center;
+}
+
+.tabs a {
+    display: block;
+    padding: 0.5rem;
+    border-radius: 10px;
+    color: #333;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.tabs a.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* Accordion styles */
+.accordion {
+    margin-top: 2.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+}
+
+.accordion details {
+    margin-top: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.accordion summary {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    background-color: #f8fafc;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.accordion summary span:first-child {
+    flex: 1;
+}
+
+.accordion summary::-webkit-details-marker {
+    display: none;
+}
+
+.details-content {
+    padding: 1rem;
+}
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.info-table th {
+    text-align: left;
+    color: #666;
+    padding: 6px 0;
+    width: 40%;
+}
+
+.info-table td {
+    padding: 6px 0;
+}
+
+.plate-country {
+    font-size: 0.75rem;
+    margin-top: -4px;
+}
+
+.plate-input {
+    border: none;
+    font-size: 1.75rem;
+    padding: 0.4rem 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    width: 150px;
+    text-align: center;
+    outline: none;
+    font-weight: 600;
+    color: #2e2e2e;
+    font-family: 'Inter', sans-serif;
+}
+
+.plate-search-button {
+    background-color: #00205b;
+    border: none;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    height: 100%;
+}
+
+.plate-search-button:hover {
+    background-color: #001842;
 }
