@@ -42,11 +42,6 @@ class Vehicle_Lookup_Shortcode {
                     <div id="owner-info-container">
                         <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
-                            <div class="purchase-features">
-                                <div>✨ Direkte tilgang</div>
-                                <div>🎯 Enkelt</div>
-                                <div>⚡ Live data</div>
-                            </div>
                             <?php 
                             $product = wc_get_product($product_id);
                             $regular_price = $product ? $product->get_regular_price() : '39';
