@@ -42,7 +42,11 @@ class Vehicle_Lookup {
     public function add_mobile_to_vipps($args, $order) {
         $mobile = $order->get_meta('_billing_phone');
         if ($mobile) {
-            $args['customerInfo']['phoneNumber'] = preg_replace('/[^0-9]/', '', $mobile);
+            $mobile = preg_replace('/[^0-9]/', '', $mobile);
+            $args['customerInfo']['phoneNumber'] = $mobile;
+            if (isset($args['url'])) {
+                $args['url'] = add_query_arg('phone', $mobile, $args['url']);
+            }
         }
         return $args;
     }
