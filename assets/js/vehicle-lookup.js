@@ -1,32 +1,4 @@
 jQuery(document).ready(function($) {
-    // Mobile OS detection
-    function getMobileOS() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        
-        if (/windows phone/i.test(userAgent)) return "Windows Phone";
-        if (/android/i.test(userAgent)) return "Android";
-        if ((/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) || 
-            ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod']
-            .includes(navigator.platform)) return "iOS";
-            
-        return "unknown";
-    }
-
-    // Adjust placeholder based on screen size
-    function adjustPlaceholder() {
-        const maxWidth = 760;
-        const input = $('#regNumber');
-        if (window.innerWidth > maxWidth) {
-            input.attr('placeholder', 'Registreringsnummer eller personlig bilskilt');
-        } else {
-            input.attr('placeholder', 'Regnr');
-        }
-    }
-
-    // Initialize and bind resize event
-    adjustPlaceholder();
-    $(window).on('resize', adjustPlaceholder);
-
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -38,23 +10,12 @@ jQuery(document).ready(function($) {
 
     // Handle tab clicks - Removed as tabs are no longer used
 
-    // Loading indicator functions
-    function showLoading() {
-        $('body').addClass('loading');
-    }
-    
-    function hideLoading() {
-        $('body').removeClass('loading');
-    }
-
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
 
         const regNumber = $('#regNumber').val().trim().toUpperCase();
         const resultsDiv = $('#vehicle-lookup-results');
         const errorDiv = $('#vehicle-lookup-error');
-        
-        showLoading();
 
         // Reset all states
         resultsDiv.hide();
