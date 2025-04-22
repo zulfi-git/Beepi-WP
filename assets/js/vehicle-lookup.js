@@ -8,25 +8,7 @@ jQuery(document).ready(function($) {
         return `${day}.${month}.${year}`;
     }
 
-    // Initialize tabs
-    function initializeTabs() {
-        $('.tabs li:first-child a').addClass('active');
-        $('.tab-panel:first-child').show().siblings('.tab-panel').hide();
-    }
-
-    // Handle tab clicks
-    $(document).on('click', '.tabs a', function(e) {
-        e.preventDefault();
-        const tabId = $(this).parent().data('tab');
-
-        // Update active tab
-        $('.tabs a').removeClass('active');
-        $(this).addClass('active');
-
-        // Show selected tab panel
-        $('.tab-panel').hide();
-        $('#' + tabId).show();
-    });
+    // Handle tab clicks - Removed as tabs are no longer used
 
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
@@ -235,8 +217,7 @@ jQuery(document).ready(function($) {
                     // Keep all details elements open by default
                     $('details').attr('open', true);
 
-                    // Initialize tabs
-                    initializeTabs();
+                    // Initialize tabs - Removed as tabs are no longer used
                     $('#vehicle-lookup-results').show();
 
                     // Smooth scroll to results
@@ -434,7 +415,7 @@ jQuery(document).ready(function($) {
             const diffDays = Math.floor((now - eventDate) / (1000 * 60 * 60 * 24));
             const diffMonths = Math.floor(diffDays / 30);
             const diffYears = Math.floor(diffDays / 365);
-            
+
             if (diffDays < 0) {
                 // Future date
                 const remainingDays = Math.abs(diffDays);
@@ -456,7 +437,7 @@ jQuery(document).ready(function($) {
         }
 
         const timelineEvents = [];
-        
+
         // First registration
         const firstRegDate = vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato;
         if (firstRegDate) {
@@ -538,7 +519,7 @@ jQuery(document).ready(function($) {
         const timelineHtml = renderTimeline(vehicleData);
         $('.timeline').remove(); // Remove any existing timeline
         $('.owner-section').append(timelineHtml);
-        
+
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
             'Reg. første gang': formatDate(vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato),
@@ -554,9 +535,8 @@ jQuery(document).ready(function($) {
             .filter(([_, value]) => value)
             .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
             .join('');
-            
+
         $('.registration-info-table').html(tableHtml);
-        $('.registration-info-table').after(timelineHtml);
     }
 
     function extractBasicInfo(vehicleData) {
@@ -604,4 +584,6 @@ jQuery(document).ready(function($) {
             <span>${value || '-'}</span>
         </div>`;
     }
+    // Add CSS for timeline margin
+    $('.timeline').css('margin', '20px 0 50px 0');
 });
