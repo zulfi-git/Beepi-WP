@@ -537,3 +537,60 @@ details summary {
 .trust-indicators div {
     margin: 6px 0;
 }
+.timeline {
+    margin: 20px 0;
+    padding: 20px 0;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e5e7eb;
+}
+
+.timeline-events {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+}
+
+.timeline-event {
+    position: relative;
+    text-align: center;
+    min-width: 120px;
+    background: white;
+    padding: 8px;
+}
+
+.timeline-event::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #2563eb;
+    border-radius: 50%;
+    bottom: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.timeline-event.future::before {
+    background: #9ca3af;
+}
+
+.timeline-event-date {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.9em;
+}
+
+.timeline-event-label {
+    color: #6b7280;
+    font-size: 0.8em;
+    margin-top: 4px;
+}

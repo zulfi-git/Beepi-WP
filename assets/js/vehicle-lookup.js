@@ -427,24 +427,101 @@ jQuery(document).ready(function($) {
         );
     }
 
+    function renderTimeline(vehicleData) {
+        const timelineEvents = [];
+        
+        // First registration
+        const firstRegDate = vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato;
+        if (firstRegDate) {
+            timelineEvents.push({
+                date: firstRegDate,
+                label: 'Første registrering',
+                isFuture: false
+            });
+        }
+
+        // Import to Norway
+        const importDate = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato;
+        if (importDate && importDate !== firstRegDate) {
+            timelineEvents.push({
+                date: importDate,
+                label: 'Registrert i Norge',
+                isFuture: false
+            });
+        }
+
+        // Current owner
+        const ownerDate = vehicleData.registrering?.registrertForstegangPaEierskap;
+        if (ownerDate) {
+            timelineEvents.push({
+                date: ownerDate,
+                label: 'Nåværende eier',
+                isFuture: false
+            });
+        }
+
+        // Last EU control
+        const lastEUDate = vehicleData.periodiskKjoretoyKontroll?.sistGodkjent;
+        if (lastEUDate) {
+            timelineEvents.push({
+                date: lastEUDate,
+                label: 'Siste EU-kontroll',
+                isFuture: false
+            });
+        }
+
+        // Next EU control
+        const nextEUDate = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
+        if (nextEUDate) {
+            timelineEvents.push({
+                date: nextEUDate,
+                label: 'Neste EU-kontroll',
+                isFuture: true
+            });
+        }
+
+        // Sort events by date
+        timelineEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        // Create timeline HTML
+        const timelineHtml = `
+            <div class="timeline">
+                <div class="timeline-events">
+                    ${timelineEvents.map(event => `
+                        <div class="timeline-event ${event.isFuture ? 'future' : ''}">
+                            <div class="timeline-event-date">${formatDate(event.date)}</div>
+                            <div class="timeline-event-label">${event.label}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        return timelineHtml;
+    }
+
     function renderRegistrationInfo(vehicleData) {
+        // Add timeline to the registration info section
+        const timelineHtml = renderTimeline(vehicleData);
+        
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
-            'Reg første gang': formatDate(vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato),
-            'Reg i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
-            'Reg på eier': formatDate(vehicleData.registrering?.registrertForstegangPaEierskap),
+            'Reg. første gang': formatDate(vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato),
+            'Reg. i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
+            'Reg. på eier': formatDate(vehicleData.registrering?.registrertForstegangPaEierskap),
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
             'EU-kontroller': '',  // Spacer for visual grouping
             'Siste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.sistGodkjent),
             'Neste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.kontrollfrist)
         };
 
-        $('.registration-info-table').html(
-            Object.entries(regInfo)
-                .filter(([_, value]) => value)
-                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
-                .join('')
-        );
+        const tableHtml = Object.entries(regInfo)
+            .filter(([_, value]) => value)
+            .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+            .join('');
+            
+        $('.registration-info-table').html(tableHtml);
+        $('.registration-info-table').after(timelineHtml);
     }
 
     function extractBasicInfo(vehicleData) {
