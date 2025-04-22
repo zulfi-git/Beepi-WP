@@ -331,11 +331,18 @@
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 12px;
-    white-space: nowrap;
-    z-index: 10;
+    white-space: normal;
+    z-index: 1000;
     margin-bottom: 5px;
     width: max-content;
     max-width: 200px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.tooltip-icon {
+    position: relative;
+    display: inline-block;
 }
 
 .tooltip-icon:hover .tooltip-text {
