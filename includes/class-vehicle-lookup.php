@@ -31,6 +31,11 @@ class Vehicle_Lookup {
         if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
         }
+        
+        if (isset($_COOKIE['customer_mobile'])) {
+            $mobile = sanitize_text_field($_COOKIE['customer_mobile']);
+            $order->update_meta_data('customer_mobile', $mobile);
+        }
     }
 
     public function update_order_meta($order_id) {

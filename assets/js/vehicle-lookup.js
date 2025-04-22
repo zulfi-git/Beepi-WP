@@ -322,8 +322,20 @@ jQuery(document).ready(function($) {
             return;
         }
 
+        // Handle mobile number
+        const mobileNumber = $('#customer_mobile').val().trim();
+        if (mobileNumber) {
+            document.cookie = `customer_mobile=${mobileNumber}; path=/`;
+            // Add mobile number to Vipps payment request
+            const vippsButton = $('.vipps-buy-now');
+            const currentHref = vippsButton.attr('href');
+            const updatedHref = currentHref + (currentHref.includes('?') ? '&' : '?') + `mob=${mobileNumber}`;
+            vippsButton.attr('href', updatedHref);
+        }
+        
         // Registration number handling is now managed by WooCommerce Vipps plugin
         console.log('Registration number:', regNumber);
+        console.log('Mobile number:', mobileNumber);
     });
 
     function renderBasicInfo(vehicleData) {
