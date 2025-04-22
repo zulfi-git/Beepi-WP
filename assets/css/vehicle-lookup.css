@@ -572,16 +572,26 @@ details summary {
 }
 
 @media (max-width: 600px) {
+    .timeline {
+        padding: 15px 0;
+        font-size: 0.9em;
+    }
+
     .timeline-event {
-        min-width: calc(50% - 40px);
+        min-width: 90px;
+        padding: 6px;
     }
-    
-    .timeline::before {
-        display: none;
+
+    .timeline-event-date {
+        font-size: 0.85em;
     }
-    
-    .timeline-event::before {
-        display: none;
+
+    .timeline-event-label {
+        font-size: 0.75em;
+    }
+
+    .timeline-event-context {
+        font-size: 0.7em;
     }
 }
 
