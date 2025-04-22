@@ -4,9 +4,13 @@ class Vehicle_Lookup {
      * Initialize the plugin
      */
     public function init() {
-        // Register scripts and styles
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_filter('woo_vipps_payment_args', array($this, 'add_mobile_to_vipps'), 10, 2);
+        try {
+            // Register scripts and styles
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+            add_filter('woo_vipps_payment_args', array($this, 'add_mobile_to_vipps'), 10, 2);
+            
+            // Add error handler
+            set_error_handler(array($this, 'error_handler'));
         
         // Initialize shortcode
         $shortcode = new Vehicle_Lookup_Shortcode();
