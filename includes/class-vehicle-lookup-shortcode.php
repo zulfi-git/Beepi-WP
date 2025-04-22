@@ -62,15 +62,6 @@ class Vehicle_Lookup_Shortcode {
                             </div>
                             <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
                             </button>
-                            <div class="mobile-input-wrapper">
-                                <input type="tel" 
-                                       id="customer_mobile" 
-                                       name="customer_mobile" 
-                                       placeholder="Mobilnummer (valgfritt)"
-                                       pattern="[0-9]{8}"
-                                       minlength="8"
-                                       maxlength="8">
-                            </div>
                             <div class="trust-indicators">
                                 <div>🔐 Data hentes fra Statens vegvesen</div>
                                 <div>⏱️ Svar på noen få sekunder</div>

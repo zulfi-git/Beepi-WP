@@ -645,24 +645,3 @@ details summary {
     margin-top: 2px;
     font-weight: 500;
 }
-.mobile-input-wrapper {
-    margin: 10px 0;
-}
-
-.mobile-input-wrapper input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-.mobile-input-wrapper input:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-.mobile-input-wrapper input:invalid {
-    border-color: #dc3545;
-}

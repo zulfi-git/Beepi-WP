@@ -4,13 +4,8 @@ class Vehicle_Lookup {
      * Initialize the plugin
      */
     public function init() {
-        try {
-            // Register scripts and styles
-            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-            add_filter('woo_vipps_payment_args', array($this, 'add_mobile_to_vipps'), 10, 2);
-            
-            // Add error handler
-            set_error_handler(array($this, 'error_handler'));
+        // Register scripts and styles
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         
         // Initialize shortcode
         $shortcode = new Vehicle_Lookup_Shortcode();
@@ -35,11 +30,6 @@ class Vehicle_Lookup {
     public function save_registration_to_order($order, $data) {
         if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
-        }
-        
-        if (isset($_COOKIE['customer_mobile'])) {
-            $mobile = sanitize_text_field($_COOKIE['customer_mobile']);
-            $order->update_meta_data('customer_mobile', $mobile);
         }
     }
 
@@ -96,15 +86,6 @@ class Vehicle_Lookup {
             '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
             '/^\d{5}$/',                      // Temporary tourist plates
             '/^[A-Za-z]\d{3}$/',              // Antique vehicles
-
-    public function add_mobile_to_vipps($args, $order) {
-        if (isset($_COOKIE['customer_mobile'])) {
-            $mobile = sanitize_text_field($_COOKIE['customer_mobile']);
-            $args['mob'] = $mobile;
-        }
-        return $args;
-    }
-
             '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
         );
         
