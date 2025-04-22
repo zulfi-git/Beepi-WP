@@ -534,8 +534,10 @@ jQuery(document).ready(function($) {
     }
 
     function renderRegistrationInfo(vehicleData) {
-        // Add timeline to the registration info section
+        // Add timeline to the owner section
         const timelineHtml = renderTimeline(vehicleData);
+        $('.timeline').remove(); // Remove any existing timeline
+        $('.owner-section').append(timelineHtml);
         
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
