@@ -49,6 +49,16 @@ class Vehicle_Lookup {
             $args['customerInfo']['phoneNumber'] = $mobile;
             $args['mob'] = $mobile; // Add mobile to JWT payload
         }
+
+        // Add required scopes
+        $args['scopes'] = ['Name', 'Email', 'PhoneNumber'];
+        
+        // Add fallback URL
+        $args['fallback'] = home_url('/vipps-betaling/') . '?id=' . $order->get_id();
+        
+        // Set landing page URL
+        $args['url'] = 'https://api.vipps.no/vipps-epayment-legacy-mobile-api/landing-page';
+        
         return $args;
     }
 
