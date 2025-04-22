@@ -362,8 +362,8 @@ jQuery(document).ready(function($) {
                 .filter(([_, value]) => value)
                 .map(([label, value]) => {
                     const tooltip = tooltips[label];
-                    const tooltipAttr = tooltip ? ` title="${tooltip}" data-tooltip="${tooltip}"` : '';
-                    return `<tr><th${tooltipAttr}>${label}</th><td${tooltipAttr}>${value}</td></tr>`;
+                    const tooltipIcon = tooltip ? ` <span class="tooltip-icon">ℹ️<span class="tooltip-text">${tooltip}</span></span>` : '';
+                    return `<tr><th>${label}${tooltipIcon}</th><td>${value}</td></tr>`;
                 })
                 .join('')
         );
