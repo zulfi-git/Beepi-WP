@@ -362,11 +362,49 @@ jQuery(document).ready(function($) {
                 .filter(([_, value]) => value)
                 .map(([label, value]) => {
                     const tooltip = tooltips[label];
-                    const tooltipIcon = tooltip ? ` <span class="tooltip-icon">ℹ️<span class="tooltip-text">${tooltip}</span></span>` : '';
+                    const tooltipIcon = tooltip ? ` <span class="tooltip-icon">❓<span class="tooltip-text">${tooltip}</span></span>` : '';
                     return `<tr><th>${label}${tooltipIcon}</th><td>${value}</td></tr>`;
                 })
                 .join('')
         );
+
+        // Add click handler for tooltips
+        $('.tooltip-icon').on('click', function(e) {
+            e.stopPropagation();
+            const tooltip = $(this).find('.tooltip-text');
+            
+            // Hide all other tooltips
+            $('.tooltip-text').not(tooltip).removeClass('active');
+            
+            // Position and show this tooltip
+            const icon = $(this);
+            const iconPos = icon.offset();
+            const tooltipWidth = tooltip.outerWidth();
+            const windowWidth = $(window).width();
+            
+            tooltip.toggleClass('active');
+            
+            if (tooltip.hasClass('active')) {
+                let left = iconPos.left;
+                
+                // Ensure tooltip doesn't go off-screen
+                if (left + tooltipWidth > windowWidth) {
+                    left = windowWidth - tooltipWidth - 10;
+                }
+                
+                tooltip.css({
+                    top: iconPos.top - tooltip.outerHeight() - 10,
+                    left: left
+                });
+            }
+        });
+
+        // Close tooltips when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.tooltip-icon').length) {
+                $('.tooltip-text').removeClass('active');
+            }
+        });
     }
 
     function renderTechnicalInfo(vehicleData) {

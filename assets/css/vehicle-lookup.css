@@ -314,39 +314,33 @@
 
 /* Tooltip styles */
 .tooltip-icon {
-    cursor: help;
+    cursor: pointer;
     position: relative;
+    display: inline-block;
     font-size: 14px;
     margin-left: 4px;
+    color: #666;
 }
 
 .tooltip-text {
-    visibility: hidden;
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
     color: white;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 12px;
     white-space: normal;
     z-index: 1000;
-    margin-bottom: 5px;
     width: max-content;
-    max-width: 200px;
-    text-align: center;
+    max-width: 250px;
+    text-align: left;
     line-height: 1.4;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.tooltip-icon {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip-icon:hover .tooltip-text {
-    visibility: visible;
+.tooltip-text.active {
+    display: block;
 }
 
 .loading-spinner {
