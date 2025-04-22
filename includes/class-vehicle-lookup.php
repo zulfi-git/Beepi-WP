@@ -31,6 +31,20 @@ class Vehicle_Lookup {
         if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
         }
+        
+        // Save mobile number if present
+        if (isset($_COOKIE['vehicle_lookup_mobile'])) {
+            $mobile = sanitize_text_field($_COOKIE['vehicle_lookup_mobile']);
+            $order->update_meta_data('_billing_phone', $mobile);
+        }
+    }
+
+    public function add_mobile_to_vipps($args, $order) {
+        $mobile = $order->get_meta('_billing_phone');
+        if ($mobile) {
+            $args['customerInfo']['phoneNumber'] = preg_replace('/[^0-9]/', '', $mobile);
+        }
+        return $args;
     }
 
     public function update_order_meta($order_id) {

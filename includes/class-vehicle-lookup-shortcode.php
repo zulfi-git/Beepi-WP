@@ -60,6 +60,12 @@ class Vehicle_Lookup_Shortcode {
                                     </div>
                                 <?php endif; ?>
                             </div>
+                            <div class="mobile-input-wrapper">
+                                <input type="tel" id="mobileNumber" name="mobileNumber" 
+                                       placeholder="Mobilnummer" 
+                                       pattern="[0-9]{8}"
+                                       required>
+                            </div>
                             <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
                             </button>
                             <div class="trust-indicators">
