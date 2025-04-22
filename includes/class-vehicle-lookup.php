@@ -44,9 +44,7 @@ class Vehicle_Lookup {
         if ($mobile) {
             $mobile = preg_replace('/[^0-9]/', '', $mobile);
             $args['customerInfo']['phoneNumber'] = $mobile;
-            if (isset($args['url'])) {
-                $args['url'] = add_query_arg('phone', $mobile, $args['url']);
-            }
+            $args['mob'] = $mobile; // Add mobile to JWT payload
         }
         return $args;
     }
