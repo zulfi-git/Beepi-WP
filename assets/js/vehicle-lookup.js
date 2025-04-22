@@ -11,10 +11,13 @@ jQuery(document).ready(function($) {
     // Handle tab clicks - Removed as tabs are no longer used
 
     // Handle mobile number input
-    $('#mobileNumber').on('input', function() {
-        const mobile = $(this).val().replace(/[^0-9]/g, '');
+    $('.vipps-mobile-form').on('submit', function(e) {
+        e.preventDefault();
+        const mobile = $('#mobileNumber').val().replace(/[^0-9]/g, '');
         if (mobile.length === 8) {
             document.cookie = `vehicle_lookup_mobile=${mobile};path=/`;
+            // Trigger Vipps button click after setting cookie
+            $('.woo-vipps-checkout-button').click();
         }
     });
 

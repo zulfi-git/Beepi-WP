@@ -60,13 +60,18 @@ class Vehicle_Lookup_Shortcode {
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <div class="mobile-input-wrapper">
-                                <input type="tel" id="mobileNumber" name="mobileNumber" 
-                                       placeholder="Mobilnummer" 
-                                       pattern="[0-9]{8}"
-                                       required>
+                            <div id="smsBtnViewEieropplysning" class="smsBtnView2">
+                                <label for="mobileNumber">Angi ditt mobilnummer for å få tilsendt eieropplysninger:</label>
+                                <form method="POST" action="/vipps" class="vipps-mobile-form">
+                                    <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>">
+                                    <input type="tel" id="mobileNumber" name="mobileNumber" 
+                                           placeholder="Mobilnummer" 
+                                           pattern="[0-9]{8}"
+                                           required>
+                                    <button type="submit" class="btn-primary">Neste</button>
+                                </form>
                             </div>
-                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
+                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} style='display:none' /]"); ?>
                             </button>
                             <div class="trust-indicators">
                                 <div>🔐 Data hentes fra Statens vegvesen</div>
