@@ -312,6 +312,27 @@
     padding: 6px 0;
 }
 
+/* Tooltip styles */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.85em;
+    white-space: nowrap;
+    z-index: 10;
+}
+
 .loading-spinner {
     display: none;
     width: 16px;

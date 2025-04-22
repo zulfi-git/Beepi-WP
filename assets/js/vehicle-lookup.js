@@ -349,19 +349,21 @@ jQuery(document).ready(function($) {
             'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
         };
 
+        const tooltips = {
+            'Lengde': 'Total lengde av kjøretøyet fra front til hekk',
+            'Bredde': 'Total bredde av kjøretøyet inkludert speil',
+            'Høyde': 'Total høyde av kjøretøyet fra bakken',
+            'Egenvekt': 'Vekt av kjøretøyet uten last eller passasjerer',
+            'Nyttelast': 'Maksimal last kjøretøyet kan bære'
+        };
+
         $('.size-weight-table').html(
             Object.entries(weightInfo)
                 .filter(([_, value]) => value)
                 .map(([label, value]) => {
-                    const tooltips = {
-                        'Lengde': 'Total lengde av kjøretøyet fra front til hekk',
-                        'Bredde': 'Total bredde av kjøretøyet inkludert speil',
-                        'Høyde': 'Total høyde av kjøretøyet fra bakken',
-                        'Egenvekt': 'Vekt av kjøretøyet uten last eller passasjerer',
-                        'Nyttelast': 'Maksimal last kjøretøyet kan bære'
-                    };
-                    const tooltip = tooltips[label] ? ` title="${tooltips[label]}"` : '';
-                    return `<tr><th${tooltip}>${label}</th><td${tooltip}>${value}</td></tr>`;
+                    const tooltip = tooltips[label];
+                    const tooltipAttr = tooltip ? ` title="${tooltip}" data-tooltip="${tooltip}"` : '';
+                    return `<tr><th${tooltipAttr}>${label}</th><td${tooltipAttr}>${value}</td></tr>`;
                 })
                 .join('')
         );
