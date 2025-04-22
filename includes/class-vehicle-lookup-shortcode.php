@@ -55,7 +55,6 @@ class Vehicle_Lookup_Shortcode {
                             ?>
                             <div class="price-display">
                                 <?php if ($sale_price): ?>
-                                    <div class="discount-badge">Tilbud!</div>
                                     <div class="price-wrapper">
                                         <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
                                         <span class="sale-price"><?php echo esc_html($sale_price); ?> kr</span>
