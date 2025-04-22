@@ -557,14 +557,32 @@ details summary {
     position: relative;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .timeline-event {
     position: relative;
     text-align: center;
     min-width: 120px;
+    flex: 1;
     background: white;
     padding: 8px;
+    margin: 0 5px;
+}
+
+@media (max-width: 600px) {
+    .timeline-event {
+        min-width: calc(50% - 40px);
+    }
+    
+    .timeline::before {
+        display: none;
+    }
+    
+    .timeline-event::before {
+        display: none;
+    }
 }
 
 .timeline-event::before {
@@ -593,4 +611,11 @@ details summary {
     color: #6b7280;
     font-size: 0.8em;
     margin-top: 4px;
+}
+
+.timeline-event-context {
+    color: #2563eb;
+    font-size: 0.75em;
+    margin-top: 2px;
+    font-weight: 500;
 }

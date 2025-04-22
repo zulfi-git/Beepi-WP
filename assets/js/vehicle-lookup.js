@@ -428,6 +428,33 @@ jQuery(document).ready(function($) {
     }
 
     function renderTimeline(vehicleData) {
+        function getTimeContext(date) {
+            const now = new Date();
+            const eventDate = new Date(date);
+            const diffDays = Math.floor((now - eventDate) / (1000 * 60 * 60 * 24));
+            const diffMonths = Math.floor(diffDays / 30);
+            const diffYears = Math.floor(diffDays / 365);
+            
+            if (diffDays < 0) {
+                // Future date
+                const remainingDays = Math.abs(diffDays);
+                if (remainingDays > 365) {
+                    return `Om ${Math.floor(remainingDays / 365)} år`;
+                } else if (remainingDays > 30) {
+                    return `Om ${Math.floor(remainingDays / 30)} måneder`;
+                }
+                return `Om ${remainingDays} dager`;
+            } else {
+                // Past date
+                if (diffYears > 0) {
+                    return `${diffYears} ${diffYears === 1 ? 'år' : 'år'} siden`;
+                } else if (diffMonths > 0) {
+                    return `${diffMonths} ${diffMonths === 1 ? 'måned' : 'måneder'} siden`;
+                }
+                return `${diffDays} ${diffDays === 1 ? 'dag' : 'dager'} siden`;
+            }
+        }
+
         const timelineEvents = [];
         
         // First registration
@@ -436,6 +463,7 @@ jQuery(document).ready(function($) {
             timelineEvents.push({
                 date: firstRegDate,
                 label: 'Første registrering',
+                context: getTimeContext(firstRegDate),
                 isFuture: false
             });
         }
@@ -446,6 +474,7 @@ jQuery(document).ready(function($) {
             timelineEvents.push({
                 date: importDate,
                 label: 'Registrert i Norge',
+                context: getTimeContext(importDate),
                 isFuture: false
             });
         }
@@ -456,6 +485,7 @@ jQuery(document).ready(function($) {
             timelineEvents.push({
                 date: ownerDate,
                 label: 'Nåværende eier',
+                context: getTimeContext(ownerDate),
                 isFuture: false
             });
         }
@@ -466,6 +496,7 @@ jQuery(document).ready(function($) {
             timelineEvents.push({
                 date: lastEUDate,
                 label: 'Siste EU-kontroll',
+                context: getTimeContext(lastEUDate),
                 isFuture: false
             });
         }
@@ -476,6 +507,7 @@ jQuery(document).ready(function($) {
             timelineEvents.push({
                 date: nextEUDate,
                 label: 'Neste EU-kontroll',
+                context: getTimeContext(nextEUDate),
                 isFuture: true
             });
         }
@@ -491,6 +523,7 @@ jQuery(document).ready(function($) {
                         <div class="timeline-event ${event.isFuture ? 'future' : ''}">
                             <div class="timeline-event-date">${formatDate(event.date)}</div>
                             <div class="timeline-event-label">${event.label}</div>
+                            <div class="timeline-event-context">${event.context}</div>
                         </div>
                     `).join('')}
                 </div>
