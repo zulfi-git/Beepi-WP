@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
         if (mobile.length === 8) {
             document.cookie = `vehicle_lookup_mobile=${mobile};path=/`;
             // Trigger Vipps button click after setting cookie
-            $('.woo-vipps-checkout-button').click();
+            $('[class*="woo-vipps-buy-now"]').click();
         }
     });
 
