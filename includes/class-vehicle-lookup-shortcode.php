@@ -69,6 +69,10 @@ class Vehicle_Lookup_Shortcode {
                         </div>
                     </div>
                 </div>
+                
+                <div class="timeline">
+                    <div class="timeline-events"></div>
+                </div>
 
                 <nav class="tabs">
                     <ul>
