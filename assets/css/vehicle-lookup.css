@@ -257,6 +257,12 @@
 }
 
 /* Accordion styles */
+.accordion {
+    margin-top: 2.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+}
+
 .accordion details {
     margin-top: 1rem;
     border: 1px solid #e2e8f0;
