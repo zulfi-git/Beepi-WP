@@ -312,37 +312,6 @@
     padding: 6px 0;
 }
 
-/* Tooltip styles */
-.tooltip-icon {
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
-    font-size: 14px;
-    margin-left: 4px;
-    color: #666;
-}
-
-.tooltip-text {
-    display: none;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: normal;
-    z-index: 1000;
-    width: max-content;
-    max-width: 250px;
-    text-align: left;
-    line-height: 1.4;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.tooltip-text.active {
-    display: block;
-}
-
 .loading-spinner {
     display: none;
     width: 16px;

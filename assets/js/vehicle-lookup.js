@@ -360,11 +360,7 @@ jQuery(document).ready(function($) {
         $('.size-weight-table').html(
             Object.entries(weightInfo)
                 .filter(([_, value]) => value)
-                .map(([label, value]) => {
-                    const tooltip = tooltips[label];
-                    const tooltipIcon = tooltip ? ` <span class="tooltip-icon">❓<span class="tooltip-text">${tooltip}</span></span>` : '';
-                    return `<tr><th>${label}${tooltipIcon}</th><td>${value}</td></tr>`;
-                })
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
 
