@@ -31,35 +31,6 @@ class Vehicle_Lookup {
         if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
         }
-        
-        // Save mobile number if present
-        if (isset($_COOKIE['vehicle_lookup_mobile'])) {
-            $mobile = sanitize_text_field($_COOKIE['vehicle_lookup_mobile']);
-            $order->update_meta_data('_billing_phone', $mobile);
-        }
-    }
-
-    public function add_mobile_to_vipps($args, $order) {
-        $mobile = $order->get_meta('_billing_phone');
-        if ($mobile) {
-            $mobile = preg_replace('/[^0-9]/', '', $mobile);
-            if (strlen($mobile) === 8) {
-                $mobile = '47' . $mobile; // Add Norwegian country code
-            }
-            $args['customerInfo']['phoneNumber'] = $mobile;
-            $args['mob'] = $mobile; // Add mobile to JWT payload
-        }
-
-        // Add required scopes
-        $args['scopes'] = ['Name', 'Email', 'PhoneNumber'];
-        
-        // Add fallback URL
-        $args['fallback'] = home_url('/vipps-betaling/') . '?id=' . $order->get_id();
-        
-        // Set landing page URL
-        $args['url'] = 'https://api.vipps.no/vipps-epayment-legacy-mobile-api/landing-page';
-        
-        return $args;
     }
 
     public function update_order_meta($order_id) {

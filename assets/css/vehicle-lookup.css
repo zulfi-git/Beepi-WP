@@ -385,19 +385,6 @@
     text-decoration: none;
 }
 
-.mobile-input-wrapper {
-    margin: 10px 0;
-}
-
-#mobileNumber {
-    width: 100%;
-    padding: 8px 12px;
-    border: 2px solid #2563eb;
-    border-radius: 4px;
-    font-size: 16px;
-    text-align: center;
-}
-
 /* Improve tap targets */
 .tabs a,
 .purchase-button,

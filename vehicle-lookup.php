@@ -21,6 +21,3 @@ $order_confirmation->init();
 
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
-
-// Add mobile number to Vipps
-add_filter('woo_vipps_payment_args', array($vehicle_lookup, 'add_mobile_to_vipps'), 10, 2);

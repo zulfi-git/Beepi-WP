@@ -10,17 +10,6 @@ jQuery(document).ready(function($) {
 
     // Handle tab clicks - Removed as tabs are no longer used
 
-    // Handle mobile number input
-    $('.vipps-mobile-form').on('submit', function(e) {
-        e.preventDefault();
-        const mobile = $('#mobileNumber').val().replace(/[^0-9]/g, '');
-        if (mobile.length === 8) {
-            document.cookie = `vehicle_lookup_mobile=${mobile};path=/`;
-            // Trigger Vipps button click after setting cookie
-            $('[class*="woo-vipps-buy-now"]').click();
-        }
-    });
-
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
 
@@ -379,26 +368,26 @@ jQuery(document).ready(function($) {
         $('.tooltip-icon').on('click', function(e) {
             e.stopPropagation();
             const tooltip = $(this).find('.tooltip-text');
-
+            
             // Hide all other tooltips
             $('.tooltip-text').not(tooltip).removeClass('active');
-
+            
             // Position and show this tooltip
             const icon = $(this);
             const iconPos = icon.offset();
             const tooltipWidth = tooltip.outerWidth();
             const windowWidth = $(window).width();
-
+            
             tooltip.toggleClass('active');
-
+            
             if (tooltip.hasClass('active')) {
                 let left = iconPos.left;
-
+                
                 // Ensure tooltip doesn't go off-screen
                 if (left + tooltipWidth > windowWidth) {
                     left = windowWidth - tooltipWidth - 10;
                 }
-
+                
                 tooltip.css({
                     top: iconPos.top - tooltip.outerHeight() - 10,
                     left: left
