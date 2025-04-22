@@ -43,6 +43,9 @@ class Vehicle_Lookup {
         $mobile = $order->get_meta('_billing_phone');
         if ($mobile) {
             $mobile = preg_replace('/[^0-9]/', '', $mobile);
+            if (strlen($mobile) === 8) {
+                $mobile = '47' . $mobile; // Add Norwegian country code
+            }
             $args['customerInfo']['phoneNumber'] = $mobile;
             $args['mob'] = $mobile; // Add mobile to JWT payload
         }
