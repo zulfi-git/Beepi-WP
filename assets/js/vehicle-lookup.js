@@ -352,7 +352,17 @@ jQuery(document).ready(function($) {
         $('.size-weight-table').html(
             Object.entries(weightInfo)
                 .filter(([_, value]) => value)
-                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .map(([label, value]) => {
+                    const tooltips = {
+                        'Lengde': 'Total lengde av kjøretøyet fra front til hekk',
+                        'Bredde': 'Total bredde av kjøretøyet inkludert speil',
+                        'Høyde': 'Total høyde av kjøretøyet fra bakken',
+                        'Egenvekt': 'Vekt av kjøretøyet uten last eller passasjerer',
+                        'Nyttelast': 'Maksimal last kjøretøyet kan bære'
+                    };
+                    const tooltip = tooltips[label] ? ` title="${tooltips[label]}"` : '';
+                    return `<tr><th${tooltip}>${label}</th><td${tooltip}>${value}</td></tr>`;
+                })
                 .join('')
         );
     }
@@ -387,7 +397,15 @@ jQuery(document).ready(function($) {
         $('.tire-info-table').html(
             Object.entries(tireInfo)
                 .filter(([_, value]) => value)
-                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .map(([label, value]) => {
+                    const tooltips = {
+                        'Dekkdimensjon': 'Dekkstørrelse angitt som bredde/høydeprofil-felgdiameter',
+                        'Hastighetsindeks': 'Bokstavkode som angir maksimal hastighet dekket er godkjent for',
+                        'Lastindeks': 'Tallkode som angir maksimal belastning dekket tåler'
+                    };
+                    const tooltip = tooltips[label] ? ` title="${tooltips[label]}"` : '';
+                    return `<tr><th${tooltip}>${label}</th><td${tooltip}>${value}</td></tr>`;
+                })
                 .join('')
         );
 
