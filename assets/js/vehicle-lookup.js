@@ -325,12 +325,14 @@ jQuery(document).ready(function($) {
         // Handle mobile number
         const mobileNumber = $('#customer_mobile').val().trim();
         if (mobileNumber) {
+            if (!/^[0-9]{8}$/.test(mobileNumber)) {
+                errorDiv.html('Please enter a valid 8-digit mobile number').show();
+                return;
+            }
             document.cookie = `customer_mobile=${mobileNumber}; path=/`;
-            // Add mobile number to Vipps payment request
-            const vippsButton = $('.vipps-buy-now');
-            const currentHref = vippsButton.attr('href');
-            const updatedHref = currentHref + (currentHref.includes('?') ? '&' : '?') + `mob=${mobileNumber}`;
-            vippsButton.attr('href', updatedHref);
+            
+            // Mobile number will be added to Vipps JWT via PHP filter
+            console.log('Mobile number captured:', mobileNumber);
         }
         
         // Registration number handling is now managed by WooCommerce Vipps plugin

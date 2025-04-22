@@ -6,6 +6,7 @@ class Vehicle_Lookup {
     public function init() {
         // Register scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_filter('woo_vipps_payment_args', array($this, 'add_mobile_to_vipps'), 10, 2);
         
         // Initialize shortcode
         $shortcode = new Vehicle_Lookup_Shortcode();
@@ -91,6 +92,15 @@ class Vehicle_Lookup {
             '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
             '/^\d{5}$/',                      // Temporary tourist plates
             '/^[A-Za-z]\d{3}$/',              // Antique vehicles
+
+    public function add_mobile_to_vipps($args, $order) {
+        if (isset($_COOKIE['customer_mobile'])) {
+            $mobile = sanitize_text_field($_COOKIE['customer_mobile']);
+            $args['mob'] = $mobile;
+        }
+        return $args;
+    }
+
             '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
         );
         
