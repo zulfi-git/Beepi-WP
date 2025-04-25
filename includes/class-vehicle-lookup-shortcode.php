@@ -9,9 +9,9 @@ class Vehicle_Lookup_Shortcode {
         $atts = shortcode_atts(array(
             'product_id' => '62' // Default product ID
         ), $atts);
-        
+
         $product_id = absint($atts['product_id']);
-        
+
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
@@ -37,7 +37,7 @@ class Vehicle_Lookup_Shortcode {
                         <p class="vehicle-subtitle"></p>
                     </div>
                 </div>
-                
+
                 <div class="owner-section">
                     <div id="owner-info-container">
                         <div id="owner-info-purchase">
@@ -61,7 +61,6 @@ class Vehicle_Lookup_Shortcode {
                                 <?php endif; ?>
                             </div>
                             <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
-                            </button>
                             <div class="trust-indicators">
                                 <div>🔐 Data hentes fra Statens vegvesen</div>
                                 <div>⏱️ Svar på noen få sekunder</div>

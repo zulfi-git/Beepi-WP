@@ -443,30 +443,21 @@ jQuery(document).ready(function($) {
 
     function renderTimeline(vehicleData) {
         function getTimeContext(date) {
+            if (!date) return '';
             const now = new Date();
             const eventDate = new Date(date);
             const diffDays = Math.floor((now - eventDate) / (1000 * 60 * 60 * 24));
-            const diffMonths = Math.floor(diffDays / 30);
-            const diffYears = Math.floor(diffDays / 365);
-
+            
             if (diffDays < 0) {
-                // Future date
-                const remainingDays = Math.abs(diffDays);
-                if (remainingDays > 365) {
-                    return `Om ${Math.floor(remainingDays / 365)} år`;
-                } else if (remainingDays > 30) {
-                    return `Om ${Math.floor(remainingDays / 30)} måneder`;
-                }
-                return `Om ${remainingDays} dager`;
-            } else {
-                // Past date
-                if (diffYears > 0) {
-                    return `${diffYears} ${diffYears === 1 ? 'år' : 'år'} siden`;
-                } else if (diffMonths > 0) {
-                    return `${diffMonths} ${diffMonths === 1 ? 'måned' : 'måneder'} siden`;
-                }
-                return `${diffDays} ${diffDays === 1 ? 'dag' : 'dager'} siden`;
+                const days = Math.abs(diffDays);
+                return days > 365 ? `Om ${Math.floor(days / 365)} år` : 
+                       days > 30 ? `Om ${Math.floor(days / 30)} måneder` : 
+                       `Om ${days} dager`;
             }
+            
+            return diffDays > 365 ? `${Math.floor(diffDays / 365)} år siden` :
+                   diffDays > 30 ? `${Math.floor(diffDays / 30)} måneder siden` :
+                   `${diffDays} dager siden`;
         }
 
         const timelineEvents = [];

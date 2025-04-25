@@ -386,8 +386,6 @@
 }
 
 /* Improve tap targets */
-.tabs a,
-.purchase-button,
 .plate-search-button,
 details summary {
     min-height: 44px;
@@ -396,12 +394,6 @@ details summary {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.purchase-features > div {
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: 500;
 }
 
 @media (max-width: 600px) {
