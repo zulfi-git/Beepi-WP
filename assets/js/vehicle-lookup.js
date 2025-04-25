@@ -331,16 +331,22 @@ jQuery(document).ready(function($) {
         const generelt = tekniskeData?.generelt;
         if (!generelt) return;
 
-        const basicInfo = {
-            'Merke': generelt.merke?.[0]?.merke || '---',
-            'Modell': generelt.handelsbetegnelse?.[0] || '---',
-            'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke || '---',
-            'Farge': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeNavn || '---',
-            'Type': vehicleData.kjoretoyklassifisering?.tekniskKode?.kodeNavn || '---',
-            'Antall seter': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.persontall?.sitteplasserTotalt || '---'
-        };
+        const basicInfo = [
+            { label: 'Merke', value: generelt.merke?.[0]?.merke || '---', type: 'brand' },
+            { label: 'Modell', value: generelt.handelsbetegnelse?.[0] || '---', type: 'model' },
+            { label: 'Kjennemerke', value: vehicleData.kjoretoyId?.kjennemerke || '---', type: 'plate' },
+            { label: 'Farge', value: vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeNavn || '---', type: 'color' },
+            { label: 'Type', value: vehicleData.kjoretoyklassifisering?.tekniskKode?.kodeNavn || '---', type: 'type' },
+            { label: 'Antall seter', value: vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.persontall?.sitteplasserTotalt || '---', type: 'seats' }
+        ];
 
         $('.basic-info-table').html(
+            basicInfo.map(info => 
+                `<tr data-type="${info.type}">
+                    <th>${info.label}</th>
+                    <td>${info.value}</td>
+                </tr>`
+            ).join('')
             Object.entries(basicInfo)
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')

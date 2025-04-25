@@ -1,10 +1,12 @@
 .vehicle-lookup-container {
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    background-color: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border-radius: 24px;
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    box-shadow: 
+        8px 8px 16px rgba(174, 174, 192, 0.4),
+        -8px -8px 16px rgba(255, 255, 255, 0.8);
     max-width: 600px;
-    margin: auto;
+    margin: 2rem auto;
 }
 
 .plate-form {
@@ -297,19 +299,71 @@
 
 .info-table {
     width: 100%;
-    border-collapse: collapse;
+    border-spacing: 0 0.75rem;
     font-size: 0.95rem;
+}
+
+.info-table tr {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 
+        2px 2px 5px rgba(174, 174, 192, 0.2),
+        -2px -2px 5px rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.75rem;
 }
 
 .info-table th {
     text-align: left;
-    color: #666;
-    padding: 6px 0;
+    color: #64748b;
+    padding: 1rem;
     width: 40%;
+    position: relative;
+    font-weight: 500;
+}
+
+.info-table th::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background-color: #e0f2fe;
+    border-radius: 50%;
+    margin-right: 1rem;
+    vertical-align: middle;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 18px;
 }
 
 .info-table td {
-    padding: 6px 0;
+    padding: 1rem 1rem 1rem 0;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* Icon styles for different rows */
+.info-table tr[data-type="brand"] th::before {
+    background-image: url("https://api.iconify.design/lucide:badge.svg?color=%230369a1");
+}
+
+.info-table tr[data-type="model"] th::before {
+    background-image: url("https://api.iconify.design/lucide:car.svg?color=%230369a1");
+}
+
+.info-table tr[data-type="plate"] th::before {
+    background-image: url("https://api.iconify.design/lucide:rectangle-horizontal.svg?color=%230369a1");
+}
+
+.info-table tr[data-type="color"] th::before {
+    background-image: url("https://api.iconify.design/lucide:palette.svg?color=%230369a1");
+}
+
+.info-table tr[data-type="type"] th::before {
+    background-image: url("https://api.iconify.design/lucide:layers.svg?color=%230369a1");
+}
+
+.info-table tr[data-type="seats"] th::before {
+    background-image: url("https://api.iconify.design/lucide:users.svg?color=%230369a1");
 }
 
 .loading-spinner {
