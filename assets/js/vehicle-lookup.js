@@ -347,9 +347,6 @@ jQuery(document).ready(function($) {
                     <td>${info.value}</td>
                 </tr>`
             ).join('')
-            Object.entries(basicInfo)
-                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
-                .join('')
         );
 
         // Update notes section to be shown last
