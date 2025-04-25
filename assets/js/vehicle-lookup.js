@@ -335,9 +335,9 @@ jQuery(document).ready(function($) {
             'Merke': generelt.merke?.[0]?.merke || '---',
             'Modell': generelt.handelsbetegnelse?.[0] || '---',
             'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke || '---',
-            'Farge': generelt.farge?.[0]?.kodeBeskrivelse || '---',
-            'Type': generelt.type || '---',
-            'Antall seter': generelt.sitteplasserTotalt || '---'
+            'Farge': generelt.farge?.[0]?.kodeNavn || '---',
+            'Type': generelt.kjoeretoygruppe?.kodeNavn || '---',
+            'Antall seter': generelt.sitteplasserTotalt?.toString() || '---'
         };
 
         $('.basic-info-table').html(
@@ -346,14 +346,15 @@ jQuery(document).ready(function($) {
                 .join('')
         );
 
+        // Update notes section to be shown last
         const notes = {
+            'Fabrikant': tekniskeData?.generelt?.fabrikant?.[0]?.fabrikant || '---',
+            'Kjøring art': vehicleData.registrering?.kjoringensArt?.kodeBeskrivelse || '---',
+            'Kjøretøymerknad': vehicleData.godkjenning?.kjoretoymerknad?.[0]?.merknad || '---',
             'Ombygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OMBYGGET')?.merknadTekst || '---',
             'Oppbygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OPPBYGGET')?.merknadTekst || '---',
             'Bruktimportert': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BRUKTIMPORTERT')?.merknadTekst || '---',
-            'Bevaringsverdig': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BEVARINGSVERDIG')?.merknadTekst || '---',
-            'Fabrikant': tekniskeData?.generelt?.fabrikant?.[0]?.fabrikant || '---',
-            'Kjøring art': tekniskeData?.generelt?.kjoeringArt?.kodeBeskrivelse || '---',
-            'Kjøretøymerknad': tekniskeData?.generelt?.merknad || '---'
+            'Bevaringsverdig': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BEVARINGSVERDIG')?.merknadTekst || '---'
         };
 
         $('.notes-info-table').html(
