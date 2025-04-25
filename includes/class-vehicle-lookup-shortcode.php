@@ -78,12 +78,6 @@ class Vehicle_Lookup_Shortcode {
                         </div>
                     </details>
                     <details>
-                        <summary><span>Merknader</span><span>📝</span></summary>
-                        <div class="details-content">
-                            <table class="info-table notes-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
                         <summary><span>Reg. og kontroll</span><span>🔍</span></summary>
                         <div class="details-content">
                             <table class="info-table registration-info-table"></table>
@@ -105,6 +99,12 @@ class Vehicle_Lookup_Shortcode {
                         <summary><span>Dekk og felg</span><span>🛞</span></summary>
                         <div class="details-content">
                             <table class="info-table tire-info-table"></table>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><span>Merknader</span><span>📝</span></summary>
+                        <div class="details-content">
+                            <table class="info-table notes-info-table"></table>
                         </div>
                     </details>
                 </div>

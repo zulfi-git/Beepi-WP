@@ -406,6 +406,24 @@ jQuery(document).ready(function($) {
         );
 
 
+        // Get vekter data
+        const vekter = tekniskeData?.vekter;
+        const weightInfo = {
+            'Egenvekt': vekter?.egenvekt ? `${vekter.egenvekt} kg` : '---',
+            'Nyttelast': vekter?.nyttelast ? `${vekter.nyttelast} kg` : '---',
+            'Tillatt totalvekt': vekter?.tillattTotalvekt ? `${vekter.tillattTotalvekt} kg` : '---',
+            'Tillatt tilhengervekt m/brems': vekter?.tillattTilhengervektMedBrems ? `${vekter.tillattTilhengervektMedBrems} kg` : '---',
+            'Tillatt tilhengervekt u/brems': vekter?.tillattTilhengervektUtenBrems ? `${vekter.tillattTilhengervektUtenBrems} kg` : '---',
+            'Tillatt vogntogvekt': vekter?.tillattVogntogvekt ? `${vekter.tillattVogntogvekt} kg` : '---',
+        };
+
+        $('.weight-info-table').html(
+            Object.entries(weightInfo)
+                .filter(([_, value]) => value !== '---')
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .join('')
+        );
+
         const engineInfo = {
             'Motor': engineData?.motor?.[0]?.antallSylindre + ' sylindre',
             'Drivstoff': engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse,
