@@ -217,7 +217,19 @@ jQuery(document).ready(function($) {
                     // Keep all details elements open by default
                     $('details').attr('open', true);
 
-                    // Initialize tabs - Removed as tabs are no longer used
+                    // Handle tab switching
+                    $('.tabs a').on('click', function(e) {
+                        e.preventDefault();
+                        const tabId = $(this).attr('href');
+
+                        // Update active states
+                        $('.tabs li').removeClass('active');
+                        $(this).parent().addClass('active');
+
+                        // Show selected tab content
+                        $('.tab-pane').removeClass('active');
+                        $(tabId).addClass('active');
+                    });
                     $('#vehicle-lookup-results').show();
 
                     // Smooth scroll to results
@@ -368,26 +380,26 @@ jQuery(document).ready(function($) {
         $('.tooltip-icon').on('click', function(e) {
             e.stopPropagation();
             const tooltip = $(this).find('.tooltip-text');
-            
+
             // Hide all other tooltips
             $('.tooltip-text').not(tooltip).removeClass('active');
-            
+
             // Position and show this tooltip
             const icon = $(this);
             const iconPos = icon.offset();
             const tooltipWidth = tooltip.outerWidth();
             const windowWidth = $(window).width();
-            
+
             tooltip.toggleClass('active');
-            
+
             if (tooltip.hasClass('active')) {
                 let left = iconPos.left;
-                
+
                 // Ensure tooltip doesn't go off-screen
                 if (left + tooltipWidth > windowWidth) {
                     left = windowWidth - tooltipWidth - 10;
                 }
-                
+
                 tooltip.css({
                     top: iconPos.top - tooltip.outerHeight() - 10,
                     left: left
