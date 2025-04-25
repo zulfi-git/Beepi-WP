@@ -335,9 +335,9 @@ jQuery(document).ready(function($) {
             'Merke': generelt.merke?.[0]?.merke || '---',
             'Modell': generelt.handelsbetegnelse?.[0] || '---',
             'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke || '---',
-            'Farge': generelt.karosseriOgLasteplan?.rFarge?.[0]?.kodeNavn || '---',
-            'Type': vehicleData?.kjoretoyklassifisering?.tekniskKode?.kodeNavn || '---',
-            'Antall seter': generelt.persontall?.sitteplasserTotalt || '5'
+            'Farge': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeNavn || '---',
+            'Type': vehicleData.kjoretoyklassifisering?.tekniskKode?.kodeNavn || '---',
+            'Antall seter': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.persontall?.sitteplasserTotalt || '---'
         };
 
         $('.basic-info-table').html(
