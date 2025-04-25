@@ -70,24 +70,37 @@ class Vehicle_Lookup_Shortcode {
                     </div>
                 </div>
 
-                <nav class="tabs">
-                    <ul>
-                        <li class="active" data-tab="general"><a href="#general">Generell</a></li>
-                        <li data-tab="technical"><a href="#technical">Teknisk</a></li>
-                        <li data-tab="registration"><a href="#registration">Registrering</a></li>
-                    </ul>
-                </nav>
-
-                <div class="tab-content">
-                    <div id="general" class="tab-pane active">
-                        <table class="info-table general-info-table"></table>
-                    </div>
-                    <div id="technical" class="tab-pane">
-                        <table class="info-table technical-info-table"></table>
-                    </div>
-                    <div id="registration" class="tab-pane">
-                        <table class="info-table registration-info-table"></table>
-                    </div>
+                <div class="accordion">
+                    <details>
+                        <summary><span>Generell informasjon</span><span>📋</span></summary>
+                        <div class="details-content">
+                            <table class="info-table general-info-table"></table>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><span>Reg. og kontroll</span><span>🔍</span></summary>
+                        <div class="details-content">
+                            <table class="info-table registration-info-table"></table>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><span>Motor og drivverk</span><span>🔧</span></summary>
+                        <div class="details-content">
+                            <table class="info-table engine-info-table"></table>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><span>Størrelse og vekt</span><span>⚖️</span></summary>
+                        <div class="details-content">
+                            <table class="info-table size-weight-table"></table>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><span>Dekk og felg</span><span>🛞</span></summary>
+                        <div class="details-content">
+                            <table class="info-table tire-info-table"></table>
+                        </div>
+                    </details>
                 </div>
             </div>
 

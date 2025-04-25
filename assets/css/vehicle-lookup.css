@@ -257,46 +257,17 @@
 }
 
 /* Accordion styles */
-.tabs {
-    margin: 2rem 0;
+.accordion {
+    margin-top: 2.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
 }
 
-.tabs ul {
-    display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border-bottom: 2px solid #e5e7eb;
-}
-
-.tabs li {
-    margin-right: 2px;
-}
-
-.tabs a {
-    display: block;
-    padding: 12px 24px;
-    color: #666;
-    text-decoration: none;
-    border-radius: 8px 8px 0 0;
-    font-weight: 500;
-}
-
-.tabs li.active a {
-    background: #2563eb;
-    color: white;
-}
-
-.tab-content {
-    padding: 20px 0;
-}
-
-.tab-pane {
-    display: none;
-}
-
-.tab-pane.active {
-    display: block;
+.accordion details {
+    margin-top: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .accordion summary {
