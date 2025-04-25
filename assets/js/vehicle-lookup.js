@@ -335,9 +335,9 @@ jQuery(document).ready(function($) {
             'Merke': generelt.merke?.[0]?.merke || '---',
             'Modell': generelt.handelsbetegnelse?.[0] || '---',
             'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke || '---',
-            'Farge': generelt.farge?.[0]?.kodeNavn || '---',
-            'Type': generelt.kjoeretoygruppe?.kodeNavn || '---',
-            'Antall seter': generelt.sitteplasserTotalt?.toString() || '---'
+            'Farge': generelt.karosseriOgLasteplan?.rFarge?.[0]?.kodeNavn || '---',
+            'Type': vehicleData?.kjoretoyklassifisering?.tekniskKode?.kodeNavn || '---',
+            'Antall seter': generelt.persontall?.sitteplasserTotalt || '5'
         };
 
         $('.basic-info-table').html(
@@ -447,14 +447,14 @@ jQuery(document).ready(function($) {
             const now = new Date();
             const eventDate = new Date(date);
             const diffDays = Math.floor((now - eventDate) / (1000 * 60 * 60 * 24));
-            
+
             if (diffDays < 0) {
                 const days = Math.abs(diffDays);
                 return days > 365 ? `Om ${Math.floor(days / 365)} år` : 
                        days > 30 ? `Om ${Math.floor(days / 30)} måneder` : 
                        `Om ${days} dager`;
             }
-            
+
             return diffDays > 365 ? `${Math.floor(diffDays / 365)} år siden` :
                    diffDays > 30 ? `${Math.floor(diffDays / 30)} måneder siden` :
                    `${diffDays} dager siden`;
