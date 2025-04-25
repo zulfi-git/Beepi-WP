@@ -327,80 +327,40 @@ jQuery(document).ready(function($) {
     });
 
     function renderBasicInfo(vehicleData) {
-        if (!vehicleData) return;
+        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+        const generelt = tekniskeData?.generelt;
+        if (!generelt) return;
 
-        const basicInfo = extractBasicInfo(vehicleData);
-        $('.general-info-table').html(
+        const basicInfo = {
+            'Merke': generelt.merke?.[0]?.merke || '---',
+            'Modell': generelt.handelsbetegnelse?.[0] || '---',
+            'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke || '---',
+            'Farge': generelt.farge?.[0]?.kodeBeskrivelse || '---',
+            'Type': generelt.type || '---',
+            'Antall seter': generelt.sitteplasserTotalt || '---'
+        };
+
+        $('.basic-info-table').html(
             Object.entries(basicInfo)
-                .filter(([_, value]) => value)
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
 
-        // Size and weight info with null checking
-        const dimensions = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner;
-        const vekter = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter;
-
-        const weightInfo = {
-            'Lengde': dimensions?.lengde ? dimensions.lengde + ' mm' : '',
-            'Bredde': dimensions?.bredde ? dimensions.bredde + ' mm' : '',
-            'Høyde': dimensions?.hoyde ? dimensions.hoyde + ' mm' : '',
-            'Egenvekt': vekter?.egenvekt ? vekter.egenvekt + ' kg' : '',
-            'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
+        const notes = {
+            'Ombygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OMBYGGET')?.merknadTekst || '---',
+            'Oppbygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OPPBYGGET')?.merknadTekst || '---',
+            'Bruktimportert': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BRUKTIMPORTERT')?.merknadTekst || '---',
+            'Bevaringsverdig': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BEVARINGSVERDIG')?.merknadTekst || '---',
+            'Fabrikant': tekniskeData?.generelt?.fabrikant?.[0]?.fabrikant || '---',
+            'Kjøring art': tekniskeData?.generelt?.kjoeringArt?.kodeBeskrivelse || '---',
+            'Kjøretøymerknad': tekniskeData?.generelt?.merknad || '---'
         };
 
-        const tooltips = {
-            'Lengde': 'Total lengde av kjøretøyet fra front til hekk',
-            'Bredde': 'Total bredde av kjøretøyet inkludert speil',
-            'Høyde': 'Total høyde av kjøretøyet fra bakken',
-            'Egenvekt': 'Vekt av kjøretøyet uten last eller passasjerer',
-            'Nyttelast': 'Maksimal last kjøretøyet kan bære'
-        };
-
-        $('.size-weight-table').html(
-            Object.entries(weightInfo)
-                .filter(([_, value]) => value)
+        $('.notes-info-table').html(
+            Object.entries(notes)
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
-
-        // Add click handler for tooltips
-        $('.tooltip-icon').on('click', function(e) {
-            e.stopPropagation();
-            const tooltip = $(this).find('.tooltip-text');
-            
-            // Hide all other tooltips
-            $('.tooltip-text').not(tooltip).removeClass('active');
-            
-            // Position and show this tooltip
-            const icon = $(this);
-            const iconPos = icon.offset();
-            const tooltipWidth = tooltip.outerWidth();
-            const windowWidth = $(window).width();
-            
-            tooltip.toggleClass('active');
-            
-            if (tooltip.hasClass('active')) {
-                let left = iconPos.left;
-                
-                // Ensure tooltip doesn't go off-screen
-                if (left + tooltipWidth > windowWidth) {
-                    left = windowWidth - tooltipWidth - 10;
-                }
-                
-                tooltip.css({
-                    top: iconPos.top - tooltip.outerHeight() - 10,
-                    left: left
-                });
-            }
-        });
-
-        // Close tooltips when clicking outside
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.tooltip-icon').length) {
-                $('.tooltip-text').removeClass('active');
-            }
-        });
     }
 
     function renderTechnicalInfo(vehicleData) {
@@ -595,14 +555,17 @@ jQuery(document).ready(function($) {
 
     function extractBasicInfo(vehicleData) {
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+        const generelt = tekniskeData?.generelt;
+        if (!generelt) return {}; // Return empty object if generelt is missing
+
         return {
             'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke,
             'Understellsnummer': vehicleData.kjoretoyId?.understellsnummer,
-            'Merke': tekniskeData?.merke?.[0]?.merke,
-            'Modell': tekniskeData?.handelsbetegnelse?.[0],
-            'Farge': tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeBeskrivelse,
-            'Type': tekniskeData?.generelt?.tekniskKode?.kodeBeskrivelse,
-            'Antall seter': tekniskeData?.persontall?.sitteplasserTotalt,
+            'Merke': generelt.merke?.[0]?.merke,
+            'Modell': generelt.handelsbetegnelse?.[0],
+            'Farge': generelt.farge?.[0]?.kodeBeskrivelse,
+            'Type': generelt.type,
+            'Antall seter': generelt.sitteplasserTotalt,
             'Ombygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OMBYGGET')?.merknadTekst || '---',
             'Oppbygget': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'OPPBYGGET')?.merknadTekst || '---',
             'Bruktimportert': vehicleData.godkjenning?.tekniskGodkjenning?.merknadListe?.find(m => m.type === 'BRUKTIMPORTERT')?.merknadTekst || '---',

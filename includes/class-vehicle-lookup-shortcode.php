@@ -74,7 +74,13 @@ class Vehicle_Lookup_Shortcode {
                     <details>
                         <summary><span>Generell informasjon</span><span>📋</span></summary>
                         <div class="details-content">
-                            <table class="info-table general-info-table"></table>
+                            <table class="info-table basic-info-table"></table>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><span>Merknader</span><span>📝</span></summary>
+                        <div class="details-content">
+                            <table class="info-table notes-info-table"></table>
                         </div>
                     </details>
                     <details>
