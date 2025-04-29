@@ -80,24 +80,76 @@
 }
 
 .vehicle-header {
-    margin-top: 0; /* Removed margin */
-    padding: 10px; /* Added padding */
-    border-bottom: 1px solid #eee;
-}
-
-.vehicle-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: contain;
-    margin: 0 auto 5px;
-    display: block;
-    background-color: #f8f9fa;
-    padding: 8px;
+    margin-top: 0;
+    padding: 16px;
+    background: #000;
+    border-radius: 12px;
+    color: white;
 }
 
 .vehicle-info {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vehicle-logo-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.vehicle-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: none;
+    padding: 0;
+}
+
+.vehicle-details {
+    text-align: left;
+}
+
+.vehicle-title {
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.vehicle-subtitle {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.vehicle-reg {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.vehicle-reg::before {
+    content: "🇳🇴";
+    font-size: 1.2em;
+}
+
+.registrert-btn {
+    background: #00C04B;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.vehicle-year {
+    background: white;
+    color: black;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: 500;
 }
 
 .vehicle-title {

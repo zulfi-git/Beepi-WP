@@ -32,9 +32,16 @@ class Vehicle_Lookup_Shortcode {
             <div id="vehicle-lookup-results" style="display: none;">
                 <div class="vehicle-header">
                     <div class="vehicle-info">
-                        <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                        <h2 class="vehicle-title"></h2>
-                        <p class="vehicle-subtitle"></p>
+                        <div class="vehicle-logo-title">
+                            <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                            <div class="vehicle-details">
+                                <h2 class="vehicle-title"></h2>
+                                <p class="vehicle-subtitle"></p>
+                                <div class="vehicle-reg"></div>
+                            </div>
+                        </div>
+                        <button class="registrert-btn">Registrert</button>
+                        <div class="vehicle-year">2022</div>
                     </div>
                 </div>
 
