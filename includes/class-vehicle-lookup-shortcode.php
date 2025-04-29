@@ -15,18 +15,19 @@ class Vehicle_Lookup_Shortcode {
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
+            <div class="gratis-banner">Gratis</div>
             <form id="vehicle-lookup-form" class="plate-form">
                 <div class="plate-input-wrapper">
                     <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
                     <input type="text" id="regNumber" name="regNumber" required
                            class="plate-input"
-                           placeholder="CU11262"
-                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
-                    <button type="submit" class="plate-search-button" aria-label="Search">
-                        <div class="loading-spinner"></div>
-                        <span class="search-icon">🔍</span>
-                    </button>
+                           placeholder="Registreringsnummer"
+                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})" />
                 </div>
+                <button type="submit" class="plate-search-button" aria-label="Search">
+                    <span>Se alle bildeler og dimensjoner</span>
+                    <div class="button-arrow">→</div>
+                </button>
             </form>
 
             <div id="vehicle-lookup-results" style="display: none;">
