@@ -80,204 +80,24 @@
 }
 
 .vehicle-header {
-    width: 402px;
-    height: 176px;
-    background: #000;
-    position: relative;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.status-section {
-    display: flex;
-    justify-content: space-between;
-    padding: 31px 18px;
-    gap: 4px;
-}
-
-.status-register, .status-EU {
-    width: 183px;
-    height: 131px;
-}
-
-.overlap-group {
-    position: relative;
-    width: 181px;
-    height: 131px;
-    background-color: #eef3ff;
-    border-radius: 10px;
-    border: 1px solid #f9fafb;
-    padding: 16px;
-    text-align: center;
-}
-
-.text-wrapper {
-    font-weight: 700;
-    color: #828282;
-}
-
-.span {
-    font-weight: 700;
-    color: #000000;
-    font-size: 16px;
-}
-
-.text-wrapper-2 {
-    color: #828282;
-    font-family: "Helvetica Neue-Regular", Helvetica;
-}
-
-.vehicle-logo-title {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    margin-top: 0; /* Removed margin */
+    padding: 10px; /* Added padding */
+    border-bottom: 1px solid #eee;
 }
 
 .vehicle-logo {
-    width: 48px;
-    height: 48px;
-    background: white;
-    padding: 8px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-}
-
-.vehicle-details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.vehicle-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.vehicle-subtitle {
-    font-size: 16px;
-    opacity: 0.8;
-    margin: 0;
-}
-
-.vehicle-status-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.registrert-btn {
-    background: #00C04B;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
-    width: fit-content;
-}
-
-.eu-control {
-    background: #00C04B;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    width: fit-content;
-}
-
-.vehicle-badges {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.badge {
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-}
-
-.badge.diesel {
-    background: rgba(255, 255, 255, 0.9);
-    color: #000;
-}
-
-.badge.automat {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-}
-
-.flag-container {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-}
-
-.flag {
-    font-size: 24px;
-}
-
-.vehicle-logo-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.vehicle-logo {
-    width: 48px;
-    height: 48px;
     object-fit: contain;
-    background: none;
-    padding: 0;
+    margin: 0 auto 5px;
+    display: block;
+    background-color: #f8f9fa;
+    padding: 8px;
 }
 
-.vehicle-details {
-    text-align: left;
-}
-
-.vehicle-title {
-    font-size: 1.25rem;
-    margin: 0;
-    font-weight: 600;
-}
-
-.vehicle-subtitle {
-    margin: 0;
-    opacity: 0.8;
-    font-size: 0.9rem;
-}
-
-.vehicle-reg {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 4px;
-}
-
-.vehicle-reg::before {
-    content: "🇳🇴";
-    font-size: 1.2em;
-}
-
-.registrert-btn {
-    background: #00C04B;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-}
-
-.vehicle-year {
-    background: white;
-    color: black;
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-weight: 500;
+.vehicle-info {
+    text-align: center;
 }
 
 .vehicle-title {

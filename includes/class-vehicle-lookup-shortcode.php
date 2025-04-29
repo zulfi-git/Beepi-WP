@@ -31,30 +31,10 @@ class Vehicle_Lookup_Shortcode {
 
             <div id="vehicle-lookup-results" style="display: none;">
                 <div class="vehicle-header">
-                    <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                    <div class="vehicle-title"></div>
-                    <div class="vehicle-subtitle"></div>
-                </div>
-                
-                <div class="status-section">
-                    <div class="status-register">
-                        <div class="overlap-group">
-                            <p class="owner">
-                                <span class="text-wrapper">Første registrering<br /></span>
-                                <span class="span">08.11.2022<br /></span>
-                                <span class="text-wrapper-2">3 år gammel</span>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="status-EU">
-                        <div class="overlap-group">
-                            <p class="owner-6">
-                                <span class="text-wrapper">EU-kontroll<br /></span>
-                                <span class="text-wrapper-5">08.11.2026<br /></span>
-                                <span class="text-wrapper-2">Om ca. 18 måneder</span>
-                            </p>
-                        </div>
+                    <div class="vehicle-info">
+                        <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                        <h2 class="vehicle-title"></h2>
+                        <p class="vehicle-subtitle"></p>
                     </div>
                 </div>
 
