@@ -35,13 +35,21 @@ class Vehicle_Lookup_Shortcode {
                         <div class="vehicle-logo-title">
                             <img class="vehicle-logo" src="" alt="Car manufacturer logo">
                             <div class="vehicle-details">
-                                <h2 class="vehicle-title"></h2>
-                                <p class="vehicle-subtitle"></p>
-                                <div class="vehicle-reg"></div>
+                                <h2 class="vehicle-title">CU11262</h2>
+                                <p class="vehicle-subtitle">SUBARU OUTBACK 2022</p>
                             </div>
                         </div>
-                        <button class="registrert-btn">Registrert</button>
-                        <div class="vehicle-year">2022</div>
+                        <div class="vehicle-status-group">
+                            <button class="registrert-btn">Registrert</button>
+                            <div class="eu-control">EU-kontroll nærmer seg: 08-11-2026 (18 måneder igjen)</div>
+                            <div class="vehicle-badges">
+                                <span class="badge diesel">Diesel</span>
+                                <span class="badge automat">Automat</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flag-container">
+                        <span class="flag">🇳🇴</span>
                     </div>
                 </div>
 

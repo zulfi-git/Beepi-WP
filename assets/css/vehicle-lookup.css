@@ -81,16 +81,106 @@
 
 .vehicle-header {
     margin-top: 0;
-    padding: 16px;
+    padding: 24px;
     background: #000;
-    border-radius: 12px;
+    border-radius: 16px;
     color: white;
+    position: relative;
 }
 
 .vehicle-info {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.vehicle-logo-title {
+    display: flex;
     align-items: center;
+    gap: 16px;
+}
+
+.vehicle-logo {
+    width: 48px;
+    height: 48px;
+    background: white;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.vehicle-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vehicle-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.vehicle-subtitle {
+    font-size: 16px;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.vehicle-status-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.registrert-btn {
+    background: #00C04B;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    width: fit-content;
+}
+
+.eu-control {
+    background: #00C04B;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: fit-content;
+}
+
+.vehicle-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.badge.diesel {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+}
+
+.badge.automat {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.flag-container {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+}
+
+.flag {
+    font-size: 24px;
 }
 
 .vehicle-logo-title {
