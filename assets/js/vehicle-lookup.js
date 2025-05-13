@@ -512,31 +512,74 @@ jQuery(document).ready(function($) {
     // Add CSS for timeline margin
     $('.timeline').css('margin', '20px 0 50px 0');
 
+    // Function to perform vehicle lookup via AJAX
+    function performVehicleLookup(regNumber) {
+        const $form = $('#vehicle-lookup-form');
+        const $button = $form.find('button');
+        const $error = $('#vehicle-lookup-error');
+        
+        // Show loading state
+        $button.prop('disabled', true).addClass('loading');
+        $error.hide();
+        
+        return $.ajax({
+            url: vehicleLookupAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vehicle_lookup',
+                nonce: vehicleLookupAjax.nonce,
+                regNumber: regNumber
+            },
+            dataType: 'json'
+        }).always(() => {
+            $button.prop('disabled', false).removeClass('loading');
+        });
+    }
+
+    // Function to update URL without triggering reload
+    function updateUrlWithRegNumber(regNumber) {
+        const currentPath = window.location.pathname;
+        const expectedPath = '/sok/' + regNumber;
+        
+        if (currentPath !== expectedPath && window.history && window.history.pushState) {
+            window.history.pushState({ regNumber: regNumber }, '', expectedPath);
+        }
+    }
+
     // Single consolidated form submit handler
     $('#vehicle-lookup-form').on('submit', function(e) {
         e.preventDefault();
         const regNumber = $('#regNumber').val().trim().toUpperCase();
 
         if (regNumber) {
-            // Only proceed if we have a valid registration number
-            const currentPath = window.location.pathname;
-            const expectedPath = '/sok/' + regNumber;
-            
-            // Update URL without triggering a page reload
-            if (currentPath !== expectedPath) {
-                if (window.history && window.history.pushState) {
-                    window.history.pushState({ regNumber: regNumber }, '', expectedPath);
-                }
-            }
-            
-            // Set the cookie
+            updateUrlWithRegNumber(regNumber);
             setRegNumberCookie(regNumber);
-            
-            // Show loading state
-            $(this).find('button').prop('disabled', true).addClass('loading');
+            performVehicleLookup(regNumber);
+        }
+        
+        return false;
+    });
 
-            // Make AJAX request without form submission
-            $.ajax({
+    // Initial lookup if registration number is present
+    $(document).ready(function() {
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        if (regNumber) {
+            performVehicleLookup(regNumber);
+        }
+    });
+
+    // Handle browser back/forward
+    $(window).on('popstate', function(event) {
+        const match = window.location.pathname.match(/\/sok\/([A-Za-z0-9]+)/);
+        if (match) {
+            const regNumber = match[1].toUpperCase();
+            $('#regNumber').val(regNumber);
+            performVehicleLookup(regNumber);
+        }
+    });
+
+    // Make AJAX request
+    $.ajax({
                 url: vehicleLookupAjax.ajaxurl,
                 type: 'POST',
                 data: {

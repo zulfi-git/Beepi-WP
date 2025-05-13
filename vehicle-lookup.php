@@ -61,17 +61,20 @@ $order_confirmation->init();
  * Prevent redirect loops with registration number
  */
 function fix_sok_redirect_loop() {
-    // Check if we're on a /sok/ page with ?regNumber in the URL
     $uri = $_SERVER['REQUEST_URI'];
-    if (strpos($uri, '/sok/') !== false && isset($_GET['regNumber'])) {
-        // Check if the URL already contains the registration number in the path
-        if (preg_match('#/sok/([A-Za-z0-9]+)#i', $uri, $matches)) {
-            $reg_in_path = $matches[1];
-            $reg_in_query = $_GET['regNumber'];
+    // Remove potential trailing slash for consistency
+    $uri = rtrim($uri, '/');
+    
+    if (strpos($uri, '/sok/') !== false) {
+        // Match registration number in path, with or without trailing slash
+        if (preg_match('#/sok/([A-Za-z0-9]+)/?#i', $uri, $matches)) {
+            $reg_in_path = strtoupper($matches[1]);
             
-            // If the registration number is duplicated, remove the query parameter
-            if (strtoupper($reg_in_path) === strtoupper($reg_in_query)) {
-                $clean_url = strtok($uri, '?');
+            // Clean URL without query parameters
+            $clean_url = '/sok/' . $reg_in_path;
+            
+            // If there are any query parameters, redirect to clean URL
+            if (strpos($uri, '?') !== false || substr($uri, -1) === '/') {
                 wp_safe_redirect($clean_url, 301);
                 exit;
             }
