@@ -297,7 +297,12 @@ jQuery(document).ready(function($) {
     $('#vehicle-lookup-form').on('submit', function(e) {
         const regNumber = $('#regNumber').val().trim().toUpperCase();
         setRegNumberCookie(regNumber);
-        // ... rest of the existing submit handler
+        
+        // Update URL without page reload
+        if (regNumber && window.history && window.history.pushState) {
+            const newUrl = '/sok/' + regNumber;
+            window.history.pushState({ regNumber: regNumber }, '', newUrl);
+        }sting submit handler
     });
 
     // Check URL parameters for successful payment
@@ -519,3 +524,12 @@ jQuery(document).ready(function($) {
     // Add CSS for timeline margin
     $('.timeline').css('margin', '20px 0 50px 0');
 });
+// Handle browser back/forward
+window.onpopstate = function(event) {
+    const match = window.location.pathname.match(/\/sok\/([A-Za-z0-9]+)/);
+    if (match && match[1]) {
+        const regNumber = match[1].toUpperCase();
+        $('#regNumber').val(regNumber);
+        $('#vehicle-lookup-form').trigger('submit');
+    }
+};
