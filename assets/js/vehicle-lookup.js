@@ -410,12 +410,11 @@ jQuery(document).ready(function($) {
         // Get vekter data
         const vekter = tekniskeData?.vekter;
         const weightInfo = {
-            'Egenvekt': vekter?.egenvekt ? `${vekter.egenvekt} kg` : '---',
-            'Nyttelast': vekter?.nyttelast ? `${vekter.nyttelast} kg` : '---',
-            'Tillatt totalvekt': vekter?.tillattTotalvekt ? `${vekter.tillattTotalvekt} kg` : '---',
-            'Tillatt tilhengervekt m/brems': vekter?.tillattTilhengervektMedBrems ? `${vekter.tillattTilhengervektMedBrems} kg` : '---',
-            'Tillatt tilhengervekt u/brems': vekter?.tillattTilhengervektUtenBrems ? `${vekter.tillattTilhengervektUtenBrems} kg` : '---',
-            'Tillatt vogntogvekt': vekter?.tillattVogntogvekt ? `${vekter.tillattVogntogvekt} kg` : '---',
+            'Lengde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.lengde ? vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.dimensjoner.lengde + ' mm' : '',
+            'Bredde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.bredde ? vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.dimensjoner.bredde + ' mm' : '',
+            'Høyde': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.dimensjoner?.hoyde ? vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.dimensjoner.hoyde + ' mm' : '',
+            'Egenvekt': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter?.egenvekt ? vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.vekter.egenvekt + ' kg' : '',
+            'Nyttelast': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.vekter?.nyttelast ? vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.vekter.nyttelast + ' kg' : ''
         };
 
         $('.weight-info-table').html(
