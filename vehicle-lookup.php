@@ -65,7 +65,7 @@ function fix_sok_redirect_loop() {
     $uri = $_SERVER['REQUEST_URI'];
     if (strpos($uri, '/sok/') !== false && isset($_GET['regNumber'])) {
         // Check if the URL already contains the registration number in the path
-        if (preg_match('#/sok/([A-Za-z0-9]+)/#i', $uri, $matches)) {
+        if (preg_match('#/sok/([A-Za-z0-9]+)#i', $uri, $matches)) {
             $reg_in_path = $matches[1];
             $reg_in_query = $_GET['regNumber'];
             

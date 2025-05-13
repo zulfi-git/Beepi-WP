@@ -518,10 +518,11 @@ jQuery(document).ready(function($) {
         const regNumber = $('#regNumber').val().trim().toUpperCase();
 
         if (regNumber) {
-            // Only update URL if we're not already on the correct path
+            // Only proceed if we have a valid registration number
             const currentPath = window.location.pathname;
             const expectedPath = '/sok/' + regNumber;
             
+            // Update URL without triggering a page reload
             if (currentPath !== expectedPath) {
                 if (window.history && window.history.pushState) {
                     window.history.pushState({ regNumber: regNumber }, '', expectedPath);
@@ -531,9 +532,35 @@ jQuery(document).ready(function($) {
             // Set the cookie
             setRegNumberCookie(regNumber);
             
-            // Continue with the lookup
-            performVehicleLookup(regNumber);
+            // Show loading state
+            $(this).find('button').prop('disabled', true).addClass('loading');
+
+            // Make AJAX request without form submission
+            $.ajax({
+                url: vehicleLookupAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vehicle_lookup',
+                    nonce: vehicleLookupAjax.nonce,
+                    regNumber: regNumber
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success && response.data) {
+                        // Update the UI with the response data
+                        $('#vehicle-lookup-results').show();
+                        // Rest of your existing AJAX success handling
+                    }
+                },
+                complete: function() {
+                    // Reset button state
+                    $('#vehicle-lookup-form button')
+                        .prop('disabled', false)
+                        .removeClass('loading');
+                }
+            });
         }
+        return false; // Ensure no form submission
     });
 
     // Handle browser back/forward buttons
