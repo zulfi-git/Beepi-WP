@@ -40,7 +40,6 @@ class Vehicle_Lookup_Shortcode {
 
                 <div class="owner-section">
                     <div id="owner-info-container">
-                        <div id="owner-info-purchase">
                             <p>Hvem eier bilen?</p>
                             <?php 
                             $product = wc_get_product($product_id);
@@ -61,10 +60,7 @@ class Vehicle_Lookup_Shortcode {
                                 <?php endif; ?>
                             </div>
                             <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
-                            <div class="trust-indicators">
-                                <div>🔐 Data hentes fra Statens vegvesen</div>
-                                <div>⏱️ Svar på noen få sekunder</div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
