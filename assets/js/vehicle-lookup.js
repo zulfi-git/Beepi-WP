@@ -412,18 +412,18 @@ jQuery(document).ready(function($) {
         const dimensjoner = tekniskeData?.dimensjoner;
         
         const weightInfo = {
-            'Lengde': dimensjoner?.lengde ? `${dimensjoner.lengde} mm` : '---',
-            'Bredde': dimensjoner?.bredde ? `${dimensjoner.bredde} mm` : '---',
-            'Høyde': dimensjoner?.hoyde ? `${dimensjoner.hoyde} mm` : '---',
-            'Egenvekt': vekter?.egenvekt ? `${vekter.egenvekt} kg` : '---',
-            'Nyttelast': vekter?.nyttelast ? `${vekter.nyttelast} kg` : '---',
-            'Tillatt totalvekt': vekter?.tillattTotalvekt ? `${vekter.tillattTotalvekt} kg` : '---',
-            'Tillatt tilhengervekt m/brems': vekter?.tillattTilhengervektMedBrems ? `${vekter.tillattTilhengervektMedBrems} kg` : '---',
-            'Tillatt tilhengervekt u/brems': vekter?.tillattTilhengervektUtenBrems ? `${vekter.tillattTilhengervektUtenBrems} kg` : '---',
-            'Tillatt vogntogvekt': vekter?.tillattVogntogvekt ? `${vekter.tillattVogntogvekt} kg` : '---'
+            'Lengde': tekniskeData?.dimensjoner?.lengde ? `${tekniskeData.dimensjoner.lengde} mm` : '---',
+            'Bredde': tekniskeData?.dimensjoner?.bredde ? `${tekniskeData.dimensjoner.bredde} mm` : '---',
+            'Høyde': tekniskeData?.dimensjoner?.hoyde ? `${tekniskeData.dimensjoner.hoyde} mm` : '---',
+            'Egenvekt': tekniskeData?.vekter?.egenvekt ? `${tekniskeData.vekter.egenvekt} kg` : '---',
+            'Nyttelast': tekniskeData?.vekter?.nyttelast ? `${tekniskeData.vekter.nyttelast} kg` : '---',
+            'Tillatt totalvekt': tekniskeData?.vekter?.tillattTotalvekt ? `${tekniskeData.vekter.tillattTotalvekt} kg` : '---',
+            'Tillatt tilhengervekt m/brems': tekniskeData?.vekter?.tillattTilhengervektMedBrems ? `${tekniskeData.vekter.tillattTilhengervektMedBrems} kg` : '---',
+            'Tillatt tilhengervekt u/brems': tekniskeData?.vekter?.tillattTilhengervektUtenBrems ? `${tekniskeData.vekter.tillattTilhengervektUtenBrems} kg` : '---',
+            'Tillatt vogntogvekt': tekniskeData?.vekter?.tillattVogntogvekt ? `${tekniskeData.vekter.tillattVogntogvekt} kg` : '---'
         };
 
-        $('.weight-info-table').html(
+        $('.size-weight-table').html(
             Object.entries(weightInfo)
                 .filter(([_, value]) => value !== '---')
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
