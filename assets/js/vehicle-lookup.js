@@ -208,11 +208,8 @@ jQuery(document).ready(function($) {
                     }
 
 
-                    // Parse and display data for each section
+                    // Only render owner information
                     renderOwnerInfo(vehicleData);
-                    renderBasicInfo(vehicleData);
-                    renderTechnicalInfo(vehicleData);
-                    renderRegistrationInfo(vehicleData);
 
                     // Keep all details elements open by default
                     $('details').attr('open', true);

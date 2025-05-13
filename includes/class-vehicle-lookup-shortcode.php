@@ -71,39 +71,9 @@ class Vehicle_Lookup_Shortcode {
 
                 <div class="accordion">
                     <details>
-                        <summary><span>Generell informasjon</span><span>📋</span></summary>
+                        <summary><span>Eierinformasjon</span><span>👤</span></summary>
                         <div class="details-content">
-                            <table class="info-table basic-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Reg. og kontroll</span><span>🔍</span></summary>
-                        <div class="details-content">
-                            <table class="info-table registration-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Motor og drivverk</span><span>🔧</span></summary>
-                        <div class="details-content">
-                            <table class="info-table engine-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Størrelse og vekt</span><span>⚖️</span></summary>
-                        <div class="details-content">
-                            <table class="info-table size-weight-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Dekk og felg</span><span>🛞</span></summary>
-                        <div class="details-content">
-                            <table class="info-table tire-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Merknader</span><span>📝</span></summary>
-                        <div class="details-content">
-                            <table class="info-table notes-info-table"></table>
+                            <table class="info-table owner-info-table"></table>
                         </div>
                     </details>
                 </div>
