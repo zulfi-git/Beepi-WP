@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteBase /
+RewriteRule ^sok/([A-Za-z0-9]+)$ /sok/ [QSA]

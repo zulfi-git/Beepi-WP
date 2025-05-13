@@ -12,8 +12,12 @@ class Vehicle_Lookup_Shortcode {
 
         $product_id = absint($atts['product_id']);
 
-        // Check if a registration number is present in the URL
-        $regNumber = isset($_GET['regNumber']) ? sanitize_text_field($_GET['regNumber']) : '';
+        // Get registration number from URL path
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        $regNumber = '';
+        if (preg_match('#/sok/([A-Za-z0-9]+)#', $request_uri, $matches)) {
+            $regNumber = sanitize_text_field($matches[1]);
+        }
         $is_valid = false;
 
         if (!empty($regNumber)) {
