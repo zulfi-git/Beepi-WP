@@ -12,6 +12,16 @@ class Vehicle_Lookup_Shortcode {
 
         $product_id = absint($atts['product_id']);
 
+        // Check if a registration number is present in the URL
+        $regNumber = isset($_GET['regNumber']) ? sanitize_text_field($_GET['regNumber']) : '';
+        $is_valid = false;
+
+        if (!empty($regNumber)) {
+            // Basic validation of the registration number format (customize as needed)
+            $pattern = '/([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})/';
+            $is_valid = preg_match($pattern, $regNumber);
+        }
+
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
@@ -21,7 +31,8 @@ class Vehicle_Lookup_Shortcode {
                     <input type="text" id="regNumber" name="regNumber" required
                            class="plate-input"
                            placeholder="CU11262"
-                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
+                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})"
+                           value="<?php echo esc_attr($regNumber); ?>">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <div class="loading-spinner"></div>
                         <span class="search-icon">🔍</span>
@@ -113,7 +124,13 @@ class Vehicle_Lookup_Shortcode {
             <div id="quota-display" class="quota-display" style="display: none;"></div>
             <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
             <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
-        </div>
+        <?php if ($is_valid): ?>
+        <script>
+            jQuery(document).ready(function($) {
+                $('#vehicle-lookup-form').submit();
+            });
+        </script>
+        <?php endif; ?>
         <?php
         return ob_get_clean();
     }
