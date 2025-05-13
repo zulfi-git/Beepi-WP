@@ -147,7 +147,7 @@ class Order_Confirmation_Shortcode {
         <div class="vehicle-lookup-container order-confirmation-container">
             <h2 style="text-align: center;">✅ Bestilling bekreftet</h2>
             <p style="text-align: center;">Betalingen er gjennomført. Se informasjon under</p>
-            
+
             <div id="vehicle-lookup-results" class="results-wrapper">
                 <div class="vehicle-header">
                     <div class="vehicle-info">
@@ -167,51 +167,16 @@ class Order_Confirmation_Shortcode {
                 <div class="tab-content">
                     <section id="general-info" class="tab-panel">
                         <div class="accordion">
-                            <details open>
-                                <summary>Eierinformasjon</summary>
-                                <div class="details-content">
-                                    <div id="owner-info-container">
-                                        <table class="info-table owner-info-table"></table>
-                                    </div>
-                                </div>
-                            </details>
-                            <details>
-                                <summary>Generell informasjon</summary>
-                                <div class="details-content">
-                                    <table class="info-table general-info-table"></table>
-                                </div>
-                            </details>
-                            <details>
-                                <summary>Registrering og kontroll</summary>
-                                <div class="details-content">
-                                    <table class="info-table registration-info-table"></table>
-                                </div>
-                            </details>
+                    <details open>
+                        <summary>Eierinformasjon</summary>
+                        <div class="details-content">
+                            <table class="info-table owner-info-table"></table>
                         </div>
+                    </details>
+                </div>
                     </section>
 
-                    <section id="technical-info" class="tab-panel">
-                        <div class="accordion">
-                            <details open>
-                                <summary>Motor og drivverk</summary>
-                                <div class="details-content">
-                                    <table class="info-table engine-info-table"></table>
-                                </div>
-                            </details>
-                            <details open>
-                                <summary>Størrelse og vekt</summary>
-                                <div class="details-content">
-                                    <table class="info-table size-weight-table"></table>
-                                </div>
-                            </details>
-                            <details open>
-                                <summary>Dekk og felg</summary>
-                                <div class="details-content">
-                                    <table class="info-table tire-info-table"></table>
-                                </div>
-                            </details>
-                        </div>
-                    </section>
+                   
                 </div>
             </div>
         </div>
