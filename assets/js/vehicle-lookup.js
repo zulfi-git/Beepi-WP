@@ -297,7 +297,7 @@ jQuery(document).ready(function($) {
     $('#vehicle-lookup-form').on('submit', function(e) {
         const regNumber = $('#regNumber').val().trim().toUpperCase();
         setRegNumberCookie(regNumber);
-        
+
         // Update URL without page reload
         if (regNumber && window.history && window.history.pushState) {
             const newUrl = '/sok/' + regNumber;
@@ -415,7 +415,7 @@ jQuery(document).ready(function($) {
         // Get size and weight data
         const vekter = tekniskeData?.vekter;
         const dimensjoner = tekniskeData?.dimensjoner;
-        
+
         const weightInfo = {
             'Lengde': tekniskeData?.dimensjoner?.lengde ? `${tekniskeData.dimensjoner.lengde} mm` : '---',
             'Bredde': tekniskeData?.dimensjoner?.bredde ? `${tekniskeData.dimensjoner.bredde} mm` : '---',
@@ -451,7 +451,7 @@ jQuery(document).ready(function($) {
         );
     }
 
-    
+
 
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {
@@ -523,13 +523,40 @@ jQuery(document).ready(function($) {
     }
     // Add CSS for timeline margin
     $('.timeline').css('margin', '20px 0 50px 0');
+
+    // Update browser URL when searching for a registration number
+    $('#vehicle-lookup-form').on('submit', function(e) {
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
+
+        if (regNumber) {
+            // Get the base URL
+            let basePath = window.location.pathname;
+
+            // If we're not already on a /sok/* URL, use the base /sok/ path
+            if (!basePath.match(/\/sok(\/|$)/)) {
+                basePath = '/sok/';
+            } else {
+                // If we're on /sok/ or /sok/SOMETHING, normalize to /sok/
+                basePath = '/sok/';
+            }
+
+            // Create new URL and update browser history
+            const newUrl = basePath + regNumber;
+
+            if (window.history && window.history.pushState) {
+                window.history.pushState({ regNumber: regNumber }, '', newUrl);
+            }
+        }
+    });
+
+    // Handle browser back/forward buttons
+    $(window).on('popstate', function(event) {
+        // Get registration number from URL
+        const match = window.location.pathname.match(/\/sok\/([A-Za-z0-9]+)/);
+        if (match && match[1]) {
+            const regNumber = match[1].toUpperCase();
+            $('#regNumber').val(regNumber);
+            $('#vehicle-lookup-form').submit();
+        }
+    });
 });
-// Handle browser back/forward
-window.onpopstate = function(event) {
-    const match = window.location.pathname.match(/\/sok\/([A-Za-z0-9]+)/);
-    if (match && match[1]) {
-        const regNumber = match[1].toUpperCase();
-        $('#regNumber').val(regNumber);
-        $('#vehicle-lookup-form').trigger('submit');
-    }
-};
