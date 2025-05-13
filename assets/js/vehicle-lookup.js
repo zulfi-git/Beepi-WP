@@ -367,7 +367,25 @@ jQuery(document).ready(function($) {
     function renderTechnicalInfo(vehicleData) {
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
         const engineData = tekniskeData?.motorOgDrivverk;
-        const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelgKombinasjon?.[0]?.akselDekkOgFelg;
+        const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelg;
+        const vektData = tekniskeData?.vekter;
+        const malData = tekniskeData?.karosseriOgLasteplan;
+
+        // Add size and weight information
+        const sizeWeight = {
+            'Egenvekt': vektData?.egenvekt ? `${vektData.egenvekt} kg` : '---',
+            'Totalvekt': vektData?.totalvekt ? `${vektData.totalvekt} kg` : '---',
+            'Nyttelast': vektData?.nyttelast ? `${vektData.nyttelast} kg` : '---',
+            'Lengde': malData?.lengde ? `${malData.lengde} mm` : '---',
+            'Bredde': malData?.bredde ? `${malData.bredde} mm` : '---',
+            'Høyde': malData?.hoyde ? `${malData.hoyde} mm` : '---'
+        };
+
+        $('.size-weight-table').html(
+            Object.entries(sizeWeight)
+                .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+                .join('')
+        );Kombinasjon?.[0]?.akselDekkOgFelg;
 
         // Render tire info for front axle
         const frontTire = dekkOgFelg?.find(axle => axle.akselId === 1);
