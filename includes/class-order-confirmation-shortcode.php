@@ -154,13 +154,9 @@ class Order_Confirmation_Shortcode {
                     </div>
                 </div>
 
-                <div class="accordion">
-                    <details open>
-                        <summary>Eierinformasjon</summary>
-                        <div class="details-content">
-                            <table class="info-table owner-info-table"></table>
-                        </div>
-                    </details>
+                <div class="owner-info-card">
+                    <h3>Eierinformasjon</h3>
+                    <table class="info-table owner-info-table"></table>
                 </div>
             </div>
         </div>
