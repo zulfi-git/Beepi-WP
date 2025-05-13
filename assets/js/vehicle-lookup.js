@@ -514,21 +514,25 @@ jQuery(document).ready(function($) {
 
     // Single consolidated form submit handler
     $('#vehicle-lookup-form').on('submit', function(e) {
+        e.preventDefault();
         const regNumber = $('#regNumber').val().trim().toUpperCase();
 
         if (regNumber) {
-            // Get the base URL and normalize to /sok/
-            let basePath = '/sok/';
+            // Only update URL if we're not already on the correct path
+            const currentPath = window.location.pathname;
+            const expectedPath = '/sok/' + regNumber;
             
-            // Create new URL and update browser history
-            const newUrl = basePath + regNumber;
-
-            if (window.history && window.history.pushState) {
-                window.history.pushState({ regNumber: regNumber }, '', newUrl);
+            if (currentPath !== expectedPath) {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState({ regNumber: regNumber }, '', expectedPath);
+                }
             }
-
+            
             // Set the cookie
             setRegNumberCookie(regNumber);
+            
+            // Continue with the lookup
+            performVehicleLookup(regNumber);
         }
     });
 
