@@ -12,11 +12,15 @@ class Vehicle_Lookup_Shortcode {
 
         $product_id = absint($atts['product_id']);
 
-        // Get registration number from URL path
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-        $regNumber = '';
-        if (preg_match('#/sok/([A-Za-z0-9]+)#', $request_uri, $matches)) {
-            $regNumber = sanitize_text_field($matches[1]);
+        // Get registration number from query variable (set by rewrite rule)
+        $regNumber = get_query_var('reg_number', '');
+        
+        // If not found in query var, check URL directly as fallback
+        if (empty($regNumber)) {
+            $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+            if (preg_match('#/sok/([A-Za-z0-9]+)#', $request_uri, $matches)) {
+                $regNumber = sanitize_text_field($matches[1]);
+            }
         }
         $is_valid = false;
 
