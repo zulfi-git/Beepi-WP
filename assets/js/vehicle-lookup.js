@@ -512,28 +512,23 @@ jQuery(document).ready(function($) {
     // Add CSS for timeline margin
     $('.timeline').css('margin', '20px 0 50px 0');
 
-    // Update browser URL when searching for a registration number
+    // Single consolidated form submit handler
     $('#vehicle-lookup-form').on('submit', function(e) {
         const regNumber = $('#regNumber').val().trim().toUpperCase();
 
         if (regNumber) {
-            // Get the base URL
-            let basePath = window.location.pathname;
-
-            // If we're not already on a /sok/* URL, use the base /sok/ path
-            if (!basePath.match(/\/sok(\/|$)/)) {
-                basePath = '/sok/';
-            } else {
-                // If we're on /sok/ or /sok/SOMETHING, normalize to /sok/
-                basePath = '/sok/';
-            }
-
+            // Get the base URL and normalize to /sok/
+            let basePath = '/sok/';
+            
             // Create new URL and update browser history
             const newUrl = basePath + regNumber;
 
             if (window.history && window.history.pushState) {
                 window.history.pushState({ regNumber: regNumber }, '', newUrl);
             }
+
+            // Set the cookie
+            setRegNumberCookie(regNumber);
         }
     });
 
