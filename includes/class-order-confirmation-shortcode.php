@@ -145,9 +145,6 @@ class Order_Confirmation_Shortcode {
         ob_start();
         ?>
         <div class="vehicle-lookup-container order-confirmation-container">
-            <h2 style="text-align: center;">✅ Bestilling bekreftet</h2>
-            <p style="text-align: center;">Betalingen er gjennomført. Se informasjon under</p>
-
             <div id="vehicle-lookup-results" class="results-wrapper">
                 <div class="vehicle-header">
                     <div class="vehicle-info">
@@ -157,26 +154,13 @@ class Order_Confirmation_Shortcode {
                     </div>
                 </div>
 
-                <nav class="tabs">
-                    <ul>
-                        <li data-tab="general-info"><a href="#general-info">Generell</a></li>
-                        <li data-tab="technical-info"><a href="#technical-info">Teknisk</a></li>
-                    </ul>
-                </nav>
-
-                <div class="tab-content">
-                    <section id="general-info" class="tab-panel">
-                        <div class="accordion">
+                <div class="accordion">
                     <details open>
                         <summary>Eierinformasjon</summary>
                         <div class="details-content">
                             <table class="info-table owner-info-table"></table>
                         </div>
                     </details>
-                </div>
-                    </section>
-
-                   
                 </div>
             </div>
         </div>
