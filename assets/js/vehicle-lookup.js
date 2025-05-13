@@ -407,15 +407,20 @@ jQuery(document).ready(function($) {
         );
 
 
-        // Get vekter data
+        // Get size and weight data
         const vekter = tekniskeData?.vekter;
+        const dimensjoner = tekniskeData?.dimensjoner;
+        
         const weightInfo = {
+            'Lengde': dimensjoner?.lengde ? `${dimensjoner.lengde} mm` : '---',
+            'Bredde': dimensjoner?.bredde ? `${dimensjoner.bredde} mm` : '---',
+            'Høyde': dimensjoner?.hoyde ? `${dimensjoner.hoyde} mm` : '---',
             'Egenvekt': vekter?.egenvekt ? `${vekter.egenvekt} kg` : '---',
             'Nyttelast': vekter?.nyttelast ? `${vekter.nyttelast} kg` : '---',
             'Tillatt totalvekt': vekter?.tillattTotalvekt ? `${vekter.tillattTotalvekt} kg` : '---',
             'Tillatt tilhengervekt m/brems': vekter?.tillattTilhengervektMedBrems ? `${vekter.tillattTilhengervektMedBrems} kg` : '---',
             'Tillatt tilhengervekt u/brems': vekter?.tillattTilhengervektUtenBrems ? `${vekter.tillattTilhengervektUtenBrems} kg` : '---',
-            'Tillatt vogntogvekt': vekter?.tillattVogntogvekt ? `${vekter.tillattVogntogvekt} kg` : '---',
+            'Tillatt vogntogvekt': vekter?.tillattVogntogvekt ? `${vekter.tillattVogntogvekt} kg` : '---'
         };
 
         $('.weight-info-table').html(
