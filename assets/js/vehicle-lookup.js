@@ -293,18 +293,6 @@ jQuery(document).ready(function($) {
         document.cookie = `vehicle_reg_number=${regNumber};path=/;max-age=3600`;
     }
 
-    // Update form submit handler to save cookie
-    $('#vehicle-lookup-form').on('submit', function(e) {
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
-        setRegNumberCookie(regNumber);
-
-        // Update URL without page reload
-        if (regNumber && window.history && window.history.pushState) {
-            const newUrl = '/sok/' + regNumber;
-            window.history.pushState({ regNumber: regNumber }, '', newUrl);
-        }sting submit handler
-    });
-
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
     const orderKey = urlParams.get('key');
