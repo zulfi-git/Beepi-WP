@@ -57,5 +57,28 @@ require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-order-confirmation-shor
 $order_confirmation = new Order_Confirmation_Shortcode();
 $order_confirmation->init();
 
+/**
+ * Prevent redirect loops with registration number
+ */
+function fix_sok_redirect_loop() {
+    // Check if we're on a /sok/ page with ?regNumber in the URL
+    $uri = $_SERVER['REQUEST_URI'];
+    if (strpos($uri, '/sok/') !== false && isset($_GET['regNumber'])) {
+        // Check if the URL already contains the registration number in the path
+        if (preg_match('#/sok/([A-Za-z0-9]+)/#i', $uri, $matches)) {
+            $reg_in_path = $matches[1];
+            $reg_in_query = $_GET['regNumber'];
+            
+            // If the registration number is duplicated, remove the query parameter
+            if (strtoupper($reg_in_path) === strtoupper($reg_in_query)) {
+                $clean_url = strtok($uri, '?');
+                wp_safe_redirect($clean_url, 301);
+                exit;
+            }
+        }
+    }
+}
+add_action('template_redirect', 'fix_sok_redirect_loop');
+
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
