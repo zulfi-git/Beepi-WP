@@ -158,18 +158,18 @@ class Order_Confirmation_Shortcode {
                     </div>
                 </div>
 
-                <div class="customer-info-card" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                    <h3>Kjøperinformasjon</h3>
-                    <table class="info-table">
+                <div class="owner-info-card">
+                    <h3>Eierinformasjon</h3>
+                    <table class="info-table owner-info-table"></table>
+                </div>
+
+                <div class="customer-info-card" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+                    <h4 style="margin: 0 0 10px 0; color: #666; font-size: 1em;">Kjøperinformasjon (FYI)</h4>
+                    <table class="info-table" style="font-size: 0.85em;">
                         <tr><th>Telefonnummer</th><td><?php echo esc_html($order->get_billing_phone()); ?></td></tr>
                         <tr><th>E-post</th><td><?php echo esc_html($order->get_billing_email()); ?></td></tr>
                         <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
                     </table>
-                </div>
-
-                <div class="owner-info-card">
-                    <h3>Eierinformasjon</h3>
-                    <table class="info-table owner-info-table"></table>
                 </div>
             </div>
         </div>
