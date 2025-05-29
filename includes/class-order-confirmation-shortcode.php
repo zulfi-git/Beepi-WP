@@ -113,6 +113,10 @@ class Order_Confirmation_Shortcode {
         error_log("Request Data:");
         error_log("- POST: " . print_r($_POST, true));
         error_log("- GET: " . print_r($_GET, true));
+        
+        // Log customer phone number for debugging
+        $customer_phone = $order->get_billing_phone();
+        error_log("Customer Phone Number: " . $customer_phone);
         error_log("=== DEBUG: DETAILED ORDER DATA END ===\n\n");
 
         foreach ($reg_fields as $field) {
@@ -152,6 +156,15 @@ class Order_Confirmation_Shortcode {
                         <img class="vehicle-logo" src="" alt="Car manufacturer logo">
                         <p class="vehicle-subtitle"></p>
                     </div>
+                </div>
+
+                <div class="customer-info-card" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <h3>Kjøperinformasjon</h3>
+                    <table class="info-table">
+                        <tr><th>Telefonnummer</th><td><?php echo esc_html($order->get_billing_phone()); ?></td></tr>
+                        <tr><th>E-post</th><td><?php echo esc_html($order->get_billing_email()); ?></td></tr>
+                        <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
+                    </table>
                 </div>
 
                 <div class="owner-info-card">
