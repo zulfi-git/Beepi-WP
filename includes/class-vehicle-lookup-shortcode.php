@@ -12,24 +12,6 @@ class Vehicle_Lookup_Shortcode {
 
         $product_id = absint($atts['product_id']);
 
-        // Get registration number from query variable (set by rewrite rule)
-        $regNumber = get_query_var('reg_number', '');
-        
-        // If not found in query var, check URL directly as fallback
-        if (empty($regNumber)) {
-            $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-            if (preg_match('#/sok/([A-Za-z0-9]+)#', $request_uri, $matches)) {
-                $regNumber = sanitize_text_field($matches[1]);
-            }
-        }
-        $is_valid = false;
-
-        if (!empty($regNumber)) {
-            // Basic validation of the registration number format (customize as needed)
-            $pattern = '/([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})/';
-            $is_valid = preg_match($pattern, $regNumber);
-        }
-
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
@@ -39,8 +21,7 @@ class Vehicle_Lookup_Shortcode {
                     <input type="text" id="regNumber" name="regNumber" required
                            class="plate-input"
                            placeholder="CU11262"
-                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})"
-                           value="<?php echo esc_attr($regNumber); ?>">
+                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <div class="loading-spinner"></div>
                         <span class="search-icon">🔍</span>
@@ -132,13 +113,7 @@ class Vehicle_Lookup_Shortcode {
             <div id="quota-display" class="quota-display" style="display: none;"></div>
             <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
             <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
-        <?php if ($is_valid): ?>
-        <script>
-            jQuery(document).ready(function($) {
-                $('#vehicle-lookup-form').submit();
-            });
-        </script>
-        <?php endif; ?>
+        </div>
         <?php
         return ob_get_clean();
     }
