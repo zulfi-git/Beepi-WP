@@ -2,6 +2,12 @@
 class SMS_Handler {
     public function init() {
         add_action('woocommerce_payment_complete', array($this, 'send_owner_notification'), 20);
+        
+        // Initialize WP SMS hooks
+        add_filter('wp_sms_modify_message', array($this, 'customize_sms_message'), 10, 2);
+        add_filter('wp_sms_to', array($this, 'format_phone_number'), 10, 1);
+        add_action('beepi_sms_sent_success', array($this, 'log_sms_success'), 10, 3);
+        add_action('beepi_sms_sent_failed', array($this, 'log_sms_failure'), 10, 2);
     }
 
     public function send_owner_notification($order_id) {
@@ -101,16 +107,30 @@ class SMS_Handler {
     }
 
     private function send_sms($phone, $message) {
-        // Integration with WP SMS plugin or your SMS service
+        // Integration with WP SMS plugin using hooks
         if (function_exists('wp_sms_send')) {
             error_log('SMS Handler: Attempting to send SMS to ' . $phone);
-            $result = wp_sms_send($phone, $message);
+            
+            // Use wp_sms_to filter to format/modify phone number
+            $filtered_phone = apply_filters('wp_sms_to', $phone);
+            
+            // Use wp_sms_modify_message filter to customize message
+            $filtered_message = apply_filters('wp_sms_modify_message', $message, $filtered_phone);
+            
+            // Add action hook before sending
+            do_action('wp_sms_send', $filtered_phone, $filtered_message);
+            
+            $result = wp_sms_send($filtered_phone, $filtered_message);
             
             if ($result) {
-                error_log('SMS Handler: SMS sent successfully to ' . $phone);
+                error_log('SMS Handler: SMS sent successfully to ' . $filtered_phone);
+                // Add custom action for successful sends
+                do_action('beepi_sms_sent_success', $filtered_phone, $filtered_message, $result);
                 return $result;
             } else {
-                error_log('SMS Handler: wp_sms_send returned false for ' . $phone);
+                error_log('SMS Handler: wp_sms_send returned false for ' . $filtered_phone);
+                // Add custom action for failed sends
+                do_action('beepi_sms_sent_failed', $filtered_phone, $filtered_message);
                 return false;
             }
         } else {
@@ -127,5 +147,47 @@ class SMS_Handler {
             }
         }
         return false;
+    }
+
+    /**
+     * Customize SMS message using wp_sms_modify_message filter
+     */
+    public function customize_sms_message($message, $phone) {
+        // Add Beepi branding and improve formatting
+        if (strpos($message, 'Eierinformasjon for') !== false) {
+            $message = "🚗 Beepi: " . $message . "\n\nTakk for at du bruker Beepi! 🚙";
+        }
+        return $message;
+    }
+
+    /**
+     * Format phone number using wp_sms_to filter
+     */
+    public function format_phone_number($phone) {
+        // Ensure Norwegian format
+        $clean = preg_replace('/[^\d+]/', '', $phone);
+        
+        // Add +47 if missing
+        if (!str_starts_with($clean, '+47') && !str_starts_with($clean, '47')) {
+            $clean = '+47' . $clean;
+        } elseif (str_starts_with($clean, '47') && !str_starts_with($clean, '+47')) {
+            $clean = '+' . $clean;
+        }
+        
+        return $clean;
+    }
+
+    /**
+     * Log successful SMS sends
+     */
+    public function log_sms_success($phone, $message, $result) {
+        error_log("Beepi SMS Success: Sent to {$phone} - Result: " . print_r($result, true));
+    }
+
+    /**
+     * Log failed SMS sends
+     */
+    public function log_sms_failure($phone, $message) {
+        error_log("Beepi SMS Failure: Failed to send to {$phone} - Message: {$message}");
     }
 }
