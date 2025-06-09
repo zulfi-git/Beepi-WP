@@ -13,22 +13,67 @@ class SMS_Handler {
             return;
         }
 
-        // Get owner phone from vehicle data
-        $owner_phone = $this->get_owner_phone($reg_number);
-        if (empty($owner_phone)) {
+        // Get owner details from vehicle API
+        $owner_details = $this->get_owner_details($reg_number);
+        if (empty($owner_details)) {
             return;
         }
 
         $customer_phone = $order->get_billing_phone();
-        $message = "Din bil ({$reg_number}) er søkt opp av tlf: {$customer_phone}. Mer info: " . get_site_url();
+        if (empty($customer_phone)) {
+            return;
+        }
+
+        // Format message with owner name and address
+        $message = "Eierinformasjon for {$reg_number}: {$owner_details['name']}, {$owner_details['address']}";
         
-        $this->send_sms($owner_phone, $message);
+        $this->send_sms($customer_phone, $message);
     }
 
-    private function get_owner_phone($reg_number) {
-        // This would need to be implemented based on how you store/retrieve owner data
-        // For now, return empty to prevent errors
-        return '';
+    private function get_owner_details($reg_number) {
+        // Call the same API endpoint used by the frontend
+        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+                'Origin' => get_site_url()
+            ),
+            'body' => json_encode(array(
+                'registrationNumber' => $reg_number
+            )),
+            'timeout' => 15
+        ));
+
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            return false;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (empty($data) || !isset($data['eierskap']['eier'])) {
+            return false;
+        }
+
+        $eier = $data['eierskap']['eier'];
+        $person = $eier['person'] ?? null;
+        $adresse = $eier['adresse'] ?? null;
+
+        if (!$person || !$adresse) {
+            return false;
+        }
+
+        $name = trim($person['fornavn'] . ' ' . $person['etternavn']);
+        $address_parts = array_filter([
+            $adresse['adresselinje1'] ?? '',
+            $adresse['postnummer'] ?? '',
+            $adresse['poststed'] ?? ''
+        ]);
+        $address = implode(', ', $address_parts);
+
+        return array(
+            'name' => $name,
+            'address' => $address
+        );
     }
 
     private function send_sms($phone, $message) {
