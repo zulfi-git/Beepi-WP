@@ -421,4 +421,3 @@ class Order_Confirmation_Shortcode {
         return ob_get_clean();
     }
 }
-?>

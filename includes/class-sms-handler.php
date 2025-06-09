@@ -105,4 +105,3 @@ class SMS_Handler {
         return false;
     }
 }
-?>
