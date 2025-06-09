@@ -6,9 +6,20 @@ class SMS_Handler {
 
     public function send_owner_notification($order_id) {
         $order = wc_get_order($order_id);
-        $reg_number = $order->get_meta('reg_number');
+        
+        // Get registration number using the same logic as order confirmation
+        $reg_number = '';
+        $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number', 'regNumber'];
+        
+        foreach ($reg_fields as $field) {
+            $reg_number = $order->get_meta($field);
+            if (!empty($reg_number)) {
+                break;
+            }
+        }
         
         if (empty($reg_number) || !$this->validate_order_has_lookup($order)) {
+            error_log('SMS Handler: No registration number found for order ' . $order_id);
             return;
         }
 
@@ -59,11 +70,12 @@ class SMS_Handler {
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if (empty($data) || !isset($data['eierskap']['eier'])) {
+        if (empty($data) || !isset($data['responser'][0]['kjoretoydata']['eierskap']['eier'])) {
+            error_log('SMS Handler: Invalid API response structure');
             return false;
         }
 
-        $eier = $data['eierskap']['eier'];
+        $eier = $data['responser'][0]['kjoretoydata']['eierskap']['eier'];
         $person = $eier['person'] ?? null;
         $adresse = $eier['adresse'] ?? null;
 
