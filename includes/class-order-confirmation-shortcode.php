@@ -36,6 +36,37 @@ class Order_Confirmation_Shortcode {
         return false;
     }
 
+    private function format_norwegian_phone($phone) {
+        if (empty($phone)) {
+            return $phone;
+        }
+
+        // Remove all non-digits and +
+        $clean = preg_replace('/[^\d+]/', '', $phone);
+        
+        // Remove leading +47 if present
+        if (strpos($clean, '+47') === 0) {
+            $clean = substr($clean, 3);
+        } elseif (strpos($clean, '47') === 0 && strlen($clean) === 10) {
+            $clean = substr($clean, 2);
+        }
+
+        // Format based on length
+        if (strlen($clean) === 8) {
+            // Mobile number: xxx xx xxx
+            if (preg_match('/^[4-9]/', $clean)) {
+                return '+47 ' . substr($clean, 0, 3) . ' ' . substr($clean, 3, 2) . ' ' . substr($clean, 5, 3);
+            }
+            // Landline: xx xx xx xx
+            else {
+                return '+47 ' . substr($clean, 0, 2) . ' ' . substr($clean, 2, 2) . ' ' . substr($clean, 4, 2) . ' ' . substr($clean, 6, 2);
+            }
+        }
+
+        // Return original if can't format
+        return $phone;
+    }
+
     public function render_shortcode($atts) {
         $order_id = isset($_GET['order']) ? sanitize_text_field($_GET['order']) : '';
         $order_key = isset($_GET['key']) ? sanitize_text_field($_GET['key']) : '';
