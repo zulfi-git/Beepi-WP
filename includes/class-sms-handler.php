@@ -44,8 +44,11 @@ class SMS_Handler {
         if ($sms_result !== false) {
             $order->update_meta_data('_sms_notification_status', 'sent');
             $order->update_meta_data('_sms_sent_time', current_time('mysql'));
+            error_log('SMS Handler: SMS notification marked as sent for order ' . $order_id);
         } else {
             $order->update_meta_data('_sms_notification_status', 'failed');
+            $order->update_meta_data('_sms_failure_reason', 'SMS service unavailable or returned false');
+            error_log('SMS Handler: SMS notification marked as failed for order ' . $order_id . ' - SMS service unavailable or returned false');
         }
         $order->save();
     }
@@ -100,10 +103,20 @@ class SMS_Handler {
     private function send_sms($phone, $message) {
         // Integration with WP SMS plugin or your SMS service
         if (function_exists('wp_sms_send')) {
+            error_log('SMS Handler: Attempting to send SMS to ' . $phone);
             $result = wp_sms_send($phone, $message);
-            return $result;
+            
+            if ($result) {
+                error_log('SMS Handler: SMS sent successfully to ' . $phone);
+                return $result;
+            } else {
+                error_log('SMS Handler: wp_sms_send returned false for ' . $phone);
+                return false;
+            }
+        } else {
+            error_log('SMS Handler: wp_sms_send function not available - WP SMS plugin may not be installed or active');
+            return false;
         }
-        return false;
     }
 
     private function validate_order_has_lookup($order) {
