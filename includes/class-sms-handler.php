@@ -53,9 +53,14 @@ class SMS_Handler {
             $order->update_meta_data('_sms_sent_time', current_time('mysql'));
             error_log('SMS Handler: SMS notification marked as sent for order ' . $order_id);
         } else {
+            $error_reason = 'SMS service unavailable or returned false';
+            if (!function_exists('wp_sms_send')) {
+                $error_reason = 'WP SMS plugin not available';
+            }
             $order->update_meta_data('_sms_notification_status', 'failed');
-            $order->update_meta_data('_sms_failure_reason', 'SMS service unavailable or returned false');
-            error_log('SMS Handler: SMS notification marked as failed for order ' . $order_id . ' - SMS service unavailable or returned false');
+            $order->update_meta_data('_sms_failure_reason', $error_reason);
+            error_log('SMS Handler: SMS notification marked as failed for order ' . $order_id . ' - ' . $error_reason);
+            error_log('SMS Handler: Failed SMS details - Phone: ' . $customer_phone . ', Message length: ' . strlen($message));
         }
         $order->save();
     }
