@@ -113,34 +113,39 @@ class SMS_Handler {
     }
 
     private function send_sms($phone, $message) {
-        // Integration with WP SMS plugin using hooks
-        if (function_exists('wp_sms_send')) {
-            error_log('SMS Handler: Attempting to send SMS to ' . $phone);
-            
-            // Use wp_sms_to filter to format/modify phone number
-            $filtered_phone = apply_filters('wp_sms_to', $phone);
-            
-            // Use wp_sms_modify_message filter to customize message
-            $filtered_message = apply_filters('wp_sms_modify_message', $message, $filtered_phone);
-            
-            // Add action hook before sending
-            do_action('wp_sms_send', $filtered_phone, $filtered_message);
-            
-            $result = wp_sms_send($filtered_phone, $filtered_message);
-            
-            if ($result) {
-                error_log('SMS Handler: SMS sent successfully to ' . $filtered_phone);
-                // Add custom action for successful sends
-                do_action('beepi_sms_sent_success', $filtered_phone, $filtered_message, $result);
-                return $result;
-            } else {
-                error_log('SMS Handler: wp_sms_send returned false for ' . $filtered_phone);
-                // Add custom action for failed sends
-                do_action('beepi_sms_sent_failed', $filtered_phone, $filtered_message);
-                return false;
-            }
-        } else {
+        // Check if WP SMS plugin is available
+        if (!function_exists('wp_sms_send')) {
             error_log('SMS Handler: wp_sms_send function not available - WP SMS plugin may not be installed or active');
+            return false;
+        }
+
+        // Format phone number to international format
+        $formatted_phone = $this->format_phone_number($phone);
+        error_log('SMS Handler: Original phone: ' . $phone . ' -> Formatted: ' . $formatted_phone);
+        
+        // Check message length (most providers limit to 160 chars for single SMS)
+        $message_length = mb_strlen($message, 'UTF-8');
+        if ($message_length > 160) {
+            error_log('SMS Handler: Warning - Message length (' . $message_length . ') exceeds 160 characters, may be split into multiple SMS');
+        }
+        
+        error_log('SMS Handler: Attempting to send SMS to ' . $formatted_phone . ' (Length: ' . $message_length . ' chars)');
+        
+        // Use wp_sms_modify_message filter to customize message if needed
+        $filtered_message = apply_filters('wp_sms_modify_message', $message, $formatted_phone);
+        
+        // Send SMS using WP SMS Pro function
+        $result = wp_sms_send($formatted_phone, $filtered_message);
+        
+        // Log detailed result
+        if ($result === true) {
+            error_log('SMS Handler: SMS sent successfully to ' . $formatted_phone);
+            do_action('beepi_sms_sent_success', $formatted_phone, $filtered_message, $result);
+            return true;
+        } else {
+            error_log('SMS Handler: wp_sms_send returned false for ' . $formatted_phone);
+            error_log('SMS Handler: Check WP SMS Pro settings, provider configuration, and balance');
+            do_action('beepi_sms_sent_failed', $formatted_phone, $filtered_message);
             return false;
         }
     }
@@ -167,20 +172,30 @@ class SMS_Handler {
     }
 
     /**
-     * Format phone number using wp_sms_to filter
+     * Format phone number to international Norwegian format (+47xxxxxxxx)
      */
     public function format_phone_number($phone) {
-        // Ensure Norwegian format
+        // Remove all non-digit characters except +
         $clean = preg_replace('/[^\d+]/', '', $phone);
         
-        // Add +47 if missing
-        if (!str_starts_with($clean, '+47') && !str_starts_with($clean, '47')) {
-            $clean = '+47' . $clean;
-        } elseif (str_starts_with($clean, '47') && !str_starts_with($clean, '+47')) {
-            $clean = '+' . $clean;
-        }
+        // Remove any leading zeros
+        $clean = ltrim($clean, '0');
         
-        return $clean;
+        // Handle different input formats
+        if (str_starts_with($clean, '+47')) {
+            // Already in correct format
+            return $clean;
+        } elseif (str_starts_with($clean, '47')) {
+            // Missing + sign
+            return '+' . $clean;
+        } elseif (str_starts_with($clean, '+')) {
+            // Has + but wrong country code, assume Norwegian
+            $clean = preg_replace('/^\+\d{1,3}/', '', $clean);
+            return '+47' . $clean;
+        } else {
+            // No country code, assume Norwegian
+            return '+47' . $clean;
+        }
     }
 
     /**
