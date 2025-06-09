@@ -40,8 +40,9 @@ class SMS_Handler {
             return;
         }
 
-        // Format message with owner name and address
-        $message = "Eierinformasjon for {$reg_number}: {$owner_details['name']}, {$owner_details['address']}";
+        // Format message with new template
+        $order_number = $order->get_order_number();
+        $message = "Beepi.no - Takk for kjøpet!\n\nEier av {$reg_number}:\n{$owner_details['name']}\n{$owner_details['address']}\n\nOrdre #{$order_number}\nSe fullstendig rapport på: beepi.no";
         
         // Send SMS and track status
         $sms_result = $this->send_sms($customer_phone, $message);
