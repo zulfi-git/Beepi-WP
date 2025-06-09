@@ -1,4 +1,3 @@
-
 <?php
 class SMS_Handler {
     public function init() {
