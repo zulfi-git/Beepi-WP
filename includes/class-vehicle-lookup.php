@@ -80,6 +80,11 @@ class Vehicle_Lookup {
             wp_send_json_error('Registration number is required');
         }
 
+        // Check daily quota
+        if (!$this->check_quota_available()) {
+            wp_send_json_error('Daily lookup quota exceeded. Please try again tomorrow.');
+        }
+
         $valid_patterns = array(
             '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
             '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
@@ -141,6 +146,37 @@ class Vehicle_Lookup {
             wp_send_json_error('No vehicle information found for this registration number');
         }
 
+        // Increment quota counter on successful lookup
+        $this->increment_quota_counter();
+        
         wp_send_json_success($data);
+    }
+
+    private function check_quota_available() {
+        $today = date('Y-m-d');
+        $quota_key = 'vegvesen_quota_' . $today;
+        $current_count = get_transient($quota_key) ?: 0;
+        
+        return $current_count < 5000;
+    }
+
+    private function increment_quota_counter() {
+        $today = date('Y-m-d');
+        $quota_key = 'vegvesen_quota_' . $today;
+        $current_count = get_transient($quota_key) ?: 0;
+        
+        set_transient($quota_key, $current_count + 1, DAY_IN_SECONDS);
+    }
+
+    public function get_quota_status() {
+        $today = date('Y-m-d');
+        $quota_key = 'vegvesen_quota_' . $today;
+        $current_count = get_transient($quota_key) ?: 0;
+        
+        return array(
+            'used' => $current_count,
+            'limit' => 5000,
+            'remaining' => 5000 - $current_count
+        );
     }
 }
