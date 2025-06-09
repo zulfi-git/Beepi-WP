@@ -175,27 +175,32 @@ class SMS_Handler {
      * Format phone number to international Norwegian format (+47xxxxxxxx)
      */
     public function format_phone_number($phone) {
-        // Remove all non-digit characters except +
+        // Handle array input (WooCommerce sometimes returns arrays)
+        if (is_array($phone)) {
+            $phone = reset($phone);
+        }
+        
+        // Convert to string and remove spaces/special chars except +
+        $phone = (string)$phone;
         $clean = preg_replace('/[^\d+]/', '', $phone);
         
-        // Remove any leading zeros
-        $clean = ltrim($clean, '0');
-        
-        // Handle different input formats
-        if (str_starts_with($clean, '+47')) {
-            // Already in correct format
+        // If already in correct Norwegian format, return as-is
+        if (preg_match('/^\+47\d{8}$/', $clean)) {
             return $clean;
-        } elseif (str_starts_with($clean, '47')) {
-            // Missing + sign
-            return '+' . $clean;
-        } elseif (str_starts_with($clean, '+')) {
-            // Has + but wrong country code, assume Norwegian
-            $clean = preg_replace('/^\+\d{1,3}/', '', $clean);
-            return '+47' . $clean;
-        } else {
-            // No country code, assume Norwegian
-            return '+47' . $clean;
         }
+        
+        // Remove any + and country codes, then leading zeros
+        $digits_only = preg_replace('/^\+?\d{1,3}/', '', $clean);
+        $digits_only = ltrim($digits_only, '0');
+        
+        // Ensure we have 8 digits for Norwegian mobile
+        if (strlen($digits_only) === 8) {
+            return '+47' . $digits_only;
+        }
+        
+        // If not 8 digits, log warning and return original
+        error_log('SMS Handler: Invalid phone number format: ' . $phone . ' (cleaned: ' . $digits_only . ')');
+        return $phone;
     }
 
     /**
