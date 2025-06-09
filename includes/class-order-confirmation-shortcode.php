@@ -166,7 +166,7 @@ class Order_Confirmation_Shortcode {
                 <div class="customer-info-card" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
                     <h4 style="margin: 0 0 10px 0; color: #666; font-size: 1em;">Kjøperinformasjon</h4>
                     <table class="info-table" style="font-size: 0.85em;">
-                        <tr><th>Telefonnummer</th><td><?php echo esc_html($order->get_billing_phone()); ?></td></tr>
+                        <tr><th>Telefonnummer</th><td><?php echo esc_html($this->format_norwegian_phone($order->get_billing_phone())); ?></td></tr>
                         <tr><th>E-post</th><td><?php echo esc_html($order->get_billing_email()); ?></td></tr>
                         <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
                     </table>
