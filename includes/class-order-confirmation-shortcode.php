@@ -202,6 +202,31 @@ class Order_Confirmation_Shortcode {
                         <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
                     </table>
                 </div>
+
+                <?php 
+                // Check if SMS was sent by looking for SMS status in order meta
+                $sms_status = $order->get_meta('_sms_notification_status');
+                $sms_sent_time = $order->get_meta('_sms_sent_time');
+                ?>
+                <div class="sms-status-card" style="margin-top: 15px; padding: 12px; border-radius: 6px; font-size: 0.9em; <?php echo $sms_status === 'sent' ? 'background: #d4edda; border: 1px solid #c3e6cb;' : 'background: #f8d7da; border: 1px solid #f5c6cb;'; ?>">
+                    <h4 style="margin: 0 0 8px 0; color: #666; font-size: 1em;">📱 SMS Varsel</h4>
+                    <?php if ($sms_status === 'sent'): ?>
+                        <p style="margin: 0; color: #155724;">
+                            ✅ Eierinformasjon er sendt til ditt telefonnummer
+                            <?php if ($sms_sent_time): ?>
+                                <br><small style="color: #666;">Sendt: <?php echo date('d.m.Y H:i', strtotime($sms_sent_time)); ?></small>
+                            <?php endif; ?>
+                        </p>
+                    <?php elseif ($sms_status === 'failed'): ?>
+                        <p style="margin: 0; color: #721c24;">
+                            ❌ SMS kunne ikke sendes. Eierinformasjonen er tilgjengelig på denne siden.
+                        </p>
+                    <?php else: ?>
+                        <p style="margin: 0; color: #856404;">
+                            ⏳ SMS varsel behandles...
+                        </p>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
         <script>

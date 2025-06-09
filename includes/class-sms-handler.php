@@ -27,7 +27,17 @@ class SMS_Handler {
         // Format message with owner name and address
         $message = "Eierinformasjon for {$reg_number}: {$owner_details['name']}, {$owner_details['address']}";
         
-        $this->send_sms($customer_phone, $message);
+        // Send SMS and track status
+        $sms_result = $this->send_sms($customer_phone, $message);
+        
+        // Store SMS status in order meta
+        if ($sms_result !== false) {
+            $order->update_meta_data('_sms_notification_status', 'sent');
+            $order->update_meta_data('_sms_sent_time', current_time('mysql'));
+        } else {
+            $order->update_meta_data('_sms_notification_status', 'failed');
+        }
+        $order->save();
     }
 
     private function get_owner_details($reg_number) {
@@ -79,8 +89,10 @@ class SMS_Handler {
     private function send_sms($phone, $message) {
         // Integration with WP SMS plugin or your SMS service
         if (function_exists('wp_sms_send')) {
-            wp_sms_send($phone, $message);
+            $result = wp_sms_send($phone, $message);
+            return $result;
         }
+        return false;
     }
 
     private function validate_order_has_lookup($order) {
