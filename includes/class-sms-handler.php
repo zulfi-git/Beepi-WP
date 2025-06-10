@@ -176,22 +176,46 @@ class SMS_Handler {
         $phone = (string)$phone;
         $clean = preg_replace('/[^\d+]/', '', $phone);
 
+        error_log('SMS Handler: Original phone: ' . $phone . ', Cleaned: ' . $clean);
+
         // If already in correct Norwegian format, return as-is
         if (preg_match('/^\+47\d{8}$/', $clean)) {
+            error_log('SMS Handler: Phone already in correct format: ' . $clean);
             return $clean;
         }
 
-        // Remove any + and country codes, then leading zeros
-        $digits_only = preg_replace('/^\+?\d{1,3}/', '', $clean);
-        $digits_only = ltrim($digits_only, '0');
-
-        // Ensure we have 8 digits for Norwegian mobile
-        if (strlen($digits_only) === 8) {
-            return '+47' . $digits_only;
+        // Handle different input formats
+        $digits_only = $clean;
+        
+        // Remove +47 prefix if present
+        if (strpos($digits_only, '+47') === 0) {
+            $digits_only = substr($digits_only, 3);
+        }
+        // Remove 47 prefix if present and total length suggests it's Norwegian
+        elseif (strpos($digits_only, '47') === 0 && strlen($digits_only) === 10) {
+            $digits_only = substr($digits_only, 2);
+        }
+        // Remove + and any other country codes, but be more specific
+        elseif (strpos($digits_only, '+') === 0) {
+            // Remove + and any non-Norwegian country codes
+            $digits_only = preg_replace('/^\+(?!47)\d{1,3}/', '', $digits_only);
+            $digits_only = ltrim($digits_only, '+');
         }
 
-        // If not 8 digits, log warning and return original
-        error_log('SMS Handler: Invalid phone number format: ' . $phone . ' (cleaned: ' . $digits_only . ')');
+        // Remove leading zeros
+        $digits_only = ltrim($digits_only, '0');
+
+        error_log('SMS Handler: Extracted digits: ' . $digits_only);
+
+        // Ensure we have exactly 8 digits for Norwegian mobile
+        if (strlen($digits_only) === 8 && preg_match('/^[4-9]\d{7}$/', $digits_only)) {
+            $formatted = '+47' . $digits_only;
+            error_log('SMS Handler: Final formatted number: ' . $formatted);
+            return $formatted;
+        }
+
+        // If not valid Norwegian mobile format, log error and return original
+        error_log('SMS Handler: Invalid Norwegian phone number format: ' . $phone . ' (extracted: ' . $digits_only . ', length: ' . strlen($digits_only) . ')');
         return $phone;
     }
 
