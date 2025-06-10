@@ -259,19 +259,6 @@ class Vehicle_Lookup {
 
         }
 
-        // Cache successful response
-        $this->cache_response($regNumber, $data);
-        
-        // Increment quota counter on successful lookup
-        $this->increment_quota_counter();
-        
-        // Increment rate limit counter
-        $this->increment_rate_limit_counter();
-        
-        error_log('Vehicle Lookup: API call made for ' . $regNumber);
-        wp_send_json_success($data);
-    }
-
     private function check_quota_available() {
         $today = date('Y-m-d');
         $quota_key = 'vegvesen_quota_' . $today;
