@@ -179,4 +179,3 @@ class Vehicle_Lookup_Shortcode {
         return '';
     }
 }
-?>
