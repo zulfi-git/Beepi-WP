@@ -296,7 +296,7 @@ jQuery(document).ready(function($) {
         document.cookie = `vehicle_reg_number=${regNumber};path=/;max-age=3600`;
     }
 
-    
+
 
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
@@ -408,7 +408,7 @@ jQuery(document).ready(function($) {
         // Get size and weight data
         const vekter = tekniskeData?.vekter;
         const dimensjoner = tekniskeData?.dimensjoner;
-        
+
         const weightInfo = {
             'Lengde': tekniskeData?.dimensjoner?.lengde ? `${tekniskeData.dimensjoner.lengde} mm` : '---',
             'Bredde': tekniskeData?.dimensjoner?.bredde ? `${tekniskeData.dimensjoner.bredde} mm` : '---',
@@ -444,7 +444,7 @@ jQuery(document).ready(function($) {
         );
     }
 
-    
+
 
     function renderRegistrationInfo(vehicleData) {
         const regInfo = {

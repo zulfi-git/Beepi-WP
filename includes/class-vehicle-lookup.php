@@ -77,17 +77,17 @@ class Vehicle_Lookup {
         $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
         
         if (empty($regNumber)) {
-            wp_send_json_error('Registration number is required');
+            wp_send_json_error('Vennligst skriv inn et registreringsnummer');
         }
 
         // Check rate limiting (before quota check)
         if (!$this->check_rate_limit()) {
-            wp_send_json_error('Too many requests. Please wait before trying again.');
+            wp_send_json_error('For mange forespørsler. Vennligst vent litt før du prøver igjen.');
         }
 
         // Check daily quota
         if (!$this->check_quota_available()) {
-            wp_send_json_error('Daily lookup quota exceeded. Please try again tomorrow.');
+            wp_send_json_error('Daglig grense nådd. Prøv igjen i morgen.');
         }
 
         // Check cache first
@@ -115,7 +115,7 @@ class Vehicle_Lookup {
         }
         
         if (!$is_valid) {
-            wp_send_json_error('Invalid registration number format');
+            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
         }
 
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
@@ -130,13 +130,12 @@ class Vehicle_Lookup {
         ));
 
         if (is_wp_error($response)) {
-            $error_message = $response->get_error_message();
-            wp_send_json_error('Connection error: ' . $error_message);
+            wp_send_json_error('Tilkoblingsfeil. Prøv igjen om litt.');
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
         if ($status_code !== 200) {
-            wp_send_json_error('Server returned error code: ' . $status_code);
+            wp_send_json_error('Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.');
         }
 
         $body = wp_remote_retrieve_body($response);
@@ -150,12 +149,12 @@ class Vehicle_Lookup {
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('JSON Decode Error: ' . json_last_error_msg());
-            wp_send_json_error('Invalid JSON response from server');
+            wp_send_json_error('Ugyldig svar fra server. Prøv igjen.');
         }
 
         if (empty($data)) {
             error_log('Empty Data Response for: ' . $regNumber);
-            wp_send_json_error('No vehicle information found for this registration number');
+            wp_send_json_error('Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
 
 
     /**
