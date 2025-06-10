@@ -1,3 +1,4 @@
+
 <?php
 /*
 Plugin Name: Beepi Vehicle Lookup
@@ -28,9 +29,6 @@ $order_confirmation->init();
 
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
-
-$vehicle_search = new Vehicle_Search_Shortcode();
-$vehicle_search->init();
 
 $vehicle_search_eu = new Vehicle_Search_EU_Shortcode();
 $vehicle_search_eu->init();
