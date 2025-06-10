@@ -66,6 +66,9 @@ jQuery(document).ready(function($) {
                             .show();
                     }
 
+                    // Set cookie for successful lookup before processing data
+                    setRegNumberCookie(regNumber);
+
                     // Always log response for debugging
                     console.log("=== Vehicle Lookup Response ===");
                     console.log("Registration Number:", regNumber);
@@ -293,12 +296,7 @@ jQuery(document).ready(function($) {
         document.cookie = `vehicle_reg_number=${regNumber};path=/;max-age=3600`;
     }
 
-    // Update form submit handler to save cookie
-    $('#vehicle-lookup-form').on('submit', function(e) {
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
-        setRegNumberCookie(regNumber);
-        // ... rest of the existing submit handler
-    });
+    
 
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
