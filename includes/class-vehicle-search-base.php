@@ -22,6 +22,47 @@ abstract class Vehicle_Search_Base {
         ), $atts);
 
         $results_page = esc_url($atts['results_page']);
+        $button_text = esc_html($atts['button_text']);
+        $placeholder = esc_attr($atts['placeholder']);
+        $fragment = $this->get_fragment();
+
+        ob_start();
+        ?>
+        <div class="vehicle-search-container">
+            <form class="vehicle-search-form" onsubmit="return handleSearchSubmit(event, '<?php echo $results_page; ?>', '<?php echo $fragment; ?>')">
+                <div class="plate-input-wrapper">
+                    <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
+                    <input type="text" name="regNumber" required
+                           class="plate-input"
+                           placeholder="<?php echo $placeholder; ?>"
+                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
+                    <button type="submit" class="plate-search-button" aria-label="Search">
+                        <div class="loading-spinner"></div>
+                        <span class="search-icon">🔍</span>
+                    </button>
+                </div>
+                <button type="submit" class="search-button"><?php echo $button_text; ?></button>
+            </form>
+        </div>
+        
+        <script>
+        function handleSearchSubmit(event, resultsPage, fragment) {
+            event.preventDefault();
+            const regNumber = event.target.regNumber.value.trim().toUpperCase();
+            if (regNumber) {
+                const url = fragment ? 
+                    `${resultsPage}/${regNumber}#${fragment}` : 
+                    `${resultsPage}/${regNumber}`;
+                window.location.href = url;
+            }
+            return false;
+        }
+        </script>
+        
+        <?php
+        return ob_get_clean();;
+
+        $results_page = esc_url($atts['results_page']);
         $fragment = $this->get_fragment();
         
         ob_start();

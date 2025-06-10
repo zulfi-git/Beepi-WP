@@ -331,6 +331,68 @@ jQuery(document).ready(function($) {
 
 
 
+    // Handle URL fragment-based auto-scrolling
+    function handleFragmentScroll() {
+        const fragment = window.location.hash.substring(1); // Remove the #
+        if (!fragment) return;
+
+        // Fragment to section mapping
+        const fragmentMapping = {
+            'eu': 'Reg. og kontroll',
+            'tires': 'Dekk og felg',
+            'loan': 'Finansiering',
+            'crash': 'Skadehistorikk',
+            'issues': 'Problemer'
+        };
+
+        const targetSectionText = fragmentMapping[fragment];
+        if (!targetSectionText) return;
+
+        // Wait for vehicle data to load and then scroll
+        const scrollToSection = () => {
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            for (let header of accordionHeaders) {
+                if (header.textContent.trim().includes(targetSectionText)) {
+                    header.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                    break;
+                }
+            }
+        };
+
+        // If vehicle data is already loaded, scroll immediately
+        if (document.querySelector('.vehicle-info')) {
+            setTimeout(scrollToSection, 100); // Small delay for smooth UX
+        } else {
+            // Wait for vehicle data to load
+            const observer = new MutationObserver((mutations) => {
+                for (let mutation of mutations) {
+                    if (mutation.type === 'childList') {
+                        const vehicleInfo = document.querySelector('.vehicle-info');
+                        if (vehicleInfo) {
+                            observer.disconnect();
+                            setTimeout(scrollToSection, 200); // Delay after data loads
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    };
+
+    // Handle fragment on page load
+    handleFragmentScroll();
+
+    // Handle fragment when hash changes (for single page navigation)
+    window.addEventListener('hashchange', handleFragmentScroll);
+
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
     const orderKey = urlParams.get('key');
