@@ -8,7 +8,7 @@ class Vehicle_Search_Shortcode {
     public function render_search_shortcode($atts) {
         // Extract attributes with defaults
         $atts = shortcode_atts(array(
-            'results_page' => '/vehicle-results', // Default results page path
+            'results_page' => '/sok', // Default results page path
             'button_text' => 'Søk', // Default button text
         ), $atts);
 

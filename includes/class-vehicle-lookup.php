@@ -7,9 +7,12 @@ class Vehicle_Lookup {
         // Register scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         
-        // Initialize shortcode
+        // Initialize shortcodes
         $shortcode = new Vehicle_Lookup_Shortcode();
         $shortcode->init();
+        
+        $search_shortcode = new Vehicle_Search_Shortcode();
+        $search_shortcode->init();
         
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
@@ -18,6 +21,10 @@ class Vehicle_Lookup {
         // WooCommerce hooks
         add_action('woocommerce_checkout_create_order', array($this, 'save_registration_to_order'), 10, 2);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
+        
+        // Add rewrite rules for /sok/ URLs
+        add_action('init', array($this, 'add_rewrite_rules'));
+        add_filter('query_vars', array($this, 'add_query_vars'));
     }
 
     private function get_registration_number() {
@@ -36,6 +43,31 @@ class Vehicle_Lookup {
     public function update_order_meta($order_id) {
         // This method is now redundant since we save during order creation
         return;
+    }
+
+    /**
+     * Add custom rewrite rules for vehicle lookup URLs
+     */
+    public function add_rewrite_rules() {
+        add_rewrite_rule(
+            '^sok/([^/]+)/?$',
+            'index.php?pagename=sok&reg_number=$matches[1]',
+            'top'
+        );
+        
+        // Flush rewrite rules if they haven't been flushed yet
+        if (get_option('vehicle_lookup_rewrite_rules_flushed') !== '1') {
+            flush_rewrite_rules();
+            update_option('vehicle_lookup_rewrite_rules_flushed', '1');
+        }
+    }
+
+    /**
+     * Add custom query variables
+     */
+    public function add_query_vars($vars) {
+        $vars[] = 'reg_number';
+        return $vars;
     }
 
     /**
