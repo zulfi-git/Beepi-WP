@@ -80,9 +80,21 @@ class Vehicle_Lookup {
             wp_send_json_error('Registration number is required');
         }
 
+        // Check rate limiting (before quota check)
+        if (!$this->check_rate_limit()) {
+            wp_send_json_error('Too many requests. Please wait before trying again.');
+        }
+
         // Check daily quota
         if (!$this->check_quota_available()) {
             wp_send_json_error('Daily lookup quota exceeded. Please try again tomorrow.');
+        }
+
+        // Check cache first
+        $cached_data = $this->get_cached_response($regNumber);
+        if ($cached_data !== false) {
+            error_log('Vehicle Lookup: Cache hit for ' . $regNumber);
+            wp_send_json_success($cached_data);
         }
 
         $valid_patterns = array(
@@ -144,11 +156,106 @@ class Vehicle_Lookup {
         if (empty($data)) {
             error_log('Empty Data Response for: ' . $regNumber);
             wp_send_json_error('No vehicle information found for this registration number');
+
+
+    /**
+     * Check if rate limit allows request
+     */
+    private function check_rate_limit() {
+        // Allow administrators to bypass rate limits
+        if (current_user_can('administrator')) {
+            return true;
         }
 
+        $ip_address = $this->get_client_ip();
+        $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
+        $current_count = get_transient($rate_limit_key) ?: 0;
+        
+        return $current_count < VEHICLE_LOOKUP_RATE_LIMIT;
+    }
+
+    /**
+     * Increment rate limit counter
+     */
+    private function increment_rate_limit_counter() {
+        $ip_address = $this->get_client_ip();
+        $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
+        $current_count = get_transient($rate_limit_key) ?: 0;
+        
+        set_transient($rate_limit_key, $current_count + 1, HOUR_IN_SECONDS);
+        
+        // Log rate limit violations
+        if ($current_count >= VEHICLE_LOOKUP_RATE_LIMIT) {
+            error_log('Vehicle Lookup: Rate limit exceeded for IP ' . $ip_address);
+        }
+    }
+
+    /**
+     * Get client IP address
+     */
+    private function get_client_ip() {
+        $ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR');
+        
+        foreach ($ip_keys as $key) {
+            if (array_key_exists($key, $_SERVER) === true) {
+                $ip = $_SERVER[$key];
+                if (strpos($ip, ',') !== false) {
+                    $ip = explode(',', $ip)[0];
+                }
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+        }
+        
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    }
+
+    /**
+     * Get cached response for registration number
+     */
+    private function get_cached_response($regNumber) {
+        $cache_key = 'vehicle_cache_' . md5(strtoupper($regNumber));
+        return get_transient($cache_key);
+    }
+
+    /**
+     * Cache API response
+     */
+    private function cache_response($regNumber, $data) {
+        $cache_key = 'vehicle_cache_' . md5(strtoupper($regNumber));
+        set_transient($cache_key, $data, VEHICLE_LOOKUP_CACHE_DURATION);
+    }
+
+    /**
+     * Get rate limit status for current IP
+     */
+    public function get_rate_limit_status() {
+        $ip_address = $this->get_client_ip();
+        $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
+        $current_count = get_transient($rate_limit_key) ?: 0;
+        
+        return array(
+            'used' => $current_count,
+            'limit' => VEHICLE_LOOKUP_RATE_LIMIT,
+            'remaining' => VEHICLE_LOOKUP_RATE_LIMIT - $current_count,
+            'resets_at' => date('Y-m-d H:59:59')
+        );
+    }
+
+        }
+
+        // Cache successful response
+        $this->cache_response($regNumber, $data);
+        
         // Increment quota counter on successful lookup
         $this->increment_quota_counter();
         
+        // Increment rate limit counter
+        $this->increment_rate_limit_counter();
+        
+        error_log('Vehicle Lookup: API call made for ' . $regNumber);
         wp_send_json_success($data);
     }
 
