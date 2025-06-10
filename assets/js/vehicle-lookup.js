@@ -1,4 +1,14 @@
 jQuery(document).ready(function($) {
+    // Fragment to section mapping
+    const fragmentMapping = {
+        'eu': 'Reg. og kontroll',
+        'tires': 'Dekk og felg', 
+        'engine': 'Motor og drivverk',
+        'weight': 'Størrelse og vekt',
+        'notes': 'Merknader',
+        'basic': 'Generell informasjon'
+    };
+
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -6,6 +16,26 @@ jQuery(document).ready(function($) {
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         return `${day}.${month}.${year}`;
+    }
+
+    function handleFragmentScroll() {
+        const fragment = window.location.hash.substring(1); // Remove #
+        if (fragment && fragmentMapping[fragment]) {
+            const targetSectionText = fragmentMapping[fragment];
+            // Find the accordion section with matching text
+            $('details summary span').each(function() {
+                if ($(this).text().trim() === targetSectionText) {
+                    const detailsElement = $(this).closest('details');
+                    // Ensure it's open
+                    detailsElement.attr('open', true);
+                    // Scroll to it with smooth animation
+                    $('html, body').animate({
+                        scrollTop: detailsElement.offset().top - 100
+                    }, 800);
+                    return false; // Break the loop
+                }
+            });
+        }
     }
 
     // Handle tab clicks - Removed as tabs are no longer used
@@ -226,7 +256,10 @@ jQuery(document).ready(function($) {
                     // Smooth scroll to results
                     $('html, body').animate({
                         scrollTop: $('.vehicle-lookup-container').offset().top - 20
-                    }, 500);
+                    }, 500, function() {
+                        // After results are visible, handle fragment scrolling
+                        setTimeout(handleFragmentScroll, 300);
+                    });
                 } else {
                     errorDiv.html('Failed to retrieve vehicle information').show();
                 }
