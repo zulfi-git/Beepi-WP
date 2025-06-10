@@ -1,4 +1,3 @@
-
 <?php
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-search-base.php';
 
