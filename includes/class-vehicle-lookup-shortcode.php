@@ -11,6 +11,9 @@ class Vehicle_Lookup_Shortcode {
         ), $atts);
 
         $product_id = absint($atts['product_id']);
+        
+        // Check for registration number in URL path or query parameter
+        $reg_number = $this->get_reg_from_url();
 
         ob_start();
         ?>
@@ -21,6 +24,7 @@ class Vehicle_Lookup_Shortcode {
                     <input type="text" id="regNumber" name="regNumber" required
                            class="plate-input"
                            placeholder="CO11204"
+                           value="<?php echo esc_attr($reg_number); ?>"
                            pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <div class="loading-spinner"></div>
@@ -114,8 +118,59 @@ class Vehicle_Lookup_Shortcode {
             <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
             <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
         </div>
+        
+        <?php if ($reg_number): ?>
+        <script>
+        jQuery(document).ready(function($) {
+            // Auto-trigger lookup if registration number is in URL
+            setTimeout(function() {
+                $('#vehicle-lookup-form').trigger('submit');
+            }, 500);
+        });
+        </script>
+        <?php endif; ?>
+        
         <?php
         return ob_get_clean();
+    }
+    
+    /**
+     * Extract registration number from URL path or query parameters
+     */
+    private function get_reg_from_url() {
+        // Check query parameter first
+        if (isset($_GET['reg']) && !empty($_GET['reg'])) {
+            return strtoupper(sanitize_text_field($_GET['reg']));
+        }
+        
+        // Check URL path for registration number
+        $request_uri = $_SERVER['REQUEST_URI'];
+        $path_parts = explode('/', trim($request_uri, '/'));
+        
+        // Look for registration number in the last part of the path
+        if (!empty($path_parts)) {
+            $last_part = end($path_parts);
+            // Remove query string if present
+            $last_part = explode('?', $last_part)[0];
+            
+            // Validate if it looks like a registration number
+            $valid_patterns = array(
+                '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles
+                '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
+                '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
+                '/^\d{5}$/',                      // Temporary tourist plates
+                '/^[A-Za-z]\d{3}$/',              // Antique vehicles
+                '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
+            );
+            
+            foreach ($valid_patterns as $pattern) {
+                if (preg_match($pattern, $last_part)) {
+                    return strtoupper(sanitize_text_field($last_part));
+                }
+            }
+        }
+        
+        return '';
     }
 }
 ?>

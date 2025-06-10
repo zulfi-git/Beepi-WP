@@ -16,6 +16,7 @@ define('VEHICLE_LOOKUP_CACHE_DURATION', 43200); // 12 hours
 
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-shortcode.php';
+require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-search-shortcode.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-order-confirmation-shortcode.php';
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-sms-handler.php';
 
@@ -24,6 +25,9 @@ $order_confirmation->init();
 
 $vehicle_lookup = new Vehicle_Lookup();
 $vehicle_lookup->init();
+
+$vehicle_search = new Vehicle_Search_Shortcode();
+$vehicle_search->init();
 
 $sms_handler = new SMS_Handler();
 $sms_handler->init();
