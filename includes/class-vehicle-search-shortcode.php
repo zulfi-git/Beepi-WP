@@ -72,4 +72,3 @@ class Vehicle_Search_Shortcode {
         return ob_get_clean();
     }
 }
-?>
