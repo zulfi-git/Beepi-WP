@@ -35,14 +35,36 @@ class SMS_Handler {
         // Send SMS and track status
         $sms_result = $this->send_sms($customer_phone, $message);
 
-        // Store SMS status in order meta
+        // Store SMS status in order meta and add order notes
         if ($sms_result) {
             $order->update_meta_data('_sms_notification_status', 'sent');
             $order->update_meta_data('_sms_sent_time', current_time('mysql'));
+            
+            // Add order note for successful SMS
+            $order->add_order_note(
+                sprintf(
+                    'SMS notification sent successfully to %s. Vehicle owner information for %s delivered.',
+                    $this->mask_phone_number($customer_phone),
+                    $reg_number
+                ),
+                false // Set to true if you want customer to see this note
+            );
+            
             error_log('SMS Handler: SMS notification sent successfully for order ' . $order_id);
         } else {
             $order->update_meta_data('_sms_notification_status', 'failed');
             $order->update_meta_data('_sms_failure_reason', 'Twilio API failed');
+            
+            // Add order note for failed SMS
+            $order->add_order_note(
+                sprintf(
+                    'SMS notification failed for phone %s. Vehicle lookup for %s completed but SMS delivery unsuccessful.',
+                    $this->mask_phone_number($customer_phone),
+                    $reg_number
+                ),
+                false // Set to true if you want customer to see this note
+            );
+            
             error_log('SMS Handler: SMS notification failed for order ' . $order_id);
         }
         $order->save();
@@ -224,6 +246,9 @@ class SMS_Handler {
      */
     public function log_sms_success($phone, $message, $result) {
         error_log("Beepi SMS Success: Sent to {$phone} - SID: " . ($result['sid'] ?? 'unknown'));
+        
+        // You could add additional order note here if needed
+        // This hook is called after the main SMS handling
     }
 
     /**
@@ -231,5 +256,18 @@ class SMS_Handler {
      */
     public function log_sms_failure($phone, $message) {
         error_log("Beepi SMS Failure: Failed to send to {$phone}");
+        
+        // You could add additional order note here if needed
+        // This hook is called after the main SMS handling
+    }
+
+    /**
+     * Mask phone number for privacy in order notes (show last 4 digits)
+     */
+    private function mask_phone_number($phone) {
+        if (strlen($phone) <= 4) {
+            return $phone;
+        }
+        return str_repeat('*', strlen($phone) - 4) . substr($phone, -4);
     }
 }
