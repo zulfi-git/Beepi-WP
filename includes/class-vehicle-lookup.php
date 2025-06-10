@@ -257,8 +257,6 @@ class Vehicle_Lookup {
         );
     }
 
-        }
-
     private function check_quota_available() {
         $today = date('Y-m-d');
         $quota_key = 'vegvesen_quota_' . $today;
