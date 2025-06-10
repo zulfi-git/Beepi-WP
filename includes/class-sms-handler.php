@@ -113,12 +113,6 @@ class SMS_Handler {
     }
 
     private function send_sms($phone, $message) {
-        // Check if WP SMS plugin is available
-        if (!function_exists('wp_sms_send')) {
-            error_log('SMS Handler: wp_sms_send function not available - WP SMS plugin may not be installed or active');
-            return false;
-        }
-
         // Format phone number to international format
         $formatted_phone = $this->format_phone_number($phone);
         error_log('SMS Handler: Original phone: ' . $phone . ' -> Formatted: ' . $formatted_phone);
@@ -131,21 +125,82 @@ class SMS_Handler {
         
         error_log('SMS Handler: Attempting to send SMS to ' . $formatted_phone . ' (Length: ' . $message_length . ' chars)');
         
-        // Use wp_sms_modify_message filter to customize message if needed
-        $filtered_message = apply_filters('wp_sms_modify_message', $message, $formatted_phone);
+        // Try WP SMS Pro first
+        if (function_exists('wp_sms_send')) {
+            $filtered_message = apply_filters('wp_sms_modify_message', $message, $formatted_phone);
+            $result = wp_sms_send($formatted_phone, $filtered_message);
+            
+            if ($result === true) {
+                error_log('SMS Handler: SMS sent successfully via WP SMS Pro to ' . $formatted_phone);
+                do_action('beepi_sms_sent_success', $formatted_phone, $filtered_message, $result);
+                return true;
+            } else {
+                error_log('SMS Handler: WP SMS Pro failed, trying Twilio backup');
+            }
+        } else {
+            error_log('SMS Handler: WP SMS Pro not available, using Twilio');
+        }
         
-        // Send SMS using WP SMS Pro function
-        $result = wp_sms_send($formatted_phone, $filtered_message);
+        // Fallback to direct Twilio integration
+        $twilio_result = $this->send_sms_twilio($formatted_phone, $message);
         
-        // Log detailed result
-        if ($result === true) {
-            error_log('SMS Handler: SMS sent successfully to ' . $formatted_phone);
-            do_action('beepi_sms_sent_success', $formatted_phone, $filtered_message, $result);
+        if ($twilio_result) {
+            error_log('SMS Handler: SMS sent successfully via Twilio to ' . $formatted_phone);
+            do_action('beepi_sms_sent_success', $formatted_phone, $message, 'twilio');
             return true;
         } else {
-            error_log('SMS Handler: wp_sms_send returned false for ' . $formatted_phone);
-            error_log('SMS Handler: Check WP SMS Pro settings, provider configuration, and balance');
-            do_action('beepi_sms_sent_failed', $formatted_phone, $filtered_message);
+            error_log('SMS Handler: Both WP SMS Pro and Twilio failed for ' . $formatted_phone);
+            do_action('beepi_sms_sent_failed', $formatted_phone, $message);
+            return false;
+        }
+    }
+
+    private function send_sms_twilio($phone, $message) {
+        // Get Twilio credentials from WordPress options or environment
+        $twilio_sid = get_option('twilio_account_sid') ?: getenv('TWILIO_ACCOUNT_SID');
+        $twilio_token = get_option('twilio_auth_token') ?: getenv('TWILIO_AUTH_TOKEN');
+        $twilio_from = get_option('twilio_from_number') ?: getenv('TWILIO_FROM_NUMBER');
+        
+        if (empty($twilio_sid) || empty($twilio_token) || empty($twilio_from)) {
+            error_log('SMS Handler: Twilio credentials not configured');
+            return false;
+        }
+        
+        // Prepare Twilio API request
+        $url = "https://api.twilio.com/2010-04-01/Accounts/{$twilio_sid}/Messages.json";
+        
+        $data = array(
+            'From' => $twilio_from,
+            'To' => $phone,
+            'Body' => $message
+        );
+        
+        $headers = array(
+            'Authorization' => 'Basic ' . base64_encode($twilio_sid . ':' . $twilio_token),
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        );
+        
+        // Send request to Twilio
+        $response = wp_remote_post($url, array(
+            'headers' => $headers,
+            'body' => http_build_query($data),
+            'timeout' => 30
+        ));
+        
+        if (is_wp_error($response)) {
+            error_log('SMS Handler: Twilio API error - ' . $response->get_error_message());
+            return false;
+        }
+        
+        $response_code = wp_remote_retrieve_response_code($response);
+        $response_body = wp_remote_retrieve_body($response);
+        
+        if ($response_code >= 200 && $response_code < 300) {
+            $result = json_decode($response_body, true);
+            error_log('SMS Handler: Twilio success - Message SID: ' . ($result['sid'] ?? 'unknown'));
+            return true;
+        } else {
+            error_log('SMS Handler: Twilio API failed - Code: ' . $response_code . ', Body: ' . $response_body);
             return false;
         }
     }
