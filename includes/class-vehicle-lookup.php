@@ -155,6 +155,20 @@ class Vehicle_Lookup {
         if (empty($data)) {
             error_log('Empty Data Response for: ' . $regNumber);
             wp_send_json_error('Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
+        }
+
+        // Cache successful response
+        $this->cache_response($regNumber, $data);
+        
+        // Increment quota counter on successful lookup
+        $this->increment_quota_counter();
+        
+        // Increment rate limit counter
+        $this->increment_rate_limit_counter();
+        
+        error_log('Vehicle Lookup: API call made for ' . $regNumber);
+        wp_send_json_success($data);
+    }
 
 
     /**
