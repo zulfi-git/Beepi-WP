@@ -8,7 +8,7 @@ class Order_Confirmation_Shortcode {
 
     public function handle_payment_complete($order_id) {
         $order = wc_get_order($order_id);
-        $reg_number = $order->get_meta('custom_reg') ?: $order->get_meta('reg_number');
+        $reg_number = $order->get_meta('reg_number');
 
         if (empty($reg_number)) {
             error_log('Payment complete but no registration number found for order: ' . $order_id);
@@ -89,28 +89,7 @@ class Order_Confirmation_Shortcode {
         }
 
         // Get registration number from WooCommerce order meta
-        $reg_number = '';
-        $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number', 'regNumber'];
-
-        // First try direct meta access
-        foreach ($reg_fields as $field) {
-            $reg_number = get_post_meta($order_id, $field, true);
-            if (!empty($reg_number)) {
-                error_log("Found registration number in post meta {$field}: {$reg_number}");
-                break;
-            }
-        }
-
-        // If not found, try WC meta
-        if (empty($reg_number)) {
-            foreach ($reg_fields as $field) {
-                $reg_number = $order->get_meta($field);
-                if (!empty($reg_number)) {
-                    error_log("Found registration number in WC meta {$field}: {$reg_number}");
-                    break;
-                }
-            }
-        }
+        $reg_number = $order->get_meta('reg_number');
 
         // Enhanced debug logging with all possible data sources
         error_log("\n\n=== DEBUG: COMPLETE ORDER DATA ===");
@@ -133,14 +112,8 @@ class Order_Confirmation_Shortcode {
             error_log("  Value: '" . print_r($meta->value, true) . "'");
         }
 
-        error_log("\nDirectly Checking Registration Fields:");
-        foreach ($reg_fields as $field) {
-            error_log("- Checking '" . $field . "': '" . $order->get_meta($field) . "'");
-        }
-        error_log("Direct Meta Access:");
-        foreach ($reg_fields as $field) {
-            error_log("- Field '{$field}' direct get_meta(): " . print_r($order->get_meta($field), true));
-        }
+        error_log("\nRegistration Number Check:");
+        error_log("- reg_number: '" . $order->get_meta('reg_number') . "'");
         error_log("Request Data:");
         error_log("- POST: " . print_r($_POST, true));
         error_log("- GET: " . print_r($_GET, true));
@@ -150,17 +123,8 @@ class Order_Confirmation_Shortcode {
         error_log("Customer Phone Number: " . $customer_phone);
         error_log("=== DEBUG: DETAILED ORDER DATA END ===\n\n");
 
-        foreach ($reg_fields as $field) {
-            $value = $order->get_meta($field);
-            error_log('Order ' . $order_id . ' - Checking field ' . $field . ': ' . var_export($value, true));
-            if (!empty($value)) {
-                $reg_number = $value;
-                break;
-            }
-        }
-
         if (empty($reg_number)) {
-            error_log('Order ' . $order_id . ': No registration number found in meta fields: ' . implode(', ', $reg_fields));
+            error_log('Order ' . $order_id . ': No registration number found in reg_number field');
             return '<p>Ingen registreringsnummer funnet for denne ordren. Vennligst kontakt support.</p>';
         }
 
