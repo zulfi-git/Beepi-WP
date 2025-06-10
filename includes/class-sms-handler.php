@@ -156,13 +156,13 @@ class SMS_Handler {
     }
 
     private function send_sms_twilio($phone, $message) {
-        // Get Twilio credentials from WordPress options or environment
-        $twilio_sid = get_option('twilio_account_sid') ?: getenv('TWILIO_ACCOUNT_SID');
-        $twilio_token = get_option('twilio_auth_token') ?: getenv('TWILIO_AUTH_TOKEN');
-        $twilio_from = get_option('twilio_from_number') ?: getenv('TWILIO_FROM_NUMBER');
+        // Get Twilio credentials from wp-config constants (preferred) or fallback to environment
+        $twilio_sid = defined('TWILIO_ACCOUNT_SID') ? TWILIO_ACCOUNT_SID : getenv('TWILIO_ACCOUNT_SID');
+        $twilio_token = defined('TWILIO_AUTH_TOKEN') ? TWILIO_AUTH_TOKEN : getenv('TWILIO_AUTH_TOKEN');
+        $twilio_from = defined('TWILIO_FROM_NUMBER') ? TWILIO_FROM_NUMBER : getenv('TWILIO_FROM_NUMBER');
         
         if (empty($twilio_sid) || empty($twilio_token) || empty($twilio_from)) {
-            error_log('SMS Handler: Twilio credentials not configured');
+            error_log('SMS Handler: Twilio credentials not configured in wp-config.php or environment variables');
             return false;
         }
         
