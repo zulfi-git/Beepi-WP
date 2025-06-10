@@ -55,11 +55,9 @@ class Vehicle_Lookup {
             'top'
         );
         
-        // Flush rewrite rules if they haven't been flushed yet
-        if (get_option('vehicle_lookup_rewrite_rules_flushed') !== '1') {
-            flush_rewrite_rules();
-            update_option('vehicle_lookup_rewrite_rules_flushed', '1');
-        }
+        // Always flush rewrite rules when this plugin is activated
+        // This ensures the rules are properly registered
+        flush_rewrite_rules();
     }
 
     /**

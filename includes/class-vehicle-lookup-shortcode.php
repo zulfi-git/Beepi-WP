@@ -138,12 +138,18 @@ class Vehicle_Lookup_Shortcode {
      * Extract registration number from URL path or query parameters
      */
     private function get_reg_from_url() {
-        // Check query parameter first
+        // Check WordPress query var first (from rewrite rule)
+        $wp_reg_number = get_query_var('reg_number');
+        if (!empty($wp_reg_number)) {
+            return strtoupper(sanitize_text_field($wp_reg_number));
+        }
+        
+        // Check standard query parameter
         if (isset($_GET['reg']) && !empty($_GET['reg'])) {
             return strtoupper(sanitize_text_field($_GET['reg']));
         }
         
-        // Check URL path for registration number
+        // Check URL path for registration number as fallback
         $request_uri = $_SERVER['REQUEST_URI'];
         $path_parts = explode('/', trim($request_uri, '/'));
         
