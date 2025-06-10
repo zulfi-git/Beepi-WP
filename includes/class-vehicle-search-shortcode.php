@@ -14,7 +14,7 @@ class Vehicle_Search_Shortcode extends Vehicle_Search_Base {
     protected function get_default_button_text() {
         return 'Søk';
     }
-});
+}
 
         $results_page = esc_url($atts['results_page']);
         
