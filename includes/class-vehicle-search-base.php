@@ -1,4 +1,3 @@
-
 <?php
 abstract class Vehicle_Search_Base {
     
