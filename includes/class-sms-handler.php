@@ -9,16 +9,8 @@ class SMS_Handler {
     public function send_owner_notification($order_id) {
         $order = wc_get_order($order_id);
 
-        // Get registration number using the same logic as order confirmation
-        $reg_number = '';
-        $reg_fields = ['custom_reg', 'reg_number', '_custom_reg', '_reg_number', 'regNumber'];
-
-        foreach ($reg_fields as $field) {
-            $reg_number = $order->get_meta($field);
-            if (!empty($reg_number)) {
-                break;
-            }
-        }
+        // Get registration number - standardized to use 'reg_number' field
+        $reg_number = $order->get_meta('reg_number');
 
         if (empty($reg_number) || !$this->validate_order_has_lookup($order)) {
             error_log('SMS Handler: No registration number found for order ' . $order_id);
