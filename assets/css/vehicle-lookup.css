@@ -67,12 +67,6 @@
     padding: 0.75rem 0;
 }
 
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
 .plate-country {
     font-size: 0.75rem;
     margin-top: -4px;
