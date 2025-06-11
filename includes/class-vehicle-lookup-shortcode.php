@@ -31,7 +31,6 @@ class Vehicle_Lookup_Shortcode {
                         <span class="search-icon">🔍</span>
                     </button>
                 </div>
-                <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             </form>
 
             <div id="vehicle-lookup-results" style="display: none;">
@@ -41,79 +40,76 @@ class Vehicle_Lookup_Shortcode {
                         <h2 class="vehicle-title"></h2>
                         <p class="vehicle-subtitle"></p>
                     </div>
-                    <div class="add-to-cart-section">
-                        <button id="add-to-cart-btn" class="add-to-cart-button" data-product-id="<?php echo $product_id; ?>">
-                            Legg til i handlekurv
-                        </button>
+                </div>
+
+                <div class="owner-section">
+                    <div id="owner-info-container">
+                        <div id="owner-info-purchase">
+                            <p>Hvem eier bilen?</p>
+                            <?php 
+                            $product = wc_get_product($product_id);
+                            $regular_price = $product ? $product->get_regular_price() : '39';
+                            $sale_price = $product ? $product->get_sale_price() : null;
+                            $final_price = $sale_price ? $sale_price : $regular_price;
+                            ?>
+                            <div class="price-display">
+                                <?php if ($sale_price): ?>
+                                    <div class="price-wrapper">
+                                        <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
+                                        <span class="sale-price"><?php echo esc_html($sale_price); ?> kr</span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="price-wrapper">
+                                        <span class="regular-price-only"><?php echo esc_html($regular_price); ?> kr</span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
+                            <div class="trust-indicators">
+                                <div>🔐 Data hentes fra Statens vegvesen</div>
+                                <div>⏱️ Svar på noen få sekunder</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="vehicle-content">
-                    <!-- Basic Information Tab -->
-                    <div class="accordion-section" data-section="basic">
-                        <div class="accordion-header">
-                            <h3>Grunnleggende informasjon</h3>
-                            <span class="accordion-toggle">▼</span>
+                <div class="accordion">
+                    <details>
+                        <summary><span>Generell informasjon</span><span>📋</span></summary>
+                        <div class="details-content">
+                            <table class="info-table basic-info-table"></table>
                         </div>
-                        <div class="accordion-content">
-                            <table class="basic-info-table"></table>
+                    </details>
+                    <details>
+                        <summary><span>Reg. og kontroll</span><span>🔍</span></summary>
+                        <div class="details-content">
+                            <table class="info-table registration-info-table"></table>
                         </div>
-                    </div>
-
-                    <!-- Registration and Control Tab -->
-                    <div class="accordion-section" data-section="eu">
-                        <div class="accordion-header">
-                            <h3>Reg. og kontroll</h3>
-                            <span class="accordion-toggle">▼</span>
+                    </details>
+                    <details>
+                        <summary><span>Motor og drivverk</span><span>🔧</span></summary>
+                        <div class="details-content">
+                            <table class="info-table engine-info-table"></table>
                         </div>
-                        <div class="accordion-content">
-                            <table class="reg-control-table"></table>
+                    </details>
+                    <details>
+                        <summary><span>Størrelse og vekt</span><span>⚖️</span></summary>
+                        <div class="details-content">
+                            <table class="info-table size-weight-table"></table>
                         </div>
-                    </div>
-
-                    <!-- Engine and Drivetrain Tab -->
-                    <div class="accordion-section" data-section="engine">
-                        <div class="accordion-header">
-                            <h3>Motor og drivverk</h3>
-                            <span class="accordion-toggle">▼</span>
+                    </details>
+                    <details>
+                        <summary><span>Dekk og felg</span><span>🛞</span></summary>
+                        <div class="details-content">
+                            <table class="info-table tire-info-table"></table>
                         </div>
-                        <div class="accordion-content">
-                            <table class="engine-drivetrain-table"></table>
+                    </details>
+                    <details>
+                        <summary><span>Merknader</span><span>📝</span></summary>
+                        <div class="details-content">
+                            <table class="info-table notes-info-table"></table>
                         </div>
-                    </div>
-
-                    <!-- Tires and Wheels Tab -->
-                    <div class="accordion-section" data-section="tires">
-                        <div class="accordion-header">
-                            <h3>Dekk og felger</h3>
-                            <span class="accordion-toggle">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <table class="tires-wheels-table"></table>
-                        </div>
-                    </div>
-
-                    <!-- Size and Weight Tab -->
-                    <div class="accordion-section" data-section="weight">
-                        <div class="accordion-header">
-                            <h3>Mål og vekt</h3>
-                            <span class="accordion-toggle">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <table class="size-weight-table"></table>
-                        </div>
-                    </div>
-
-                    <!-- Additional Notes Tab -->
-                    <div class="accordion-section" data-section="notes">
-                        <div class="accordion-header">
-                            <h3>Tilleggsopplysninger</h3>
-                            <span class="accordion-toggle">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="additional-notes"></div>
-                        </div>
-                    </div>
+                    </details>
                 </div>
             </div>
 
@@ -155,8 +151,29 @@ class Vehicle_Lookup_Shortcode {
         
         // Check URL path for registration number as fallback
         $request_uri = $_SERVER['REQUEST_URI'];
-        if (preg_match('/\/sok\/([A-Za-z0-9]+)/', $request_uri, $matches)) {
-            return strtoupper(sanitize_text_field($matches[1]));
+        $path_parts = explode('/', trim($request_uri, '/'));
+        
+        // Look for registration number in the last part of the path
+        if (!empty($path_parts)) {
+            $last_part = end($path_parts);
+            // Remove query string if present
+            $last_part = explode('?', $last_part)[0];
+            
+            // Validate if it looks like a registration number
+            $valid_patterns = array(
+                '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles
+                '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
+                '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
+                '/^\d{5}$/',                      // Temporary tourist plates
+                '/^[A-Za-z]\d{3}$/',              // Antique vehicles
+                '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
+            );
+            
+            foreach ($valid_patterns as $pattern) {
+                if (preg_match($pattern, $last_part)) {
+                    return strtoupper(sanitize_text_field($last_part));
+                }
+            }
         }
         
         return '';

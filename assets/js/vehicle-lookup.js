@@ -1,14 +1,4 @@
 jQuery(document).ready(function($) {
-    // Fragment to section mapping
-    const fragmentMapping = {
-        'eu': 'Reg. og kontroll',
-        'tires': 'Dekk og felg', 
-        'engine': 'Motor og drivverk',
-        'weight': 'Størrelse og vekt',
-        'notes': 'Merknader',
-        'basic': 'Generell informasjon'
-    };
-
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -16,26 +6,6 @@ jQuery(document).ready(function($) {
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         return `${day}.${month}.${year}`;
-    }
-
-    function handleFragmentScroll() {
-        const fragment = window.location.hash.substring(1); // Remove #
-        if (fragment && fragmentMapping[fragment]) {
-            const targetSectionText = fragmentMapping[fragment];
-            // Find the accordion section with matching text
-            $('details summary span').each(function() {
-                if ($(this).text().trim() === targetSectionText) {
-                    const detailsElement = $(this).closest('details');
-                    // Ensure it's open
-                    detailsElement.attr('open', true);
-                    // Scroll to it with smooth animation
-                    $('html, body').animate({
-                        scrollTop: detailsElement.offset().top - 100
-                    }, 800);
-                    return false; // Break the loop
-                }
-            });
-        }
     }
 
     // Handle tab clicks - Removed as tabs are no longer used
@@ -256,10 +226,7 @@ jQuery(document).ready(function($) {
                     // Smooth scroll to results
                     $('html, body').animate({
                         scrollTop: $('.vehicle-lookup-container').offset().top - 20
-                    }, 500, function() {
-                        // After results are visible, handle fragment scrolling
-                        setTimeout(handleFragmentScroll, 300);
-                    });
+                    }, 500);
                 } else {
                     errorDiv.html('Failed to retrieve vehicle information').show();
                 }
@@ -330,68 +297,6 @@ jQuery(document).ready(function($) {
     }
 
 
-
-    // Handle URL fragment-based auto-scrolling
-    function handleFragmentScroll() {
-        const fragment = window.location.hash.substring(1); // Remove the #
-        if (!fragment) return;
-
-        // Fragment to section mapping
-        const fragmentMapping = {
-            'eu': 'Reg. og kontroll',
-            'tires': 'Dekk og felg',
-            'loan': 'Finansiering',
-            'crash': 'Skadehistorikk',
-            'issues': 'Problemer'
-        };
-
-        const targetSectionText = fragmentMapping[fragment];
-        if (!targetSectionText) return;
-
-        // Wait for vehicle data to load and then scroll
-        const scrollToSection = () => {
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
-            for (let header of accordionHeaders) {
-                if (header.textContent.trim().includes(targetSectionText)) {
-                    header.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
-                    break;
-                }
-            }
-        };
-
-        // If vehicle data is already loaded, scroll immediately
-        if (document.querySelector('.vehicle-info')) {
-            setTimeout(scrollToSection, 100); // Small delay for smooth UX
-        } else {
-            // Wait for vehicle data to load
-            const observer = new MutationObserver((mutations) => {
-                for (let mutation of mutations) {
-                    if (mutation.type === 'childList') {
-                        const vehicleInfo = document.querySelector('.vehicle-info');
-                        if (vehicleInfo) {
-                            observer.disconnect();
-                            setTimeout(scrollToSection, 200); // Delay after data loads
-                            break;
-                        }
-                    }
-                }
-            });
-            
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        }
-    };
-
-    // Handle fragment on page load
-    handleFragmentScroll();
-
-    // Handle fragment when hash changes (for single page navigation)
-    window.addEventListener('hashchange', handleFragmentScroll);
 
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
