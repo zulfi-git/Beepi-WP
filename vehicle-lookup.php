@@ -1,9 +1,8 @@
-
 <?php
 /*
 Plugin Name: Beepi Vehicle Lookup
 Description: A plugin to lookup Norwegian vehicle information using registration numbers
-Version: 2.1.0
+Version: 3.0.0
 Author: Beepi
 Author URI: https://beepi.no
 */
