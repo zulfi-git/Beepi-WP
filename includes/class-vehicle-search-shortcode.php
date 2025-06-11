@@ -1,5 +1,3 @@
-
-<old_str>
 <?php
 require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-search-base.php';
 
@@ -16,7 +14,12 @@ class Vehicle_Search_Shortcode extends Vehicle_Search_Base {
     protected function get_default_button_text() {
         return 'Søk';
     }
-}
+
+    public function __invoke( $atts ) {
+        $atts = shortcode_atts( array(
+            'results_page' => '',
+            'button_text' => $this->get_default_button_text(),
+        ), $atts );
 
         $results_page = esc_url($atts['results_page']);
         
@@ -78,23 +81,3 @@ class Vehicle_Search_Shortcode extends Vehicle_Search_Base {
         return ob_get_clean();
     }
 }
-</old_str>
-<new_str>
-<?php
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-search-base.php';
-
-class Vehicle_Search_Shortcode extends Vehicle_Search_Base {
-
-    protected function get_shortcode_name() {
-        return 'vehicle_search';
-    }
-
-    protected function get_fragment() {
-        return ''; // No fragment for basic search
-    }
-
-    protected function get_default_button_text() {
-        return 'Søk';
-    }
-}
-</new_str>
