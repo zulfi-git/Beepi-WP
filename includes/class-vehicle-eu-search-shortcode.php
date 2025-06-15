@@ -8,7 +8,7 @@ class Vehicle_EU_Search_Shortcode {
         // Extract attributes with defaults
         $atts = shortcode_atts(array(
             'results_page' => '/sok', // Default results page path
-            'button_text' => 'EU Kontroll', // Default button text
+            'button_text' => 'Søk', // Default button text
         ), $atts);
 
         $results_page = esc_url($atts['results_page']);
