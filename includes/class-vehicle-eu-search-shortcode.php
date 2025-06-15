@@ -24,7 +24,7 @@ class Vehicle_EU_Search_Shortcode {
                            placeholder="CO11204"
                            pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
                     <button type="submit" class="plate-search-button" aria-label="EU Search">
-                        <span class="search-icon">🇪🇺</span>
+                        <span class="button-text"><?php echo esc_html($atts['button_text']); ?></span>
                     </button>
                 </div>
                 <div id="eu-search-error" class="error-message" style="display: none;"></div>
