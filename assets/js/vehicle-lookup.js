@@ -8,6 +8,23 @@ jQuery(document).ready(function($) {
         return `${day}.${month}.${year}`;
     }
 
+    // Check for EU anchor and scroll to registration accordion when results are shown
+    function checkEUAnchor() {
+        if (window.location.hash === '#EU') {
+            setTimeout(function() {
+                // Find the "Reg. og kontroll" accordion and open it
+                const regAccordion = $('details summary span:contains("Reg. og kontroll")').closest('details');
+                if (regAccordion.length) {
+                    regAccordion.attr('open', true);
+                    // Scroll to the accordion
+                    $('html, body').animate({
+                        scrollTop: regAccordion.offset().top - 100
+                    }, 800);
+                }
+            }, 1000); // Wait for results to load
+        }
+    }
+
     // Handle tab clicks - Removed as tabs are no longer used
 
     $('#vehicle-lookup-form').on('submit', function(e) {
@@ -227,6 +244,9 @@ jQuery(document).ready(function($) {
                     $('html, body').animate({
                         scrollTop: $('.vehicle-lookup-container').offset().top - 20
                     }, 500);
+
+                    // Check for EU anchor after results are shown
+                    checkEUAnchor();
                 } else {
                     errorDiv.html('Failed to retrieve vehicle information').show();
                 }
