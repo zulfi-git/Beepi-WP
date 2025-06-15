@@ -12,8 +12,8 @@ jQuery(document).ready(function($) {
     function checkEUAnchor() {
         if (window.location.hash === '#EU') {
             setTimeout(function() {
-                // Find the "Reg. og kontroll" accordion and open it
-                const regAccordion = $('details summary span:contains("Reg. og kontroll")').closest('details');
+                // Find the "Reg. og EU-kontroll" accordion and open it
+                const regAccordion = $('details summary span:contains("Reg. og EU-kontroll")').closest('details');
                 if (regAccordion.length) {
                     regAccordion.attr('open', true);
                     // Scroll to the accordion

@@ -81,7 +81,7 @@ class Vehicle_Lookup_Shortcode {
                         </div>
                     </details>
                     <details>
-                        <summary><span>Reg. og kontroll</span><span>🔍</span></summary>
+                        <summary><span>Reg. og EU-kontroll</span><span>🔍</span></summary>
                         <div class="details-content">
                             <table class="info-table registration-info-table"></table>
                         </div>
