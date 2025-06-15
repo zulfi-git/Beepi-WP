@@ -1,4 +1,3 @@
-
 <?php
 class Vehicle_EU_Search_Shortcode {
     public function init() {
