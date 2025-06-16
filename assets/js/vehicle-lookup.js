@@ -493,7 +493,7 @@ jQuery(document).ready(function($) {
 
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
-            'Neste EU-kontroll': euControlText,
+            'EU-kontroll': euControlText,
             'Reg. første gang': formatDate(vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato),
             'Reg. i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
             'Reg. på eier': formatDate(vehicleData.registrering?.registrertForstegangPaEierskap),
@@ -505,7 +505,7 @@ jQuery(document).ready(function($) {
         const tableHtml = Object.entries(regInfo)
             .filter(([_, value]) => value)
             .map(([label, value]) => {
-                if (label === 'Neste EU-kontroll' && euControlClass) {
+                if (label === 'EU-kontroll' && euControlClass) {
                     return `<tr class="${euControlClass}"><th>${label}</th><td>${value}</td></tr>`;
                 }
                 return `<tr><th>${label}</th><td>${value}</td></tr>`;
