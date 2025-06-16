@@ -23,16 +23,11 @@ class SMS_Handler {
             return;
         }
 
-        // Try to get pre-formatted phone number first, fallback to billing phone
+        // Get pre-formatted phone number
         $customer_phone = $order->get_meta('formatted_billing_phone');
         if (empty($customer_phone)) {
-            $customer_phone = $order->get_billing_phone();
-            if (empty($customer_phone)) {
-                error_log('SMS Handler: No phone number found for order ' . $order_id);
-                return;
-            }
-            // Format it now as fallback (for existing orders)
-            $customer_phone = $this->format_phone_number($customer_phone);
+            error_log('SMS Handler: No formatted phone number found for order ' . $order_id);
+            return;
         }
 
         // Format message with new template
@@ -162,7 +157,7 @@ class SMS_Handler {
 
         if (is_wp_error($response)) {
             error_log('SMS Handler: Twilio API error - ' . $response->get_error_message());
-            do_action('beepi_sms_sent_failed', $formatted_phone, $message);
+            do_action('beepi_sms_sent_failed', $phone, $message);
             return false;
         }
 
@@ -191,61 +186,7 @@ class SMS_Handler {
         return false;
     }
 
-    /**
-     * Format phone number to international Norwegian format (+47xxxxxxxx)
-     */
-    public function format_phone_number($phone) {
-        // Handle array input (WooCommerce sometimes returns arrays)
-        if (is_array($phone)) {
-            $phone = reset($phone);
-        }
-
-        // Convert to string and remove spaces/special chars except +
-        $phone = (string)$phone;
-        $clean = preg_replace('/[^\d+]/', '', $phone);
-
-        error_log('SMS Handler: Original phone: ' . $phone . ', Cleaned: ' . $clean);
-
-        // If already in correct Norwegian format, return as-is
-        if (preg_match('/^\+47\d{8}$/', $clean)) {
-            error_log('SMS Handler: Phone already in correct format: ' . $clean);
-            return $clean;
-        }
-
-        // Handle different input formats
-        $digits_only = $clean;
-        
-        // Remove +47 prefix if present
-        if (strpos($digits_only, '+47') === 0) {
-            $digits_only = substr($digits_only, 3);
-        }
-        // Remove 47 prefix if present and total length suggests it's Norwegian
-        elseif (strpos($digits_only, '47') === 0 && strlen($digits_only) === 10) {
-            $digits_only = substr($digits_only, 2);
-        }
-        // Remove + and any other country codes, but be more specific
-        elseif (strpos($digits_only, '+') === 0) {
-            // Remove + and any non-Norwegian country codes
-            $digits_only = preg_replace('/^\+(?!47)\d{1,3}/', '', $digits_only);
-            $digits_only = ltrim($digits_only, '+');
-        }
-
-        // Remove leading zeros
-        $digits_only = ltrim($digits_only, '0');
-
-        error_log('SMS Handler: Extracted digits: ' . $digits_only);
-
-        // Ensure we have exactly 8 digits for Norwegian mobile
-        if (strlen($digits_only) === 8 && preg_match('/^[4-9]\d{7}$/', $digits_only)) {
-            $formatted = '+47' . $digits_only;
-            error_log('SMS Handler: Final formatted number: ' . $formatted);
-            return $formatted;
-        }
-
-        // If not valid Norwegian mobile format, log error and return original
-        error_log('SMS Handler: Invalid Norwegian phone number format: ' . $phone . ' (extracted: ' . $digits_only . ', length: ' . strlen($digits_only) . ')');
-        return $phone;
-    }
+    
 
     /**
      * Log successful SMS sends
