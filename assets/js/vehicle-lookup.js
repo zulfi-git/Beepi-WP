@@ -55,7 +55,7 @@ jQuery(document).ready(function($) {
 
         const isValid = validFormats.some(format => format.test(regNumber));
         if (!regNumber || !isValid) {
-            errorDiv.html('Please enter a valid Norwegian registration number').show();
+            errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
             return;
         }
 
@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
                     // Display remaining quota
                     if (response.data.gjenstaendeKvote !== undefined) {
                         $('#quota-display')
-                            .html(`Remaining quota: ${response.data.gjenstaendeKvote}`)
+                            .html(`Gjenværende kvote: ${response.data.gjenstaendeKvote}`)
                             .show();
                     }
 
@@ -94,7 +94,7 @@ jQuery(document).ready(function($) {
                     console.log("=============================");
 
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
-                        errorDiv.html('No valid vehicle data found for this registration number').show();
+                        errorDiv.html('Fant ingen gyldig kjøretøydata for dette registreringsnummeret').show();
                         return;
                     }
 
@@ -248,13 +248,13 @@ jQuery(document).ready(function($) {
                     // Check for EU anchor after results are shown
                     checkEUAnchor();
                 } else {
-                    errorDiv.html('Failed to retrieve vehicle information').show();
+                    errorDiv.html('Kunne ikke hente kjøretøyinformasjon').show();
                 }
             },
             error: function(xhr, status, error) {
-                let errorMessage = 'An error occurred: ';
+                let errorMessage = 'En feil oppstod: ';
                 if (status === 'timeout') {
-                    errorMessage = 'Request timed out. Please try again.';
+                    errorMessage = 'Forespørsel tok for lang tid. Vennligst prøv igjen.';
                 } else if (xhr.responseJSON && xhr.responseJSON.data) {
                     errorMessage = xhr.responseJSON.data;
                 } else if (error) {
@@ -336,7 +336,7 @@ jQuery(document).ready(function($) {
         const regNumber = displayedReg || inputReg;
 
         if (!regNumber) {
-            console.error('No registration number found');
+            console.error('Ingen registreringsnummer funnet');
             return;
         }
 
