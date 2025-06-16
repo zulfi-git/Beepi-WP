@@ -27,6 +27,18 @@ class SMS_Handler {
         $customer_phone = $order->get_meta('formatted_billing_phone');
         if (empty($customer_phone)) {
             error_log('SMS Handler: No formatted phone number found for order ' . $order_id);
+            
+            // Set failed status for orders without formatted phone
+            $order->update_meta_data('_sms_notification_status', 'failed');
+            $order->update_meta_data('_sms_failure_reason', 'No formatted phone number available');
+            $order->add_order_note(
+                sprintf(
+                    'SMS notification failed for order %s - no formatted phone number available.',
+                    $order_id
+                ),
+                false
+            );
+            $order->save();
             return;
         }
 
