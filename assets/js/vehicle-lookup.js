@@ -467,20 +467,49 @@ jQuery(document).ready(function($) {
 
 
     function renderRegistrationInfo(vehicleData) {
+        const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
+        let euControlText = formatDate(euDeadline);
+        let euControlClass = '';
+
+        // Add dynamic text for EU control if deadline exists
+        if (euDeadline) {
+            const today = new Date();
+            const deadline = new Date(euDeadline);
+            const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+            if (daysUntilDeadline < 0) {
+                const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
+                euControlText += ` <span class="eu-overdue">(${monthsAgo} ${monthsAgo === 1 ? 'måned' : 'måneder'} siden)</span>`;
+                euControlClass = 'eu-overdue';
+            } else if (daysUntilDeadline <= 30) {
+                euControlText += ` <span class="eu-warning">(${daysUntilDeadline} ${daysUntilDeadline === 1 ? 'dag' : 'dager'} igjen)</span>`;
+                euControlClass = 'eu-warning';
+            } else {
+                const monthsLeft = Math.floor(daysUntilDeadline / 30);
+                euControlText += ` <span class="eu-ok">(${monthsLeft} ${monthsLeft === 1 ? 'måned' : 'måneder'} igjen)</span>`;
+                euControlClass = 'eu-ok';
+            }
+        }
+
         const regInfo = {
             'Reg.nr.': vehicleData.kjoretoyId?.kjennemerke,
+            'Neste EU-kontroll': euControlText,
             'Reg. første gang': formatDate(vehicleData.godkjenning?.forstegangsGodkjenning?.forstegangRegistrertDato),
             'Reg. i Norge': formatDate(vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato),
             'Reg. på eier': formatDate(vehicleData.registrering?.registrertForstegangPaEierskap),
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse,
             'EU-kontroller': '',  // Spacer for visual grouping
-            'Siste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.sistGodkjent),
-            'Neste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.kontrollfrist)
+            'Siste EU-kontroll': formatDate(vehicleData.periodiskKjoretoyKontroll?.sistGodkjent)
         };
 
         const tableHtml = Object.entries(regInfo)
             .filter(([_, value]) => value)
-            .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+            .map(([label, value]) => {
+                if (label === 'Neste EU-kontroll' && euControlClass) {
+                    return `<tr class="${euControlClass}"><th>${label}</th><td>${value}</td></tr>`;
+                }
+                return `<tr><th>${label}</th><td>${value}</td></tr>`;
+            })
             .join('');
 
         $('.registration-info-table').html(tableHtml);

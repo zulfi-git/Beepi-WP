@@ -488,6 +488,37 @@ details summary {
     font-weight: 600;
 }
 
+/* EU Control status colors in registration table */
+.registration-info-table tr.eu-ok {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.registration-info-table tr.eu-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.registration-info-table tr.eu-overdue {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.eu-ok {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.eu-warning {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.eu-overdue {
+    color: #dc3545;
+    font-weight: 600;
+}
+
 .purchase-features {
     display: flex;
     justify-content: space-around;
