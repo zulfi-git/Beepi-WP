@@ -23,16 +23,23 @@ class SMS_Handler {
             return;
         }
 
-        $customer_phone = $order->get_billing_phone();
+        // Try to get pre-formatted phone number first, fallback to billing phone
+        $customer_phone = $order->get_meta('formatted_billing_phone');
         if (empty($customer_phone)) {
-            return;
+            $customer_phone = $order->get_billing_phone();
+            if (empty($customer_phone)) {
+                error_log('SMS Handler: No phone number found for order ' . $order_id);
+                return;
+            }
+            // Format it now as fallback (for existing orders)
+            $customer_phone = $this->format_phone_number($customer_phone);
         }
 
         // Format message with new template
         $order_number = $order->get_order_number();
         $message = "Beepi.no - Takk for kjøpet!\n\nEier av {$reg_number}:\n{$owner_details['name']}\n{$owner_details['address']}\n\nOrdre #{$order_number}\nSe fullstendig rapport på: beepi.no";
 
-        // Send SMS and track status
+        // Send SMS and track status (phone is already formatted)
         $sms_result = $this->send_sms($customer_phone, $message);
 
         // Store SMS status in order meta and add order notes
@@ -129,16 +136,15 @@ class SMS_Handler {
             return false;
         }
 
-        // Format phone number to international format
-        $formatted_phone = $this->format_phone_number($phone);
-        error_log('SMS Handler: Sending SMS to ' . $formatted_phone);
+        // Phone number should already be formatted when saved to order
+        error_log('SMS Handler: Sending SMS to ' . $phone);
 
         // Prepare Twilio API request
         $url = "https://api.twilio.com/2010-04-01/Accounts/{$twilio_sid}/Messages.json";
 
         $data = array(
             'From' => $twilio_from,
-            'To' => $formatted_phone,
+            'To' => $phone,
             'Body' => $message
         );
 
@@ -166,11 +172,11 @@ class SMS_Handler {
         if ($response_code >= 200 && $response_code < 300) {
             $result = json_decode($response_body, true);
             error_log('SMS Handler: SMS sent successfully - SID: ' . ($result['sid'] ?? 'unknown'));
-            do_action('beepi_sms_sent_success', $formatted_phone, $message, $result);
+            do_action('beepi_sms_sent_success', $phone, $message, $result);
             return true;
         } else {
             error_log('SMS Handler: Twilio API failed - Code: ' . $response_code . ', Body: ' . $response_body);
-            do_action('beepi_sms_sent_failed', $formatted_phone, $message);
+            do_action('beepi_sms_sent_failed', $phone, $message);
             return false;
         }
     }

@@ -38,6 +38,65 @@ class Vehicle_Lookup {
         if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
         }
+        
+        // Format and validate phone number when saving
+        $billing_phone = $data['billing_phone'] ?? '';
+        if (!empty($billing_phone)) {
+            $formatted_phone = $this->format_phone_number($billing_phone);
+            $order->update_meta_data('formatted_billing_phone', $formatted_phone);
+            
+            // Log for debugging
+            error_log("Vehicle Lookup: Original phone: {$billing_phone}, Formatted: {$formatted_phone}");
+        }
+    }
+    
+    /**
+     * Format phone number to international Norwegian format (+47xxxxxxxx)
+     */
+    private function format_phone_number($phone) {
+        // Handle array input (WooCommerce sometimes returns arrays)
+        if (is_array($phone)) {
+            $phone = reset($phone);
+        }
+
+        // Convert to string and remove spaces/special chars except +
+        $phone = (string)$phone;
+        $clean = preg_replace('/[^\d+]/', '', $phone);
+
+        // If already in correct Norwegian format, return as-is
+        if (preg_match('/^\+47\d{8}$/', $clean)) {
+            return $clean;
+        }
+
+        // Handle different input formats
+        $digits_only = $clean;
+        
+        // Remove +47 prefix if present
+        if (strpos($digits_only, '+47') === 0) {
+            $digits_only = substr($digits_only, 3);
+        }
+        // Remove 47 prefix if present and total length suggests it's Norwegian
+        elseif (strpos($digits_only, '47') === 0 && strlen($digits_only) === 10) {
+            $digits_only = substr($digits_only, 2);
+        }
+        // Remove + and any other country codes, but be more specific
+        elseif (strpos($digits_only, '+') === 0) {
+            // Remove + and any non-Norwegian country codes
+            $digits_only = preg_replace('/^\+(?!47)\d{1,3}/', '', $digits_only);
+            $digits_only = ltrim($digits_only, '+');
+        }
+
+        // Remove leading zeros
+        $digits_only = ltrim($digits_only, '0');
+
+        // Ensure we have exactly 8 digits for Norwegian mobile
+        if (strlen($digits_only) === 8 && preg_match('/^[4-9]\d{7}$/', $digits_only)) {
+            return '+47' . $digits_only;
+        }
+
+        // If not valid Norwegian mobile format, return original
+        error_log('Vehicle Lookup: Invalid Norwegian phone number format: ' . $phone . ' (extracted: ' . $digits_only . ', length: ' . strlen($digits_only) . ')');
+        return $phone;
     }
 
     public function update_order_meta($order_id) {
