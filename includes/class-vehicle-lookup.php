@@ -75,11 +75,7 @@ class Vehicle_Lookup {
         if (strpos($digits_only, '+47') === 0) {
             $digits_only = substr($digits_only, 3);
         }
-        // Remove 47 prefix if present and total length suggests it's Norwegian
-        elseif (strpos($digits_only, '47') === 0 && strlen($digits_only) === 10) {
-            $digits_only = substr($digits_only, 2);
-        }
-        // Remove + and any other country codes, but be more specific
+        // Remove + and any other country codes first
         elseif (strpos($digits_only, '+') === 0) {
             // Remove + and any non-Norwegian country codes
             $digits_only = preg_replace('/^\+(?!47)\d{1,3}/', '', $digits_only);
@@ -89,13 +85,29 @@ class Vehicle_Lookup {
         // Remove leading zeros
         $digits_only = ltrim($digits_only, '0');
 
-        // Ensure we have exactly 8 digits for Norwegian mobile
+        // Check if we have exactly 8 digits and it's a valid Norwegian mobile number
         if (strlen($digits_only) === 8 && preg_match('/^[4-9]\d{7}$/', $digits_only)) {
+            error_log('Vehicle Lookup: Formatting 8-digit number: ' . $digits_only . ' to +47' . $digits_only);
             return '+47' . $digits_only;
         }
 
-        // If not valid Norwegian mobile format, return original
-        error_log('Vehicle Lookup: Invalid Norwegian phone number format: ' . $phone . ' (extracted: ' . $digits_only . ', length: ' . strlen($digits_only) . ')');
+        // Check if we have 10 digits starting with 47 (Norwegian country code + 8 digit mobile)
+        if (strlen($digits_only) === 10 && strpos($digits_only, '47') === 0) {
+            $mobile_part = substr($digits_only, 2);
+            if (preg_match('/^[4-9]\d{7}$/', $mobile_part)) {
+                error_log('Vehicle Lookup: Formatting 10-digit number with 47 prefix: ' . $digits_only . ' to +47' . $mobile_part);
+                return '+47' . $mobile_part;
+            }
+        }
+
+        // If not valid Norwegian mobile format, try to format as international
+        if (strlen($digits_only) >= 8) {
+            error_log('Vehicle Lookup: Formatting as international number: +' . $digits_only);
+            return '+' . $digits_only;
+        }
+
+        // Last resort - return original
+        error_log('Vehicle Lookup: Could not format phone number: ' . $phone . ' (extracted: ' . $digits_only . ', length: ' . strlen($digits_only) . ')');
         return $phone;
     }
 
