@@ -23,8 +23,20 @@ class SMS_Handler {
             return;
         }
 
-        // Get and format phone number (Vipps has populated it by now)
+        // Get and format phone number (try multiple sources for Vipps Express Checkout)
         $billing_phone = $order->get_billing_phone();
+        
+        // If standard method fails, try to extract from address index (Vipps Express Checkout)
+        if (empty($billing_phone)) {
+            $billing_address_index = $order->get_meta('_billing_address_index');
+            if (!empty($billing_address_index)) {
+                // Extract phone from address index using regex
+                if (preg_match('/(\d{8,})/', $billing_address_index, $matches)) {
+                    $billing_phone = $matches[1];
+                    error_log("SMS Handler: Phone extracted from address index: {$billing_phone}");
+                }
+            }
+        }
         
         if (empty($billing_phone)) {
             error_log('SMS Handler: No billing phone found for order ' . $order_id);
