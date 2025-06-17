@@ -60,6 +60,7 @@ class SMS_Handler {
         
         // Save formatted phone for future reference
         $order->update_meta_data('formatted_billing_phone', $customer_phone);
+        $order->save(); // Save immediately to ensure it's persisted
         
         error_log("SMS Handler: Phone formatting - Original: {$billing_phone}, Formatted: {$customer_phone}");
 
