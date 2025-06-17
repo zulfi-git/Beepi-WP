@@ -23,17 +23,18 @@ class SMS_Handler {
             return;
         }
 
-        // Get pre-formatted phone number
-        $customer_phone = $order->get_meta('formatted_billing_phone');
-        if (empty($customer_phone)) {
-            error_log('SMS Handler: No formatted phone number found for order ' . $order_id);
+        // Get and format phone number (Vipps has populated it by now)
+        $billing_phone = $order->get_billing_phone();
+        
+        if (empty($billing_phone)) {
+            error_log('SMS Handler: No billing phone found for order ' . $order_id);
             
-            // Set failed status for orders without formatted phone
+            // Set failed status for orders without phone
             $order->update_meta_data('_sms_notification_status', 'failed');
-            $order->update_meta_data('_sms_failure_reason', 'No formatted phone number available');
+            $order->update_meta_data('_sms_failure_reason', 'No phone number available');
             $order->add_order_note(
                 sprintf(
-                    'SMS notification failed for order %s - no formatted phone number available.',
+                    'SMS notification failed for order %s - no phone number available.',
                     $order_id
                 ),
                 false
@@ -41,6 +42,14 @@ class SMS_Handler {
             $order->save();
             return;
         }
+
+        // Format the phone number now when we have it
+        $customer_phone = $this->format_phone_number($billing_phone);
+        
+        // Save formatted phone for future reference
+        $order->update_meta_data('formatted_billing_phone', $customer_phone);
+        
+        error_log("SMS Handler: Phone formatting - Original: {$billing_phone}, Formatted: {$customer_phone}");
 
         // Format message with new template
         $order_number = $order->get_order_number();
@@ -218,6 +227,63 @@ class SMS_Handler {
         
         // You could add additional order note here if needed
         // This hook is called after the main SMS handling
+    }
+
+    /**
+     * Format phone number to international Norwegian format (+47xxxxxxxx)
+     */
+    private function format_phone_number($phone) {
+        // Handle array input (WooCommerce sometimes returns arrays)
+        if (is_array($phone)) {
+            $phone = reset($phone);
+        }
+
+        // Convert to string and remove spaces/special chars except +
+        $phone = (string)$phone;
+        $clean = preg_replace('/[^\d+]/', '', $phone);
+
+        // If already in correct Norwegian format, return as-is
+        if (preg_match('/^\+47\d{8}$/', $clean)) {
+            return $clean;
+        }
+
+        // Handle different input formats
+        $digits_only = $clean;
+
+        // Remove +47 prefix if present
+        if (strpos($digits_only, '+47') === 0) {
+            $digits_only = substr($digits_only, 3);
+        }
+        // Remove + and any other country codes first
+        elseif (strpos($digits_only, '+') === 0) {
+            // Remove + and any non-Norwegian country codes
+            $digits_only = preg_replace('/^\+(?!47)\d{1,3}/', '', $digits_only);
+            $digits_only = ltrim($digits_only, '+');
+        }
+
+        // Remove leading zeros
+        $digits_only = ltrim($digits_only, '0');
+
+        // Check if we have exactly 8 digits and it's a valid Norwegian mobile number
+        if (strlen($digits_only) === 8 && preg_match('/^[4-9]\d{7}$/', $digits_only)) {
+            return '+47' . $digits_only;
+        }
+
+        // Check if we have 10 digits starting with 47 (Norwegian country code + 8 digit mobile)
+        if (strlen($digits_only) === 10 && strpos($digits_only, '47') === 0) {
+            $mobile_part = substr($digits_only, 2);
+            if (preg_match('/^[4-9]\d{7}$/', $mobile_part)) {
+                return '+47' . $mobile_part;
+            }
+        }
+
+        // If not valid Norwegian mobile format, try to format as international
+        if (strlen($digits_only) >= 8) {
+            return '+' . $digits_only;
+        }
+
+        // Last resort - return original
+        return $phone;
     }
 
     /**

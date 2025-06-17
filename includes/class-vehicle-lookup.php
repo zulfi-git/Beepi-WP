@@ -22,9 +22,7 @@ class Vehicle_Lookup {
         add_action('woocommerce_checkout_create_order', array($this, 'save_registration_to_order'), 10, 2);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
 
-        // Fallback hook for phone formatting (runs after order is fully created)
-        add_action('woocommerce_payment_complete', array($this, 'ensure_phone_formatted'), 5);
-        add_action('woocommerce_order_status_processing', array($this, 'ensure_phone_formatted'), 5);
+        
 
         // Add rewrite rules for /sok/ URLs
         add_action('init', array($this, 'add_rewrite_rules'));
@@ -411,54 +409,7 @@ class Vehicle_Lookup {
         );
     }
 
-    /**
-     * Fallback method to ensure phone is formatted (for Vipps Express Checkout)
-     */
-    public function ensure_phone_formatted($order_id) {
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            error_log("Vehicle Lookup: Could not retrieve order {$order_id} in fallback method");
-            return;
-        }
-
-        // Only format phone for orders with vehicle lookup product
-        if (!$this->validate_order_has_lookup($order)) {
-            error_log("Vehicle Lookup: Order {$order_id} does not have vehicle lookup product, skipping phone formatting");
-            return;
-        }
-
-        // Check if formatted phone already exists
-        $formatted_phone = $order->get_meta('formatted_billing_phone');
-        if (!empty($formatted_phone)) {
-            error_log("Vehicle Lookup: Formatted phone already exists for order {$order_id}: {$formatted_phone}");
-            return; // Already formatted
-        }
-
-        // Try to get phone from order - multiple methods
-        $billing_phone = $order->get_billing_phone();
-
-        error_log("Vehicle Lookup: Fallback formatting for order {$order_id}");
-        error_log("Vehicle Lookup: get_billing_phone() returned: '" . $billing_phone . "'");
-        error_log("Vehicle Lookup: Payment method: " . $order->get_payment_method());
-
-        if (!empty($billing_phone)) {
-            $formatted_phone = $this->format_phone_number($billing_phone);
-            $order->update_meta_data('formatted_billing_phone', $formatted_phone);
-            $order->save();
-
-            error_log("Vehicle Lookup: FALLBACK SUCCESS - Original: {$billing_phone}, Formatted: {$formatted_phone}");
-        } else {
-            error_log("Vehicle Lookup: FALLBACK FAILED - No billing phone found for order {$order_id}");
-
-            // Additional debugging - check all order data
-            $all_meta = $order->get_meta_data();
-            foreach ($all_meta as $meta) {
-                if (strpos($meta->key, 'phone') !== false || strpos($meta->key, 'billing') !== false) {
-                    error_log("Vehicle Lookup: Found phone-related meta - Key: '{$meta->key}', Value: '{$meta->value}'");
-                }
-            }
-        }
-    }
+    
 
     /**
      * Check if order contains vehicle lookup product
