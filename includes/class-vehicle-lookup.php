@@ -336,7 +336,6 @@ class Vehicle_Lookup {
                 $ip = $_SERVER[$key];
                 if (strpos($ip, ',') !== false) {
                     $ip = explode(',', $ip)[0];
-```
                 }
                 $ip = trim($ip);
                 if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
