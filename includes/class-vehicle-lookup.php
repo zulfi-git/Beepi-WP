@@ -6,22 +6,22 @@ class Vehicle_Lookup {
     public function init() {
         // Register scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        
+
         // Initialize shortcodes
         $shortcode = new Vehicle_Lookup_Shortcode();
         $shortcode->init();
-        
+
         $search_shortcode = new Vehicle_Search_Shortcode();
         $search_shortcode->init();
-        
+
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
         add_action('wp_ajax_nopriv_vehicle_lookup', array($this, 'handle_lookup'));
-        
+
         // WooCommerce hooks
         add_action('woocommerce_checkout_create_order', array($this, 'save_registration_to_order'), 10, 2);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
-        
+
         // Add rewrite rules for /sok/ URLs
         add_action('init', array($this, 'add_rewrite_rules'));
         add_filter('query_vars', array($this, 'add_query_vars'));
@@ -38,18 +38,39 @@ class Vehicle_Lookup {
         if ($reg_number = $this->get_registration_number()) {
             $order->update_meta_data('reg_number', $reg_number);
         }
-        
-        // Format and validate phone number when saving
-        $billing_phone = $data['billing_phone'] ?? '';
+
+        // Format and validate phone number when saving - try multiple sources
+        $billing_phone = '';
+
+        error_log("Vehicle Lookup: Starting phone extraction for order during creation");
+        error_log("Vehicle Lookup: Available data keys: " . implode(', ', array_keys($data)));
+
+        // First try the data array
+        if (!empty($data['billing_phone'])) {
+            $billing_phone = $data['billing_phone'];
+            error_log("Vehicle Lookup: Phone found in data array: {$billing_phone}");
+        }
+        // Then try getting it from the order object (for Vipps Express)
+        elseif (method_exists($order, 'get_billing_phone')) {
+            $billing_phone = $order->get_billing_phone();
+            if (!empty($billing_phone)) {
+                error_log("Vehicle Lookup: Phone found via order->get_billing_phone(): {$billing_phone}");
+            } else {
+                error_log("Vehicle Lookup: order->get_billing_phone() returned empty");
+            }
+        }
+
         if (!empty($billing_phone)) {
             $formatted_phone = $this->format_phone_number($billing_phone);
             $order->update_meta_data('formatted_billing_phone', $formatted_phone);
-            
+
             // Log for debugging
-            error_log("Vehicle Lookup: Original phone: {$billing_phone}, Formatted: {$formatted_phone}");
+            error_log("Vehicle Lookup: INITIAL SUCCESS - Original phone: {$billing_phone}, Formatted: {$formatted_phone}");
+        } else {
+            error_log("Vehicle Lookup: INITIAL FAILED - No phone number found during order creation, fallback will be needed");
         }
     }
-    
+
     /**
      * Format phone number to international Norwegian format (+47xxxxxxxx)
      */
@@ -70,7 +91,7 @@ class Vehicle_Lookup {
 
         // Handle different input formats
         $digits_only = $clean;
-        
+
         // Remove +47 prefix if present
         if (strpos($digits_only, '+47') === 0) {
             $digits_only = substr($digits_only, 3);
@@ -125,7 +146,7 @@ class Vehicle_Lookup {
             'index.php?pagename=sok&reg_number=$matches[1]',
             'top'
         );
-        
+
         // Always flush rewrite rules when this plugin is activated
         // This ensures the rules are properly registered
         flush_rewrite_rules();
@@ -176,7 +197,7 @@ class Vehicle_Lookup {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
         $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
-        
+
         if (empty($regNumber)) {
             wp_send_json_error('Vennligst skriv inn et registreringsnummer');
         }
@@ -206,7 +227,7 @@ class Vehicle_Lookup {
             '/^[A-Za-z]\d{3}$/',              // Antique vehicles
             '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
         );
-        
+
         $is_valid = false;
         foreach ($valid_patterns as $pattern) {
             if (preg_match($pattern, $regNumber)) {
@@ -214,7 +235,7 @@ class Vehicle_Lookup {
                 break;
             }
         }
-        
+
         if (!$is_valid) {
             wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
         }
@@ -240,12 +261,12 @@ class Vehicle_Lookup {
         }
 
         $body = wp_remote_retrieve_body($response);
-        
+
         // Basic error logging
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('Vehicle Lookup Error: Invalid JSON response for ' . $regNumber);
         }
-        
+
         $data = json_decode($body, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -260,13 +281,13 @@ class Vehicle_Lookup {
 
         // Cache successful response
         $this->cache_response($regNumber, $data);
-        
+
         // Increment quota counter on successful lookup
         $this->increment_quota_counter();
-        
+
         // Increment rate limit counter
         $this->increment_rate_limit_counter();
-        
+
         error_log('Vehicle Lookup: API call made for ' . $regNumber);
         wp_send_json_success($data);
     }
@@ -284,7 +305,7 @@ class Vehicle_Lookup {
         $ip_address = $this->get_client_ip();
         $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
         $current_count = get_transient($rate_limit_key) ?: 0;
-        
+
         return $current_count < VEHICLE_LOOKUP_RATE_LIMIT;
     }
 
@@ -295,9 +316,9 @@ class Vehicle_Lookup {
         $ip_address = $this->get_client_ip();
         $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
         $current_count = get_transient($rate_limit_key) ?: 0;
-        
+
         set_transient($rate_limit_key, $current_count + 1, HOUR_IN_SECONDS);
-        
+
         // Log rate limit violations
         if ($current_count >= VEHICLE_LOOKUP_RATE_LIMIT) {
             error_log('Vehicle Lookup: Rate limit exceeded for IP ' . $ip_address);
@@ -309,12 +330,13 @@ class Vehicle_Lookup {
      */
     private function get_client_ip() {
         $ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR');
-        
+
         foreach ($ip_keys as $key) {
             if (array_key_exists($key, $_SERVER) === true) {
                 $ip = $_SERVER[$key];
                 if (strpos($ip, ',') !== false) {
                     $ip = explode(',', $ip)[0];
+```
                 }
                 $ip = trim($ip);
                 if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
@@ -322,7 +344,7 @@ class Vehicle_Lookup {
                 }
             }
         }
-        
+
         return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
 
@@ -349,7 +371,7 @@ class Vehicle_Lookup {
         $ip_address = $this->get_client_ip();
         $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
         $current_count = get_transient($rate_limit_key) ?: 0;
-        
+
         return array(
             'used' => $current_count,
             'limit' => VEHICLE_LOOKUP_RATE_LIMIT,
@@ -362,7 +384,7 @@ class Vehicle_Lookup {
         $today = date('Y-m-d');
         $quota_key = 'vegvesen_quota_' . $today;
         $current_count = get_transient($quota_key) ?: 0;
-        
+
         return $current_count < 5000;
     }
 
@@ -370,7 +392,7 @@ class Vehicle_Lookup {
         $today = date('Y-m-d');
         $quota_key = 'vegvesen_quota_' . $today;
         $current_count = get_transient($quota_key) ?: 0;
-        
+
         set_transient($quota_key, $current_count + 1, DAY_IN_SECONDS);
     }
 
@@ -378,11 +400,73 @@ class Vehicle_Lookup {
         $today = date('Y-m-d');
         $quota_key = 'vegvesen_quota_' . $today;
         $current_count = get_transient($quota_key) ?: 0;
-        
+
         return array(
             'used' => $current_count,
             'limit' => 5000,
             'remaining' => 5000 - $current_count
         );
+    }
+
+    /**
+     * Fallback method to ensure phone is formatted (for Vipps Express Checkout)
+     */
+    public function ensure_phone_formatted($order_id) {
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            error_log("Vehicle Lookup: Could not retrieve order {$order_id} in fallback method");
+            return;
+        }
+
+        // Only format phone for orders with vehicle lookup product
+        if (!$this->validate_order_has_lookup($order)) {
+            error_log("Vehicle Lookup: Order {$order_id} does not have vehicle lookup product, skipping phone formatting");
+            return;
+        }
+
+        // Check if formatted phone already exists
+        $formatted_phone = $order->get_meta('formatted_billing_phone');
+        if (!empty($formatted_phone)) {
+            error_log("Vehicle Lookup: Formatted phone already exists for order {$order_id}: {$formatted_phone}");
+            return; // Already formatted
+        }
+
+        // Try to get phone from order - multiple methods
+        $billing_phone = $order->get_billing_phone();
+
+        error_log("Vehicle Lookup: Fallback formatting for order {$order_id}");
+        error_log("Vehicle Lookup: get_billing_phone() returned: '" . $billing_phone . "'");
+        error_log("Vehicle Lookup: Payment method: " . $order->get_payment_method());
+
+        if (!empty($billing_phone)) {
+            $formatted_phone = $this->format_phone_number($billing_phone);
+            $order->update_meta_data('formatted_billing_phone', $formatted_phone);
+            $order->save();
+
+            error_log("Vehicle Lookup: FALLBACK SUCCESS - Original: {$billing_phone}, Formatted: {$formatted_phone}");
+        } else {
+            error_log("Vehicle Lookup: FALLBACK FAILED - No billing phone found for order {$order_id}");
+
+            // Additional debugging - check all order data
+            $all_meta = $order->get_meta_data();
+            foreach ($all_meta as $meta) {
+                if (strpos($meta->key, 'phone') !== false || strpos($meta->key, 'billing') !== false) {
+                    error_log("Vehicle Lookup: Found phone-related meta - Key: '{$meta->key}', Value: '{$meta->value}'");
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if order contains vehicle lookup product
+     */
+    private function validate_order_has_lookup($order) {
+        $lookup_product_id = 62;
+        foreach ($order->get_items() as $item) {
+            if ($item->get_product_id() == $lookup_product_id) {
+                return true;
+            }
+        }
+        return false;
     }
 }
