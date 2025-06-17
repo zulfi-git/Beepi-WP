@@ -22,6 +22,10 @@ class Vehicle_Lookup {
         add_action('woocommerce_checkout_create_order', array($this, 'save_registration_to_order'), 10, 2);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
 
+        // Fallback hook for phone formatting (runs after order is fully created)
+        add_action('woocommerce_payment_complete', array($this, 'ensure_phone_formatted'), 5);
+        add_action('woocommerce_order_status_processing', array($this, 'ensure_phone_formatted'), 5);
+
         // Add rewrite rules for /sok/ URLs
         add_action('init', array($this, 'add_rewrite_rules'));
         add_filter('query_vars', array($this, 'add_query_vars'));
@@ -469,3 +473,4 @@ class Vehicle_Lookup {
         return false;
     }
 }
+</replit_final_file>
