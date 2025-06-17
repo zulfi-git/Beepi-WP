@@ -29,7 +29,7 @@ class SMS_Handler {
         // If standard method fails, try to extract from address index (Vipps Express Checkout)
         if (empty($billing_phone)) {
             $billing_address_index = $order->get_meta('_billing_address_index');
-            if (!empty($billing_address_index)) {
+            if (!empty($billing_address_index) && is_string($billing_address_index)) {
                 // Extract phone from address index using regex
                 if (preg_match('/(\d{8,})/', $billing_address_index, $matches)) {
                     $billing_phone = $matches[1];
