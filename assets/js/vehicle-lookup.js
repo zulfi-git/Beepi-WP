@@ -360,6 +360,7 @@ jQuery(document).ready(function($) {
 
         $('.basic-info-table').html(
             Object.entries(basicInfo)
+                .filter(([_, value]) => value && value !== '---')
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
@@ -377,6 +378,7 @@ jQuery(document).ready(function($) {
 
         $('.notes-info-table').html(
             Object.entries(notes)
+                .filter(([_, value]) => value && value !== '---')
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
@@ -448,17 +450,32 @@ jQuery(document).ready(function($) {
                 .join('')
         );
 
-        const engineInfo = {
-            'Motor': engineData?.motor?.[0]?.antallSylindre + ' sylindre',
-            'Drivstoff': engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse,
-            'Slagvolum': engineData?.motor?.[0]?.slagvolum + ' ccm',
-            'Effekt': engineData?.motor?.[0]?.drivstoff?.[0]?.maksNettoEffekt + ' kW',
-            'Girkasse': engineData?.girkassetype?.kodeBeskrivelse
-        };
+        const engineInfo = {};
+        
+        if (engineData?.motor?.[0]?.antallSylindre) {
+            engineInfo['Motor'] = `${engineData.motor[0].antallSylindre} sylindre`;
+        }
+        
+        if (engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse) {
+            engineInfo['Drivstoff'] = engineData.motor[0].arbeidsprinsipp.kodeBeskrivelse;
+        }
+        
+        if (engineData?.motor?.[0]?.slagvolum) {
+            engineInfo['Slagvolum'] = `${engineData.motor[0].slagvolum.toLocaleString()} cm³`;
+        }
+        
+        if (engineData?.motor?.[0]?.drivstoff?.[0]?.maksNettoEffekt) {
+            const kw = engineData.motor[0].drivstoff[0].maksNettoEffekt;
+            const hp = Math.round(kw * 1.34102);
+            engineInfo['Effekt'] = `${kw} kW (${hp} hk)`;
+        }
+        
+        if (engineData?.girkassetype?.kodeBeskrivelse) {
+            engineInfo['Girkasse'] = engineData.girkassetype.kodeBeskrivelse;
+        }
 
         $('.engine-info-table').html(
             Object.entries(engineInfo)
-                .filter(([_, value]) => value)
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );

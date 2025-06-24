@@ -1,10 +1,11 @@
 .vehicle-lookup-container {
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    background-color: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border-radius: 20px;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     max-width: 600px;
     margin: auto;
+    border: 1px solid rgba(226,232,240,0.5);
 }
 
 .plate-form {
@@ -123,20 +124,30 @@
 }
 
 .vehicle-header {
-    margin-top: 0; /* Removed margin */
-    padding: 10px; /* Added padding */
-    border-bottom: 1px solid #eee;
+    margin-top: 0;
+    padding: 1.5rem;
+    border-bottom: none;
+    background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
 }
 
 .vehicle-logo {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     object-fit: contain;
-    margin: 0 auto 5px;
+    margin: 0 auto 1rem;
     display: block;
-    background-color: #f8f9fa;
-    padding: 8px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 2px solid #f1f5f9;
+    transition: transform 0.2s ease;
+}
+
+.vehicle-logo:hover {
+    transform: scale(1.05);
 }
 
 .vehicle-info {
@@ -145,17 +156,20 @@
 
 .vehicle-title {
     margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #333;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
     text-align: center;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
 }
 
 .vehicle-subtitle {
-    margin: 5px 0 0;
-    font-size: 0.9rem;
-    color: #666;
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    color: #64748b;
     text-align: center;
+    font-weight: 500;
 }
 
 .vehicle-tags {
@@ -301,29 +315,49 @@
 
 /* Accordion styles */
 .accordion {
-    margin-top: 2.5rem;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .accordion details {
-    margin-top: 1rem;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+}
+
+.accordion details:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-color: #cbd5e1;
+}
+
+.accordion details[open] {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-color: #3b82f6;
 }
 
 .accordion summary {
-    padding: 0.75rem 1rem;
+    padding: 1rem 1.25rem;
     font-weight: 600;
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     cursor: pointer;
     list-style: none;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+.accordion summary:hover {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
 }
 
 .accordion summary span:first-child {
@@ -335,24 +369,40 @@
 }
 
 .details-content {
-    padding: 1rem;
+    padding: 0;
 }
 
 .info-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+}
+
+.info-table tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-table tr:last-child {
+    border-bottom: none;
 }
 
 .info-table th {
     text-align: left;
-    color: #666;
-    padding: 6px 0;
-    width: 40%;
+    color: #64748b;
+    padding: 1rem 1.25rem;
+    width: 45%;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    background-color: #fafbfc;
 }
 
 .info-table td {
-    padding: 6px 0;
+    padding: 1rem 1.25rem;
+    color: #1e293b;
+    font-weight: 500;
+    word-break: break-word;
 }
 
 .loading-spinner {
@@ -445,43 +495,116 @@ details summary {
     }
 
     .vehicle-lookup-container {
-        padding: 10px;
+        padding: 1rem;
+        margin: 0.5rem;
+        border-radius: 16px;
+    }
+
+    .vehicle-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .vehicle-logo {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 0.75rem;
+    }
+
+    .vehicle-title {
+        font-size: 1.25rem;
+    }
+
+    .vehicle-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .accordion summary {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .info-table th,
+    .info-table td {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .info-table th {
+        width: 40%;
+    }
+
+    .vehicle-tags {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .tag {
+        width: fit-content;
+    }
+
+    .trust-indicators {
+        font-size: 0.8rem;
     }
 }
 
 .vehicle-status,
 .eu-status {
-    margin: 4px 4px 4px 0;
-    padding: 6px 12px;
-    border-radius: 6px;
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
     font-size: 0.9rem;
     text-align: center;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Success state */
 .vehicle-status.registrert {
-    background-color: #198754;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: white;
+}
+
+.vehicle-status.registrert::before {
+    content: "✓";
+    font-weight: bold;
 }
 
 /* Warning state */
 .vehicle-status.avregistrert,
 .eu-status.warning {
-    background-color: #ffc107;
-    color: #000;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #7c2d12;
+}
+
+.eu-status.warning::before {
+    content: "⚠️";
 }
 
 /* Danger state */
 .vehicle-status.vraket,
 .eu-status.overdue {
-    background-color: #dc3545;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
+}
+
+.eu-status.overdue::before {
+    content: "⛔";
 }
 
 /* Default EU status */
 .eu-status:not(.warning):not(.overdue) {
-    background-color: #198754;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: white;
+}
+
+.eu-status:not(.warning):not(.overdue)::before {
+    content: "✓";
 }
 
 .eu-status strong {
@@ -587,25 +710,38 @@ details summary {
 
 #owner-info-purchase {
     text-align: center;
-    padding: 16px;
-    border-radius: 8px;
-    background-color: #f8fafc;
-    margin-top: 16px;
-    border: 1px solid #e2e8f0; /* Added border */
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    margin-top: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 
 #owner-info-purchase p {
-    margin-bottom: 12px;
-    color: #000; /* Changed text color to black */
+    margin-bottom: 1rem;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .trust-indicators {
-    margin-top: 12px;
-    font-size: 0.9rem;
-    color: #666;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .trust-indicators div {
-    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(59, 130, 246, 0.05);
+    border-radius: 8px;
+    font-weight: 500;
 }
