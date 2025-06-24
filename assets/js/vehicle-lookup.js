@@ -216,11 +216,12 @@ jQuery(document).ready(function($) {
 
                             if (daysUntilDeadline < 0) {
                                 const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
-                                euMessage = `EU-kontroll overskredet siden ${formattedDate} (${monthsAgo} ${monthsAgo === 1 ? 'måned' : 'måneder'} siden)`;
+                                euMessage = `EU-kontroll (${monthsAgo} mnd siden)`;
                             } else if (daysUntilDeadline <= 30) {
-                                euMessage = `EU-kontroll haster: ${formattedDate} (${daysUntilDeadline} ${daysUntilDeadline === 1 ? 'dag' : 'dager'} igjen)`;
+                                euMessage = `EU-kontroll (${daysUntilDeadline} dager igjen)`;
                             } else {
-                                euMessage = `EU-kontroll nærmer seg: ${formattedDate} (${Math.floor(daysUntilDeadline / 30)} måneder igjen)`;
+                                const monthsLeft = Math.floor(daysUntilDeadline / 30);
+                                euMessage = `EU-kontroll (${monthsLeft} mnd igjen)`;
                             }
 
                             $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">${euMessage}</p>`);
