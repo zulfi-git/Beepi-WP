@@ -153,18 +153,24 @@ class Order_Confirmation_Shortcode {
                     </div>
                 </div>
 
-                <div class="owner-info-card">
-                    <h3>Eierinformasjon</h3>
-                    <table class="info-table owner-info-table"></table>
-                </div>
-
-                <div class="customer-info-card">
-                    <h4>Kjøperinformasjon</h4>
-                    <table class="info-table">
-                        <tr><th>Telefonnummer</th><td><?php echo esc_html($this->format_norwegian_phone($order->get_billing_phone())); ?></td></tr>
-                        <tr><th>E-post</th><td><?php echo esc_html($order->get_billing_email()); ?></td></tr>
-                        <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
-                    </table>
+                <div class="accordion">
+                    <details open>
+                        <summary><span>Eierinformasjon</span><span>👤</span></summary>
+                        <div class="details-content">
+                            <table class="info-table owner-info-table"></table>
+                        </div>
+                    </details>
+                    
+                    <details open>
+                        <summary><span>Kjøperinformasjon</span><span>📋</span></summary>
+                        <div class="details-content">
+                            <table class="info-table">
+                                <tr><th>Telefonnummer</th><td><?php echo esc_html($this->format_norwegian_phone($order->get_billing_phone())); ?></td></tr>
+                                <tr><th>E-post</th><td><?php echo esc_html($order->get_billing_email()); ?></td></tr>
+                                <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
+                            </table>
+                        </div>
+                    </details>
                 </div>
 
                 <?php 
