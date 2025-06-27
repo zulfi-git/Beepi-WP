@@ -570,6 +570,34 @@ details summary {
         margin-top: 1rem;
         padding: 0.5rem;
     }
+
+    /* Order confirmation mobile styles */
+    .order-confirmation-container .customer-info-card,
+    .order-confirmation-container .sms-status-card {
+        margin: 0.5rem 0;
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .order-confirmation-container .customer-info-card h4,
+    .order-confirmation-container .sms-status-card h4 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .order-confirmation-container .customer-info-card .info-table th,
+    .order-confirmation-container .customer-info-card .info-table td {
+        padding: 0.6rem 0;
+        font-size: 0.85rem;
+    }
+
+    .order-confirmation-container .customer-info-card .info-table th {
+        width: 40%;
+    }
+
+    .sms-status-card p {
+        font-size: 0.85rem;
+    }
 }
 
 .vehicle-status,
@@ -746,6 +774,90 @@ details summary {
     color: #1e293b;
     font-weight: 600;
     font-size: 1.1rem;
+}
+
+/* Order confirmation page specific styles */
+.order-confirmation-container .customer-info-card,
+.order-confirmation-container .sms-status-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin: 1rem 0;
+}
+
+.order-confirmation-container .customer-info-card h4,
+.order-confirmation-container .sms-status-card h4 {
+    color: #333;
+    font-size: 1.25rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.order-confirmation-container .customer-info-card .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.order-confirmation-container .customer-info-card .info-table th {
+    text-align: left;
+    color: #64748b;
+    padding: 0.75rem 0;
+    width: 35%;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.order-confirmation-container .customer-info-card .info-table td {
+    padding: 0.75rem 0;
+    color: #1e293b;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.order-confirmation-container .customer-info-card .info-table tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.order-confirmation-container .customer-info-card .info-table tr:last-child {
+    border-bottom: none;
+}
+
+/* SMS Status Card Styling */
+.sms-status-card.sent {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 1px solid #c3e6cb;
+}
+
+.sms-status-card.failed {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 1px solid #f5c6cb;
+}
+
+.sms-status-card.pending {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+}
+
+.sms-status-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.sms-status-card.sent p {
+    color: #155724;
+}
+
+.sms-status-card.failed p {
+    color: #721c24;
+}
+
+.sms-status-card.pending p {
+    color: #856404;
 }
 
 .trust-indicators {

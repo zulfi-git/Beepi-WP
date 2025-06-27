@@ -158,9 +158,9 @@ class Order_Confirmation_Shortcode {
                     <table class="info-table owner-info-table"></table>
                 </div>
 
-                <div class="customer-info-card" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
-                    <h4 style="margin: 0 0 10px 0; color: #666; font-size: 1em;">Kjøperinformasjon</h4>
-                    <table class="info-table" style="font-size: 0.85em;">
+                <div class="customer-info-card">
+                    <h4>Kjøperinformasjon</h4>
+                    <table class="info-table">
                         <tr><th>Telefonnummer</th><td><?php echo esc_html($this->format_norwegian_phone($order->get_billing_phone())); ?></td></tr>
                         <tr><th>E-post</th><td><?php echo esc_html($order->get_billing_email()); ?></td></tr>
                         <tr><th>Ordre ID</th><td><?php echo esc_html($order_id); ?></td></tr>
@@ -172,21 +172,21 @@ class Order_Confirmation_Shortcode {
                 $sms_status = $order->get_meta('_sms_notification_status');
                 $sms_sent_time = $order->get_meta('_sms_sent_time');
                 ?>
-                <div class="sms-status-card" style="margin-top: 15px; padding: 12px; border-radius: 6px; font-size: 0.9em; <?php echo $sms_status === 'sent' ? 'background: #d4edda; border: 1px solid #c3e6cb;' : 'background: #f8d7da; border: 1px solid #f5c6cb;'; ?>">
-                    <h4 style="margin: 0 0 8px 0; color: #666; font-size: 1em;">📱 SMS Varsel</h4>
+                <div class="sms-status-card <?php echo $sms_status === 'sent' ? 'sent' : ($sms_status === 'failed' ? 'failed' : 'pending'); ?>">
+                    <h4>📱 SMS Varsel</h4>
                     <?php if ($sms_status === 'sent'): ?>
-                        <p style="margin: 0; color: #155724;">
+                        <p>
                             ✅ Eierinformasjon er sendt til ditt telefonnummer
                             <?php if ($sms_sent_time): ?>
                                 <br><small style="color: #666;">Sendt: <?php echo date('d.m.Y H:i', strtotime($sms_sent_time)); ?></small>
                             <?php endif; ?>
                         </p>
                     <?php elseif ($sms_status === 'failed'): ?>
-                        <p style="margin: 0; color: #721c24;">
+                        <p>
                             ❌ SMS kunne ikke sendes. Eierinformasjonen er tilgjengelig på denne siden.
                         </p>
                     <?php else: ?>
-                        <p style="margin: 0; color: #856404;">
+                        <p>
                             ⏳ SMS varsel behandles...
                         </p>
                     <?php endif; ?>
