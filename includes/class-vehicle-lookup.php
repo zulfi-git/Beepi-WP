@@ -27,6 +27,9 @@ class Vehicle_Lookup {
         // Add rewrite rules for /sok/ URLs
         add_action('init', array($this, 'add_rewrite_rules'));
         add_filter('query_vars', array($this, 'add_query_vars'));
+
+        // Register AI endpoint
+        add_action('rest_api_init', array($this, 'register_ai_endpoint'));
     }
 
     private function get_registration_number() {
@@ -422,5 +425,139 @@ class Vehicle_Lookup {
             }
         }
         return false;
+    }
+
+    /**
+     * Register AI-friendly REST API endpoint
+     */
+    public function register_ai_endpoint() {
+        register_rest_route('beepi/v1', '/ai-lookup/(?P<plate>[a-zA-Z0-9]+)', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'handle_ai_lookup'),
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'plate' => array(
+                    'required' => true,
+                    'validate_callback' => function($param) {
+                        $valid_patterns = array(
+                            '/^[A-Za-z]{2}\d{4,5}$/',
+                            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',
+                            '/^[Cc][Dd]\d{5}$/',
+                            '/^\d{5}$/',
+                            '/^[A-Za-z]\d{3}$/',
+                            '/^[A-Za-z]{2}\d{3}$/'
+                        );
+                        
+                        foreach ($valid_patterns as $pattern) {
+                            if (preg_match($pattern, $param)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                )
+            )
+        ));
+    }
+
+    /**
+     * Handle AI lookup requests
+     */
+    public function handle_ai_lookup($request) {
+        $plate = strtoupper(sanitize_text_field($request['plate']));
+
+        // Check rate limiting
+        if (!$this->check_rate_limit()) {
+            return new WP_Error('rate_limit_exceeded', 'Too many requests. Please wait before trying again.', array('status' => 429));
+        }
+
+        // Check daily quota
+        if (!$this->check_quota_available()) {
+            return new WP_Error('quota_exceeded', 'Daily limit reached. Try again tomorrow.', array('status' => 429));
+        }
+
+        // Check cache first
+        $cached_data = $this->get_cached_response($plate);
+        if ($cached_data !== false) {
+            return $this->format_vehicle_for_ai($plate, $cached_data);
+        }
+
+        // Make API call to worker
+        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+                'Origin' => get_site_url()
+            ),
+            'body' => json_encode(array(
+                'registrationNumber' => $plate
+            )),
+            'timeout' => 15
+        ));
+
+        if (is_wp_error($response)) {
+            return new WP_Error('connection_error', 'Connection failed. Please try again later.', array('status' => 503));
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        if ($status_code !== 200) {
+            return new WP_Error('service_unavailable', 'Service is currently unavailable. Please try again later.', array('status' => 503));
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || empty($data)) {
+            return new WP_Error('invalid_response', 'Invalid response from server. Please try again.', array('status' => 502));
+        }
+
+        // Cache successful response
+        $this->cache_response($plate, $data);
+
+        // Increment counters
+        $this->increment_quota_counter();
+        $this->increment_rate_limit_counter();
+
+        return $this->format_vehicle_for_ai($plate, $data);
+    }
+
+    /**
+     * Format vehicle data for AI consumption
+     */
+    private function format_vehicle_for_ai($plate, $vehicle_data) {
+        // Build basic vehicle info
+        $basic_info_parts = array();
+        
+        if (!empty($vehicle_data['registreringsaar'])) {
+            $basic_info_parts[] = $vehicle_data['registreringsaar'];
+        }
+        
+        if (!empty($vehicle_data['merke'])) {
+            $basic_info_parts[] = $vehicle_data['merke'];
+        }
+        
+        if (!empty($vehicle_data['handelsbetegnelse'])) {
+            $basic_info_parts[] = $vehicle_data['handelsbetegnelse'];
+        }
+
+        $basic_info = !empty($basic_info_parts) ? implode(' ', $basic_info_parts) : 'Vehicle information';
+
+        // Get WooCommerce services dynamically
+        $services = array();
+        
+        // Get "Show owner" product (ID 62)
+        $owner_product = wc_get_product(62);
+        if ($owner_product) {
+            $price = $owner_product->get_sale_price() ? $owner_product->get_sale_price() : $owner_product->get_regular_price();
+            $services[] = $owner_product->get_name() . ': ' . $price . 'kr';
+        }
+
+        // Additional services can be added here later by fetching other WooCommerce products
+        
+        return array(
+            'plate' => $plate,
+            'basic_info' => $basic_info,
+            'services' => $services,
+            'url' => get_site_url() . '/sok/' . $plate
+        );
     }
 }
