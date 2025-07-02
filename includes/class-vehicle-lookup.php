@@ -521,42 +521,91 @@ class Vehicle_Lookup {
     }
 
     /**
-     * Format vehicle data for AI consumption
+     * Format vehicle data for AI consumption with conversion strategy
      */
     private function format_vehicle_for_ai($plate, $vehicle_data) {
-        // Build basic vehicle info
-        $basic_info_parts = array();
-        
-        if (!empty($vehicle_data['registreringsaar'])) {
-            $basic_info_parts[] = $vehicle_data['registreringsaar'];
-        }
-        
-        if (!empty($vehicle_data['merke'])) {
-            $basic_info_parts[] = $vehicle_data['merke'];
-        }
-        
-        if (!empty($vehicle_data['handelsbetegnelse'])) {
-            $basic_info_parts[] = $vehicle_data['handelsbetegnelse'];
+        // Extract vehicle data from proper nested structure
+        $kjoretoy_data = null;
+        if (!empty($vehicle_data['responser'][0]['kjoretoydata'])) {
+            $kjoretoy_data = $vehicle_data['responser'][0]['kjoretoydata'];
         }
 
-        $basic_info = !empty($basic_info_parts) ? implode(' ', $basic_info_parts) : 'Vehicle information';
+        if (!$kjoretoy_data) {
+            return new WP_Error('no_vehicle_data', 'No vehicle data found', array('status' => 404));
+        }
 
-        // Get WooCommerce services dynamically
-        $services = array();
+        // Extract basic vehicle info
+        $year = '';
+        $make = '';
+        $model = '';
         
-        // Get "Show owner" product (ID 62)
+        // Extract year from registration
+        if (!empty($kjoretoy_data['forstegangsregistrering']['registrertForstegangNorgeDato'])) {
+            $year = date('Y', strtotime($kjoretoy_data['forstegangsregistrering']['registrertForstegangNorgeDato']));
+        }
+        
+        // Extract make and model from technical data
+        $tekniske_data = $kjoretoy_data['godkjenning']['tekniskGodkjenning']['tekniskeData'] ?? null;
+        if ($tekniske_data) {
+            if (!empty($tekniske_data['generelt']['merke'][0]['merke'])) {
+                $make = $tekniske_data['generelt']['merke'][0]['merke'];
+            }
+            if (!empty($tekniske_data['generelt']['handelsbetegnelse'][0]['handelsbetegnelse'])) {
+                $model = $tekniske_data['generelt']['handelsbetegnelse'][0]['handelsbetegnelse'];
+            }
+        }
+
+        // Build teaser info
+        $teaser_parts = array();
+        if ($year) $teaser_parts[] = $year;
+        if ($make) $teaser_parts[] = $make;
+        if ($model) $teaser_parts[] = $model;
+        $teaser = !empty($teaser_parts) ? 'Vehicle found - ' . implode(' ', $teaser_parts) : 'Vehicle found - registered in Norway';
+
+        // Extract owner info for preview (create curiosity gap)
+        $owner_preview = 'Owner info available';
+        if (!empty($kjoretoy_data['eierskap']['eier'][0]['person']['navn']['fornavn'])) {
+            $first_name = $kjoretoy_data['eierskap']['eier'][0]['person']['navn']['fornavn'];
+            $last_name = $kjoretoy_data['eierskap']['eier'][0]['person']['navn']['etternavn'] ?? '';
+            $masked_last = substr($last_name, 0, 1) . str_repeat('*', max(0, strlen($last_name) - 1));
+            $owner_preview = "Owner: {$first_name} {$masked_last} (full name available)";
+        }
+
+        // Extract EU control status for urgency
+        $urgency = '';
+        $eu_data = $kjoretoy_data['periodiskKjoretoyKontroll'] ?? null;
+        if ($eu_data && !empty($eu_data['kontrollfrist'])) {
+            $control_date = new DateTime($eu_data['kontrollfrist']);
+            $now = new DateTime();
+            $diff = $now->diff($control_date);
+            
+            if ($control_date > $now) {
+                if ($diff->days <= 60) {
+                    $urgency = "EU control expires in {$diff->days} days";
+                } else if ($diff->m <= 2) {
+                    $urgency = "EU control expires in {$diff->m} months";
+                }
+            } else {
+                $urgency = "EU control expired {$diff->days} days ago";
+            }
+        }
+
+        // Get dynamic pricing
         $owner_product = wc_get_product(62);
+        $price = '29kr'; // fallback
         if ($owner_product) {
-            $price = $owner_product->get_sale_price() ? $owner_product->get_sale_price() : $owner_product->get_regular_price();
-            $services[] = $owner_product->get_name() . ': ' . $price . 'kr';
+            $product_price = $owner_product->get_sale_price() ? $owner_product->get_sale_price() : $owner_product->get_regular_price();
+            $price = "Complete report: {$product_price}kr";
         }
 
-        // Additional services can be added here later by fetching other WooCommerce products
-        
+        // Return conversion-optimized response
         return array(
             'plate' => $plate,
-            'basic_info' => $basic_info,
-            'services' => $services,
+            'teaser' => $teaser,
+            'owner_preview' => $owner_preview,
+            'urgency' => $urgency ?: 'Get complete vehicle history',
+            'price' => $price,
+            'action' => "Search 'beepi {$plate}' for instant access",
             'url' => get_site_url() . '/sok/' . $plate
         );
     }
