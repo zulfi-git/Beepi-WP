@@ -1,4 +1,15 @@
 jQuery(document).ready(function($) {
+    // Cache DOM elements
+    const $form = $('#vehicle-lookup-form');
+    const $resultsDiv = $('#vehicle-lookup-results');
+    const $errorDiv = $('#vehicle-lookup-error');
+    const $quotaDisplay = $('#quota-display');
+    const $vehicleTitle = $('.vehicle-title');
+    const $vehicleSubtitle = $('.vehicle-subtitle');
+    const $vehicleLogo = $('.vehicle-logo');
+    const $vehicleInfo = $('.vehicle-info');
+    const $submitButton = $form.find('button');
+
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -8,42 +19,31 @@ jQuery(document).ready(function($) {
         return `${day}.${month}.${year}`;
     }
 
-    // Check for EU anchor and scroll to registration accordion when results are shown
     function checkEUAnchor() {
         if (window.location.hash === '#EU') {
             setTimeout(function() {
-                // Find the "Reg. og EU-kontroll" accordion and open it
                 const regAccordion = $('details summary span:contains("Reg. og EU-kontroll")').closest('details');
                 if (regAccordion.length) {
                     regAccordion.attr('open', true);
-                    // Scroll to the accordion
                     $('html, body').animate({
                         scrollTop: regAccordion.offset().top - 100
                     }, 800);
                 }
-            }, 1000); // Wait for results to load
+            }, 1000);
         }
     }
 
-    // Handle tab clicks - Removed as tabs are no longer used
-
-    $('#vehicle-lookup-form').on('submit', function(e) {
-        e.preventDefault();
-
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
-        const resultsDiv = $('#vehicle-lookup-results');
-        const errorDiv = $('#vehicle-lookup-error');
-
-        // Reset all states
-        resultsDiv.hide();
-        errorDiv.hide().empty();
+    function resetFormState() {
+        $resultsDiv.hide();
+        $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
-        $('.vehicle-title').empty();
-        $('.vehicle-subtitle').empty();
-        $('.vehicle-logo').attr('src', '');
+        $vehicleTitle.empty();
+        $vehicleSubtitle.empty();
+        $vehicleLogo.attr('src', '');
         $('.info-table').empty();
+    }
 
-        // Validate Norwegian registration number
+    function validateRegistrationNumber(regNumber) {
         const validFormats = [
             /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
             /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
@@ -52,15 +52,151 @@ jQuery(document).ready(function($) {
             /^[A-Z]\d{3}$/,               // Antique vehicles
             /^[A-Z]{2}\d{3}$/             // Provisional plates
         ];
+        return validFormats.some(format => format.test(regNumber));
+    }
 
-        const isValid = validFormats.some(format => format.test(regNumber));
-        if (!regNumber || !isValid) {
-            errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
+    function setLoadingState(isLoading) {
+        $submitButton.prop('disabled', isLoading).toggleClass('loading', isLoading);
+    }
+
+    function displayQuota(quota) {
+        if (quota !== undefined) {
+            $quotaDisplay.html(`Gjenværende kvote: ${quota}`).show();
+        }
+    }
+
+    function displayVehicleHeader(vehicleData, regNumber) {
+        // Set vehicle title
+        const kjennemerke = vehicleData.kjoretoyId?.kjennemerke;
+        $vehicleTitle.text(kjennemerke || regNumber);
+
+        // Set manufacturer logo
+        const defaultLogoUrl = vehicleLookupAjax.plugin_url + '/assets/images/car.png';
+        const manufacturer = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke;
+        
+        if (manufacturer) {
+            const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer.toLowerCase()}-logo.png`;
+            $vehicleLogo
+                .attr('src', logoUrl)
+                .attr('alt', `${manufacturer} logo`)
+                .on('error', function() {
+                    $(this).attr('src', defaultLogoUrl).attr('alt', 'Generic car logo');
+                });
+        } else {
+            $vehicleLogo.attr('src', defaultLogoUrl).attr('alt', 'Generic car logo');
+        }
+
+        // Set subtitle and tags
+        const generalData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt;
+        if (generalData) {
+            let subtitle = '';
+            if (generalData.merke?.[0]?.merke) subtitle += generalData.merke[0].merke + ' ';
+            if (generalData.handelsbetegnelse?.[0]) subtitle += generalData.handelsbetegnelse[0];
+            
+            const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
+            if (regYear) subtitle += ` <strong>${regYear}</strong>`;
+            
+            $vehicleSubtitle.html(subtitle);
+            addVehicleTags(vehicleData);
+        }
+    }
+
+    function addVehicleTags(vehicleData) {
+        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
+        const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
+        const transmission = engineData?.girkassetype?.kodeBeskrivelse;
+
+        let tags = '';
+        
+        if (fuelType) {
+            const fuelEmoji = {
+                'Diesel': '⛽', 'Bensin': '⛽', 'Elektrisk': '⚡',
+                'Hybrid': '🔋', 'Plugin-hybrid': '🔌', 'Hydrogen': '💨', 'Gass': '💨'
+            }[fuelType] || '⛽';
+            
+            const fuelClass = fuelType.toLowerCase().replace('-', '');
+            tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
+        }
+
+        if (transmission) {
+            const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
+            tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
+        }
+
+        $vehicleInfo.append(`<div class="vehicle-tags">${tags}</div>`);
+    }
+
+    function displayStatusInfo(vehicleData) {
+        const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
+        const statusText = vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || '';
+        const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
+
+        $('.vehicle-status, .eu-status').remove();
+
+        if (status) {
+            const statusClass = status.toLowerCase();
+            $vehicleSubtitle.after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
+
+            if (status === 'REGISTRERT' && euDeadline) {
+                const today = new Date();
+                const deadline = new Date(euDeadline);
+                const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+                let euStatusClass = '';
+                let euMessage = '';
+
+                if (daysUntilDeadline < 0) {
+                    euStatusClass = 'overdue';
+                    const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
+                    euMessage = `EU-kontroll (${monthsAgo} mnd siden)`;
+                } else if (daysUntilDeadline <= 30) {
+                    euStatusClass = 'warning';
+                    euMessage = `EU-kontroll (${daysUntilDeadline} dager igjen)`;
+                } else {
+                    const monthsLeft = Math.floor(daysUntilDeadline / 30);
+                    euMessage = `EU-kontroll (${monthsLeft} mnd igjen)`;
+                }
+
+                $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">${euMessage}</p>`);
+            }
+        }
+    }
+
+    function processVehicleData(response, regNumber) {
+        const vehicleData = response.data.responser[0].kjoretoydata;
+        
+        setRegNumberCookie(regNumber);
+        displayVehicleHeader(vehicleData, regNumber);
+        displayStatusInfo(vehicleData);
+        
+        renderOwnerInfo(vehicleData);
+        renderBasicInfo(vehicleData);
+        renderTechnicalInfo(vehicleData);
+        renderRegistrationInfo(vehicleData);
+
+        $('details').attr('open', true);
+        $resultsDiv.show();
+
+        $('html, body').animate({
+            scrollTop: $('.vehicle-lookup-container').offset().top - 20
+        }, 500);
+
+        checkEUAnchor();
+    }
+
+    $form.on('submit', function(e) {
+        e.preventDefault();
+
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
+
+        resetFormState();
+
+        if (!regNumber || !validateRegistrationNumber(regNumber)) {
+            $errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
             return;
         }
 
-        // Show loading state
-        $(this).find('button').prop('disabled', true).addClass('loading');
+        setLoadingState(true);
 
         // Make AJAX request
         $.ajax({
@@ -76,180 +212,17 @@ jQuery(document).ready(function($) {
             timeout: 15000,
             success: function(response) {
                 if (response.success && response.data) {
-                    // Display remaining quota
-                    if (response.data.gjenstaendeKvote !== undefined) {
-                        $('#quota-display')
-                            .html(`Gjenværende kvote: ${response.data.gjenstaendeKvote}`)
-                            .show();
-                    }
-
-                    // Set cookie for successful lookup before processing data
-                    setRegNumberCookie(regNumber);
-
-                    // Always log response for debugging
-                    console.log("=== Vehicle Lookup Response ===");
-                    console.log("Registration Number:", regNumber);
-                    console.log("Full Response:", response);
-                    console.log("Response Data:", response.data);
-                    console.log("=============================");
+                    displayQuota(response.data.gjenstaendeKvote);
 
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
-                        errorDiv.html('Fant ingen gyldig kjøretøydata for dette registreringsnummeret').show();
+                        $errorDiv.html('Fant ingen gyldig kjøretøydata for dette registreringsnummeret').show();
                         return;
                     }
 
-                    // Clear existing vehicle tags before adding new ones
                     $('.vehicle-info .vehicle-tags').remove();
-
-                    const vehicleData = response.data.responser[0].kjoretoydata;
-
-                    // Set vehicle title and subtitle with safe access
-                    if (vehicleData.kjoretoyId?.kjennemerke) {
-                        $('.vehicle-title').text(vehicleData.kjoretoyId.kjennemerke);
-                    } else {
-                        $('.vehicle-title').text(regNumber);
-                    }
-
-                    // Set manufacturer logo
-                    const defaultLogoUrl = vehicleLookupAjax.plugin_url + '/assets/images/car.png';
-                    if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke) {
-                        const manufacturer = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke.toLowerCase();
-                        const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer}-logo.png`;
-
-                        $('.vehicle-logo')
-                            .attr('src', logoUrl)
-                            .attr('alt', `${manufacturer} logo`)
-                            .on('error', function() {
-                                $(this)
-                                    .attr('src', defaultLogoUrl)
-                                    .attr('alt', 'Generic car logo');
-                            });
-                    } else {
-                        $('.vehicle-logo')
-                            .attr('src', defaultLogoUrl)
-                            .attr('alt', 'Generic car logo');
-                    }
-                    if (vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt) {
-                        const generalData = vehicleData.godkjenning.tekniskGodkjenning.tekniskeData.generelt;
-                        let subtitle = '';
-
-                        if (generalData.merke?.[0]?.merke) {
-                            subtitle += generalData.merke[0].merke + ' ';
-                        }
-
-                        if (generalData.handelsbetegnelse?.[0]) {
-                            subtitle += generalData.handelsbetegnelse[0];
-                        }
-
-                        // Add registration year if available
-                        const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
-                        if (regYear) {
-                            subtitle += ` <strong>${regYear}</strong>`;
-                        }
-
-                        $('.vehicle-subtitle').html(subtitle);
-
-                        // Add vehicle tags
-                        const engineData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.motorOgDrivverk;
-                        const fuelType = engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse;
-                        const transmission = engineData?.girkassetype?.kodeBeskrivelse;
-
-                        let tags = '';
-
-                        // Fuel type tags
-                        if (fuelType) {
-                            const fuelEmoji = {
-                                'Diesel': '⛽',
-                                'Bensin': '⛽',
-                                'Elektrisk': '⚡',
-                                'Hybrid': '🔋',
-                                'Plugin-hybrid': '🔌',
-                                'Hydrogen': '💨',
-                                'Gass': '💨'
-                            }[fuelType] || '⛽';
-
-                            const fuelClass = fuelType.toLowerCase().replace('-', '');
-                            tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
-                        }
-
-                        // Transmission tag
-                        if (transmission) {
-                            const gearboxClass = transmission.toLowerCase() === 'manuell' ? 'manual' : 'automatic';
-                            tags += `<span class="tag gearbox ${gearboxClass}">⚙️ ${transmission}</span>`;
-                        }
-
-                        $('.vehicle-info').append(`<div class="vehicle-tags">${tags}</div>`);
-                    }
-
-                    // Add status display
-                    const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
-                    const statusText = vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || '';
-                    const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
-
-                    // Remove any existing status displays
-                    $('.vehicle-status, .eu-status').remove();
-
-                    // Add status badge for all statuses
-                    if (status) {
-                        const statusClass = status.toLowerCase();
-                        $('.vehicle-subtitle').after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
-
-                        // Only show EU control status for registered vehicles
-                        if (status === 'REGISTRERT' && euDeadline) {
-                            const today = new Date();
-                            const deadline = new Date(euDeadline);
-                            const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
-
-                            let euStatusClass = '';
-                            if (daysUntilDeadline < 0) {
-                                euStatusClass = 'overdue';
-                            } else if (daysUntilDeadline <= 30) {
-                                euStatusClass = 'warning';
-                            }
-
-                            // Format date as DD-MM-YYYY with bold year
-                            const day = deadline.getDate().toString().padStart(2, '0');
-                            const month = (deadline.getMonth() + 1).toString().padStart(2, '0');
-                            const year = deadline.getFullYear();
-                            const formattedDate = `${day}-${month}-<strong>${year}</strong>`;
-                            let euMessage = '';
-
-                            if (daysUntilDeadline < 0) {
-                                const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
-                                euMessage = `EU-kontroll (${monthsAgo} mnd siden)`;
-                            } else if (daysUntilDeadline <= 30) {
-                                euMessage = `EU-kontroll (${daysUntilDeadline} dager igjen)`;
-                            } else {
-                                const monthsLeft = Math.floor(daysUntilDeadline / 30);
-                                euMessage = `EU-kontroll (${monthsLeft} mnd igjen)`;
-                            }
-
-                            $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">${euMessage}</p>`);
-                        }
-                    }
-
-
-                    // Parse and display data for each section
-                    renderOwnerInfo(vehicleData);
-                    renderBasicInfo(vehicleData);
-                    renderTechnicalInfo(vehicleData);
-                    renderRegistrationInfo(vehicleData);
-
-                    // Keep all details elements open by default
-                    $('details').attr('open', true);
-
-                    // Initialize tabs - Removed as tabs are no longer used
-                    $('#vehicle-lookup-results').show();
-
-                    // Smooth scroll to results
-                    $('html, body').animate({
-                        scrollTop: $('.vehicle-lookup-container').offset().top - 20
-                    }, 500);
-
-                    // Check for EU anchor after results are shown
-                    checkEUAnchor();
+                    processVehicleData(response, regNumber);
                 } else {
-                    errorDiv.html('Kunne ikke hente kjøretøyinformasjon').show();
+                    $errorDiv.html('Kunne ikke hente kjøretøyinformasjon').show();
                 }
             },
             error: function(xhr, status, error) {
@@ -261,13 +234,10 @@ jQuery(document).ready(function($) {
                 } else if (error) {
                     errorMessage += error;
                 }
-                errorDiv.html(errorMessage).show();
+                $errorDiv.html(errorMessage).show();
             },
             complete: function() {
-                // Reset button state
-                $('#vehicle-lookup-form button')
-                    .prop('disabled', false)
-                    .removeClass('loading');
+                setLoadingState(false);
             }
         });
     });
