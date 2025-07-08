@@ -455,12 +455,6 @@ class Vehicle_Lookup_Admin {
         echo '<p class="description">Maximum API calls allowed per day</p>';
     }
 
-    public function rate_limit_field() {
-        $value = get_option('vehicle_lookup_rate_limit', VEHICLE_LOOKUP_RATE_LIMIT);
-        echo '<input type="number" name="vehicle_lookup_rate_limit" value="' . esc_attr($value) . '" min="10" max="1000" />';
-        echo '<p class="description">Maximum requests per hour per IP address (10-1000)</p>';
-    }
-
     public function log_retention_field() {
         $value = get_option('vehicle_lookup_log_retention', 90);
         echo '<input type="number" name="vehicle_lookup_log_retention" value="' . esc_attr($value) . '" min="30" max="365" />';
