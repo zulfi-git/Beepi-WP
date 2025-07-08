@@ -4,10 +4,26 @@ jQuery(document).ready(function($) {
     // Test API connectivity
     $('#test-api').on('click', function() {
         const button = $(this);
-        const statusDiv = $('#api-status');
         
         button.prop('disabled', true).text('Testing...');
-        statusDiv.html('<span class="status-indicator checking">●</span> Testing connection...');
+        testApiStatus();
+        
+        setTimeout(function() {
+            button.prop('disabled', false).text('Test Connection');
+        }, 2000);
+    });
+    
+    // Auto-check API status on page load
+    if ($('#api-status').length) {
+        setTimeout(function() {
+            testApiStatus();
+        }, 500);
+    }
+    
+    function testApiStatus() {
+        const statusDiv = $('#api-status');
+        
+        statusDiv.html('<span class="status-indicator checking">●</span> Checking connection...');
         
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
@@ -16,6 +32,7 @@ jQuery(document).ready(function($) {
                 action: 'vehicle_lookup_test_api',
                 nonce: vehicleLookupAdmin.nonce
             },
+            timeout: 10000, // 10 second timeout
             success: function(response) {
                 console.log('API Test Response:', response);
                 if (response.success) {
@@ -25,25 +42,14 @@ jQuery(document).ready(function($) {
                         (response.data.response_time ? ' (' + response.data.response_time + ')' : '')
                     );
                 } else {
-                    const errorMsg = response.data ? response.data.message : 'Unknown error';
-                    statusDiv.html('<span class="status-indicator error">●</span> ' + errorMsg);
+                    statusDiv.html('<span class="status-indicator error">●</span> ' + (response.data ? response.data.message : 'Unknown error'));
                 }
             },
             error: function(xhr, status, error) {
-                console.error('API Test Error:', xhr.responseText);
-                statusDiv.html('<span class="status-indicator error">●</span> Connection failed: ' + error);
-            },
-            complete: function() {
-                button.prop('disabled', false).text('Test Connection');
+                console.error('API Test Error:', status, error, xhr.responseText);
+                statusDiv.html('<span class="status-indicator error">●</span> Connection test failed: ' + error);
             }
         });
-    });
-    
-    // Auto-check API status on page load
-    if ($('#api-status').length) {
-        setTimeout(function() {
-            $('#test-api').trigger('click');
-        }, 1000);
     }
     
     // Refresh stats every 30 seconds

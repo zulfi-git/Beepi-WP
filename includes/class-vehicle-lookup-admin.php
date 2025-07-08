@@ -331,7 +331,7 @@ class Vehicle_Lookup_Admin {
         ?>
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-chart-area"></span> Vehicle Lookup Analytics</h1>
-            
+
             <div style="margin-bottom: 20px;">
                 <button type="button" class="button button-secondary" id="reset-analytics" 
                         onclick="if(confirm('Are you sure? This will permanently delete ALL analytics data.')) { resetAnalytics(); }">
@@ -674,56 +674,53 @@ class Vehicle_Lookup_Admin {
     }
 
     public function reset_analytics_data() {
-        // Verify nonce and permissions
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vehicle_lookup_admin_nonce')) {
-            wp_send_json_error(array('message' => 'Security check failed'));
-            return;
-        }
+        // Add debugging
+        error_log('Reset analytics called');
+
+        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => 'Insufficient permissions'));
-            return;
+            error_log('Reset analytics: Insufficient permissions');
+            wp_send_json_error('Insufficient permissions');
         }
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-        
+
+        error_log('Reset analytics: Table name = ' . $table_name);
+
         // Check if table exists first
-        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
-        
-        if ($table_exists !== $table_name) {
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
+
+        error_log('Reset analytics: Table exists = ' . ($table_exists ? 'yes' : 'no'));
+
+        if (!$table_exists) {
             wp_send_json_error(array(
                 'message' => 'Analytics table does not exist: ' . $table_name
             ));
-            return;
         }
-        
+
         // Get count before deletion for verification
         $count_before = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-        
-        if ($count_before === null) {
-            wp_send_json_error(array(
-                'message' => 'Could not access analytics table'
-            ));
-            return;
-        }
-        
-        // Use DELETE with WHERE 1=1 for maximum compatibility
-        $result = $wpdb->query("DELETE FROM {$table_name} WHERE 1=1");
-        
+        error_log('Reset analytics: Records before deletion = ' . $count_before);
+
+        // Use DELETE instead of TRUNCATE for better compatibility
+        $result = $wpdb->query("DELETE FROM {$table_name}");
+        error_log('Reset analytics: Delete result = ' . $result);
+        error_log('Reset analytics: Last error = ' . $wpdb->last_error);
+
         if ($result !== false) {
             // Verify deletion worked
             $count_after = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-            
-            // Clear WordPress transients/cache
-            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_lookup%'");
-            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_vehicle_lookup%'");
-            
-            // Clear any object cache
-            if (function_exists('wp_cache_flush')) {
-                wp_cache_flush();
-            }
-            
+            error_log('Reset analytics: Records after deletion = ' . $count_after);
+
+            // Also clear any cached data
+            wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
+
+            // Clear all transients related to vehicle lookup
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_cache_%'");
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_vehicle_cache_%'");
+
             wp_send_json_success(array(
                 'message' => "Successfully deleted {$count_before} records. Table now has {$count_after} records."
             ));
