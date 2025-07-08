@@ -1,9 +1,14 @@
 <?php
 class Vehicle_Lookup {
+    private $db_handler;
+
     /**
      * Initialize the plugin
      */
     public function init() {
+        // Initialize database handler
+        $this->db_handler = new Vehicle_Lookup_Database();
+        
         // Register scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
@@ -22,11 +27,12 @@ class Vehicle_Lookup {
         add_action('woocommerce_checkout_create_order', array($this, 'save_registration_to_order'), 10, 2);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'update_order_meta'));
 
-        
-
         // Add rewrite rules for /sok/ URLs
         add_action('init', array($this, 'add_rewrite_rules'));
         add_filter('query_vars', array($this, 'add_query_vars'));
+
+        // Database cleanup hook
+        add_action('wp_scheduled_delete', array($this, 'cleanup_old_logs'));
     }
 
     private function get_registration_number() {
@@ -199,30 +205,37 @@ class Vehicle_Lookup {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
         $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
+        $ip_address = $this->get_client_ip();
+        $start_time = microtime(true);
 
         if (empty($regNumber)) {
+            $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Empty registration number');
             wp_send_json_error('Vennligst skriv inn et registreringsnummer');
+        }
+
+        if (!$this->validate_registration_number($regNumber)) {
+            $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Invalid registration number format');
+            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
         }
 
         // Check rate limiting (before quota check)
         if (!$this->check_rate_limit()) {
+            $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Rate limit exceeded');
             wp_send_json_error('For mange forespørsler. Vennligst vent litt før du prøver igjen.');
         }
 
         // Check daily quota
         if (!$this->check_quota_available()) {
+            $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Daily quota exceeded');
             wp_send_json_error('Daglig grense nådd. Prøv igjen i morgen.');
         }
 
         // Check cache first
         $cached_data = $this->get_cached_response($regNumber);
         if ($cached_data !== false) {
-            error_log('Vehicle Lookup: Cache hit for ' . $regNumber);
+            $response_time = round((microtime(true) - $start_time) * 1000);
+            $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, true);
             wp_send_json_success($cached_data);
-        }
-
-        if (!$this->validate_registration_number($regNumber)) {
-            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
         }
 
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
@@ -236,8 +249,11 @@ class Vehicle_Lookup {
             'timeout' => 15
         ));
 
+        $response_time = round((microtime(true) - $start_time) * 1000);
         $result = $this->process_api_response($response, $regNumber);
+        
         if (isset($result['error'])) {
+            $this->db_handler->log_lookup($regNumber, $ip_address, false, $result['error'], $response_time);
             wp_send_json_error($result['error']);
         }
 
@@ -246,13 +262,9 @@ class Vehicle_Lookup {
         // Cache successful response
         $this->cache_response($regNumber, $data);
 
-        // Increment quota counter on successful lookup
-        $this->increment_quota_counter();
+        // Log successful lookup
+        $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time);
 
-        // Increment rate limit counter
-        $this->increment_rate_limit_counter();
-
-        error_log('Vehicle Lookup: API call made for ' . $regNumber);
         wp_send_json_success($data);
     }
 
@@ -267,26 +279,10 @@ class Vehicle_Lookup {
         }
 
         $ip_address = $this->get_client_ip();
-        $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
-        $current_count = get_transient($rate_limit_key) ?: 0;
+        $current_hour = date('Y-m-d H');
+        $current_count = $this->db_handler->get_hourly_rate_limit($ip_address, $current_hour);
 
         return $current_count < VEHICLE_LOOKUP_RATE_LIMIT;
-    }
-
-    /**
-     * Increment rate limit counter
-     */
-    private function increment_rate_limit_counter() {
-        $ip_address = $this->get_client_ip();
-        $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
-        $current_count = get_transient($rate_limit_key) ?: 0;
-
-        set_transient($rate_limit_key, $current_count + 1, HOUR_IN_SECONDS);
-
-        // Log rate limit violations
-        if ($current_count >= VEHICLE_LOOKUP_RATE_LIMIT) {
-            error_log('Vehicle Lookup: Rate limit exceeded for IP ' . $ip_address);
-        }
     }
 
     /**
@@ -332,42 +328,43 @@ class Vehicle_Lookup {
      */
     public function get_rate_limit_status() {
         $ip_address = $this->get_client_ip();
-        $rate_limit_key = 'vehicle_rate_limit_' . md5($ip_address) . '_' . date('Y-m-d-H');
-        $current_count = get_transient($rate_limit_key) ?: 0;
+        $current_hour = date('Y-m-d H');
+        $current_count = $this->db_handler->get_hourly_rate_limit($ip_address, $current_hour);
+        $rate_limit = get_option('vehicle_lookup_rate_limit', VEHICLE_LOOKUP_RATE_LIMIT);
 
         return array(
             'used' => $current_count,
-            'limit' => VEHICLE_LOOKUP_RATE_LIMIT,
-            'remaining' => VEHICLE_LOOKUP_RATE_LIMIT - $current_count,
+            'limit' => $rate_limit,
+            'remaining' => $rate_limit - $current_count,
             'resets_at' => date('Y-m-d H:59:59')
         );
     }
 
-    private function check_quota_available() {
-        $today = date('Y-m-d');
-        $quota_key = 'vegvesen_quota_' . $today;
-        $current_count = get_transient($quota_key) ?: 0;
-
-        return $current_count < 5000;
+    /**
+     * Cleanup old logs
+     */
+    public function cleanup_old_logs() {
+        $retention_days = get_option('vehicle_lookup_log_retention', 90);
+        $this->db_handler->cleanup_old_logs($retention_days);
     }
 
-    private function increment_quota_counter() {
+    private function check_quota_available() {
         $today = date('Y-m-d');
-        $quota_key = 'vegvesen_quota_' . $today;
-        $current_count = get_transient($quota_key) ?: 0;
+        $current_count = $this->db_handler->get_daily_quota($today);
+        $quota_limit = get_option('vehicle_lookup_daily_quota', 5000);
 
-        set_transient($quota_key, $current_count + 1, DAY_IN_SECONDS);
+        return $current_count < $quota_limit;
     }
 
     public function get_quota_status() {
         $today = date('Y-m-d');
-        $quota_key = 'vegvesen_quota_' . $today;
-        $current_count = get_transient($quota_key) ?: 0;
+        $current_count = $this->db_handler->get_daily_quota($today);
+        $quota_limit = get_option('vehicle_lookup_daily_quota', 5000);
 
         return array(
             'used' => $current_count,
-            'limit' => 5000,
-            'remaining' => 5000 - $current_count
+            'limit' => $quota_limit,
+            'remaining' => $quota_limit - $current_count
         );
     }
 

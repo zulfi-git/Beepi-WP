@@ -22,6 +22,7 @@ if (!defined('ABSPATH')) {
 // Check if required files exist before including
 $required_files = [
     'includes/class-vehicle-lookup-helpers.php',
+    'includes/class-vehicle-lookup-database.php',
     'includes/class-vehicle-lookup.php',
     'includes/class-vehicle-lookup-shortcode.php',
     'includes/class-vehicle-search-shortcode.php',
@@ -74,4 +75,14 @@ try {
     }
 } catch (Exception $e) {
     error_log("Vehicle Lookup Plugin Error: " . $e->getMessage());
+}
+
+// Plugin activation hook
+register_activation_hook(__FILE__, 'vehicle_lookup_activate');
+
+function vehicle_lookup_activate() {
+    if (class_exists('Vehicle_Lookup_Database')) {
+        $db_handler = new Vehicle_Lookup_Database();
+        $db_handler->create_table();
+    }
 }

@@ -54,6 +54,7 @@ class Vehicle_Lookup_Admin {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_duration');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
+        register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
 
         add_settings_section(
             'vehicle_lookup_api_section',
@@ -108,6 +109,14 @@ class Vehicle_Lookup_Admin {
             'vehicle_lookup_settings',
             'vehicle_lookup_limits_section'
         );
+
+        add_settings_field(
+            'log_retention',
+            'Log Retention (days)',
+            array($this, 'log_retention_field'),
+            'vehicle_lookup_settings',
+            'vehicle_lookup_limits_section'
+        );
     }
 
     public function enqueue_admin_scripts($hook) {
@@ -139,21 +148,22 @@ class Vehicle_Lookup_Admin {
     }
 
     public function admin_page() {
+        $db_handler = new Vehicle_Lookup_Database();
         $today = date('Y-m-d');
-        $quota_key = 'vegvesen_quota_' . $today;
-        $quota_used = get_transient($quota_key) ?: 0;
+        
+        // Get real quota usage
+        $quota_used = $db_handler->get_daily_quota($today);
         $quota_limit = get_option('vehicle_lookup_daily_quota', 5000);
 
-        // Get hourly rate limit stats
+        // Get real hourly rate limit stats
         $current_hour = date('Y-m-d-H');
-        $rate_limit_pattern = 'vehicle_rate_limit_*_' . $current_hour;
-        $rate_limit_total = $this->get_hourly_rate_limit_usage();
+        $rate_limit_total = $this->get_hourly_rate_limit_usage($db_handler, $current_hour);
 
         // Get cache stats
         $cache_stats = $this->get_cache_stats();
 
-        // Get recent lookup stats
-        $stats = $this->get_lookup_stats();
+        // Get real lookup stats
+        $stats = $this->get_lookup_stats($db_handler);
 
         ?>
         <div class="wrap vehicle-lookup-admin">
@@ -389,18 +399,27 @@ class Vehicle_Lookup_Admin {
         echo '<p class="description">Maximum API calls allowed per day</p>';
     }
 
+    public function log_retention_field() {
+        $value = get_option('vehicle_lookup_log_retention', 90);
+        echo '<input type="number" name="vehicle_lookup_log_retention" value="' . esc_attr($value) . '" min="30" max="365" />';
+        echo '<p class="description">Number of days to keep lookup logs (30-365)</p>';
+    }
+
     // Helper methods
-    private function get_hourly_rate_limit_usage() {
+    private function get_hourly_rate_limit_usage($db_handler, $current_hour) {
         global $wpdb;
         
-        // Since we're using transients, we'll estimate based on quota usage
-        $today = date('Y-m-d');
-        $quota_key = 'vegvesen_quota_' . $today;
-        $daily_usage = get_transient($quota_key) ?: 0;
+        // Get actual hourly usage across all IPs
+        $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
+        $start_time = $current_hour . ':00:00';
+        $end_time = $current_hour . ':59:59';
         
-        // Rough estimate: divide daily usage by hours passed today
-        $hours_passed = (int) date('H') + 1;
-        return intval($daily_usage / $hours_passed);
+        $sql = "SELECT COUNT(*) FROM {$table_name} 
+        WHERE lookup_time >= %s AND lookup_time <= %s";
+
+        return $wpdb->get_var(
+            $wpdb->prepare($sql, $start_time, $end_time)
+        ) ?: 0;
     }
 
     private function get_cache_stats() {
@@ -412,8 +431,15 @@ class Vehicle_Lookup_Admin {
              WHERE option_name LIKE '_transient_vehicle_cache_%'"
         );
         
-        // Estimate hit rate (this is simplified)
-        $hit_rate = $cache_entries > 0 ? rand(70, 95) : 0;
+        // Calculate real hit rate from database
+        $db_handler = new Vehicle_Lookup_Database();
+        $today = date('Y-m-d');
+        $start_date = $today . ' 00:00:00';
+        $end_date = $today . ' 23:59:59';
+        
+        $stats = $db_handler->get_stats($start_date, $end_date);
+        $hit_rate = $stats && $stats->total_lookups > 0 ? 
+            round(($stats->cache_hits / $stats->total_lookups) * 100) : 0;
         
         return array(
             'entries' => (int) $cache_entries,
@@ -421,53 +447,82 @@ class Vehicle_Lookup_Admin {
         );
     }
 
-    private function get_lookup_stats() {
-        // Simple stats from quota usage (in a real implementation, you'd track this more precisely)
+    private function get_lookup_stats($db_handler) {
         $today = date('Y-m-d');
-        $quota_key = 'vegvesen_quota_' . $today;
-        $today_total = get_transient($quota_key) ?: 0;
+        $start_date = $today . ' 00:00:00';
+        $end_date = $today . ' 23:59:59';
         
-        // Estimate success/failure (in reality, you'd track these separately)
-        $success_rate = 85; // Typical success rate
-        $today_success = intval($today_total * ($success_rate / 100));
-        $today_failed = $today_total - $today_success;
+        $stats = $db_handler->get_stats($start_date, $end_date);
+        
+        if (!$stats) {
+            return array(
+                'today_total' => 0,
+                'today_success' => 0,
+                'today_failed' => 0,
+                'success_rate' => 0
+            );
+        }
+        
+        $success_rate = $stats->total_lookups > 0 ? 
+            round(($stats->successful_lookups / $stats->total_lookups) * 100) : 0;
         
         return array(
-            'today_total' => $today_total,
-            'today_success' => $today_success,
-            'today_failed' => $today_failed,
+            'today_total' => (int) $stats->total_lookups,
+            'today_success' => (int) $stats->successful_lookups,
+            'today_failed' => (int) $stats->failed_lookups,
             'success_rate' => $success_rate
         );
     }
 
     private function get_detailed_stats() {
-        // Get basic stats for different periods
-        $today_stats = $this->get_lookup_stats();
+        $db_handler = new Vehicle_Lookup_Database();
+        
+        // Today's stats
+        $today = date('Y-m-d');
+        $today_stats = $db_handler->get_stats($today . ' 00:00:00', $today . ' 23:59:59');
+        
+        // Week's stats
+        $week_start = date('Y-m-d', strtotime('-7 days')) . ' 00:00:00';
+        $week_end = date('Y-m-d') . ' 23:59:59';
+        $week_stats = $db_handler->get_stats($week_start, $week_end);
+        
+        // Month's stats
+        $month_start = date('Y-m-d', strtotime('-30 days')) . ' 00:00:00';
+        $month_end = date('Y-m-d') . ' 23:59:59';
+        $month_stats = $db_handler->get_stats($month_start, $month_end);
+        
+        // Popular searches
+        $popular_searches = $db_handler->get_popular_searches(5, 30);
         
         return array(
             'today' => array(
-                'total' => $today_stats['today_total'],
-                'success' => $today_stats['today_success'],
-                'failed' => $today_stats['today_failed'],
-                'rate' => $today_stats['success_rate']
+                'total' => $today_stats ? (int) $today_stats->total_lookups : 0,
+                'success' => $today_stats ? (int) $today_stats->successful_lookups : 0,
+                'failed' => $today_stats ? (int) $today_stats->failed_lookups : 0,
+                'rate' => $today_stats && $today_stats->total_lookups > 0 ? 
+                    round(($today_stats->successful_lookups / $today_stats->total_lookups) * 100) : 0
             ),
             'week' => array(
-                'total' => $today_stats['today_total'] * 7,
-                'success' => $today_stats['today_success'] * 7,
-                'failed' => $today_stats['today_failed'] * 7,
-                'rate' => $today_stats['success_rate']
+                'total' => $week_stats ? (int) $week_stats->total_lookups : 0,
+                'success' => $week_stats ? (int) $week_stats->successful_lookups : 0,
+                'failed' => $week_stats ? (int) $week_stats->failed_lookups : 0,
+                'rate' => $week_stats && $week_stats->total_lookups > 0 ? 
+                    round(($week_stats->successful_lookups / $week_stats->total_lookups) * 100) : 0
             ),
             'month' => array(
-                'total' => $today_stats['today_total'] * 30,
-                'success' => $today_stats['today_success'] * 30,
-                'failed' => $today_stats['today_failed'] * 30,
-                'rate' => $today_stats['success_rate']
+                'total' => $month_stats ? (int) $month_stats->total_lookups : 0,
+                'success' => $month_stats ? (int) $month_stats->successful_lookups : 0,
+                'failed' => $month_stats ? (int) $month_stats->failed_lookups : 0,
+                'rate' => $month_stats && $month_stats->total_lookups > 0 ? 
+                    round(($month_stats->successful_lookups / $month_stats->total_lookups) * 100) : 0
             ),
-            'popular' => array(
-                array('reg_number' => 'AB12345', 'count' => 15, 'last_search' => time() - 3600),
-                array('reg_number' => 'CD67890', 'count' => 12, 'last_search' => time() - 7200),
-                array('reg_number' => 'EF11111', 'count' => 8, 'last_search' => time() - 14400),
-            )
+            'popular' => array_map(function($search) {
+                return array(
+                    'reg_number' => $search->reg_number,
+                    'count' => (int) $search->search_count,
+                    'last_search' => strtotime($search->last_searched)
+                );
+            }, $popular_searches)
         );
     }
 
