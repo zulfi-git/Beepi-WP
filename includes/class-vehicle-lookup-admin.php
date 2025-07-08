@@ -448,8 +448,6 @@ class Vehicle_Lookup_Admin {
         echo '<p class="description">Maximum API calls allowed per day</p>';
     }
 
-    
-
     public function log_retention_field() {
         $value = get_option('vehicle_lookup_log_retention', 90);
         echo '<input type="number" name="vehicle_lookup_log_retention" value="' . esc_attr($value) . '" min="30" max="365" />';
