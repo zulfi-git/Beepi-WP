@@ -246,7 +246,7 @@ class Vehicle_Lookup {
             'body' => json_encode(array(
                 'registrationNumber' => $regNumber
             )),
-            'timeout' => 15
+            'timeout' => get_option('vehicle_lookup_timeout', 15)
         ));
 
         $response_time = round((microtime(true) - $start_time) * 1000);
