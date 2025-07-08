@@ -55,3 +55,17 @@ jQuery(document).ready(function($) {
         $(this).closest('tr').find('th').attr('title', $(this).text());
     });
 });
+
+function resetAnalytics() {
+    $.post(vehicleLookupAdmin.ajaxurl, {
+        action: 'vehicle_lookup_reset_analytics',
+        nonce: vehicleLookupAdmin.nonce
+    }, function(response) {
+        if (response.success) {
+            alert('Analytics data has been reset successfully');
+            location.reload();
+        } else {
+            alert('Error: ' + response.data.message);
+        }
+    });
+});

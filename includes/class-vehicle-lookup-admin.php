@@ -7,6 +7,7 @@ class Vehicle_Lookup_Admin {
         add_action('admin_init', array($this, 'init_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
+        add_action('wp_ajax_vehicle_lookup_reset_analytics', array($this, 'reset_analytics_data'));
 
         // Ensure database table exists
         $this->ensure_database_table();
@@ -330,6 +331,13 @@ class Vehicle_Lookup_Admin {
         ?>
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-chart-area"></span> Vehicle Lookup Analytics</h1>
+            
+            <div style="margin-bottom: 20px;">
+                <button type="button" class="button button-secondary" id="reset-analytics" 
+                        onclick="if(confirm('Are you sure? This will permanently delete ALL analytics data.')) { resetAnalytics(); }">
+                    Reset All Analytics Data
+                </button>
+            </div>
 
             <div class="analytics-grid">
                 <div class="analytics-card">
@@ -658,6 +666,29 @@ class Vehicle_Lookup_Admin {
             wp_send_json_error(array(
                 'message' => 'API returned status code: ' . $status_code,
                 'status_code' => $status_code
+            ));
+        }
+    }
+
+    public function reset_analytics_data() {
+        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
+        
+        $result = $wpdb->query("TRUNCATE TABLE {$table_name}");
+        
+        if ($result !== false) {
+            wp_send_json_success(array(
+                'message' => 'All analytics data has been deleted successfully'
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => 'Failed to reset analytics data'
             ));
         }
     }
