@@ -459,23 +459,18 @@ class Vehicle_Lookup_Admin {
         // Get actual hourly usage across all IPs
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
 
-        // Convert Y-m-d-H format to proper datetime range
-        $hour_parts = explode('-', $current_hour);
-        if (count($hour_parts) === 4) {
-            $start_time = $hour_parts[0] . '-' . $hour_parts[1] . '-' . $hour_parts[2] . ' ' . $hour_parts[3] . ':00:00';
-            $end_time = $hour_parts[0] . '-' . $hour_parts[1] . '-' . $hour_parts[2] . ' ' . $hour_parts[3] . ':59:59';
-        } else {
-            // Fallback to current hour if format is unexpected
-            $start_time = date('Y-m-d H:00:00');
-            $end_time = date('Y-m-d H:59:59');
-        }
+        // Use current hour directly without complex conversion
+        $start_time = date('Y-m-d H:00:00');
+        $end_time = date('Y-m-d H:59:59');
 
         $sql = "SELECT COUNT(*) FROM {$table_name} 
                 WHERE lookup_time >= %s AND lookup_time <= %s";
 
-        return $wpdb->get_var(
+        $result = $wpdb->get_var(
             $wpdb->prepare($sql, $start_time, $end_time)
-        ) ?: 0;
+        );
+
+        return (int) ($result ?: 0);
     }
 
     private function get_cache_stats() {
