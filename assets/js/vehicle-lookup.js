@@ -252,6 +252,14 @@ jQuery(document).ready(function($) {
                     errorMessage = 'Serverfeil (' + xhr.status + '). Tjenesten kan være midlertidig nede. Prøv igjen om litt.';
                 } else if (xhr.status === 429) {
                     errorMessage = 'For mange forespørsler. Vent 1-2 minutter før du prøver igjen.';
+                } else if (xhr.status === 400) {
+                    errorMessage = 'Ugyldig forespørsel. Sjekk registreringsnummeret og prøv igjen.';
+                } else if (xhr.status === 401) {
+                    errorMessage = 'Ikke autorisert tilgang til tjenesten. Kontakt oss for hjelp.';
+                } else if (xhr.status === 403) {
+                    errorMessage = 'Tilgang nektet. Du har ikke tillatelse til å bruke denne tjenesten.';
+                } else if (xhr.status === 404) {
+                    errorMessage = 'Tjenesten ble ikke funnet. Kontakt oss hvis problemet vedvarer.';
                 } else if (error && error !== 'error') {
                     errorMessage = 'Teknisk feil: ' + error + '. Prøv å laste siden på nytt.';
                 } else {
