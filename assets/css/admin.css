@@ -284,3 +284,23 @@
 .status-invalid .validity-indicator {
     color: #dc3232;
 }
+
+.failure-reason {
+    color: #666;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.analytics-card table .status-column {
+    white-space: nowrap;
+}
+
+.analytics-card table .status-valid {
+    color: #46b450;
+    font-weight: bold;
+}
+
+.analytics-card table .status-invalid {
+    color: #dc3232;
+    font-weight: bold;
+}

@@ -376,6 +376,7 @@ class Vehicle_Lookup_Admin {
                             <tr>
                                 <th>Registration Number</th>
                                 <th>Search Count</th>
+                                <th>Status</th>
                                 <th>Last Searched</th>
                             </tr>
                         </thead>
@@ -384,6 +385,16 @@ class Vehicle_Lookup_Admin {
                             <tr>
                                 <td><strong><?php echo esc_html($search['reg_number']); ?></strong></td>
                                 <td><?php echo $search['count']; ?></td>
+                                <td>
+                                    <?php if ($search['has_valid_result']): ?>
+                                        <span style="color: #46b450;">✓ Valid</span>
+                                    <?php else: ?>
+                                        <span style="color: #dc3232;">✗ Invalid</span>
+                                        <?php if (!empty($search['failure_reason'])): ?>
+                                            <span style="color: #666; font-size: 0.9em;">(<?php echo esc_html($search['failure_reason']); ?>)</span>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?php echo date('d.m.Y H:i', $search['last_search']); ?></td>
                             </tr>
                             <?php endforeach; ?>
@@ -564,7 +575,8 @@ class Vehicle_Lookup_Admin {
                     'reg_number' => $search->registration_number,
                     'count' => (int) $search->search_count,
                     'last_search' => strtotime($search->last_searched),
-                    'has_valid_result' => (bool) $search->has_valid_result
+                    'has_valid_result' => (bool) $search->has_valid_result,
+                    'failure_reason' => $search->last_failure_type
                 );
             }, $popular_searches)
         );
@@ -579,8 +591,14 @@ class Vehicle_Lookup_Admin {
                 reg_number as registration_number,
                 COUNT(*) as search_count,
                 MAX(success) as has_valid_result,
-                MAX(lookup_time) as last_searched
-            FROM {$table_name}
+                MAX(lookup_time) as last_searched,
+                (SELECT failure_type FROM {$table_name} l2 
+                 WHERE l2.reg_number = l1.reg_number 
+                 AND l2.success = 0 
+                 AND l2.failure_type IS NOT NULL 
+                 ORDER BY l2.lookup_time DESC 
+                 LIMIT 1) as last_failure_type
+            FROM {$table_name} l1
             WHERE reg_number IS NOT NULL 
             AND reg_number != ''
             AND lookup_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)
