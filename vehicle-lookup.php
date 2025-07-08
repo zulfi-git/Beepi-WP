@@ -27,7 +27,8 @@ $required_files = [
     'includes/class-vehicle-search-shortcode.php',
     'includes/class-vehicle-eu-search-shortcode.php',
     'includes/class-order-confirmation-shortcode.php',
-    'includes/class-sms-handler.php'
+    'includes/class-sms-handler.php',
+    'includes/class-vehicle-lookup-admin.php'
 ];
 
 foreach ($required_files as $file) {
@@ -64,6 +65,12 @@ try {
     if (class_exists('SMS_Handler')) {
         $sms_handler = new SMS_Handler();
         $sms_handler->init();
+    }
+
+    // Initialize admin interface
+    if (is_admin() && class_exists('Vehicle_Lookup_Admin')) {
+        $admin = new Vehicle_Lookup_Admin();
+        $admin->init();
     }
 } catch (Exception $e) {
     error_log("Vehicle Lookup Plugin Error: " . $e->getMessage());
