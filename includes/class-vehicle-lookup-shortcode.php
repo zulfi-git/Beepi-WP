@@ -16,123 +16,155 @@ class Vehicle_Lookup_Shortcode {
         $reg_number = $this->get_reg_from_url();
 
         ob_start();
+        echo $this->render_form_section($reg_number);
+        echo $this->render_results_section($product_id);
+        echo $this->render_footer_section();
+        echo $this->render_auto_submit_script($reg_number);
+        
+        return ob_get_clean();
+    }
+
+    private function render_form_section($reg_number) {
+        ob_start();
         ?>
         <div class="vehicle-lookup-container">
             <form id="vehicle-lookup-form" class="plate-form">
-                <div class="plate-input-wrapper">
-                    <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
-                    <input type="text" id="regNumber" name="regNumber" required
-                           class="plate-input"
-                           placeholder="CO11204"
-                           value="<?php echo esc_attr($reg_number); ?>"
-                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
-                    <button type="submit" class="plate-search-button" aria-label="Search">
-                        <div class="loading-spinner"></div>
-                        <span class="search-icon">🔍</span>
-                    </button>
-                </div>
+                <?php echo $this->render_plate_input($reg_number); ?>
             </form>
-
-            <div id="vehicle-lookup-results" style="display: none;">
-                <div class="vehicle-header">
-                    <div class="vehicle-info">
-                        <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                        <h2 class="vehicle-title"></h2>
-                        <p class="vehicle-subtitle"></p>
-                    </div>
-                </div>
-
-                <div class="owner-section">
-                    <div id="owner-info-container">
-                        <div id="owner-info-purchase">
-                            <p>Hvem eier bilen?</p>
-                            <?php 
-                            $product = wc_get_product($product_id);
-                            $regular_price = $product ? $product->get_regular_price() : '39';
-                            $sale_price = $product ? $product->get_sale_price() : null;
-                            $final_price = $sale_price ? $sale_price : $regular_price;
-                            ?>
-                            <div class="price-display">
-                                <?php if ($sale_price): ?>
-                                    <div class="price-wrapper">
-                                        <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
-                                        <span class="sale-price"><?php echo esc_html($sale_price); ?> kr</span>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="price-wrapper">
-                                        <span class="regular-price-only"><?php echo esc_html($regular_price); ?> kr</span>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
-                            <div class="trust-indicators">
-                                <div>🔐 Data hentes fra Statens vegvesen</div>
-                                <div>⏱️ Svar på noen få sekunder</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion">
-                    <details>
-                        <summary><span>Generell informasjon</span><span>📋</span></summary>
-                        <div class="details-content">
-                            <table class="info-table basic-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Reg. og EU-kontroll</span><span>🔍</span></summary>
-                        <div class="details-content">
-                            <table class="info-table registration-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Motor og drivverk</span><span>🔧</span></summary>
-                        <div class="details-content">
-                            <table class="info-table engine-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Størrelse og vekt</span><span>⚖️</span></summary>
-                        <div class="details-content">
-                            <table class="info-table size-weight-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Dekk og felg</span><span>🛞</span></summary>
-                        <div class="details-content">
-                            <table class="info-table tire-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Merknader</span><span>📝</span></summary>
-                        <div class="details-content">
-                            <table class="info-table notes-info-table"></table>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
-            <div id="quota-display" class="quota-display" style="display: none;"></div>
-            <div id="version-display" class="version-display">v<?php echo VEHICLE_LOOKUP_VERSION; ?></div>
-            <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
-        </div>
-        
-        <?php if ($reg_number): ?>
-        <script>
-        jQuery(document).ready(function($) {
-            // Auto-trigger lookup if registration number is in URL
-            setTimeout(function() {
-                $('#vehicle-lookup-form').trigger('submit');
-            }, 500);
-        });
-        </script>
-        <?php endif; ?>
-        
         <?php
         return ob_get_clean();
     }
+
+    private function render_plate_input($reg_number) {
+        return sprintf(
+            '<div class="plate-input-wrapper">
+                <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
+                <input type="text" id="regNumber" name="regNumber" required
+                       class="plate-input"
+                       placeholder="CO11204"
+                       value="%s"
+                       pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
+                <button type="submit" class="plate-search-button" aria-label="Search">
+                    <div class="loading-spinner"></div>
+                    <span class="search-icon">🔍</span>
+                </button>
+            </div>',
+            esc_attr($reg_number)
+        );
+    }
+
+    private function render_results_section($product_id) {
+        ob_start();
+
+            <div id="vehicle-lookup-results" style="display: none;">
+            <?php echo $this->render_vehicle_header(); ?>
+            <?php echo $this->render_owner_section($product_id); ?>
+            <?php echo $this->render_accordion_section(); ?>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    private function render_vehicle_header() {
+        return '<div class="vehicle-header">
+            <div class="vehicle-info">
+                <img class="vehicle-logo" src="" alt="Car manufacturer logo">
+                <h2 class="vehicle-title"></h2>
+                <p class="vehicle-subtitle"></p>
+            </div>
+        </div>';
+    }
+
+    private function render_owner_section($product_id) {
+        $product = wc_get_product($product_id);
+        $regular_price = $product ? $product->get_regular_price() : '39';
+        $sale_price = $product ? $product->get_sale_price() : null;
+        
+        ob_start();
+        ?>
+        <div class="owner-section">
+            <div id="owner-info-container">
+                <div id="owner-info-purchase">
+                    <p>Hvem eier bilen?</p>
+                    <div class="price-display">
+                        <?php if ($sale_price): ?>
+                            <div class="price-wrapper">
+                                <span class="regular-price"><?php echo esc_html($regular_price); ?> kr</span>
+                                <span class="sale-price"><?php echo esc_html($sale_price); ?> kr</span>
+                            </div>
+                        <?php else: ?>
+                            <div class="price-wrapper">
+                                <span class="regular-price-only"><?php echo esc_html($regular_price); ?> kr</span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php echo do_shortcode("[woo_vipps_buy_now id={$product_id} /]"); ?>
+                    <?php echo $this->render_trust_indicators(); ?>
+                </div>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    private function render_trust_indicators() {
+        return '<div class="trust-indicators">
+            <div>🔐 Data hentes fra Statens vegvesen</div>
+            <div>⏱️ Svar på noen få sekunder</div>
+        </div>';
+    }
+
+    private function render_accordion_section() {
+        $accordion_sections = [
+            ['Generell informasjon', '📋', 'basic-info-table'],
+            ['Reg. og EU-kontroll', '🔍', 'registration-info-table'],
+            ['Motor og drivverk', '🔧', 'engine-info-table'],
+            ['Størrelse og vekt', '⚖️', 'size-weight-table'],
+            ['Dekk og felg', '🛞', 'tire-info-table'],
+            ['Merknader', '📝', 'notes-info-table']
+        ];
+
+        $html = '<div class="accordion">';
+        foreach ($accordion_sections as $section) {
+            $html .= sprintf(
+                '<details>
+                    <summary><span>%s</span><span>%s</span></summary>
+                    <div class="details-content">
+                        <table class="info-table %s"></table>
+                    </div>
+                </details>',
+                $section[0], $section[1], $section[2]
+            );
+        }
+        $html .= '</div>';
+        
+        return $html;
+    }
+
+    private function render_footer_section() {
+        return sprintf(
+            '<div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
+            <div id="quota-display" class="quota-display" style="display: none;"></div>
+            <div id="version-display" class="version-display">v%s</div>
+            <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
+            </div>',
+            VEHICLE_LOOKUP_VERSION
+        );
+    }
+
+    private function render_auto_submit_script($reg_number) {
+        if (!$reg_number) return '';
+        
+        return '<script>
+        jQuery(document).ready(function($) {
+            setTimeout(function() {
+                $("#vehicle-lookup-form").trigger("submit");
+            }, 500);
+        });
+        </script>';
+    }
+        
+        
     
     /**
      * Extract registration number from URL path or query parameters

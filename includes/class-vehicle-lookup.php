@@ -221,24 +221,7 @@ class Vehicle_Lookup {
             wp_send_json_success($cached_data);
         }
 
-        $valid_patterns = array(
-            '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
-            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
-            '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
-            '/^\d{5}$/',                      // Temporary tourist plates
-            '/^[A-Za-z]\d{3}$/',              // Antique vehicles
-            '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
-        );
-
-        $is_valid = false;
-        foreach ($valid_patterns as $pattern) {
-            if (preg_match($pattern, $regNumber)) {
-                $is_valid = true;
-                break;
-            }
-        }
-
-        if (!$is_valid) {
+        if (!$this->validate_registration_number($regNumber)) {
             wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
         }
 
@@ -253,33 +236,12 @@ class Vehicle_Lookup {
             'timeout' => 15
         ));
 
-        if (is_wp_error($response)) {
-            wp_send_json_error('Tilkoblingsfeil. Prøv igjen om litt.');
+        $result = $this->process_api_response($response, $regNumber);
+        if (isset($result['error'])) {
+            wp_send_json_error($result['error']);
         }
 
-        $status_code = wp_remote_retrieve_response_code($response);
-        if ($status_code !== 200) {
-            wp_send_json_error('Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.');
-        }
-
-        $body = wp_remote_retrieve_body($response);
-
-        // Basic error logging
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('Vehicle Lookup Error: Invalid JSON response for ' . $regNumber);
-        }
-
-        $data = json_decode($body, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON Decode Error: ' . json_last_error_msg());
-            wp_send_json_error('Ugyldig svar fra server. Prøv igjen.');
-        }
-
-        if (empty($data)) {
-            error_log('Empty Data Response for: ' . $regNumber);
-            wp_send_json_error('Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
-        }
+        $data = $result['data'];
 
         // Cache successful response
         $this->cache_response($regNumber, $data);
@@ -410,6 +372,56 @@ class Vehicle_Lookup {
     }
 
     
+
+    /**
+     * Validate Norwegian registration number format
+     */
+    private function validate_registration_number($regNumber) {
+        $valid_patterns = array(
+            '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
+            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
+            '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
+            '/^\d{5}$/',                      // Temporary tourist plates
+            '/^[A-Za-z]\d{3}$/',              // Antique vehicles
+            '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
+        );
+
+        foreach ($valid_patterns as $pattern) {
+            if (preg_match($pattern, $regNumber)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Handle API response with proper error checking
+     */
+    private function process_api_response($response, $regNumber) {
+        if (is_wp_error($response)) {
+            return array('error' => 'Tilkoblingsfeil. Prøv igjen om litt.');
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        if ($status_code !== 200) {
+            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.');
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON Decode Error: ' . json_last_error_msg());
+            return array('error' => 'Ugyldig svar fra server. Prøv igjen.');
+        }
+
+        if (empty($data)) {
+            error_log('Empty Data Response for: ' . $regNumber);
+            return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
+        }
+
+        return array('success' => true, 'data' => $data);
+    }
 
     /**
      * Check if order contains vehicle lookup product
