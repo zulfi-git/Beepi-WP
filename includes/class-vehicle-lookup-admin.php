@@ -674,15 +674,34 @@ class Vehicle_Lookup_Admin {
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
-        $result = $wpdb->query("TRUNCATE TABLE {$table_name}");
+        // Check if table exists first
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
+        
+        if (!$table_exists) {
+            wp_send_json_error(array(
+                'message' => 'Analytics table does not exist'
+            ));
+        }
+        
+        // Get count before deletion for verification
+        $count_before = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
+        
+        // Use DELETE instead of TRUNCATE for better compatibility
+        $result = $wpdb->query("DELETE FROM {$table_name}");
         
         if ($result !== false) {
+            // Verify deletion worked
+            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
+            
+            // Also clear any cached data
+            wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
+            
             wp_send_json_success(array(
-                'message' => 'All analytics data has been deleted successfully'
+                'message' => "Successfully deleted {$count_before} records. Table now has {$count_after} records."
             ));
         } else {
             wp_send_json_error(array(
-                'message' => 'Failed to reset analytics data'
+                'message' => 'Failed to reset analytics data. Database error: ' . $wpdb->last_error
             ));
         }
     }

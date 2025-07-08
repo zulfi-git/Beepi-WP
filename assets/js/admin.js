@@ -57,15 +57,29 @@ jQuery(document).ready(function($) {
 });
 
 function resetAnalytics() {
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to delete ALL analytics data? This action cannot be undone.')) {
+        return;
+    }
+    
+    // Disable button and show loading
+    const $button = $('#reset-analytics');
+    const originalText = $button.text();
+    $button.prop('disabled', true).text('Deleting...');
+    
     $.post(vehicleLookupAdmin.ajaxurl, {
         action: 'vehicle_lookup_reset_analytics',
         nonce: vehicleLookupAdmin.nonce
     }, function(response) {
         if (response.success) {
-            alert('Analytics data has been reset successfully');
+            alert('Success: ' + response.data.message);
             location.reload();
         } else {
-            alert('Error: ' + response.data.message);
+            alert('Error: ' + (response.data ? response.data.message : 'Unknown error occurred'));
+            $button.prop('disabled', false).text(originalText);
         }
+    }).fail(function(xhr, status, error) {
+        alert('Network error: ' + error);
+        $button.prop('disabled', false).text(originalText);
     });
 });
