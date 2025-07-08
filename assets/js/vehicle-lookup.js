@@ -191,8 +191,18 @@ jQuery(document).ready(function($) {
 
         resetFormState();
 
-        if (!regNumber || !validateRegistrationNumber(regNumber)) {
-            $errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
+        if (!regNumber) {
+            $errorDiv.html('Du må skrive inn et registreringsnummer. Eksempler: AB12345, EL12345, CD12345').show();
+            return;
+        }
+        
+        if (!validateRegistrationNumber(regNumber)) {
+            $errorDiv.html('Registreringsnummeret "' + regNumber.toUpperCase() + '" har feil format.<br>' +
+                          'Norske bilskilt følger format som:<br>' +
+                          '• AB12345 (vanlige biler)<br>' +
+                          '• EL12345 (elbiler)<br>' +
+                          '• CD12345 (diplomatbiler)<br>' +
+                          'Skriv uten mellomrom og bindestrek.').show();
             return;
         }
 
@@ -215,25 +225,39 @@ jQuery(document).ready(function($) {
                     displayQuota(response.data.gjenstaendeKvote);
 
                     if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
-                        $errorDiv.html('Fant ingen gyldig kjøretøydata for dette registreringsnummeret').show();
+                        $errorDiv.html('Ingen kjøretøydata funnet for "' + regNumber.toUpperCase() + '".<br>' +
+                                     'Dette kan skyldes:<br>' +
+                                     '• Kjøretøyet er ikke registrert i Norge<br>' +
+                                     '• Feil i registreringsnummer<br>' +
+                                     '• Kjøretøyet er sperret for oppslag').show();
                         return;
                     }
 
                     $('.vehicle-info .vehicle-tags').remove();
                     processVehicleData(response, regNumber);
                 } else {
-                    $errorDiv.html('Kunne ikke hente kjøretøyinformasjon').show();
+                    $errorDiv.html('Kunne ikke hente kjøretøydata. Dette kan skyldes midlertidig tekniske problemer. Prøv igjen om litt.').show();
                 }
             },
             error: function(xhr, status, error) {
-                let errorMessage = 'En feil oppstod: ';
+                let errorMessage = '';
+                
                 if (status === 'timeout') {
-                    errorMessage = 'Forespørsel tok for lang tid. Vennligst prøv igjen.';
+                    errorMessage = 'Forespørselen tok for lang tid. Sjekk internetttilkoblingen din og prøv igjen.';
+                } else if (xhr.status === 0) {
+                    errorMessage = 'Ingen internettforbindelse. Sjekk tilkoblingen din og prøv igjen.';
                 } else if (xhr.responseJSON && xhr.responseJSON.data) {
                     errorMessage = xhr.responseJSON.data;
-                } else if (error) {
-                    errorMessage += error;
+                } else if (xhr.status >= 500) {
+                    errorMessage = 'Serverfeil (' + xhr.status + '). Tjenesten kan være midlertidig nede. Prøv igjen om litt.';
+                } else if (xhr.status === 429) {
+                    errorMessage = 'For mange forespørsler. Vent 1-2 minutter før du prøver igjen.';
+                } else if (error && error !== 'error') {
+                    errorMessage = 'Teknisk feil: ' + error + '. Prøv å laste siden på nytt.';
+                } else {
+                    errorMessage = 'Noe gikk galt. Prøv å laste siden på nytt eller kontakt oss hvis problemet vedvarer.';
                 }
+                
                 $errorDiv.html(errorMessage).show();
             },
             complete: function() {

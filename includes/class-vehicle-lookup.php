@@ -210,24 +210,26 @@ class Vehicle_Lookup {
 
         if (empty($regNumber)) {
             $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Empty registration number');
-            wp_send_json_error('Vennligst skriv inn et registreringsnummer');
+            wp_send_json_error('Du må skrive inn et registreringsnummer. F.eks: AB12345 eller EL12345');
         }
 
         if (!$this->validate_registration_number($regNumber)) {
             $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Invalid registration number format', null, false, 'validation_error');
-            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
+            wp_send_json_error('Registreringsnummeret "' . strtoupper($regNumber) . '" har feil format. Norske bilskilt følger mønster som AB12345, EL12345 eller CD12345. Prøv uten mellomrom og bindestrek.');
         }
 
         // Check rate limiting (before quota check)
         if (!$this->check_rate_limit()) {
+            $rate_status = $this->get_rate_limit_status();
             $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Rate limit exceeded', null, false, 'rate_limit');
-            wp_send_json_error('For mange forespørsler. Vennligst vent litt før du prøver igjen.');
+            wp_send_json_error('Du har brukt opp dine ' . $rate_status['limit'] . ' oppslag denne timen. Prøv igjen etter kl. ' . date('H:59', strtotime('+1 hour')) . '.');
         }
 
         // Check daily quota
         if (!$this->check_quota_available()) {
+            $quota_status = $this->get_quota_status();
             $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Daily quota exceeded', null, false, 'quota_exceeded');
-            wp_send_json_error('Daglig grense nådd. Prøv igjen i morgen.');
+            wp_send_json_error('Daglig grense på ' . number_format($quota_status['limit']) . ' oppslag er nådd. Tjenesten tilbakestilles i morgen kl. 00:00.');
         }
 
         // Check cache first
@@ -384,12 +386,20 @@ class Vehicle_Lookup {
      */
     private function process_api_response($response, $regNumber) {
         if (is_wp_error($response)) {
-            return array('error' => 'Tilkoblingsfeil. Prøv igjen om litt.', 'failure_type' => 'connection_error');
+            $error_message = $response->get_error_message();
+            if (strpos($error_message, 'timeout') !== false) {
+                return array('error' => 'Forespørselen tok for lang tid. Sjekk internetttilkoblingen og prøv igjen.', 'failure_type' => 'connection_error');
+            }
+            return array('error' => 'Kunne ikke koble til kjøretøyregisteret. Sjekk internetttilkoblingen og prøv igjen om et øyeblikk.', 'failure_type' => 'connection_error');
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
-        if ($status_code !== 200) {
-            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.', 'failure_type' => 'http_error');
+        if ($status_code === 429) {
+            return array('error' => 'For mange forespørsler. Vent 1-2 minutter før du prøver igjen.', 'failure_type' => 'rate_limit');
+        } elseif ($status_code === 503) {
+            return array('error' => 'Kjøretøyregisteret er midlertidig utilgjengelig. Prøv igjen om 5-10 minutter.', 'failure_type' => 'http_error');
+        } elseif ($status_code !== 200) {
+            return array('error' => 'Kjøretøyregisteret svarer ikke som forventet (feilkode: ' . $status_code . '). Prøv igjen senere.', 'failure_type' => 'http_error');
         }
 
         $body = wp_remote_retrieve_body($response);
@@ -397,12 +407,12 @@ class Vehicle_Lookup {
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('JSON Decode Error: ' . json_last_error_msg());
-            return array('error' => 'Ugyldig svar fra server. Prøv igjen.', 'failure_type' => 'http_error');
+            return array('error' => 'Mottok ugyldig data fra kjøretøyregisteret. Dette er vanligvis midlertidig - prøv igjen om litt.', 'failure_type' => 'http_error');
         }
 
         if (empty($data)) {
             error_log('Empty Data Response for: ' . $regNumber);
-            return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'http_error');
+            return array('error' => 'Kjøretøyregisteret returnerte tomt svar. Prøv igjen eller kontakt oss hvis problemet vedvarer.', 'failure_type' => 'http_error');
         }
 
         // Check if API returned an error in the response data
@@ -414,19 +424,21 @@ class Vehicle_Lookup {
                     // Map API error codes to user-friendly messages
                     switch ($error_code) {
                         case 'KJENNEMERKE_UKJENT':
-                            return array('error' => 'Fant ingen kjøretøy med dette registreringsnummeret', 'failure_type' => 'invalid_plate');
+                            return array('error' => 'Finner ikke kjøretøy med registreringsnummer "' . strtoupper($regNumber) . '". Sjekk at du har skrevet det riktig (f.eks. AB12345).', 'failure_type' => 'invalid_plate');
                         case 'KJENNEMERKE_UGYLDIG':
-                            return array('error' => 'Ugyldig registreringsnummer format', 'failure_type' => 'invalid_plate');
+                            return array('error' => 'Registreringsnummeret "' . strtoupper($regNumber) . '" har ugyldig format. Norske skiltnummer følger formatet AB12345.', 'failure_type' => 'invalid_plate');
                         case 'TJENESTE_IKKE_TILGJENGELIG':
-                            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket', 'failure_type' => 'http_error');
+                            return array('error' => 'Kjøretøyregisteret er midlertidig utilgjengelig for vedlikehold. Prøv igjen om 10-15 minutter.', 'failure_type' => 'http_error');
+                        case 'INGEN_TILGANG':
+                            return array('error' => 'Mangler tilgang til kjøretøydata. Dette kan skyldes at kjøretøyet er sperret for oppslag.', 'failure_type' => 'access_denied');
                         default:
-                            return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
+                            return array('error' => 'Kunne ikke hente kjøretøydata: ' . $error_code . '. Kontakt oss hvis problemet vedvarer.', 'failure_type' => 'invalid_plate');
                     }
                 }
                 
                 // Check if we have valid vehicle data
                 if (!isset($respons['kjoretoydata']) || empty($respons['kjoretoydata'])) {
-                    return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
+                    return array('error' => 'Ingen kjøretøydata tilgjengelig for "' . strtoupper($regNumber) . '". Dette kan skyldes at kjøretøyet ikke er registrert i Norge eller er sperret for oppslag.', 'failure_type' => 'invalid_plate');
                 }
             }
         }
