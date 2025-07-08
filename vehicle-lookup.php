@@ -14,24 +14,56 @@ define('VEHICLE_LOOKUP_VERSION', '2.1.0');
 define('VEHICLE_LOOKUP_RATE_LIMIT', 20); // per hour per IP
 define('VEHICLE_LOOKUP_CACHE_DURATION', 43200); // 12 hours
 
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup.php';
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-lookup-shortcode.php';
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-search-shortcode.php';
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-vehicle-eu-search-shortcode.php';
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-order-confirmation-shortcode.php';
-require_once VEHICLE_LOOKUP_PLUGIN_DIR . 'includes/class-sms-handler.php';
+// Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-$order_confirmation = new Order_Confirmation_Shortcode();
-$order_confirmation->init();
+// Check if required files exist before including
+$required_files = [
+    'includes/class-vehicle-lookup.php',
+    'includes/class-vehicle-lookup-shortcode.php',
+    'includes/class-vehicle-search-shortcode.php',
+    'includes/class-vehicle-eu-search-shortcode.php',
+    'includes/class-order-confirmation-shortcode.php',
+    'includes/class-sms-handler.php'
+];
 
-$vehicle_lookup = new Vehicle_Lookup();
-$vehicle_lookup->init();
+foreach ($required_files as $file) {
+    $file_path = VEHICLE_LOOKUP_PLUGIN_DIR . $file;
+    if (file_exists($file_path)) {
+        require_once $file_path;
+    } else {
+        error_log("Vehicle Lookup Plugin: Missing file - {$file_path}");
+    }
+}
 
-$vehicle_search = new Vehicle_Search_Shortcode();
-$vehicle_search->init();
+// Initialize classes with error handling
+try {
+    if (class_exists('Vehicle_Lookup')) {
+        $vehicle_lookup = new Vehicle_Lookup();
+        $vehicle_lookup->init();
+    }
 
-$eu_search = new Vehicle_EU_Search_Shortcode();
-$eu_search->init();
+    if (class_exists('Vehicle_Search_Shortcode')) {
+        $vehicle_search = new Vehicle_Search_Shortcode();
+        $vehicle_search->init();
+    }
 
-$sms_handler = new SMS_Handler();
-$sms_handler->init();
+    if (class_exists('Vehicle_EU_Search_Shortcode')) {
+        $eu_search = new Vehicle_EU_Search_Shortcode();
+        $eu_search->init();
+    }
+
+    if (class_exists('Order_Confirmation_Shortcode')) {
+        $order_confirmation = new Order_Confirmation_Shortcode();
+        $order_confirmation->init();
+    }
+
+    if (class_exists('SMS_Handler')) {
+        $sms_handler = new SMS_Handler();
+        $sms_handler->init();
+    }
+} catch (Exception $e) {
+    error_log("Vehicle Lookup Plugin Error: " . $e->getMessage());
+}

@@ -55,8 +55,8 @@ class Vehicle_Lookup_Shortcode {
 
     private function render_results_section($product_id) {
         ob_start();
-
-            <div id="vehicle-lookup-results" style="display: none;">
+        ?>
+        <div id="vehicle-lookup-results" style="display: none;">
             <?php echo $this->render_vehicle_header(); ?>
             <?php echo $this->render_owner_section($product_id); ?>
             <?php echo $this->render_accordion_section(); ?>
