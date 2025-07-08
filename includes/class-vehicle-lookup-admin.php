@@ -7,7 +7,6 @@ class Vehicle_Lookup_Admin {
         add_action('admin_init', array($this, 'init_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
-        add_action('wp_ajax_vehicle_lookup_reset_analytics', array($this, 'reset_analytics_data'));
 
         // Ensure database table exists
         $this->ensure_database_table();
@@ -147,14 +146,14 @@ class Vehicle_Lookup_Admin {
                 'vehicle-lookup-admin',
                 VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/admin.css',
                 array(),
-                VEHICLE_LOOKUP_VERSION . '-' . time()
+                VEHICLE_LOOKUP_VERSION
             );
 
             wp_enqueue_script(
                 'vehicle-lookup-admin',
                 VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/admin.js',
                 array('jquery'),
-                VEHICLE_LOOKUP_VERSION . '-' . time(),
+                VEHICLE_LOOKUP_VERSION,
                 true
             );
 
@@ -332,13 +331,6 @@ class Vehicle_Lookup_Admin {
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-chart-area"></span> Vehicle Lookup Analytics</h1>
 
-            <div style="margin-bottom: 20px;">
-                <button type="button" class="button button-secondary" id="reset-analytics" 
-                        onclick="if(confirm('Are you sure? This will permanently delete ALL analytics data.')) { resetAnalytics(); }">
-                    Reset All Analytics Data
-                </button>
-            </div>
-
             <div class="analytics-grid">
                 <div class="analytics-card">
                     <h3>Usage Statistics</h3>
@@ -453,6 +445,12 @@ class Vehicle_Lookup_Admin {
         $value = get_option('vehicle_lookup_daily_quota', 5000);
         echo '<input type="number" name="vehicle_lookup_daily_quota" value="' . esc_attr($value) . '" min="100" max="10000" />';
         echo '<p class="description">Maximum API calls allowed per day</p>';
+    }
+
+    public function rate_limit_field() {
+        $value = get_option('vehicle_lookup_rate_limit', VEHICLE_LOOKUP_RATE_LIMIT);
+        echo '<input type="number" name="vehicle_lookup_rate_limit" value="' . esc_attr($value) . '" min="10" max="1000" />';
+        echo '<p class="description">Maximum requests per hour per IP address (10-1000)</p>';
     }
 
     public function log_retention_field() {
@@ -625,16 +623,7 @@ class Vehicle_Lookup_Admin {
     }
 
     public function test_api_connectivity() {
-        // Check nonce and permissions
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vehicle_lookup_admin_nonce')) {
-            wp_send_json_error(array('message' => 'Security check failed'));
-            return;
-        }
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => 'Insufficient permissions'));
-            return;
-        }
+        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
 
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
@@ -669,64 +658,6 @@ class Vehicle_Lookup_Admin {
             wp_send_json_error(array(
                 'message' => 'API returned status code: ' . $status_code,
                 'status_code' => $status_code
-            ));
-        }
-    }
-
-    public function reset_analytics_data() {
-        // Add debugging
-        error_log('Reset analytics called');
-
-        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            error_log('Reset analytics: Insufficient permissions');
-            wp_send_json_error('Insufficient permissions');
-        }
-
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-
-        error_log('Reset analytics: Table name = ' . $table_name);
-
-        // Check if table exists first
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
-
-        error_log('Reset analytics: Table exists = ' . ($table_exists ? 'yes' : 'no'));
-
-        if (!$table_exists) {
-            wp_send_json_error(array(
-                'message' => 'Analytics table does not exist: ' . $table_name
-            ));
-        }
-
-        // Get count before deletion for verification
-        $count_before = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-        error_log('Reset analytics: Records before deletion = ' . $count_before);
-
-        // Use DELETE instead of TRUNCATE for better compatibility
-        $result = $wpdb->query("DELETE FROM {$table_name}");
-        error_log('Reset analytics: Delete result = ' . $result);
-        error_log('Reset analytics: Last error = ' . $wpdb->last_error);
-
-        if ($result !== false) {
-            // Verify deletion worked
-            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-            error_log('Reset analytics: Records after deletion = ' . $count_after);
-
-            // Also clear any cached data
-            wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
-
-            // Clear all transients related to vehicle lookup
-            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_cache_%'");
-            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_vehicle_cache_%'");
-
-            wp_send_json_success(array(
-                'message' => "Successfully deleted {$count_before} records. Table now has {$count_after} records."
-            ));
-        } else {
-            wp_send_json_error(array(
-                'message' => 'Failed to reset analytics data. Database error: ' . ($wpdb->last_error ?: 'Unknown error')
             ));
         }
     }

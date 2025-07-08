@@ -19,28 +19,25 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Include required files with error checking
-$required_files = array(
+// Check if required files exist before including
+$required_files = [
+    'includes/class-vehicle-lookup-helpers.php',
     'includes/class-vehicle-lookup-database.php',
     'includes/class-vehicle-lookup.php',
-    'includes/class-vehicle-lookup-admin.php',
     'includes/class-vehicle-lookup-shortcode.php',
     'includes/class-vehicle-search-shortcode.php',
     'includes/class-vehicle-eu-search-shortcode.php',
     'includes/class-order-confirmation-shortcode.php',
     'includes/class-sms-handler.php',
-    'includes/class-vehicle-lookup-helpers.php'
-);
+    'includes/class-vehicle-lookup-admin.php'
+];
 
 foreach ($required_files as $file) {
     $file_path = VEHICLE_LOOKUP_PLUGIN_DIR . $file;
     if (file_exists($file_path)) {
         require_once $file_path;
     } else {
-        add_action('admin_notices', function() use ($file) {
-            echo '<div class="notice notice-error"><p>Vehicle Lookup: Missing file: ' . esc_html($file) . '</p></div>';
-        });
-        return;
+        error_log("Vehicle Lookup Plugin: Missing file - {$file_path}");
     }
 }
 
