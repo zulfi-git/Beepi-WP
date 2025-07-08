@@ -11,7 +11,7 @@ define('VEHICLE_LOOKUP_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VEHICLE_LOOKUP_WORKER_URL', 'https://lookup.beepi.no');
 define('VEHICLE_LOOKUP_VERSION', '2.1.0');
-define('VEHICLE_LOOKUP_RATE_LIMIT', 20); // per hour per IP
+define('VEHICLE_LOOKUP_RATE_LIMIT', 100); // per hour per IP
 define('VEHICLE_LOOKUP_CACHE_DURATION', 43200); // 12 hours
 
 // Prevent direct access
