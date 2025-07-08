@@ -1,3 +1,32 @@
+:root {
+    --primary-blue: #1e40af;
+    --primary-green: #10b981;
+    --primary-green-hover: #059669;
+    --primary-orange: #ff5b24;
+    --primary-orange-hover: #ff4400;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --bg-white: #ffffff;
+    --bg-light: #f8fafc;
+    --bg-lighter: #f1f5f9;
+    --border-light: #e2e8f0;
+    --border-lighter: #f1f5f9;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.1);
+    --gradient-light: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    --gradient-white: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    --gradient-green: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradient-orange: linear-gradient(135deg, #ff5b24 0%, #ff4400 100%);
+    --gradient-yellow: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    --gradient-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-xl: 20px;
+}
+
 .vehicle-lookup-container {
     background: transparent;
     max-width: 600px;
@@ -14,15 +43,15 @@
 .plate-input-wrapper {
     display: flex;
     align-items: center;
-    background-color: white;
+    background-color: var(--bg-white);
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
 }
 
 .plate-flag {
-    background-color: #1e40af;
+    background-color: var(--primary-blue);
     color: white;
     font-size: 1.5rem;
     padding: 0.5rem 0.75rem;
@@ -31,7 +60,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    border-radius: 12px 0 0 12px;
+    border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
 }
 
 .plate-country {
