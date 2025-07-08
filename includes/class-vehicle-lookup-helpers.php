@@ -1,4 +1,3 @@
-
 <?php
 class Vehicle_Lookup_Helpers {
     
