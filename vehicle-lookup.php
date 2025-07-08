@@ -40,6 +40,30 @@ foreach ($required_files as $file) {
         error_log("Vehicle Lookup Plugin: Missing file - {$file_path}");
     }
 }
+define('VEHICLE_LOOKUP_PLUGIN_PATH', plugin_dir_path(__FILE__));
+
+// Check if required files exist before including
+$required_files = [
+    'includes/class-vehicle-lookup-database.php',
+    'includes/class-vehicle-lookup-helpers.php',
+    'includes/class-vehicle-lookup.php',
+    'includes/class-vehicle-lookup-shortcode.php',
+    'includes/class-vehicle-lookup-admin.php',
+    'includes/class-vehicle-search-shortcode.php',
+    'includes/class-vehicle-eu-search-shortcode.php',
+    'includes/class-popular-vehicles-shortcode.php',
+    'includes/class-sms-handler.php',
+    'includes/class-order-confirmation-shortcode.php',
+];
+
+foreach ($required_files as $file) {
+    $file_path = VEHICLE_LOOKUP_PLUGIN_DIR . $file;
+    if (file_exists($file_path)) {
+        require_once $file_path;
+    } else {
+        error_log("Vehicle Lookup Plugin: Missing file - {$file_path}");
+    }
+}
 
 // Initialize classes with error handling
 try {
@@ -72,6 +96,14 @@ try {
     if (is_admin() && class_exists('Vehicle_Lookup_Admin')) {
         $admin = new Vehicle_Lookup_Admin();
         $admin->init();
+
+        // Initialize database handler
+        $db_handler = new Vehicle_Lookup_Database();
+        $db_handler->init();
+
+        // Initialize popular vehicles shortcode
+        $popular_vehicles = new Popular_Vehicles_Shortcode();
+        $popular_vehicles->init();
     }
 } catch (Exception $e) {
     error_log("Vehicle Lookup Plugin Error: " . $e->getMessage());
