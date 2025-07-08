@@ -236,6 +236,7 @@ jQuery(document).ready(function($) {
                     $('.vehicle-info .vehicle-tags').remove();
                     processVehicleData(response, regNumber);
                 } else {
+                    // Server should handle all error cases - this should rarely be reached
                     $errorDiv.html('Kunne ikke hente kjøretøydata. Dette kan skyldes midlertidig tekniske problemer. Prøv igjen om litt.').show();
                 }
             },
@@ -247,6 +248,7 @@ jQuery(document).ready(function($) {
                 } else if (xhr.status === 0) {
                     errorMessage = 'Ingen internettforbindelse. Sjekk tilkoblingen din og prøv igjen.';
                 } else if (xhr.responseJSON && xhr.responseJSON.data) {
+                    // This handles server-side errors like KJENNEMERKE_UKJENT
                     errorMessage = xhr.responseJSON.data;
                 } else if (xhr.status >= 500) {
                     errorMessage = 'Serverfeil (' + xhr.status + '). Tjenesten kan være midlertidig nede. Prøv igjen om litt.';
