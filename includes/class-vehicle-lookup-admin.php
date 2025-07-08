@@ -625,7 +625,16 @@ class Vehicle_Lookup_Admin {
     }
 
     public function test_api_connectivity() {
-        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
+        // Check nonce and permissions
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vehicle_lookup_admin_nonce')) {
+            wp_send_json_error(array('message' => 'Security check failed'));
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'Insufficient permissions'));
+            return;
+        }
 
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
@@ -665,43 +674,62 @@ class Vehicle_Lookup_Admin {
     }
 
     public function reset_analytics_data() {
-        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
+        // Verify nonce and permissions
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vehicle_lookup_admin_nonce')) {
+            wp_send_json_error(array('message' => 'Security check failed'));
+            return;
+        }
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
+            wp_send_json_error(array('message' => 'Insufficient permissions'));
+            return;
         }
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
         // Check if table exists first
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
+        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
         
-        if (!$table_exists) {
+        if ($table_exists !== $table_name) {
             wp_send_json_error(array(
-                'message' => 'Analytics table does not exist'
+                'message' => 'Analytics table does not exist: ' . $table_name
             ));
+            return;
         }
         
         // Get count before deletion for verification
         $count_before = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
         
-        // Use DELETE instead of TRUNCATE for better compatibility
-        $result = $wpdb->query("DELETE FROM {$table_name}");
+        if ($count_before === null) {
+            wp_send_json_error(array(
+                'message' => 'Could not access analytics table'
+            ));
+            return;
+        }
+        
+        // Use DELETE with WHERE 1=1 for maximum compatibility
+        $result = $wpdb->query("DELETE FROM {$table_name} WHERE 1=1");
         
         if ($result !== false) {
             // Verify deletion worked
             $count_after = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
             
-            // Also clear any cached data
-            wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
+            // Clear WordPress transients/cache
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_lookup%'");
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_vehicle_lookup%'");
+            
+            // Clear any object cache
+            if (function_exists('wp_cache_flush')) {
+                wp_cache_flush();
+            }
             
             wp_send_json_success(array(
                 'message' => "Successfully deleted {$count_before} records. Table now has {$count_after} records."
             ));
         } else {
             wp_send_json_error(array(
-                'message' => 'Failed to reset analytics data. Database error: ' . $wpdb->last_error
+                'message' => 'Failed to reset analytics data. Database error: ' . ($wpdb->last_error ?: 'Unknown error')
             ));
         }
     }

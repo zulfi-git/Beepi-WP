@@ -17,6 +17,7 @@ jQuery(document).ready(function($) {
                 nonce: vehicleLookupAdmin.nonce
             },
             success: function(response) {
+                console.log('API Test Response:', response);
                 if (response.success) {
                     statusDiv.html(
                         '<span class="status-indicator ok">●</span> ' + 
@@ -24,11 +25,13 @@ jQuery(document).ready(function($) {
                         (response.data.response_time ? ' (' + response.data.response_time + ')' : '')
                     );
                 } else {
-                    statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
+                    const errorMsg = response.data ? response.data.message : 'Unknown error';
+                    statusDiv.html('<span class="status-indicator error">●</span> ' + errorMsg);
                 }
             },
-            error: function() {
-                statusDiv.html('<span class="status-indicator error">●</span> Connection test failed');
+            error: function(xhr, status, error) {
+                console.error('API Test Error:', xhr.responseText);
+                statusDiv.html('<span class="status-indicator error">●</span> Connection failed: ' + error);
             },
             complete: function() {
                 button.prop('disabled', false).text('Test Connection');
