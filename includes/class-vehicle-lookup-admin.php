@@ -147,14 +147,14 @@ class Vehicle_Lookup_Admin {
                 'vehicle-lookup-admin',
                 VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/admin.css',
                 array(),
-                VEHICLE_LOOKUP_VERSION
+                VEHICLE_LOOKUP_VERSION . '-' . time()
             );
 
             wp_enqueue_script(
                 'vehicle-lookup-admin',
                 VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/admin.js',
                 array('jquery'),
-                VEHICLE_LOOKUP_VERSION,
+                VEHICLE_LOOKUP_VERSION . '-' . time(),
                 true
             );
 
