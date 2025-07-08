@@ -1,4 +1,3 @@
-
 .vehicle-lookup-admin {
     margin: 20px 0;
 }
@@ -217,11 +216,11 @@
     .admin-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .status-cards {
         grid-template-columns: 1fr;
     }
-    
+
     .activity-stats {
         grid-template-columns: 1fr;
     }
@@ -244,4 +243,44 @@
 .form-table .description {
     font-style: italic;
     color: #646970;
+}
+
+.search-item.status-valid {
+    border-left-color: #46b450;
+    background: #f0f8f0;
+}
+
+.search-item.status-invalid {
+    border-left-color: #dc3232;
+    background: #fdf0f0;
+}
+
+.reg-number {
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+}
+
+.search-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.search-count {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.validity-indicator {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.status-valid .validity-indicator {
+    color: #46b450;
+}
+
+.status-invalid .validity-indicator {
+    color: #dc3232;
 }

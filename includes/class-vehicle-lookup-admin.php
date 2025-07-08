@@ -20,7 +20,7 @@ class Vehicle_Lookup_Admin {
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
 
         $db_handler = new Vehicle_Lookup_Database();
-        
+
         if (!$table_exists) {
             $db_handler->create_table();
         } else {
@@ -529,7 +529,7 @@ class Vehicle_Lookup_Admin {
         $month_stats = $db_handler->get_stats($month_start, $month_end);
 
         // Popular searches
-        $popular_searches = $db_handler->get_popular_searches(5, 30);
+        $popular_searches = $this->get_most_searched_numbers(5);
 
         return array(
             'today' => array(
@@ -561,12 +561,33 @@ class Vehicle_Lookup_Admin {
             ),
             'popular' => array_map(function($search) {
                 return array(
-                    'reg_number' => $search->reg_number,
+                    'reg_number' => $search->registration_number,
                     'count' => (int) $search->search_count,
-                    'last_search' => strtotime($search->last_searched)
+                    'last_search' => strtotime($search->last_searched),
+                    'has_valid_result' => (bool) $search->has_valid_result
                 );
             }, $popular_searches)
         );
+    }
+
+    private function get_most_searched_numbers($limit = 10) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
+
+        return $wpdb->get_results($wpdb->prepare("
+            SELECT 
+                reg_number as registration_number,
+                COUNT(*) as search_count,
+                MAX(success) as has_valid_result,
+                MAX(lookup_time) as last_searched
+            FROM {$table_name}
+            WHERE reg_number IS NOT NULL 
+            AND reg_number != ''
+            AND lookup_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY reg_number
+            ORDER BY search_count DESC
+            LIMIT %d
+        ", $limit));
     }
 
     public function test_api_connectivity() {
