@@ -262,6 +262,14 @@ class Vehicle_Lookup_Admin {
                             <span>Failed</span>
                         </div>
                         <div class="stat-item">
+                            <strong><?php echo $stats['today_invalid_plates']; ?></strong>
+                            <span>Invalid Plates</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong><?php echo $stats['today_http_errors']; ?></strong>
+                            <span>HTTP Errors</span>
+                        </div>
+                        <div class="stat-item">
                             <strong><?php echo $stats['success_rate']; ?>%</strong>
                             <span>Success Rate</span>
                         </div>
@@ -507,6 +515,8 @@ class Vehicle_Lookup_Admin {
                 'today_total' => 0,
                 'today_success' => 0,
                 'today_failed' => 0,
+                'today_invalid_plates' => 0,
+                'today_http_errors' => 0,
                 'success_rate' => 0
             );
         }
@@ -518,6 +528,8 @@ class Vehicle_Lookup_Admin {
             'today_total' => (int) $stats->total_lookups,
             'today_success' => (int) $stats->successful_lookups,
             'today_failed' => (int) $stats->failed_lookups,
+            'today_invalid_plates' => (int) $stats->invalid_plates,
+            'today_http_errors' => (int) $stats->http_errors,
             'success_rate' => $success_rate
         );
     }
