@@ -36,21 +36,7 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_plate_input($reg_number) {
-        return sprintf(
-            '<div class="plate-input-wrapper">
-                <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
-                <input type="text" id="regNumber" name="regNumber" required
-                       class="plate-input"
-                       placeholder="CO11204"
-                       value="%s"
-                       pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
-                <button type="submit" class="plate-search-button" aria-label="Search">
-                    <div class="loading-spinner"></div>
-                    <span class="search-icon">🔍</span>
-                </button>
-            </div>',
-            esc_attr($reg_number)
-        );
+        return Vehicle_Lookup_Helpers::render_plate_input($reg_number);
     }
 
     private function render_results_section($product_id) {
@@ -66,13 +52,7 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_vehicle_header() {
-        return '<div class="vehicle-header">
-            <div class="vehicle-info">
-                <img class="vehicle-logo" src="" alt="Car manufacturer logo">
-                <h2 class="vehicle-title"></h2>
-                <p class="vehicle-subtitle"></p>
-            </div>
-        </div>';
+        return Vehicle_Lookup_Helpers::render_vehicle_header();
     }
 
     private function render_owner_section($product_id) {
@@ -108,37 +88,11 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_trust_indicators() {
-        return '<div class="trust-indicators">
-            <div>🔐 Data hentes fra Statens vegvesen</div>
-            <div>⏱️ Svar på noen få sekunder</div>
-        </div>';
+        return Vehicle_Lookup_Helpers::render_trust_indicators();
     }
 
     private function render_accordion_section() {
-        $accordion_sections = [
-            ['Generell informasjon', '📋', 'basic-info-table'],
-            ['Reg. og EU-kontroll', '🔍', 'registration-info-table'],
-            ['Motor og drivverk', '🔧', 'engine-info-table'],
-            ['Størrelse og vekt', '⚖️', 'size-weight-table'],
-            ['Dekk og felg', '🛞', 'tire-info-table'],
-            ['Merknader', '📝', 'notes-info-table']
-        ];
-
-        $html = '<div class="accordion">';
-        foreach ($accordion_sections as $section) {
-            $html .= sprintf(
-                '<details>
-                    <summary><span>%s</span><span>%s</span></summary>
-                    <div class="details-content">
-                        <table class="info-table %s"></table>
-                    </div>
-                </details>',
-                $section[0], $section[1], $section[2]
-            );
-        }
-        $html .= '</div>';
-        
-        return $html;
+        return Vehicle_Lookup_Helpers::render_accordion_section();
     }
 
     private function render_footer_section() {
@@ -170,44 +124,6 @@ class Vehicle_Lookup_Shortcode {
      * Extract registration number from URL path or query parameters
      */
     private function get_reg_from_url() {
-        // Check WordPress query var first (from rewrite rule)
-        $wp_reg_number = get_query_var('reg_number');
-        if (!empty($wp_reg_number)) {
-            return strtoupper(sanitize_text_field($wp_reg_number));
-        }
-        
-        // Check standard query parameter
-        if (isset($_GET['reg']) && !empty($_GET['reg'])) {
-            return strtoupper(sanitize_text_field($_GET['reg']));
-        }
-        
-        // Check URL path for registration number as fallback
-        $request_uri = $_SERVER['REQUEST_URI'];
-        $path_parts = explode('/', trim($request_uri, '/'));
-        
-        // Look for registration number in the last part of the path
-        if (!empty($path_parts)) {
-            $last_part = end($path_parts);
-            // Remove query string if present
-            $last_part = explode('?', $last_part)[0];
-            
-            // Validate if it looks like a registration number
-            $valid_patterns = array(
-                '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles
-                '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
-                '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
-                '/^\d{5}$/',                      // Temporary tourist plates
-                '/^[A-Za-z]\d{3}$/',              // Antique vehicles
-                '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
-            );
-            
-            foreach ($valid_patterns as $pattern) {
-                if (preg_match($pattern, $last_part)) {
-                    return strtoupper(sanitize_text_field($last_part));
-                }
-            }
-        }
-        
-        return '';
+        return Vehicle_Lookup_Helpers::get_reg_from_url();
     }
 }

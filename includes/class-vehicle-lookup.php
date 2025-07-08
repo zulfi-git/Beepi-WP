@@ -377,21 +377,7 @@ class Vehicle_Lookup {
      * Validate Norwegian registration number format
      */
     private function validate_registration_number($regNumber) {
-        $valid_patterns = array(
-            '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
-            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
-            '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
-            '/^\d{5}$/',                      // Temporary tourist plates
-            '/^[A-Za-z]\d{3}$/',              // Antique vehicles
-            '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
-        );
-
-        foreach ($valid_patterns as $pattern) {
-            if (preg_match($pattern, $regNumber)) {
-                return true;
-            }
-        }
-        return false;
+        return Vehicle_Lookup_Helpers::validate_registration_number($regNumber);
     }
 
     /**

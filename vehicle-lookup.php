@@ -21,6 +21,7 @@ if (!defined('ABSPATH')) {
 
 // Check if required files exist before including
 $required_files = [
+    'includes/class-vehicle-lookup-helpers.php',
     'includes/class-vehicle-lookup.php',
     'includes/class-vehicle-lookup-shortcode.php',
     'includes/class-vehicle-search-shortcode.php',
