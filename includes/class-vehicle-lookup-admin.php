@@ -448,6 +448,8 @@ class Vehicle_Lookup_Admin {
         echo '<p class="description">Maximum API calls allowed per day</p>';
     }
 
+    
+
     public function log_retention_field() {
         $value = get_option('vehicle_lookup_log_retention', 90);
         echo '<input type="number" name="vehicle_lookup_log_retention" value="' . esc_attr($value) . '" min="30" max="365" />';
@@ -641,11 +643,13 @@ class Vehicle_Lookup_Admin {
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
+        $response_time = wp_remote_retrieve_header($response, 'X-Response-Time');
 
         if ($status_code === 200) {
             wp_send_json_success(array(
                 'message' => 'API is responding correctly',
-                'status_code' => $status_code
+                'status_code' => $status_code,
+                'response_time' => $response_time ?: 'Unknown'
             ));
         } else {
             wp_send_json_error(array(
