@@ -23,6 +23,7 @@ class Vehicle_Lookup_Database {
             lookup_time datetime DEFAULT CURRENT_TIMESTAMP,
             success tinyint(1) NOT NULL,
             error_message text,
+            failure_type varchar(20) DEFAULT NULL,
             response_time_ms int,
             cached tinyint(1) DEFAULT 0,
             PRIMARY KEY (id),
@@ -39,7 +40,7 @@ class Vehicle_Lookup_Database {
     /**
      * Log a lookup attempt
      */
-    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false) {
+    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null) {
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
         
         return $this->wpdb->insert(
@@ -51,10 +52,11 @@ class Vehicle_Lookup_Database {
                 'lookup_time' => current_time('mysql'),
                 'success' => $success ? 1 : 0,
                 'error_message' => $error_message,
+                'failure_type' => $failure_type,
                 'response_time_ms' => $response_time_ms,
                 'cached' => $cached ? 1 : 0
             ),
-            array('%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d')
+            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d')
         );
     }
 
@@ -67,7 +69,10 @@ class Vehicle_Lookup_Database {
             SUM(success) as successful_lookups,
             COUNT(*) - SUM(success) as failed_lookups,
             AVG(response_time_ms) as avg_response_time,
-            SUM(cached) as cache_hits
+            SUM(cached) as cache_hits,
+            SUM(CASE WHEN success = 0 AND failure_type = 'http_error' THEN 1 ELSE 0 END) as http_errors,
+            SUM(CASE WHEN success = 0 AND failure_type = 'invalid_plate' THEN 1 ELSE 0 END) as invalid_plates,
+            SUM(CASE WHEN success = 0 AND failure_type = 'connection_error' THEN 1 ELSE 0 END) as connection_errors
         FROM {$this->table_name} 
         WHERE lookup_time >= %s AND lookup_time <= %s";
 

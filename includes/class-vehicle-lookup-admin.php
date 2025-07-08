@@ -1,13 +1,13 @@
 <?php
 
 class Vehicle_Lookup_Admin {
-    
+
     public function init() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'init_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
-        
+
         // Ensure database table exists
         $this->ensure_database_table();
     }
@@ -15,10 +15,10 @@ class Vehicle_Lookup_Admin {
     private function ensure_database_table() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-        
+
         // Check if table exists
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
-        
+
         if (!$table_exists) {
             $db_handler = new Vehicle_Lookup_Database();
             $db_handler->create_table();
@@ -143,7 +143,7 @@ class Vehicle_Lookup_Admin {
                 array(),
                 VEHICLE_LOOKUP_VERSION
             );
-            
+
             wp_enqueue_script(
                 'vehicle-lookup-admin',
                 VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/admin.js',
@@ -166,7 +166,7 @@ class Vehicle_Lookup_Admin {
     public function admin_page() {
         $db_handler = new Vehicle_Lookup_Database();
         $today = date('Y-m-d');
-        
+
         // Get real quota usage
         $quota_used = $db_handler->get_daily_quota($today);
         $quota_limit = get_option('vehicle_lookup_daily_quota', 5000);
@@ -184,7 +184,7 @@ class Vehicle_Lookup_Admin {
         ?>
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-car"></span> Vehicle Lookup Dashboard</h1>
-            
+
             <div class="admin-grid">
                 <!-- Status Cards -->
                 <div class="status-cards">
@@ -300,7 +300,7 @@ class Vehicle_Lookup_Admin {
         ?>
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-admin-settings"></span> Vehicle Lookup Settings</h1>
-            
+
             <form method="post" action="options.php">
                 <?php
                 settings_fields('vehicle_lookup_settings');
@@ -317,7 +317,7 @@ class Vehicle_Lookup_Admin {
         ?>
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-chart-area"></span> Vehicle Lookup Analytics</h1>
-            
+
             <div class="analytics-grid">
                 <div class="analytics-card">
                     <h3>Usage Statistics</h3>
@@ -338,6 +338,8 @@ class Vehicle_Lookup_Admin {
                                 <td><?php echo $stats['today']['success']; ?></td>
                                 <td><?php echo $stats['today']['failed']; ?></td>
                                 <td><?php echo $stats['today']['rate']; ?>%</td>
+                                <td><?php echo $stats['today']['invalid_plates']; ?></td>
+                                <td><?php echo $stats['today']['http_errors']; ?></td>
                             </tr>
                             <tr>
                                 <td><strong>This Week</strong></td>
@@ -424,10 +426,10 @@ class Vehicle_Lookup_Admin {
     // Helper methods
     private function get_hourly_rate_limit_usage($db_handler, $current_hour) {
         global $wpdb;
-        
+
         // Get actual hourly usage across all IPs
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-        
+
         // Convert Y-m-d-H format to proper datetime range
         $hour_parts = explode('-', $current_hour);
         if (count($hour_parts) === 4) {
@@ -438,7 +440,7 @@ class Vehicle_Lookup_Admin {
             $start_time = date('Y-m-d H:00:00');
             $end_time = date('Y-m-d H:59:59');
         }
-        
+
         $sql = "SELECT COUNT(*) FROM {$table_name} 
                 WHERE lookup_time >= %s AND lookup_time <= %s";
 
@@ -449,23 +451,23 @@ class Vehicle_Lookup_Admin {
 
     private function get_cache_stats() {
         global $wpdb;
-        
+
         // Count cache entries by checking transients
         $cache_entries = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$wpdb->options} 
              WHERE option_name LIKE '_transient_vehicle_cache_%'"
         );
-        
+
         // Calculate real hit rate from database
         $db_handler = new Vehicle_Lookup_Database();
         $today = date('Y-m-d');
         $start_date = $today . ' 00:00:00';
         $end_date = $today . ' 23:59:59';
-        
+
         $stats = $db_handler->get_stats($start_date, $end_date);
         $hit_rate = $stats && $stats->total_lookups > 0 ? 
             round(($stats->cache_hits / $stats->total_lookups) * 100) : 0;
-        
+
         return array(
             'entries' => (int) $cache_entries,
             'hit_rate' => $hit_rate
@@ -476,9 +478,9 @@ class Vehicle_Lookup_Admin {
         $today = date('Y-m-d');
         $start_date = $today . ' 00:00:00';
         $end_date = $today . ' 23:59:59';
-        
+
         $stats = $db_handler->get_stats($start_date, $end_date);
-        
+
         if (!$stats) {
             return array(
                 'today_total' => 0,
@@ -487,10 +489,10 @@ class Vehicle_Lookup_Admin {
                 'success_rate' => 0
             );
         }
-        
+
         $success_rate = $stats->total_lookups > 0 ? 
             round(($stats->successful_lookups / $stats->total_lookups) * 100) : 0;
-        
+
         return array(
             'today_total' => (int) $stats->total_lookups,
             'today_success' => (int) $stats->successful_lookups,
@@ -501,31 +503,33 @@ class Vehicle_Lookup_Admin {
 
     private function get_detailed_stats() {
         $db_handler = new Vehicle_Lookup_Database();
-        
+
         // Today's stats
         $today = date('Y-m-d');
         $today_stats = $db_handler->get_stats($today . ' 00:00:00', $today . ' 23:59:59');
-        
+
         // Week's stats
         $week_start = date('Y-m-d', strtotime('-7 days')) . ' 00:00:00';
         $week_end = date('Y-m-d') . ' 23:59:59';
         $week_stats = $db_handler->get_stats($week_start, $week_end);
-        
+
         // Month's stats
         $month_start = date('Y-m-d', strtotime('-30 days')) . ' 00:00:00';
         $month_end = date('Y-m-d') . ' 23:59:59';
         $month_stats = $db_handler->get_stats($month_start, $month_end);
-        
+
         // Popular searches
         $popular_searches = $db_handler->get_popular_searches(5, 30);
-        
+
         return array(
             'today' => array(
                 'total' => $today_stats ? (int) $today_stats->total_lookups : 0,
                 'success' => $today_stats ? (int) $today_stats->successful_lookups : 0,
                 'failed' => $today_stats ? (int) $today_stats->failed_lookups : 0,
                 'rate' => $today_stats && $today_stats->total_lookups > 0 ? 
-                    round(($today_stats->successful_lookups / $today_stats->total_lookups) * 100) : 0
+                    round(($today_stats->successful_lookups / $today_stats->total_lookups) * 100) : 0,
+                'invalid_plates' => $today_stats ? (int) $today_stats->invalid_plates : 0,
+                'http_errors' => $today_stats ? (int) $today_stats->http_errors : 0
             ),
             'week' => array(
                 'total' => $week_stats ? (int) $week_stats->total_lookups : 0,
@@ -553,10 +557,10 @@ class Vehicle_Lookup_Admin {
 
     public function test_api_connectivity() {
         check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
-        
+
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
-        
+
         $response = wp_remote_post($worker_url, array(
             'headers' => array(
                 'Content-Type' => 'application/json',
@@ -567,16 +571,16 @@ class Vehicle_Lookup_Admin {
             )),
             'timeout' => $timeout
         ));
-        
+
         if (is_wp_error($response)) {
             wp_send_json_error(array(
                 'message' => 'Connection failed: ' . $response->get_error_message()
             ));
         }
-        
+
         $status_code = wp_remote_retrieve_response_code($response);
         $response_time = wp_remote_retrieve_header($response, 'X-Response-Time');
-        
+
         if ($status_code === 200) {
             wp_send_json_success(array(
                 'message' => 'API is responding correctly',
