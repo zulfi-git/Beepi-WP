@@ -45,8 +45,9 @@ jQuery(document).ready(function($) {
 
     function validateRegistrationNumber(regNumber) {
         const validFormats = [
-            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and diplomatic plates like CO11204
+            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
             /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
+            /^CD\d{5}$/,                   // Diplomatic vehicles
             /^\d{5}$/,                     // Temporary tourist plates
             /^[A-Z]\d{3}$/,               // Antique vehicles
             /^[A-Z]{2}\d{3}$/             // Provisional plates
@@ -235,7 +236,6 @@ jQuery(document).ready(function($) {
                     $('.vehicle-info .vehicle-tags').remove();
                     processVehicleData(response, regNumber);
                 } else {
-                    // Server should handle all error cases - this should rarely be reached
                     $errorDiv.html('Kunne ikke hente kjøretøydata. Dette kan skyldes midlertidig tekniske problemer. Prøv igjen om litt.').show();
                 }
             },
@@ -247,20 +247,11 @@ jQuery(document).ready(function($) {
                 } else if (xhr.status === 0) {
                     errorMessage = 'Ingen internettforbindelse. Sjekk tilkoblingen din og prøv igjen.';
                 } else if (xhr.responseJSON && xhr.responseJSON.data) {
-                    // This handles server-side errors like KJENNEMERKE_UKJENT - display the Norwegian message from server
                     errorMessage = xhr.responseJSON.data;
                 } else if (xhr.status >= 500) {
                     errorMessage = 'Serverfeil (' + xhr.status + '). Tjenesten kan være midlertidig nede. Prøv igjen om litt.';
                 } else if (xhr.status === 429) {
                     errorMessage = 'For mange forespørsler. Vent 1-2 minutter før du prøver igjen.';
-                } else if (xhr.status === 400) {
-                    errorMessage = 'Ugyldig forespørsel. Sjekk registreringsnummeret og prøv igjen.';
-                } else if (xhr.status === 401) {
-                    errorMessage = 'Ikke autorisert tilgang til tjenesten. Kontakt oss for hjelp.';
-                } else if (xhr.status === 403) {
-                    errorMessage = 'Tilgang nektet. Du har ikke tillatelse til å bruke denne tjenesten.';
-                } else if (xhr.status === 404) {
-                    errorMessage = 'Tjenesten ble ikke funnet. Kontakt oss hvis problemet vedvarer.';
                 } else if (error && error !== 'error') {
                     errorMessage = 'Teknisk feil: ' + error + '. Prøv å laste siden på nytt.';
                 } else {
