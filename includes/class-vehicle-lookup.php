@@ -403,6 +403,32 @@ class Vehicle_Lookup {
             return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
         }
 
+        // Check if API returned an error in the response data
+        if (isset($data['responser']) && is_array($data['responser'])) {
+            foreach ($data['responser'] as $respons) {
+                if (isset($respons['feilmelding'])) {
+                    $error_code = $respons['feilmelding'];
+                    
+                    // Map API error codes to user-friendly messages
+                    switch ($error_code) {
+                        case 'KJENNEMERKE_UKJENT':
+                            return array('error' => 'Fant ingen kjøretøy med dette registreringsnummeret');
+                        case 'KJENNEMERKE_UGYLDIG':
+                            return array('error' => 'Ugyldig registreringsnummer format');
+                        case 'TJENESTE_IKKE_TILGJENGELIG':
+                            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket');
+                        default:
+                            return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
+                    }
+                }
+                
+                // Check if we have valid vehicle data
+                if (!isset($respons['kjoretoydata']) || empty($respons['kjoretoydata'])) {
+                    return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret');
+                }
+            }
+        }
+
         return array('success' => true, 'data' => $data);
     }
 
