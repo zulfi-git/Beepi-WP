@@ -20,8 +20,7 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     statusDiv.html(
                         '<span class="status-indicator ok">●</span> ' + 
-                        response.data.message +
-                        (response.data.response_time ? ' (' + response.data.response_time + ')' : '')
+                        response.data.message
                     );
                 } else {
                     statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);

@@ -643,13 +643,11 @@ class Vehicle_Lookup_Admin {
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
-        $response_time = wp_remote_retrieve_header($response, 'X-Response-Time');
 
         if ($status_code === 200) {
             wp_send_json_success(array(
                 'message' => 'API is responding correctly',
-                'status_code' => $status_code,
-                'response_time' => $response_time ?: 'Unknown'
+                'status_code' => $status_code
             ));
         } else {
             wp_send_json_error(array(
