@@ -73,43 +73,38 @@ class Vehicle_Lookup_Shortcode {
                     </div>
                 </div>
 
-                <div class="accordion">
-                    <details>
-                        <summary><span>Generell informasjon</span><span>📋</span></summary>
-                        <div class="details-content">
-                            <table class="info-table basic-info-table"></table>
+                <div class="vehicle-reports">
+                    <div class="modern-card">
+                        <div class="section-header">
+                            <div class="section-icon">📋</div>
+                            <span>Grunnleggende informasjon</span>
                         </div>
-                    </details>
-                    <details>
-                        <summary><span>Reg. og EU-kontroll</span><span>🔍</span></summary>
-                        <div class="details-content">
-                            <table class="info-table registration-info-table"></table>
+                        <table class="info-table basic-info-table"></table>
+                    </div>
+                    
+                    <div class="modern-card">
+                        <div class="section-header">
+                            <div class="section-icon">🔍</div>
+                            <span>Registrering og EU-kontroll</span>
                         </div>
-                    </details>
-                    <details>
-                        <summary><span>Motor og drivverk</span><span>🔧</span></summary>
-                        <div class="details-content">
-                            <table class="info-table engine-info-table"></table>
+                        <table class="info-table registration-info-table"></table>
+                    </div>
+                    
+                    <div class="modern-card">
+                        <div class="section-header">
+                            <div class="section-icon">🔧</div>
+                            <span>Motor og drivverk</span>
                         </div>
-                    </details>
-                    <details>
-                        <summary><span>Størrelse og vekt</span><span>⚖️</span></summary>
-                        <div class="details-content">
-                            <table class="info-table size-weight-table"></table>
+                        <table class="info-table engine-info-table"></table>
+                    </div>
+                    
+                    <div class="modern-card">
+                        <div class="section-header">
+                            <div class="section-icon">⚖️</div>
+                            <span>Størrelse og vekt</span>
                         </div>
-                    </details>
-                    <details>
-                        <summary><span>Dekk og felg</span><span>🛞</span></summary>
-                        <div class="details-content">
-                            <table class="info-table tire-info-table"></table>
-                        </div>
-                    </details>
-                    <details>
-                        <summary><span>Merknader</span><span>📝</span></summary>
-                        <div class="details-content">
-                            <table class="info-table notes-info-table"></table>
-                        </div>
-                    </details>
+                        <table class="info-table size-weight-table"></table>
+                    </div>
                 </div>
             </div>
 
