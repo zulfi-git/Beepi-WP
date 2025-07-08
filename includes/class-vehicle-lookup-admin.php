@@ -7,6 +7,22 @@ class Vehicle_Lookup_Admin {
         add_action('admin_init', array($this, 'init_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
+        
+        // Ensure database table exists
+        $this->ensure_database_table();
+    }
+
+    private function ensure_database_table() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
+        
+        // Check if table exists
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
+        
+        if (!$table_exists) {
+            $db_handler = new Vehicle_Lookup_Database();
+            $db_handler->create_table();
+        }
     }
 
     public function add_admin_menu() {
