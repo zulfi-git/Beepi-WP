@@ -35,6 +35,28 @@ class Vehicle_Lookup_Database {
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
+        
+        // Ensure failure_type column exists for existing installations
+        $this->add_failure_type_column();
+    }
+
+    /**
+     * Add failure_type column to existing table if it doesn't exist
+     */
+    private function add_failure_type_column() {
+        $column_exists = $this->wpdb->get_results(
+            $this->wpdb->prepare(
+                "SHOW COLUMNS FROM {$this->table_name} LIKE %s",
+                'failure_type'
+            )
+        );
+
+        if (empty($column_exists)) {
+            $this->wpdb->query(
+                "ALTER TABLE {$this->table_name} 
+                ADD COLUMN failure_type varchar(20) DEFAULT NULL AFTER error_message"
+            );
+        }
     }
 
     /**

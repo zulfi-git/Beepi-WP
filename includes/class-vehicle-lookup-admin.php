@@ -19,8 +19,12 @@ class Vehicle_Lookup_Admin {
         // Check if table exists
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
 
+        $db_handler = new Vehicle_Lookup_Database();
+        
         if (!$table_exists) {
-            $db_handler = new Vehicle_Lookup_Database();
+            $db_handler->create_table();
+        } else {
+            // Ensure table has all required columns for existing installations
             $db_handler->create_table();
         }
     }
@@ -329,6 +333,8 @@ class Vehicle_Lookup_Admin {
                                 <th>Successful</th>
                                 <th>Failed</th>
                                 <th>Success Rate</th>
+                                <th>Invalid Plates</th>
+                                <th>HTTP Errors</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -347,6 +353,8 @@ class Vehicle_Lookup_Admin {
                                 <td><?php echo $stats['week']['success']; ?></td>
                                 <td><?php echo $stats['week']['failed']; ?></td>
                                 <td><?php echo $stats['week']['rate']; ?>%</td>
+                                <td><?php echo $stats['week']['invalid_plates']; ?></td>
+                                <td><?php echo $stats['week']['http_errors']; ?></td>
                             </tr>
                             <tr>
                                 <td><strong>This Month</strong></td>
@@ -354,6 +362,8 @@ class Vehicle_Lookup_Admin {
                                 <td><?php echo $stats['month']['success']; ?></td>
                                 <td><?php echo $stats['month']['failed']; ?></td>
                                 <td><?php echo $stats['month']['rate']; ?>%</td>
+                                <td><?php echo $stats['month']['invalid_plates']; ?></td>
+                                <td><?php echo $stats['month']['http_errors']; ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -536,14 +546,18 @@ class Vehicle_Lookup_Admin {
                 'success' => $week_stats ? (int) $week_stats->successful_lookups : 0,
                 'failed' => $week_stats ? (int) $week_stats->failed_lookups : 0,
                 'rate' => $week_stats && $week_stats->total_lookups > 0 ? 
-                    round(($week_stats->successful_lookups / $week_stats->total_lookups) * 100) : 0
+                    round(($week_stats->successful_lookups / $week_stats->total_lookups) * 100) : 0,
+                'invalid_plates' => $week_stats ? (int) $week_stats->invalid_plates : 0,
+                'http_errors' => $week_stats ? (int) $week_stats->http_errors : 0
             ),
             'month' => array(
                 'total' => $month_stats ? (int) $month_stats->total_lookups : 0,
                 'success' => $month_stats ? (int) $month_stats->successful_lookups : 0,
                 'failed' => $month_stats ? (int) $month_stats->failed_lookups : 0,
                 'rate' => $month_stats && $month_stats->total_lookups > 0 ? 
-                    round(($month_stats->successful_lookups / $month_stats->total_lookups) * 100) : 0
+                    round(($month_stats->successful_lookups / $month_stats->total_lookups) * 100) : 0,
+                'invalid_plates' => $month_stats ? (int) $month_stats->invalid_plates : 0,
+                'http_errors' => $month_stats ? (int) $month_stats->http_errors : 0
             ),
             'popular' => array_map(function($search) {
                 return array(
