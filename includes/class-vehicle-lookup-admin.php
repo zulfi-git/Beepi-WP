@@ -73,6 +73,7 @@ class Vehicle_Lookup_Admin {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_timeout');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_duration');
+        register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
 
@@ -444,6 +445,12 @@ class Vehicle_Lookup_Admin {
         $value = get_option('vehicle_lookup_daily_quota', 5000);
         echo '<input type="number" name="vehicle_lookup_daily_quota" value="' . esc_attr($value) . '" min="100" max="10000" />';
         echo '<p class="description">Maximum API calls allowed per day</p>';
+    }
+
+    public function rate_limit_field() {
+        $value = get_option('vehicle_lookup_rate_limit', VEHICLE_LOOKUP_RATE_LIMIT);
+        echo '<input type="number" name="vehicle_lookup_rate_limit" value="' . esc_attr($value) . '" min="10" max="1000" />';
+        echo '<p class="description">Maximum requests per hour per IP address (10-1000)</p>';
     }
 
     public function log_retention_field() {
