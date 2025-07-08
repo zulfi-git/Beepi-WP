@@ -214,15 +214,24 @@ jQuery(document).ready(function($) {
                 if (response.success && response.data) {
                     displayQuota(response.data.gjenstaendeKvote);
 
-                    if (!response.data.responser || response.data.responser.length === 0 || !response.data.responser[0]?.kjoretoydata) {
-                        $errorDiv.html('Fant ingen gyldig kjøretøydata for dette registreringsnummeret').show();
+                    // Check if we have valid vehicle data structure
+                    if (!response.data.responser || response.data.responser.length === 0) {
+                        $errorDiv.html('Fant ingen kjøretøy med registreringsnummer ' + regNumber + '. Dette kan være en ugyldig registreringsnummer eller kjøretøyet er ikke registrert i Norge.').show();
+                        return;
+                    }
+
+                    // Check if the first response has vehicle data
+                    const firstResponse = response.data.responser[0];
+                    if (!firstResponse || !firstResponse.kjoretoydata) {
+                        $errorDiv.html('Fant ingen kjøretøy med registreringsnummer ' + regNumber + '. Dette kan være en ugyldig registreringsnummer eller kjøretøyet er ikke registrert i Norge.').show();
                         return;
                     }
 
                     $('.vehicle-info .vehicle-tags').remove();
                     processVehicleData(response, regNumber);
                 } else {
-                    $errorDiv.html('Kunne ikke hente kjøretøyinformasjon').show();
+                    // This handles cases where success is false - should show server error message
+                    $errorDiv.html(response.data || 'Kunne ikke hente kjøretøyinformasjon').show();
                 }
             },
             error: function(xhr, status, error) {
