@@ -253,6 +253,7 @@ class Vehicle_Lookup {
         $result = $this->process_api_response($response, $regNumber);
         
         if (isset($result['error'])) {
+            // This is an API error (like KJENNEMERKE_UKJENT) - log as failed lookup
             $this->db_handler->log_lookup($regNumber, $ip_address, false, $result['error'], $response_time);
             wp_send_json_error($result['error']);
         }
@@ -262,7 +263,7 @@ class Vehicle_Lookup {
         // Cache successful response
         $this->cache_response($regNumber, $data);
 
-        // Log successful lookup
+        // Log successful lookup (HTTP 200 with valid vehicle data)
         $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time);
 
         wp_send_json_success($data);
