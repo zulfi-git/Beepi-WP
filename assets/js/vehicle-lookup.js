@@ -45,9 +45,8 @@ jQuery(document).ready(function($) {
 
     function validateRegistrationNumber(regNumber) {
         const validFormats = [
-            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
+            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and diplomatic plates like CO11204
             /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
-            /^CD\d{5}$/,                   // Diplomatic vehicles
             /^\d{5}$/,                     // Temporary tourist plates
             /^[A-Z]\d{3}$/,               // Antique vehicles
             /^[A-Z]{2}\d{3}$/             // Provisional plates
@@ -248,7 +247,7 @@ jQuery(document).ready(function($) {
                 } else if (xhr.status === 0) {
                     errorMessage = 'Ingen internettforbindelse. Sjekk tilkoblingen din og prøv igjen.';
                 } else if (xhr.responseJSON && xhr.responseJSON.data) {
-                    // This handles server-side errors like KJENNEMERKE_UKJENT
+                    // This handles server-side errors like KJENNEMERKE_UKJENT - display the Norwegian message from server
                     errorMessage = xhr.responseJSON.data;
                 } else if (xhr.status >= 500) {
                     errorMessage = 'Serverfeil (' + xhr.status + '). Tjenesten kan være midlertidig nede. Prøv igjen om litt.';
