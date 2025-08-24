@@ -470,6 +470,14 @@ jQuery(document).ready(function($) {
 
 
 
+    function renderPremiumPreview(vehicleData) {
+        // Placeholder function to show preview of premium content
+        console.log('Premium preview for vehicle:', vehicleData.kjoretoyId?.kjennemerke);
+        
+        // This function can be expanded to show preview cards or hints 
+        // about additional premium data available after purchase
+    }
+
     function renderRegistrationInfo(vehicleData) {
         const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
         let euControlText = formatDate(euDeadline);
