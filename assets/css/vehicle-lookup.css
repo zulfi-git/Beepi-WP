@@ -1004,25 +1004,29 @@ details summary {
 
 .tier-price {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .tier-price .price {
     font-size: 28px;
     font-weight: bold;
     color: #007cba;
+    display: block;
 }
 
 .tier-price .regular-price {
     font-size: 18px;
     text-decoration: line-through;
     color: #666;
-    margin-right: 8px;
+    display: block;
+    margin-bottom: 4px;
 }
 
 .tier-price .sale-price {
     font-size: 28px;
     font-weight: bold;
     color: #e74c3c;
+    display: block;
 }
 
 .tier-features {

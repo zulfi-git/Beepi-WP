@@ -8,7 +8,7 @@ class Vehicle_Lookup {
     public function init() {
         // Initialize database handler
         $this->db_handler = new Vehicle_Lookup_Database();
-        
+
         // Register scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
@@ -240,7 +240,7 @@ class Vehicle_Lookup {
 
         // Determine tier based on user's purchase status
         $tier = $this->determine_user_tier($regNumber);
-        
+
         $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/report', array(
             'headers' => array(
                 'Content-Type' => 'application/json',
@@ -255,7 +255,7 @@ class Vehicle_Lookup {
 
         $response_time = round((microtime(true) - $start_time) * 1000);
         $result = $this->process_api_response($response, $regNumber);
-        
+
         if (isset($result['error'])) {
             // This is an API error (like KJENNEMERKE_UKJENT) - log as failed lookup
             $failure_type = isset($result['failure_type']) ? $result['failure_type'] : 'unknown';
@@ -371,13 +371,13 @@ class Vehicle_Lookup {
         if (get_transient($premium_key)) {
             return 'premium';
         }
-        
+
         // Check for basic access (Product ID 62)
         $basic_key = 'owner_access_' . $regNumber;
         if (get_transient($basic_key)) {
             return 'basic';
         }
-        
+
         // Default to free tier
         return 'free';
     }
@@ -394,7 +394,7 @@ class Vehicle_Lookup {
         );
     }
 
-    
+
 
     /**
      * Validate Norwegian registration number format
@@ -434,7 +434,7 @@ class Vehicle_Lookup {
             foreach ($data['responser'] as $respons) {
                 if (isset($respons['feilmelding'])) {
                     $error_code = $respons['feilmelding'];
-                    
+
                     // Map API error codes to user-friendly messages
                     switch ($error_code) {
                         case 'KJENNEMERKE_UKJENT':
@@ -447,7 +447,7 @@ class Vehicle_Lookup {
                             return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
                     }
                 }
-                
+
                 // Check if we have valid vehicle data
                 if (!isset($respons['kjoretoydata']) || empty($respons['kjoretoydata'])) {
                     return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
