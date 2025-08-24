@@ -892,6 +892,70 @@ details summary {
 }
 
 
+/* Free Info Guide Styles */
+.free-info-guide {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.free-info-guide h4 {
+    margin: 0 0 8px 0;
+    color: #047857;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.free-info-guide p {
+    margin: 0 0 12px 0;
+    color: #065f46;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.explore-free-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.explore-free-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 600px) {
+    .free-info-guide {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .free-info-guide h4 {
+        font-size: 1rem;
+    }
+    
+    .free-info-guide p {
+        font-size: 0.85rem;
+    }
+    
+    .explore-free-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
 /* Tier Selection Styles */
 .tier-comparison {
     display: grid;

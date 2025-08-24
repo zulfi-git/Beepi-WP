@@ -33,6 +33,24 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // Make expandAllAccordions available globally
+    window.expandAllAccordions = function() {
+        $('.accordion details').each(function() {
+            $(this).attr('open', true);
+        });
+        
+        // Scroll to first accordion
+        const firstAccordion = $('.accordion details').first();
+        if (firstAccordion.length) {
+            $('html, body').animate({
+                scrollTop: firstAccordion.offset().top - 100
+            }, 600);
+        }
+        
+        // Hide the guide box after use
+        $('.free-info-guide').slideUp(300);
+    };
+
     function resetFormState() {
         $resultsDiv.hide();
         $errorDiv.hide().empty();

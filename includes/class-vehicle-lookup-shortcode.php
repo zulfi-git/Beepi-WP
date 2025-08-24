@@ -70,6 +70,14 @@ class Vehicle_Lookup_Shortcode {
         ?>
         <div class="owner-section">
             <div id="owner-info-container">
+                <div id="free-info-guide" class="free-info-guide">
+                    <div class="guide-content">
+                        <h4>💡 Se gratis informasjon</h4>
+                        <p>Utforsk tekniske detaljer, EU-kontroll status og mer i boksene nedenfor - helt gratis!</p>
+                        <button type="button" class="explore-free-btn" onclick="expandAllAccordions()">Utforsk gratis info</button>
+                    </div>
+                </div>
+                
                 <div id="tier-selection">
                     <h3>Velg rapporttype</h3>
                     <div class="tier-comparison">
