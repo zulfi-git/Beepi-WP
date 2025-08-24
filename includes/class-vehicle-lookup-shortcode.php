@@ -84,7 +84,7 @@ class Vehicle_Lookup_Shortcode {
                         <!-- Basic Tier -->
                         <div class="tier-card basic-tier">
                             <div class="tier-header">
-                                <h4>Basic rapport</h4>
+                                <h4><?php echo $basic_product ? esc_html($basic_product->get_name()) : 'Basic rapport'; ?></h4>
                                 <div class="tier-price">
                                     <?php if ($basic_sale): ?>
                                         <span class="regular-price"><?php echo esc_html($basic_price); ?> kr</span>
@@ -109,7 +109,7 @@ class Vehicle_Lookup_Shortcode {
                         <div class="tier-card premium-tier recommended">
                             <div class="tier-badge">Anbefalt</div>
                             <div class="tier-header">
-                                <h4>Premium rapport</h4>
+                                <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
                                 <div class="tier-price">
                                     <?php if ($premium_sale): ?>
                                         <span class="regular-price"><?php echo esc_html($premium_price); ?> kr</span>
