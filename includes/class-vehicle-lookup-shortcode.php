@@ -65,7 +65,14 @@ class Vehicle_Lookup_Shortcode {
         <div class="owner-section">
             <div id="owner-info-container">
                 <div id="owner-info-purchase">
-                    <p>Hvem eier bilen?</p>
+                    <h3>Få full kjøretøyrapport</h3>
+                    <p>Se hvem som eier bilen + detaljert teknisk informasjon</p>
+                    <div class="value-features">
+                        <div class="feature-item">✓ Eierinformasjon</div>
+                        <div class="feature-item">✓ Tekniske detaljer</div>
+                        <div class="feature-item">✓ Vekt og dimensjoner</div>
+                        <div class="feature-item">✓ Motor og ytelse</div>
+                    </div>
                     <div class="price-display">
                         <?php if ($sale_price): ?>
                             <div class="price-wrapper">
@@ -96,12 +103,29 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_footer_section() {
+        // Get usage statistics
+        $db_handler = new Vehicle_Lookup_Database();
+        $today = date('Y-m-d');
+        $stats = $db_handler->get_stats($today . ' 00:00:00', $today . ' 23:59:59');
+        $today_searches = $stats ? $stats->total_lookups : 0;
+        
         return sprintf(
             '<div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             <div id="quota-display" class="quota-display" style="display: none;"></div>
+            <div class="usage-stats">
+                <div class="stat-item">
+                    <span class="stat-number">%d</span>
+                    <span class="stat-label">oppslag i dag</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">15.000+</span>
+                    <span class="stat-label">fornøyde kunder</span>
+                </div>
+            </div>
             <div id="version-display" class="version-display">v%s</div>
             <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
             </div>',
+            $today_searches,
             VEHICLE_LOOKUP_VERSION
         );
     }

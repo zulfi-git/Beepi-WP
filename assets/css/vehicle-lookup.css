@@ -486,6 +486,77 @@
     text-decoration: underline;
 }
 
+.usage-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e40af;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.value-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.feature-item {
+    font-size: 0.9rem;
+    color: #059669;
+    font-weight: 500;
+}
+
+#owner-info-purchase h3 {
+    margin: 0 0 0.5rem 0;
+    color: #0f172a;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .usage-stats {
+        gap: 1rem;
+        margin: 1rem 0;
+        padding: 0.75rem;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .value-features {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+}
+
 /* Improve tap targets */
 .plate-search-button,
 details summary {

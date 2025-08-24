@@ -169,12 +169,19 @@ jQuery(document).ready(function($) {
         displayVehicleHeader(vehicleData, regNumber);
         displayStatusInfo(vehicleData);
         
-        renderOwnerInfo(vehicleData);
+        // Always show basic info for free
         renderBasicInfo(vehicleData);
-        renderTechnicalInfo(vehicleData);
         renderRegistrationInfo(vehicleData);
+        
+        // Show preview of premium content
+        renderPremiumPreview(vehicleData);
+        
+        // Only show full owner info if user has access
+        renderOwnerInfo(vehicleData);
+        renderTechnicalInfo(vehicleData);
 
-        $('details').attr('open', true);
+        // Open basic info sections by default
+        $('.accordion details[data-free="true"]').attr('open', true);
         $resultsDiv.show();
 
         $('html, body').animate({
