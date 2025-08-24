@@ -238,13 +238,17 @@ class Vehicle_Lookup {
             wp_send_json_success($cached_data);
         }
 
-        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL, array(
+        // Determine tier based on user's purchase status
+        $tier = $this->determine_user_tier($regNumber);
+        
+        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/report', array(
             'headers' => array(
                 'Content-Type' => 'application/json',
                 'Origin' => get_site_url()
             ),
             'body' => json_encode(array(
-                'registrationNumber' => $regNumber
+                'registrationNumber' => $regNumber,
+                'tier' => $tier
             )),
             'timeout' => get_option('vehicle_lookup_timeout', 15)
         ));
@@ -265,7 +269,7 @@ class Vehicle_Lookup {
         $this->cache_response($regNumber, $data);
 
         // Log successful lookup (HTTP 200 with valid vehicle data)
-        $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time);
+        $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, false, null, $tier);
 
         wp_send_json_success($data);
     }
@@ -358,6 +362,26 @@ class Vehicle_Lookup {
         return $current_count < $quota_limit;
     }
 
+    /**
+     * Determine user's tier based on purchase status
+     */
+    private function determine_user_tier($regNumber) {
+        // Check for premium access first (Product ID 739)
+        $premium_key = 'premium_access_' . $regNumber;
+        if (get_transient($premium_key)) {
+            return 'premium';
+        }
+        
+        // Check for basic access (Product ID 62)
+        $basic_key = 'owner_access_' . $regNumber;
+        if (get_transient($basic_key)) {
+            return 'basic';
+        }
+        
+        // Default to free tier
+        return 'free';
+    }
+
     public function get_quota_status() {
         $today = date('Y-m-d');
         $current_count = $this->db_handler->get_daily_quota($today);
@@ -438,12 +462,27 @@ class Vehicle_Lookup {
      * Check if order contains vehicle lookup product
      */
     private function validate_order_has_lookup($order) {
-        $lookup_product_id = 62;
+        $lookup_product_ids = [62, 739]; // Basic and Premium product IDs
         foreach ($order->get_items() as $item) {
-            if ($item->get_product_id() == $lookup_product_id) {
+            if (in_array($item->get_product_id(), $lookup_product_ids)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Get product tier from order
+     */
+    private function get_order_tier($order) {
+        foreach ($order->get_items() as $item) {
+            $product_id = $item->get_product_id();
+            if ($product_id == 739) {
+                return 'premium';
+            } elseif ($product_id == 62) {
+                return 'basic';
+            }
+        }
+        return 'free';
     }
 }

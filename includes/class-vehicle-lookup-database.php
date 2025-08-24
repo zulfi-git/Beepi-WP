@@ -24,13 +24,15 @@ class Vehicle_Lookup_Database {
             success tinyint(1) NOT NULL,
             error_message text,
             failure_type varchar(20) DEFAULT NULL,
+            tier varchar(10) DEFAULT 'free',
             response_time_ms int,
             cached tinyint(1) DEFAULT 0,
             PRIMARY KEY (id),
             KEY idx_reg_number (reg_number),
             KEY idx_lookup_time (lookup_time),
             KEY idx_success (success),
-            KEY idx_ip_address (ip_address)
+            KEY idx_ip_address (ip_address),
+            KEY idx_tier (tier)
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -38,6 +40,9 @@ class Vehicle_Lookup_Database {
         
         // Ensure failure_type column exists for existing installations
         $this->add_failure_type_column();
+        
+        // Ensure tier column exists for existing installations
+        $this->add_tier_column();
     }
 
     /**
@@ -60,9 +65,28 @@ class Vehicle_Lookup_Database {
     }
 
     /**
+     * Add tier column to existing table if it doesn't exist
+     */
+    private function add_tier_column() {
+        $column_exists = $this->wpdb->get_results(
+            $this->wpdb->prepare(
+                "SHOW COLUMNS FROM {$this->table_name} LIKE %s",
+                'tier'
+            )
+        );
+
+        if (empty($column_exists)) {
+            $this->wpdb->query(
+                "ALTER TABLE {$this->table_name} 
+                ADD COLUMN tier varchar(10) DEFAULT 'free' AFTER failure_type"
+            );
+        }
+    }
+
+    /**
      * Log a lookup attempt
      */
-    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null) {
+    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null, $tier = 'free') {
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
         
         return $this->wpdb->insert(
@@ -75,10 +99,11 @@ class Vehicle_Lookup_Database {
                 'success' => $success ? 1 : 0,
                 'error_message' => $error_message,
                 'failure_type' => $failure_type,
+                'tier' => $tier,
                 'response_time_ms' => $response_time_ms,
                 'cached' => $cached ? 1 : 0
             ),
-            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d')
+            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%d')
         );
     }
 

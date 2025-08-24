@@ -16,8 +16,15 @@ class Order_Confirmation_Shortcode {
         }
 
         if ($reg_number && $this->validate_order_has_lookup($order)) {
-            $transient_key = 'owner_access_' . $reg_number;
-            set_transient($transient_key, true, 24 * HOUR_IN_SECONDS);
+            $tier = $this->get_order_tier($order);
+            
+            if ($tier === 'premium') {
+                $transient_key = 'premium_access_' . $reg_number;
+                set_transient($transient_key, true, 24 * HOUR_IN_SECONDS);
+            } elseif ($tier === 'basic') {
+                $transient_key = 'owner_access_' . $reg_number;
+                set_transient($transient_key, true, 24 * HOUR_IN_SECONDS);
+            }
         }
     }
 
@@ -26,14 +33,29 @@ class Order_Confirmation_Shortcode {
     }
 
     private function validate_order_has_lookup($order) {
-        $lookup_product_id = 62; // Hardcoded product ID from vehicle-lookup.js
+        $lookup_product_ids = [62, 739]; // Basic and Premium product IDs
 
         foreach ($order->get_items() as $item) {
-            if ($item->get_product_id() == $lookup_product_id) {
+            if (in_array($item->get_product_id(), $lookup_product_ids)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Get product tier from order
+     */
+    private function get_order_tier($order) {
+        foreach ($order->get_items() as $item) {
+            $product_id = $item->get_product_id();
+            if ($product_id == 739) {
+                return 'premium';
+            } elseif ($product_id == 62) {
+                return 'basic';
+            }
+        }
+        return 'free';
     }
 
     private function format_norwegian_phone($phone) {
@@ -134,11 +156,19 @@ class Order_Confirmation_Shortcode {
             return '<p>Invalid order information.</p>';
         }
 
-        // Check if transient already exists before creating
-        $transient_key = 'owner_access_' . $reg_number;
-        if (false === get_transient($transient_key)) {
-            $expiry = 24 * HOUR_IN_SECONDS; // 24 hours
-            set_transient($transient_key, true, $expiry);
+        // Set appropriate transient based on purchased tier
+        $tier = $this->get_order_tier($order);
+        
+        if ($tier === 'premium') {
+            $transient_key = 'premium_access_' . $reg_number;
+            if (false === get_transient($transient_key)) {
+                set_transient($transient_key, true, 24 * HOUR_IN_SECONDS);
+            }
+        } elseif ($tier === 'basic') {
+            $transient_key = 'owner_access_' . $reg_number;
+            if (false === get_transient($transient_key)) {
+                set_transient($transient_key, true, 24 * HOUR_IN_SECONDS);
+            }
         }
 
         ob_start();
