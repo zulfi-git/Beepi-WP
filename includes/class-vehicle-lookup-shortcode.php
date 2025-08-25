@@ -136,7 +136,13 @@ class Vehicle_Lookup_Shortcode {
                                 <div class="feature-item">✓ Import</div>
                             </div>
                             <div class="tier-purchase">
-                                <?php echo do_shortcode("[woo_vipps_buy_now id=739 /]"); ?>
+                                <?php 
+                                $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
+                                echo $vipps_button;
+                                ?>
+                                <script>
+                                window.premiumVippsBuyButton = <?php echo json_encode($vipps_button); ?>;
+                                </script>
                             </div>
                         </div>
                     </div>

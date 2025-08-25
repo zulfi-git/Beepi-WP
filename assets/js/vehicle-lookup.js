@@ -235,7 +235,7 @@ jQuery(document).ready(function($) {
         // Only show full owner info if user has access
         renderOwnerInfo(vehicleData);
         renderTechnicalInfo(vehicleData);
-        
+
         // Populate owner history section
         populateOwnerHistoryTable();
 
@@ -441,23 +441,23 @@ jQuery(document).ready(function($) {
         ];
 
         let html = '<div class="owner-history-content">';
-        
+
         // Blurred content
         html += '<div class="blurred-owner-data">';
         html += '<h4 style="margin-top: 0;">📊 Komplett eierhistorikk</h4>';
         html += '<div style="margin-bottom: 0.75rem;">Se alle tidligere eiere med full adresseinformasjon:</div>';
-        
+
         mockOwnerHistory.forEach(item => {
             html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
                 <strong>${item.period}:</strong> ${item.owner}<br>
                 <small style="color: #6b7280;">${item.address}</small>
             </div>`;
         });
-        
+
         html += '<div style="margin-top: 1rem; font-size: 12px; color: #9ca3af;">Opplysninger hentet fra Statens vegvesen • Siste oppdatering: i dag</div>';
         html += '</div>';
 
-        // Premium overlay with dynamic pricing
+        // Premium overlay with dynamic pricing - use same payment as premium tier
         const premiumProduct = window.vehicleLookupData?.premiumProduct;
         const regularPrice = premiumProduct?.regular_price || '89';
         const salePrice = premiumProduct?.sale_price;
@@ -470,10 +470,10 @@ jQuery(document).ready(function($) {
                 <span class="sale-price">kr ${salePrice || regularPrice},-</span>
             </div>
             <div class="tier-purchase">
-                ${window.premiumVippsBuyButton || `<button class="purchase-button tier-button" data-product="739">🛒 Kjøp eierhistorikk</button>`}
+                ${window.premiumVippsBuyButton || ''}
             </div>
         </div>`;
-        
+
         html += '</div>';
 
         $ownerHistoryDiv.html(html);
@@ -514,9 +514,9 @@ jQuery(document).ready(function($) {
             'Merke': generelt.merke?.[0]?.merke || '---',
             'Modell': generelt.handelsbetegnelse?.[0] || '---',
             'Kjennemerke': vehicleData.kjoretoyId?.kjennemerke || '---',
-            'Farge': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.karosseriOgLasteplan?.rFarge?.[0]?.kodeNavn || '---',
-            'Type': vehicleData.kjoretoyklassifisering?.tekniskKode?.kodeNavn || '---',
-            'Antall seter': vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.persontall?.sitteplasserTotalt || '---'
+            'Farge': generelt.farge?.[0]?.kodeBeskrivelse || '---',
+            'Type': generelt.type || '---',
+            'Antall seter': generelt.sitteplasserTotalt || '---'
         };
 
         $('.basic-info-table').html(
