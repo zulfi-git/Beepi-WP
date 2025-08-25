@@ -79,26 +79,21 @@ jQuery(document).ready(function($) {
             const diffMinutes = Math.round((now - cacheDate) / (1000 * 60));
             
             if (diffMinutes < 1) {
-                noticeText = '📋 Cached (< 1 min)';
+                noticeText = 'Bufret (< 1 min)';
             } else if (diffMinutes < 60) {
-                noticeText = `📋 Cached (${diffMinutes} min)`;
+                noticeText = `Bufret (${diffMinutes} min)`;
             } else {
                 const diffHours = Math.round(diffMinutes / 60);
-                noticeText = `📋 Cached (${diffHours}h)`;
+                noticeText = `Bufret (${diffHours}t)`;
             }
             noticeClass = 'cached';
         } else {
-            noticeText = '🔄 Fresh data';
+            noticeText = 'Ferske data';
             noticeClass = 'fresh';
         }
         
-        // Add cache notice after quota display or at end of vehicle info
-        const $quotaDisplay = $('.quota-display');
-        if ($quotaDisplay.length) {
-            $quotaDisplay.after(`<div class="cache-notice ${noticeClass}" title="Data retrieval status for this registration number">${noticeText}</div>`);
-        } else {
-            $('.vehicle-info').append(`<div class="cache-notice ${noticeClass}" title="Data retrieval status for this registration number">${noticeText}</div>`);
-        }
+        // Add cache notice above vehicle-lookup-results
+        $('#vehicle-lookup-results').before(`<div class="cache-notice ${noticeClass}" title="Datahentingsstatus for dette registreringsnummeret">${noticeText}</div>`);
     }
 
     function validateRegistrationNumber(regNumber) {
