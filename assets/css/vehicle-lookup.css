@@ -980,20 +980,84 @@ details summary {
 
 .tier-card.recommended {
     border-color: #007cba;
-    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.25);
+    animation: premiumGlow 2s ease-in-out infinite alternate;
+    position: relative;
+}
+
+.tier-card.recommended::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, #007cba, #00a8f0, #007cba);
+    border-radius: 15px;
+    opacity: 0.6;
+    z-index: -1;
+    animation: borderPulse 2s ease-in-out infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes premiumGlow {
+    0% {
+        box-shadow: 0 4px 12px rgba(0, 124, 186, 0.25);
+    }
+    100% {
+        box-shadow: 0 8px 20px rgba(0, 124, 186, 0.4);
+    }
+}
+
+@keyframes borderPulse {
+    0% {
+        opacity: 0.4;
+        background-position: 0% 50%;
+    }
+    50% {
+        opacity: 0.8;
+        background-position: 100% 50%;
+    }
+    100% {
+        opacity: 0.4;
+        background-position: 0% 50%;
+    }6, 0.1);
 }
 
 .tier-badge {
     position: absolute;
     top: -12px;
     left: 24px;
-    background: #007cba;
+    background: linear-gradient(135deg, #007cba 0%, #00a8f0 100%);
     color: white;
     padding: 6px 16px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
+}
+
+.savings-display {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    margin: 12px 0;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+    animation: savingsPulse 3s ease-in-out infinite;
+}
+
+@keyframes savingsPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
 }
 
 .tier-header h4 {

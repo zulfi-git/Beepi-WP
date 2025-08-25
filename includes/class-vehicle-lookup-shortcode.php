@@ -106,9 +106,19 @@ class Vehicle_Lookup_Shortcode {
 
                         <!-- Premium Tier -->
                         <div class="tier-card premium-tier recommended">
-                            <div class="tier-badge">Anbefalt</div>
+                            <div class="tier-badge">Mest populær</div>
                             <div class="tier-header">
                                 <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
+                                <?php
+                                // Calculate savings - assuming individual price would be basic price + additional services
+                                $estimated_individual_cost = ($basic_price * 2) + 50; // Rough estimate of individual purchases
+                                $actual_premium_price = $premium_sale ?: $premium_price;
+                                $savings = $estimated_individual_cost - $actual_premium_price;
+                                if ($savings > 0): ?>
+                                    <div class="savings-display">
+                                        Spar <?php echo esc_html($savings); ?> kr ved å kjøpe samlet!
+                                    </div>
+                                <?php endif; ?>
                                 <div class="tier-price">
                                     <?php if ($premium_sale): ?>
                                         <span class="regular-price"><?php echo esc_html($premium_price); ?> kr</span>
