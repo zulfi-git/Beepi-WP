@@ -455,7 +455,7 @@ class Vehicle_Lookup_Admin {
         echo '<p class="description">Maximum API calls allowed per day</p>';
     }
 
-    
+
 
     public function log_retention_field() {
         $value = get_option('vehicle_lookup_log_retention', 90);
@@ -668,52 +668,35 @@ class Vehicle_Lookup_Admin {
     }
 
     public function reset_analytics_data() {
-        error_log('Reset analytics method called'); // Debug log
-        
         check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            error_log('User lacks permissions'); // Debug log
-            wp_send_json_error(array(
-                'message' => 'Insufficient permissions'
-            ));
-        }
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-        
-        error_log('Table name: ' . $table_name); // Debug log
-        
+
         // Check if table exists first
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
-        
+
         if (!$table_exists) {
-            error_log('Table does not exist'); // Debug log
             wp_send_json_error(array(
                 'message' => 'Analytics table does not exist'
             ));
         }
-        
+
         // Get count before deletion for verification
         $count_before = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-        error_log('Records before deletion: ' . $count_before); // Debug log
-        
+
         // Use DELETE instead of TRUNCATE for better compatibility
         $result = $wpdb->query("DELETE FROM {$table_name}");
-        
-        error_log('Delete result: ' . $result . ', wpdb error: ' . $wpdb->last_error); // Debug log
-        
+
         if ($result !== false) {
             // Verify deletion worked
             $count_after = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-            
-            // Also clear any cached data
+
+            // Clear any cached data
             wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
-            
-            error_log('Records after deletion: ' . $count_after); // Debug log
-            
+
             wp_send_json_success(array(
-                'message' => "Successfully deleted {$count_before} records. Table now has {$count_after} records."
+                'message' => "Successfully deleted {$count_before} records"
             ));
         } else {
             wp_send_json_error(array(
