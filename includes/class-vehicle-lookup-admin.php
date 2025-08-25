@@ -631,7 +631,7 @@ class Vehicle_Lookup_Admin {
                 'Origin' => get_site_url()
             ),
             'body' => json_encode(array(
-                'registrationNumber' => 'AB12345',
+                'registrationNumber' => 'CO10101',
                 'tier' => 'free'
             )),
             'timeout' => $timeout
