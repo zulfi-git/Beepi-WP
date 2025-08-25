@@ -1096,3 +1096,25 @@ details summary {
 .cache-status .cache-miss {
     background-color: #dc3545;
 }
+
+.cache-notice {
+    font-size: 0.75rem;
+    color: #999;
+    text-align: right;
+    margin-top: 5px;
+    padding: 4px 8px;
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 4px;
+    opacity: 0.7;
+    display: inline-block;
+    float: right;
+    clear: both;
+}
+
+.cache-notice.cached {
+    color: #28a745;
+}
+
+.cache-notice.fresh {
+    color: #17a2b8;
+}

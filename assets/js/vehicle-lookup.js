@@ -92,8 +92,13 @@ jQuery(document).ready(function($) {
             noticeClass = 'fresh';
         }
         
-        // Add cache notice to results div
-        $resultsDiv.prepend(`<div class="cache-notice ${noticeClass}" title="Data retrieval status for this registration number">${noticeText}</div>`);
+        // Add cache notice after quota display or at end of vehicle info
+        const $quotaDisplay = $('.quota-display');
+        if ($quotaDisplay.length) {
+            $quotaDisplay.after(`<div class="cache-notice ${noticeClass}" title="Data retrieval status for this registration number">${noticeText}</div>`);
+        } else {
+            $('.vehicle-info').append(`<div class="cache-notice ${noticeClass}" title="Data retrieval status for this registration number">${noticeText}</div>`);
+        }
     }
 
     function validateRegistrationNumber(regNumber) {
