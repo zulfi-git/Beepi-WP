@@ -28,6 +28,13 @@ class VehicleLookupAPI {
     }
 
     /**
+     * Validate Norwegian registration number format
+     */
+    public function validate_registration_number($regNumber) {
+        return Vehicle_Lookup_Helpers::validate_registration_number($regNumber);
+    }
+
+    /**
      * Process API response with proper error handling
      */
     public function process_response($response, $regNumber) {

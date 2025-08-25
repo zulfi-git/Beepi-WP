@@ -60,7 +60,7 @@ class VehicleLookupWooCommerce {
     /**
      * Format phone number to international Norwegian format (+47xxxxxxxx)
      */
-    private function format_phone_number($phone) {
+    public function format_phone_number($phone) {
         // Handle array input (WooCommerce sometimes returns arrays)
         if (is_array($phone)) {
             $phone = reset($phone);

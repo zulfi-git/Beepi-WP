@@ -115,7 +115,7 @@ class Vehicle_Lookup {
             wp_send_json_error('Vennligst skriv inn et registreringsnummer');
         }
 
-        if (!$this->validate_registration_number($regNumber)) {
+        if (!$this->api->validate_registration_number($regNumber)) {
             $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Invalid registration number format', null, false, 'validation_error');
             wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
         }
@@ -192,7 +192,7 @@ class Vehicle_Lookup {
      * Validate Norwegian registration number format
      */
     private function validate_registration_number($regNumber) {
-        return Vehicle_Lookup_Helpers::validate_registration_number($regNumber);
+        return $this->api->validate_registration_number($regNumber);
     }
 
     /**
