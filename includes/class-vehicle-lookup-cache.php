@@ -41,7 +41,10 @@ class VehicleLookupCache {
             'cache_time' => current_time('c')
         );
         
-        set_transient($cache_key, $cache_data, VEHICLE_LOOKUP_CACHE_DURATION);
+        // Use admin setting for cache duration, fallback to constant if not set
+        $cache_duration = get_option('vehicle_lookup_cache_duration', VEHICLE_LOOKUP_CACHE_DURATION);
+        
+        set_transient($cache_key, $cache_data, $cache_duration);
     }
 
     /**
@@ -75,7 +78,9 @@ class VehicleLookupCache {
      * Clear cache on the worker
      */
     public function clear_worker_cache() {
-        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/cache/clear', array(
+        $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
+        
+        $response = wp_remote_post($worker_url . '/cache/clear', array(
             'headers' => array(
                 'Content-Type' => 'application/json',
                 'Origin' => get_site_url()

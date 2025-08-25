@@ -7,7 +7,11 @@ class VehicleLookupAPI {
     public function lookup($regNumber, $tier) {
         $start_time = microtime(true);
         
-        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/report', array(
+        // Get worker URL and timeout from admin settings
+        $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
+        $timeout = get_option('vehicle_lookup_timeout', 15);
+        
+        $response = wp_remote_post($worker_url . '/report', array(
             'headers' => array(
                 'Content-Type' => 'application/json',
                 'Origin' => get_site_url()
@@ -16,7 +20,7 @@ class VehicleLookupAPI {
                 'registrationNumber' => $regNumber,
                 'tier' => $tier
             )),
-            'timeout' => get_option('vehicle_lookup_timeout', 15)
+            'timeout' => $timeout
         ));
 
         $response_time = round((microtime(true) - $start_time) * 1000);
