@@ -23,6 +23,10 @@ if (!defined('ABSPATH')) {
 $required_files = [
     'includes/class-vehicle-lookup-helpers.php',
     'includes/class-vehicle-lookup-database.php',
+    'includes/class-vehicle-lookup-api.php',
+    'includes/class-vehicle-lookup-cache.php',
+    'includes/class-vehicle-lookup-access.php',
+    'includes/class-vehicle-lookup-woocommerce.php',
     'includes/class-vehicle-lookup.php',
     'includes/class-vehicle-lookup-shortcode.php',
     'includes/class-vehicle-search-shortcode.php',
