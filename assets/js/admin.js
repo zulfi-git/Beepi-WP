@@ -55,8 +55,17 @@ jQuery(document).ready(function($) {
         $(this).closest('tr').find('th').attr('title', $(this).text());
     });
     
-    // Reset analytics data
-    $('#reset-analytics').on('click', function() {
+    // Debug: Check if reset button exists and script is loading
+    console.log('Admin script loaded');
+    console.log('Reset button found:', $('#reset-analytics').length);
+    console.log('Current page:', window.location.href);
+    
+    // Only bind reset handler if button exists
+    if ($('#reset-analytics').length > 0) {
+        console.log('Binding reset analytics handler');
+        
+        // Reset analytics data
+        $('#reset-analytics').on('click', function() {
         console.log('Reset button clicked'); // Debug log
         
         if (!confirm('Are you sure you want to reset all analytics data? This action cannot be undone.')) {
@@ -98,5 +107,7 @@ jQuery(document).ready(function($) {
                 button.prop('disabled', false).html(originalText);
             }
         });
-    });
+    } else {
+        console.log('Reset button not found on this page');
+    }
 });
