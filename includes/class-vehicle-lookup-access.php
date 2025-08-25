@@ -1,4 +1,3 @@
-
 <?php
 class VehicleLookupAccess {
     private $db_handler;
