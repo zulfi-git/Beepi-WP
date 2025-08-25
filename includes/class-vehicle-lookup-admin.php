@@ -145,7 +145,8 @@ class Vehicle_Lookup_Admin {
     }
 
     public function enqueue_admin_scripts($hook) {
-        if ($hook !== 'toplevel_page_vehicle-lookup') {
+        // Load on all vehicle lookup admin pages
+        if (strpos($hook, 'vehicle-lookup') === false) {
             return;
         }
 
@@ -165,7 +166,7 @@ class Vehicle_Lookup_Admin {
         );
 
         wp_localize_script('vehicle-lookup-admin-script', 'vehicleLookupAdmin', array(
-            'nonce' => wp_create_nonce('clear_vehicle_cache_nonce'),
+            'nonce' => wp_create_nonce('vehicle_lookup_admin_nonce'),
             'ajaxurl' => admin_url('admin-ajax.php')
         ));
     }
@@ -519,7 +520,7 @@ class Vehicle_Lookup_Admin {
      */
     public function handle_clear_cache() {
         // Check nonce for security
-        if (!wp_verify_nonce($_POST['nonce'], 'clear_vehicle_cache_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'], 'vehicle_lookup_admin_nonce')) {
             wp_die('Security check failed');
         }
 
