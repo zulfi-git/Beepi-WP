@@ -289,6 +289,8 @@ jQuery(document).ready(function($) {
                         $errorDiv.html('Fant ingen kjøretøy med registreringsnummer ' + regNumber + '. Dette kan være en ugyldig registreringsnummer eller kjøretøyet er ikke registrert i Norge.').show();
                         return;
                     }
+                        return;
+                    }
 
                     $('.vehicle-info .vehicle-tags').remove();
                     processVehicleData(response, regNumber);
