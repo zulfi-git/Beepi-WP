@@ -1039,7 +1039,7 @@ details summary {
 }
 
 .savings-display {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     padding: 8px 16px;
     border-radius: 8px;
@@ -1047,7 +1047,7 @@ details summary {
     font-weight: 600;
     text-align: center;
     margin: 12px 0;
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
     animation: savingsPulse 3s ease-in-out infinite;
 }
 
