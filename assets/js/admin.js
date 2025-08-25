@@ -63,7 +63,7 @@ jQuery(document).ready(function($) {
         const button = $(this);
         const originalText = button.html();
 
-        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...');
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...ng...');
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
@@ -82,6 +82,75 @@ jQuery(document).ready(function($) {
             },
             error: function(xhr, status, error) {
                 alert('Connection error while resetting analytics data: ' + error);
+            },
+            complete: function() {
+                button.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Clear worker cache
+    $('#clear-worker-cache').on('click', function() {
+        if (!confirm('Are you sure you want to clear the worker cache?')) {
+            return;
+        }
+
+        const button = $(this);
+        const originalText = button.html();
+
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Clearing...');
+
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'clear_worker_cache',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Worker cache cleared successfully: ' + response.data.message);
+                } else {
+                    alert('Error clearing worker cache: ' + (response.data ? response.data.message : 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Connection error while clearing worker cache: ' + error);
+            },
+            complete: function() {
+                button.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Clear local cache
+    $('#clear-local-cache').on('click', function() {
+        if (!confirm('Are you sure you want to clear the local vehicle cache?')) {
+            return;
+        }
+
+        const button = $(this);
+        const originalText = button.html();
+
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Clearing...');
+
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'clear_local_cache',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Local cache cleared successfully: ' + response.data.message);
+                    location.reload();
+                } else {
+                    alert('Error clearing local cache: ' + (response.data ? response.data.message : 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Connection error while clearing local cache: ' + error);
             },
             complete: function() {
                 button.prop('disabled', false).html(originalText);
