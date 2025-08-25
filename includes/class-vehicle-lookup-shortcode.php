@@ -11,7 +11,7 @@ class Vehicle_Lookup_Shortcode {
         ), $atts);
 
         $product_id = absint($atts['product_id']);
-        
+
         // Check for registration number in URL path or query parameter
         $reg_number = $this->get_reg_from_url();
 
@@ -20,7 +20,7 @@ class Vehicle_Lookup_Shortcode {
         echo $this->render_results_section($product_id);
         echo $this->render_footer_section();
         echo $this->render_auto_submit_script($reg_number);
-        
+
         return ob_get_clean();
     }
 
@@ -59,13 +59,13 @@ class Vehicle_Lookup_Shortcode {
         // Get products for both tiers
         $basic_product = wc_get_product(62);
         $premium_product = wc_get_product(739);
-        
+
         $basic_price = $basic_product ? $basic_product->get_regular_price() : '39';
         $basic_sale = $basic_product ? $basic_product->get_sale_price() : null;
-        
+
         $premium_price = $premium_product ? $premium_product->get_regular_price() : '89';
         $premium_sale = $premium_product ? $premium_product->get_sale_price() : null;
-        
+
         ob_start();
         ?>
         <div class="owner-section">
@@ -77,7 +77,7 @@ class Vehicle_Lookup_Shortcode {
                         <button type="button" class="explore-free-btn" onclick="expandAllAccordions()">Utforsk gratis info</button>
                     </div>
                 </div>
-                
+
                 <div id="tier-selection">
                     <h3>Velg rapporttype</h3>
                     <div class="tier-comparison">
@@ -110,13 +110,12 @@ class Vehicle_Lookup_Shortcode {
                             <div class="tier-header">
                                 <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
                                 <?php
-                                // Calculate savings - assuming individual price would be basic price + additional services
-                                $estimated_individual_cost = ($basic_price * 2) + 50; // Rough estimate of individual purchases
-                                $actual_premium_price = $premium_sale ?: $premium_price;
-                                $savings = $estimated_individual_cost - $actual_premium_price;
-                                if ($savings > 0): ?>
+                                // Calculate percentage discount if there's a sale price
+                                if ($premium_sale && $premium_sale < $premium_price): 
+                                    $discount_percentage = round((($premium_price - $premium_sale) / $premium_price) * 100);
+                                    ?>
                                     <div class="savings-display">
-                                        Spar <?php echo esc_html($savings); ?> kr ved å kjøpe samlet!
+                                        Spar <?php echo esc_html($discount_percentage); ?>% ved å kjøpe denne!
                                     </div>
                                 <?php endif; ?>
                                 <div class="tier-price">
@@ -162,7 +161,7 @@ class Vehicle_Lookup_Shortcode {
         $today = date('Y-m-d');
         $stats = $db_handler->get_stats($today . ' 00:00:00', $today . ' 23:59:59');
         $today_searches = $stats ? $stats->total_lookups : 0;
-        
+
         return sprintf(
             '<div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             <div id="quota-display" class="quota-display" style="display: none;"></div>
@@ -186,7 +185,7 @@ class Vehicle_Lookup_Shortcode {
 
     private function render_auto_submit_script($reg_number) {
         if (!$reg_number) return '';
-        
+
         return '<script>
         jQuery(document).ready(function($) {
             setTimeout(function() {
@@ -195,9 +194,9 @@ class Vehicle_Lookup_Shortcode {
         });
         </script>';
     }
-        
-        
-    
+
+
+
     /**
      * Extract registration number from URL path or query parameters
      */
