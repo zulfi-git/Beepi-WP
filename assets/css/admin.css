@@ -191,7 +191,23 @@
 }
 
 .health-error {
-    color: #d63638;
+    color: #dc3232;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+.analytics-actions {
+    border: 1px solid #ddd;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 5px;
 }
 
 .analytics-grid {

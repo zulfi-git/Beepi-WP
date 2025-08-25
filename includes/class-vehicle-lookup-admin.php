@@ -332,6 +332,13 @@ class Vehicle_Lookup_Admin {
         <div class="wrap vehicle-lookup-admin">
             <h1><span class="dashicons dashicons-chart-area"></span> Vehicle Lookup Analytics</h1>
 
+            <div class="analytics-actions" style="margin-bottom: 20px;">
+                <button type="button" class="button button-secondary" id="reset-analytics" style="background-color: #dc3232; color: white; border-color: #dc3232;">
+                    <span class="dashicons dashicons-trash" style="margin-top: 3px;"></span> Reset Analytics Data
+                </button>
+                <p class="description" style="margin-top: 8px;">This will permanently delete all historical lookup data, statistics, and analytics records.</p>
+            </div>
+
             <div class="analytics-grid">
                 <div class="analytics-card">
                     <h3>Usage Statistics</h3>

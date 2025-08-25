@@ -54,4 +54,39 @@ jQuery(document).ready(function($) {
     $('.description').each(function() {
         $(this).closest('tr').find('th').attr('title', $(this).text());
     });
+    
+    // Reset analytics data
+    $('#reset-analytics').on('click', function() {
+        if (!confirm('Are you sure you want to reset all analytics data? This action cannot be undone.')) {
+            return;
+        }
+        
+        const button = $(this);
+        const originalText = button.html();
+        
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...');
+        
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vehicle_lookup_reset_analytics',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Analytics data has been successfully reset: ' + response.data.message);
+                    location.reload(); // Refresh page to show updated stats
+                } else {
+                    alert('Error resetting analytics data: ' + response.data.message);
+                }
+            },
+            error: function() {
+                alert('Connection error while resetting analytics data');
+            },
+            complete: function() {
+                button.prop('disabled', false).html(originalText);
+            }
+        });
+    });
 });
