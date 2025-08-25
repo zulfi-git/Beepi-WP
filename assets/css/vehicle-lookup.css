@@ -1188,3 +1188,86 @@ details summary {
     background: rgba(23, 162, 184, 0.1);
     border-color: rgba(23, 162, 184, 0.2);
 }
+
+/* Owner History Premium Upsell Styles */
+.owner-history-container {
+    position: relative;
+    min-height: 200px;
+}
+
+.owner-history-blurred {
+    filter: blur(3px);
+    opacity: 0.6;
+    pointer-events: none;
+    user-select: none;
+}
+
+.owner-history-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 12px;
+    backdrop-filter: blur(2px);
+}
+
+.owner-history-overlay h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+}
+
+.owner-history-overlay .tier-price {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.owner-history-overlay .tier-price .regular-price {
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #666;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.owner-history-overlay .tier-price .sale-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e74c3c;
+    display: block;
+}
+
+.owner-history-overlay .tier-price .price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007cba;
+    display: block;
+}
+
+.owner-history-overlay .tier-purchase {
+    margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+    .owner-history-overlay {
+        padding: 1rem;
+    }
+    
+    .owner-history-overlay h4 {
+        font-size: 1rem;
+    }
+    
+    .owner-history-overlay .tier-price .sale-price,
+    .owner-history-overlay .tier-price .price {
+        font-size: 20px;
+    }
+}

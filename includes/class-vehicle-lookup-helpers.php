@@ -114,6 +114,7 @@ class Vehicle_Lookup_Helpers {
         $accordion_sections = [
             ['Generell informasjon', '📋', 'basic-info-table'],
             ['Reg. og EU-kontroll', '🔍', 'registration-info-table'],
+            ['Eierhistorikk', '👥', 'owner-history-table'],
             ['Motor og drivverk', '🔧', 'engine-info-table'],
             ['Størrelse og vekt', '⚖️', 'size-weight-table'],
             ['Dekk og felg', '🛞', 'tire-info-table'],

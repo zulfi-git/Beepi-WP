@@ -19,6 +19,7 @@ class Vehicle_Lookup_Shortcode {
         echo $this->render_form_section($reg_number);
         echo $this->render_results_section($product_id);
         echo $this->render_footer_section();
+        echo $this->render_premium_data_script();
         echo $this->render_auto_submit_script($reg_number);
 
         return ob_get_clean();
@@ -181,6 +182,23 @@ class Vehicle_Lookup_Shortcode {
             $today_searches,
             VEHICLE_LOOKUP_VERSION
         );
+    }
+
+    private function render_premium_data_script() {
+        $premium_product = wc_get_product(739);
+        $premium_data = array(
+            'name' => $premium_product ? $premium_product->get_name() : 'Premium Kjøretøyrapport',
+            'regular_price' => $premium_product ? $premium_product->get_regular_price() : '89',
+            'sale_price' => $premium_product ? $premium_product->get_sale_price() : null
+        );
+
+        $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
+
+        return '<script>
+        window.vehicleLookupData = window.vehicleLookupData || {};
+        window.vehicleLookupData.premiumProduct = ' . json_encode($premium_data) . ';
+        window.premiumVippsBuyButton = ' . json_encode($vipps_button) . ';
+        </script>';
     }
 
     private function render_auto_submit_script($reg_number) {

@@ -38,7 +38,7 @@ jQuery(document).ready(function($) {
         $('.accordion details').each(function() {
             $(this).attr('open', true);
         });
-        
+
         // Scroll to first accordion
         const firstAccordion = $('.accordion details').first();
         if (firstAccordion.length) {
@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
                 scrollTop: firstAccordion.offset().top - 150
             }, 600);
         }
-        
+
         // Hide the guide box after use
         $('.free-info-guide').slideUp(300);
     };
@@ -65,19 +65,19 @@ jQuery(document).ready(function($) {
     function displayCacheNotice(responseData) {
         // Remove any existing cache notice
         $('.cache-notice').remove();
-        
+
         // Check if data includes cache information
         const cacheTime = responseData.cache_time;
         const isCached = responseData.is_cached || false;
-        
+
         let noticeText = '';
         let noticeClass = 'fresh';
-        
+
         if (isCached && cacheTime) {
             const cacheDate = new Date(cacheTime);
             const now = new Date();
             const diffMinutes = Math.round((now - cacheDate) / (1000 * 60));
-            
+
             if (diffMinutes < 1) {
                 noticeText = 'Bufret (< 1 min)';
             } else if (diffMinutes < 60) {
@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
             noticeText = 'Ferske data';
             noticeClass = 'fresh';
         }
-        
+
         // Add cache notice above vehicle-lookup-results
         $('#vehicle-lookup-results').before(`<div class="cache-notice ${noticeClass}" title="Datahentingsstatus for dette registreringsnummeret">${noticeText}</div>`);
     }
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
         // Set manufacturer logo
         const defaultLogoUrl = vehicleLookupAjax.plugin_url + '/assets/images/car.png';
         const manufacturer = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke;
-        
+
         if (manufacturer) {
             const logoUrl = `https://www.carlogos.org/car-logos/${manufacturer.toLowerCase()}-logo.png`;
             $vehicleLogo
@@ -145,10 +145,10 @@ jQuery(document).ready(function($) {
             let subtitle = '';
             if (generalData.merke?.[0]?.merke) subtitle += generalData.merke[0].merke + ' ';
             if (generalData.handelsbetegnelse?.[0]) subtitle += generalData.handelsbetegnelse[0];
-            
+
             const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
             if (regYear) subtitle += ` <strong>${regYear}</strong>`;
-            
+
             $vehicleSubtitle.html(subtitle);
             addVehicleTags(vehicleData);
         }
@@ -160,13 +160,13 @@ jQuery(document).ready(function($) {
         const transmission = engineData?.girkassetype?.kodeBeskrivelse;
 
         let tags = '';
-        
+
         if (fuelType) {
             const fuelEmoji = {
                 'Diesel': '⛽', 'Bensin': '⛽', 'Elektrisk': '⚡',
                 'Hybrid': '🔋', 'Plugin-hybrid': '🔌', 'Hydrogen': '💨', 'Gass': '💨'
             }[fuelType] || '⛽';
-            
+
             const fuelClass = fuelType.toLowerCase().replace('-', '');
             tags += `<span class="tag fuel ${fuelClass}">${fuelEmoji} ${fuelType}</span>`;
         }
@@ -217,21 +217,21 @@ jQuery(document).ready(function($) {
 
     function processVehicleData(response, regNumber) {
         const vehicleData = response.data.responser[0].kjoretoydata;
-        
+
         setRegNumberCookie(regNumber);
         displayVehicleHeader(vehicleData, regNumber);
         displayStatusInfo(vehicleData);
-        
+
         // Show cache status notice
         displayCacheNotice(response.data);
-        
+
         // Always show basic info for free
         renderBasicInfo(vehicleData);
         renderRegistrationInfo(vehicleData);
-        
+
         // Show preview of premium content
         renderPremiumPreview(vehicleData);
-        
+
         // Only show full owner info if user has access
         renderOwnerInfo(vehicleData);
         renderTechnicalInfo(vehicleData);
@@ -359,7 +359,103 @@ jQuery(document).ready(function($) {
         document.cookie = `vehicle_reg_number=${regNumber};path=/;max-age=3600`;
     }
 
+    // Add CSS for the new owner history section
+    const ownerHistoryCss = `
+        .owner-history-container .content-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        .owner-history-container .blurred-content {
+            filter: blur(10px);
+            height: 150px; /* Adjust height as needed */
+            background-color: rgba(200, 200, 200, 0.5); /* Light grey background for blur effect */
+            padding: 15px;
+            box-sizing: border-box;
+            color: #555; /* Darker text for readability behind blur */
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .owner-history-container .premium-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            z-index: 10;
+            width: 80%; /* Adjust overlay width */
+        }
+        .owner-history-container .premium-overlay h3 {
+            margin-top: 0;
+            color: #007bff; /* Premium color */
+        }
+        .owner-history-container .premium-overlay .price {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+        .owner-history-container .premium-overlay .buy-button {
+            display: inline-block;
+            background-color: #28a745; /* Buy button color */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .owner-history-container .premium-overlay .buy-button:hover {
+            background-color: #218838;
+        }
+        .owner-history-container .premium-overlay .product-title {
+            font-size: 1.1em;
+            color: #6c757d; /* Secondary text color */
+            margin-bottom: 5px;
+        }
+    `;
+    const $style = $('<style type="text/css"></style>').text(ownerHistoryCss);
+    $('head').append($style);
 
+    // Function to populate the owner history table
+    function populateOwnerHistoryTable() {
+        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        const $ownerHistoryDiv = $('#eierhistorikk-content');
+
+        if (!regNumber || !$ownerHistoryDiv.length) {
+            return;
+        }
+
+        // Mock data for owner history (blurred)
+        const mockOwnerHistory = [
+            { date: '2020-2023', owner: 'Fornavn Etternavn' },
+            { date: '2018-2020', owner: 'Annet Navn' },
+            { date: '2015-2018', owner: 'Tredje Person' }
+        ];
+
+        let blurredHtml = '<div class="content-wrapper">';
+        blurredHtml += '<div class="blurred-content">';
+        blurredHtml += 'Historikk er tilgjengelig for premium-medlemmer.<br>';
+        blurredHtml += mockOwnerHistory.map(item => `${item.date}: ${item.owner}`).join('<br>');
+        blurredHtml += '</div>';
+
+        // Premium overlay content
+        blurredHtml += `
+            <div class="premium-overlay">
+                <div class="product-title">Premium Eierhistorikk</div>
+                <h3>Se full eierhistorikk</h3>
+                <div class="price">kr 49,-</div>
+                <a href="/kjop-eierhistorikk?reg=${regNumber}" class="buy-button">Kjøp nå</a>
+            </div>
+        `;
+        blurredHtml += '</div>'; // Close content-wrapper
+
+        $ownerHistoryDiv.html(blurredHtml);
+    }
 
     // Check URL parameters for successful payment
     const urlParams = new URLSearchParams(window.location.search);
@@ -494,25 +590,25 @@ jQuery(document).ready(function($) {
         );
 
         const engineInfo = {};
-        
+
         if (engineData?.motor?.[0]?.antallSylindre) {
             engineInfo['Motor'] = `${engineData.motor[0].antallSylindre} sylindre`;
         }
-        
+
         if (engineData?.motor?.[0]?.arbeidsprinsipp?.kodeBeskrivelse) {
             engineInfo['Drivstoff'] = engineData.motor[0].arbeidsprinsipp.kodeBeskrivelse;
         }
-        
+
         if (engineData?.motor?.[0]?.slagvolum) {
             engineInfo['Slagvolum'] = `${engineData.motor[0].slagvolum.toLocaleString()} cm³`;
         }
-        
+
         if (engineData?.motor?.[0]?.drivstoff?.[0]?.maksNettoEffekt) {
             const kw = engineData.motor[0].drivstoff[0].maksNettoEffekt;
             const hp = Math.round(kw * 1.34102);
             engineInfo['Effekt'] = `${kw} kW (${hp} hk)`;
         }
-        
+
         if (engineData?.girkassetype?.kodeBeskrivelse) {
             engineInfo['Girkasse'] = engineData.girkassetype.kodeBeskrivelse;
         }
@@ -529,8 +625,8 @@ jQuery(document).ready(function($) {
     function renderPremiumPreview(vehicleData) {
         // Placeholder function to show preview of premium content
         console.log('Premium preview for vehicle:', vehicleData.kjoretoyId?.kjennemerke);
-        
-        // This function can be expanded to show preview cards or hints 
+
+        // This function can be expanded to show preview cards or hints
         // about additional premium data available after purchase
     }
 
@@ -547,7 +643,7 @@ jQuery(document).ready(function($) {
 
             if (daysUntilDeadline < 0) {
                 const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
-                euControlText += ` <span class="eu-overdue">(${monthsAgo} ${monthsAgo === 1 ? 'måned' : 'måneder'} siden)</span>`;
+                euControlText += ` <span class="eu-overdue">(${monthsAgo} ${monthsAgo === 1 ? 'måned' : 'måneder'} igjen)</span>`;
                 euControlClass = 'eu-overdue';
             } else if (daysUntilDeadline <= 30) {
                 euControlText += ` <span class="eu-warning">(${daysUntilDeadline} ${daysUntilDeadline === 1 ? 'dag' : 'dager'} igjen)</span>`;
@@ -633,4 +729,18 @@ jQuery(document).ready(function($) {
     }
     // Add CSS for timeline margin
     $('.timeline').css('margin', '20px 0 50px 0');
+
+    // Call populateOwnerHistoryTable after processing vehicle data
+    // Ensure this is called at the right time, e.g., after vehicle data is loaded
+    // For now, we'll attach it to the submit success handler for demonstration
+    $form.on('submit', function(e) {
+        // ... existing submit handler code ...
+        // Inside the success callback, after processVehicleData:
+        // success: function(response) {
+        //     // ... other success logic ...
+        //     processVehicleData(response, regNumber);
+        //     populateOwnerHistoryTable(); // Call it here after data is processed
+        //     // ... rest of success logic ...
+        // },
+    });
 });
