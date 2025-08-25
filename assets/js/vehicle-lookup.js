@@ -459,18 +459,27 @@ jQuery(document).ready(function($) {
         html += '<div style="margin-top: 1rem; font-size: 12px; color: #9ca3af;">Opplysninger hentet fra Statens vegvesen • Siste oppdatering: i dag</div>';
         html += '</div>';
 
-        // Premium overlay
+        // Premium overlay with dynamic pricing
+        const premiumProduct = window.vehicleLookupData?.premiumProduct;
+        const regularPrice = premiumProduct?.regular_price || '89';
+        const salePrice = premiumProduct?.sale_price;
+        const productName = premiumProduct?.name || 'Premium Kjøretøyrapport';
+
         html += `<div class="owner-history-overlay">
-            <h4>🔐 Premium Eierhistorikk</h4>
+            <h4>🔐 ${productName}</h4>
             <p style="margin: 0.5rem 0; text-align: center; color: #64748b;">Få tilgang til komplett eierhistorikk med alle tidligere eiere og adresser</p>
-            <div class="tier-price">
-                <span class="regular-price">kr 79,-</span>
-                <span class="sale-price">kr 49,-</span>
-            </div>
+            <div class="tier-price">`;
+        
+        if (salePrice && salePrice < regularPrice) {
+            html += `<span class="regular-price">kr ${regularPrice},-</span>
+                     <span class="sale-price">kr ${salePrice},-</span>`;
+        } else {
+            html += `<span class="price">kr ${regularPrice},-</span>`;
+        }
+        
+        html += `</div>
             <div class="tier-purchase">
-                <button class="purchase-button tier-button" data-product="739">
-                    🛒 Kjøp eierhistorikk
-                </button>
+                ${window.premiumVippsBuyButton || `<button class="purchase-button tier-button" data-product="739">🛒 Kjøp eierhistorikk</button>`}
             </div>
         </div>`;
         
