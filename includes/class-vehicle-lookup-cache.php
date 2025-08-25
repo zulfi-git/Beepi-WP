@@ -66,5 +66,38 @@ class VehicleLookupCache {
         global $wpdb;
         $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_cache_%'");
         $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_vehicle_cache_%'");
+        
+        // Also clear worker cache
+        $this->clear_worker_cache();
+    }
+
+    /**
+     * Clear cache on the worker
+     */
+    public function clear_worker_cache() {
+        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/cache/clear', array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+                'Origin' => get_site_url()
+            ),
+            'body' => json_encode(array(
+                'clearAll' => true
+            )),
+            'timeout' => 10
+        ));
+
+        if (is_wp_error($response)) {
+            error_log('Failed to clear worker cache: ' . $response->get_error_message());
+            return false;
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        if ($status_code === 200) {
+            error_log('Worker cache cleared successfully');
+            return true;
+        } else {
+            error_log('Failed to clear worker cache. Status code: ' . $status_code);
+            return false;
+        }
     }
 }

@@ -88,4 +88,36 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    // Clear cache functionality
+    $('#clear-cache-btn').on('click', function() {
+        const $btn = $(this);
+        const originalText = $btn.text();
+
+        $btn.text('Clearing...').prop('disabled', true);
+
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'clear_vehicle_cache',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $btn.text('Cleared!').removeClass('button-secondary').addClass('button-primary');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('Failed to clear cache');
+                    $btn.text(originalText).prop('disabled', false);
+                }
+            },
+            error: function() {
+                alert('Error clearing cache');
+                $btn.text(originalText).prop('disabled', false);
+            }
+        });
+    });
 });
