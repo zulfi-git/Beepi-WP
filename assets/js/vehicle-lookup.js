@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
         const firstAccordion = $('.accordion details').first();
         if (firstAccordion.length) {
             $('html, body').animate({
-                scrollTop: firstAccordion.offset().top - 100
+                scrollTop: firstAccordion.offset().top - 150
             }, 600);
         }
         
