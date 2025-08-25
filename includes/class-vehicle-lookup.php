@@ -137,6 +137,11 @@ class Vehicle_Lookup {
         if ($cached_data !== false) {
             $response_time = round((microtime(true) - $start_time) * 1000);
             $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, true);
+            
+            // Add cache metadata to response
+            $cached_data['is_cached'] = true;
+            $cached_data['cache_time'] = $this->cache->get_cache_time($regNumber);
+            
             wp_send_json_success($cached_data);
         }
 
@@ -159,6 +164,10 @@ class Vehicle_Lookup {
 
         // Cache successful response
         $this->cache->set($regNumber, $data);
+
+        // Add cache metadata to response
+        $data['is_cached'] = false;
+        $data['cache_time'] = current_time('c'); // ISO 8601 format
 
         // Log successful lookup (HTTP 200 with valid vehicle data)
         $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, false, null, $tier);

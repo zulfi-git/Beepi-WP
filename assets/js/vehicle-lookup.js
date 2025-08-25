@@ -55,10 +55,45 @@ jQuery(document).ready(function($) {
         $resultsDiv.hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
+        $('.cache-notice').remove();
         $vehicleTitle.empty();
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
         $('.info-table').empty();
+    }
+
+    function displayCacheNotice(responseData) {
+        // Remove any existing cache notice
+        $('.cache-notice').remove();
+        
+        // Check if data includes cache information
+        const cacheTime = responseData.cache_time;
+        const isCached = responseData.is_cached || false;
+        
+        let noticeText = '';
+        let noticeClass = 'fresh';
+        
+        if (isCached && cacheTime) {
+            const cacheDate = new Date(cacheTime);
+            const now = new Date();
+            const diffMinutes = Math.round((now - cacheDate) / (1000 * 60));
+            
+            if (diffMinutes < 1) {
+                noticeText = '📋 Cached (< 1 min)';
+            } else if (diffMinutes < 60) {
+                noticeText = `📋 Cached (${diffMinutes} min)`;
+            } else {
+                const diffHours = Math.round(diffMinutes / 60);
+                noticeText = `📋 Cached (${diffHours}h)`;
+            }
+            noticeClass = 'cached';
+        } else {
+            noticeText = '🔄 Fresh data';
+            noticeClass = 'fresh';
+        }
+        
+        // Add cache notice to results div
+        $resultsDiv.prepend(`<div class="cache-notice ${noticeClass}" title="Data retrieval status for this registration number">${noticeText}</div>`);
     }
 
     function validateRegistrationNumber(regNumber) {
@@ -186,6 +221,9 @@ jQuery(document).ready(function($) {
         setRegNumberCookie(regNumber);
         displayVehicleHeader(vehicleData, regNumber);
         displayStatusInfo(vehicleData);
+        
+        // Show cache status notice
+        displayCacheNotice(response.data);
         
         // Always show basic info for free
         renderBasicInfo(vehicleData);

@@ -542,15 +542,15 @@
         margin: 1rem 0;
         padding: 0.75rem;
     }
-    
+
     .stat-number {
         font-size: 1.25rem;
     }
-    
+
     .stat-label {
         font-size: 0.8rem;
     }
-    
+
     .value-features {
         grid-template-columns: 1fr;
         gap: 0.25rem;
@@ -941,15 +941,15 @@ details summary {
         padding: 12px;
         margin-bottom: 16px;
     }
-    
+
     .free-info-guide h4 {
         font-size: 1rem;
     }
-    
+
     .free-info-guide p {
         font-size: 0.85rem;
     }
-    
+
     .explore-free-btn {
         padding: 6px 12px;
         font-size: 0.8rem;
@@ -1054,7 +1054,7 @@ details summary {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .tier-card {
         padding: 20px;
     }

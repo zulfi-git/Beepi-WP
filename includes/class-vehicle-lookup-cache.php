@@ -6,7 +6,27 @@ class VehicleLookupCache {
      */
     public function get($regNumber) {
         $cache_key = $this->get_cache_key($regNumber);
-        return get_transient($cache_key);
+        $cached_data = get_transient($cache_key);
+        
+        if ($cached_data && is_array($cached_data) && isset($cached_data['data'])) {
+            return $cached_data['data'];
+        }
+        
+        return $cached_data;
+    }
+
+    /**
+     * Get cache time for registration number
+     */
+    public function get_cache_time($regNumber) {
+        $cache_key = $this->get_cache_key($regNumber);
+        $cached_data = get_transient($cache_key);
+        
+        if ($cached_data && is_array($cached_data) && isset($cached_data['cache_time'])) {
+            return $cached_data['cache_time'];
+        }
+        
+        return null;
     }
 
     /**
@@ -14,7 +34,14 @@ class VehicleLookupCache {
      */
     public function set($regNumber, $data) {
         $cache_key = $this->get_cache_key($regNumber);
-        set_transient($cache_key, $data, VEHICLE_LOOKUP_CACHE_DURATION);
+        
+        // Store cache time with the data
+        $cache_data = array(
+            'data' => $data,
+            'cache_time' => current_time('c')
+        );
+        
+        set_transient($cache_key, $cache_data, VEHICLE_LOOKUP_CACHE_DURATION);
     }
 
     /**
