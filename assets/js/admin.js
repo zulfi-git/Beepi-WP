@@ -107,6 +107,7 @@ jQuery(document).ready(function($) {
                 button.prop('disabled', false).html(originalText);
             }
         });
+    });
     } else {
         console.log('Reset button not found on this page');
     }
