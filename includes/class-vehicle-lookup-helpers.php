@@ -114,7 +114,7 @@ class Vehicle_Lookup_Helpers {
         $accordion_sections = [
             ['Generell informasjon', '📋', 'basic-info-table'],
             ['Reg. og EU-kontroll', '🔍', 'registration-info-table'],
-            ['Eierhistorikk', '👥', 'owner-history-table'],
+            ['Eierhistorikk', '👥', 'eierhistorikk-content'],
             ['Motor og drivverk', '🔧', 'engine-info-table'],
             ['Størrelse og vekt', '⚖️', 'size-weight-table'],
             ['Dekk og felg', '🛞', 'tire-info-table'],
@@ -123,15 +123,29 @@ class Vehicle_Lookup_Helpers {
 
         $html = '<div class="accordion">';
         foreach ($accordion_sections as $section) {
-            $html .= sprintf(
-                '<details>
-                    <summary><span>%s</span><span>%s</span></summary>
-                    <div class="details-content">
-                        <table class="info-table %s"></table>
-                    </div>
-                </details>',
-                $section[0], $section[1], $section[2]
-            );
+            if ($section[2] === 'eierhistorikk-content') {
+                $html .= sprintf(
+                    '<details>
+                        <summary><span>%s</span><span>%s</span></summary>
+                        <div class="details-content">
+                            <div class="owner-history-container">
+                                <div id="%s"></div>
+                            </div>
+                        </div>
+                    </details>',
+                    $section[0], $section[1], $section[2]
+                );
+            } else {
+                $html .= sprintf(
+                    '<details>
+                        <summary><span>%s</span><span>%s</span></summary>
+                        <div class="details-content">
+                            <table class="info-table %s"></table>
+                        </div>
+                    </details>',
+                    $section[0], $section[1], $section[2]
+                );
+            }
         }
         $html .= '</div>';
         

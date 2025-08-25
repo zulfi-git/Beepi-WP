@@ -235,6 +235,9 @@ jQuery(document).ready(function($) {
         // Only show full owner info if user has access
         renderOwnerInfo(vehicleData);
         renderTechnicalInfo(vehicleData);
+        
+        // Populate owner history section
+        populateOwnerHistoryTable();
 
         // Open basic info sections by default
         $('.accordion details[data-free="true"]').attr('open', true);
@@ -430,31 +433,50 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        // Mock data for owner history (blurred)
+        // Mock Norwegian owner history data (will be heavily blurred)
         const mockOwnerHistory = [
-            { date: '2020-2023', owner: 'Fornavn Etternavn' },
-            { date: '2018-2020', owner: 'Annet Navn' },
-            { date: '2015-2018', owner: 'Tredje Person' }
+            { period: '2020-2023', owner: 'Kari Nordmann', address: 'Storgata 15, 0101 Oslo' },
+            { period: '2018-2020', owner: 'Lars Hansen', address: 'Bjørnstjerne Bjørnsons gate 45, 4611 Kristiansand' },
+            { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' },
+            { period: '2012-2015', owner: 'Olav Thon', address: 'Prinsens gate 8, 0152 Oslo' },
+            { period: '2010-2012', owner: 'Anne Kristin Berg', address: 'Torgallmenningen 17, 5014 Bergen' }
         ];
 
-        let blurredHtml = '<div class="content-wrapper">';
-        blurredHtml += '<div class="blurred-content">';
-        blurredHtml += 'Historikk er tilgjengelig for premium-medlemmer.<br>';
-        blurredHtml += mockOwnerHistory.map(item => `${item.date}: ${item.owner}`).join('<br>');
-        blurredHtml += '</div>';
+        let html = '<div class="owner-history-content">';
+        
+        // Blurred content
+        html += '<div class="blurred-owner-data">';
+        html += '<h4 style="margin-top: 0;">📊 Komplett eierhistorikk</h4>';
+        html += '<div style="margin-bottom: 0.75rem;">Se alle tidligere eiere med full adresseinformasjon:</div>';
+        
+        mockOwnerHistory.forEach(item => {
+            html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
+                <strong>${item.period}:</strong> ${item.owner}<br>
+                <small style="color: #6b7280;">${item.address}</small>
+            </div>`;
+        });
+        
+        html += '<div style="margin-top: 1rem; font-size: 12px; color: #9ca3af;">Opplysninger hentet fra Statens vegvesen • Siste oppdatering: i dag</div>';
+        html += '</div>';
 
-        // Premium overlay content
-        blurredHtml += `
-            <div class="premium-overlay">
-                <div class="product-title">Premium Eierhistorikk</div>
-                <h3>Se full eierhistorikk</h3>
-                <div class="price">kr 49,-</div>
-                <a href="/kjop-eierhistorikk?reg=${regNumber}" class="buy-button">Kjøp nå</a>
+        // Premium overlay
+        html += `<div class="owner-history-overlay">
+            <h4>🔐 Premium Eierhistorikk</h4>
+            <p style="margin: 0.5rem 0; text-align: center; color: #64748b;">Få tilgang til komplett eierhistorikk med alle tidligere eiere og adresser</p>
+            <div class="tier-price">
+                <span class="regular-price">kr 79,-</span>
+                <span class="sale-price">kr 49,-</span>
             </div>
-        `;
-        blurredHtml += '</div>'; // Close content-wrapper
+            <div class="tier-purchase">
+                <button class="purchase-button tier-button" data-product="739">
+                    🛒 Kjøp eierhistorikk
+                </button>
+            </div>
+        </div>`;
+        
+        html += '</div>';
 
-        $ownerHistoryDiv.html(blurredHtml);
+        $ownerHistoryDiv.html(html);
     }
 
     // Check URL parameters for successful payment
