@@ -1212,14 +1212,12 @@ details summary {
 
 .blurred-owner-data {
     filter: blur(6px);
-    opacity: 0.5;
     padding: 1rem;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border-radius: 8px;
     font-size: 14px;
     line-height: 1.6;
     color: #64748b;
-}t: none;
 }
 
 .owner-history-overlay {

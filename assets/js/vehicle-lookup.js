@@ -467,17 +467,10 @@ jQuery(document).ready(function($) {
 
         html += `<div class="owner-history-overlay">
             <h4>🔐 ${productName}</h4>
-            <p style="margin: 0.5rem 0; text-align: center; color: #64748b;">Få tilgang til komplett eierhistorikk med alle tidligere eiere og adresser</p>
-            <div class="tier-price">`;
-        
-        if (salePrice && salePrice < regularPrice) {
-            html += `<span class="regular-price">kr ${regularPrice},-</span>
-                     <span class="sale-price">kr ${salePrice},-</span>`;
-        } else {
-            html += `<span class="price">kr ${regularPrice},-</span>`;
-        }
-        
-        html += `</div>
+            <div class="tier-price">
+                <span class="regular-price">kr ${regularPrice},-</span>
+                <span class="sale-price">kr ${salePrice || regularPrice},-</span>
+            </div>
             <div class="tier-purchase">
                 ${window.premiumVippsBuyButton || `<button class="purchase-button tier-button" data-product="739">🛒 Kjøp eierhistorikk</button>`}
             </div>
