@@ -28,32 +28,6 @@ class VehicleLookupAPI {
     }
 
     /**
-     * Batch lookup multiple registration numbers
-     */
-    public function lookup_batch($regNumbers, $tier = 'free') {
-        $start_time = microtime(true);
-        
-        $response = wp_remote_post(VEHICLE_LOOKUP_WORKER_URL . '/batch', array(
-            'headers' => array(
-                'Content-Type' => 'application/json',
-                'Origin' => get_site_url()
-            ),
-            'body' => json_encode(array(
-                'registrationNumbers' => $regNumbers,
-                'tier' => $tier
-            )),
-            'timeout' => get_option('vehicle_lookup_timeout', 30) // Longer timeout for batch
-        ));
-
-        $response_time = round((microtime(true) - $start_time) * 1000);
-        
-        return array(
-            'response' => $response,
-            'response_time' => $response_time
-        );
-    }
-
-    /**
      * Validate Norwegian registration number format
      */
     public function validate_registration_number($regNumber) {
@@ -110,35 +84,6 @@ class VehicleLookupAPI {
                     return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
                 }
             }
-        }
-
-        return array('success' => true, 'data' => $data);
-    }
-
-    /**
-     * Process batch API response
-     */
-    public function process_batch_response($response) {
-        if (is_wp_error($response)) {
-            return array('error' => 'Tilkoblingsfeil. Prøv igjen om litt.', 'failure_type' => 'connection_error');
-        }
-
-        $status_code = wp_remote_retrieve_response_code($response);
-        if ($status_code !== 200) {
-            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.', 'failure_type' => 'http_error');
-        }
-
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON Decode Error in batch response: ' . json_last_error_msg());
-            return array('error' => 'Ugyldig svar fra server. Prøv igjen.', 'failure_type' => 'http_error');
-        }
-
-        if (empty($data)) {
-            error_log('Empty Data Response in batch lookup');
-            return array('error' => 'Ingen data mottatt fra server', 'failure_type' => 'http_error');
         }
 
         return array('success' => true, 'data' => $data);
