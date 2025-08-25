@@ -437,9 +437,7 @@ jQuery(document).ready(function($) {
         const mockOwnerHistory = [
             { period: '2020-2023', owner: 'Kari Nordmann', address: 'Storgata 15, 0101 Oslo' },
             { period: '2018-2020', owner: 'Lars Hansen', address: 'Bjørnstjerne Bjørnsons gate 45, 4611 Kristiansand' },
-            { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' },
-            { period: '2012-2015', owner: 'Olav Thon', address: 'Prinsens gate 8, 0152 Oslo' },
-            { period: '2010-2012', owner: 'Anne Kristin Berg', address: 'Torgallmenningen 17, 5014 Bergen' }
+            { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' }
         ];
 
         let html = '<div class="owner-history-content">';
