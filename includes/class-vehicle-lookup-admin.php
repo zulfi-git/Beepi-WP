@@ -343,14 +343,14 @@ class Vehicle_Lookup_Admin {
                     </div>
                     
                     <div>
-                        <button type="button" class="button button-secondary" id="clear-worker-cache" style="background-color: #ff8c00; color: white; border-color: #ff8c00;">
+                        <button type="button" class="button button-secondary" id="clear-worker-cache">
                             <span class="dashicons dashicons-cloud" style="margin-top: 3px;"></span> Clear Worker Cache
                         </button>
                         <p class="description" style="margin-top: 5px; max-width: 200px;">Clear cached data on the remote worker server.</p>
                     </div>
                     
                     <div>
-                        <button type="button" class="button button-secondary" id="clear-local-cache" style="background-color: #0073aa; color: white; border-color: #0073aa;">
+                        <button type="button" class="button button-secondary" id="clear-local-cache">
                             <span class="dashicons dashicons-performance" style="margin-top: 3px;"></span> Clear Local Cache
                         </button>
                         <p class="description" style="margin-top: 5px; max-width: 200px;">Clear WordPress transient cache for vehicle lookups.</p>
