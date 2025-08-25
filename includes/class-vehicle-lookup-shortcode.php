@@ -95,9 +95,8 @@ class Vehicle_Lookup_Shortcode {
                                 </div>
                             </div>
                             <div class="tier-features">
-                                <div class="feature-item">✓ Alle tekniske detaljer</div>
                                 <div class="feature-item">✓ Nåværende eier</div>
-                                <div class="feature-item">✓ Kontaktinformasjon</div>
+                                <div class="feature-item">✓ Alle tekniske detaljer</div>
                                 <div class="feature-item">✓ EU-kontroll status</div>
                             </div>
                             <div class="tier-purchase">
@@ -122,9 +121,9 @@ class Vehicle_Lookup_Shortcode {
                             <div class="tier-features">
                                 <div class="feature-item">✓ Alt fra Basic rapport</div>
                                 <div class="feature-item">✓ Komplett eierhistorikk</div>
-                                <div class="feature-item">✓ Importhistorikk</div>
                                 <div class="feature-item">✓ Skadehistorikk</div>
                                 <div class="feature-item">✓ Detaljert kjøretøyrapport</div>
+                                <div class="feature-item">✓ Import</div>
                             </div>
                             <div class="tier-purchase">
                                 <?php echo do_shortcode("[woo_vipps_buy_now id=739 /]"); ?>
