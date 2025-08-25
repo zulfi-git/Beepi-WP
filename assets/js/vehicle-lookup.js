@@ -444,8 +444,6 @@ jQuery(document).ready(function($) {
 
         // Blurred content
         html += '<div class="blurred-owner-data">';
-        html += '<h4 style="margin-top: 0;">📊 Komplett eierhistorikk</h4>';
-        html += '<div style="margin-bottom: 0.75rem;">Se alle tidligere eiere med full adresseinformasjon:</div>';
 
         mockOwnerHistory.forEach(item => {
             html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
@@ -454,7 +452,6 @@ jQuery(document).ready(function($) {
             </div>`;
         });
 
-        html += '<div style="margin-top: 1rem; font-size: 12px; color: #9ca3af;">Opplysninger hentet fra Statens vegvesen • Siste oppdatering: i dag</div>';
         html += '</div>';
 
         // Premium overlay with dynamic pricing - use same payment as premium tier
