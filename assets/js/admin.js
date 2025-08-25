@@ -57,12 +57,17 @@ jQuery(document).ready(function($) {
     
     // Reset analytics data
     $('#reset-analytics').on('click', function() {
+        console.log('Reset button clicked'); // Debug log
+        
         if (!confirm('Are you sure you want to reset all analytics data? This action cannot be undone.')) {
             return;
         }
         
         const button = $(this);
         const originalText = button.html();
+        
+        console.log('AJAX URL:', vehicleLookupAdmin.ajaxurl); // Debug log
+        console.log('Nonce:', vehicleLookupAdmin.nonce); // Debug log
         
         button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...');
         
@@ -73,16 +78,21 @@ jQuery(document).ready(function($) {
                 action: 'vehicle_lookup_reset_analytics',
                 nonce: vehicleLookupAdmin.nonce
             },
+            beforeSend: function() {
+                console.log('Sending AJAX request...'); // Debug log
+            },
             success: function(response) {
+                console.log('AJAX Response:', response); // Debug log
                 if (response.success) {
                     alert('Analytics data has been successfully reset: ' + response.data.message);
                     location.reload(); // Refresh page to show updated stats
                 } else {
-                    alert('Error resetting analytics data: ' + response.data.message);
+                    alert('Error resetting analytics data: ' + (response.data ? response.data.message : 'Unknown error'));
                 }
             },
-            error: function() {
-                alert('Connection error while resetting analytics data');
+            error: function(xhr, status, error) {
+                console.log('AJAX Error:', xhr, status, error); // Debug log
+                alert('Connection error while resetting analytics data: ' + error);
             },
             complete: function() {
                 button.prop('disabled', false).html(originalText);
