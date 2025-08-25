@@ -1030,7 +1030,7 @@ details summary {
     left: 24px;
     background: linear-gradient(135deg, #007cba 0%, #00a8f0 100%);
     color: white;
-    padding: 6px 16px;
+    padding: 8px 20px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
@@ -1061,10 +1061,11 @@ details summary {
 }
 
 .tier-header h4 {
-    margin: 0 0 12px 0;
+    margin: 16px 0 16px 0;
     font-size: 20px;
     color: #2c3e50;
     text-align: center;
+    padding-top: 8px;
 }
 
 .tier-price {
@@ -1110,6 +1111,7 @@ details summary {
 
 .tier-purchase {
     margin-top: auto;
+    text-align: center;
 }
 
 /* Responsive */
