@@ -979,8 +979,7 @@ details summary {
 
 .tier-card.recommended {
     border-color: #007cba;
-    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.25);
-    animation: premiumGlow 1.5s ease-in-out infinite alternate;
+    box-shadow: 0 6px 16px rgba(0, 124, 186, 0.3);
     position: relative;
     transform: scale(1.02);
 }
@@ -988,66 +987,22 @@ details summary {
 .tier-card.recommended::before {
     content: '';
     position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    background: linear-gradient(45deg, #007cba, #00a8f0, #ff6b35, #007cba);
-    border-radius: 16px;
-    opacity: 0.7;
-    z-index: -1;
-    animation: borderPulse 1.5s ease-in-out infinite;
-    background-size: 300% 300%;
-}
-
-.tier-card.recommended::after {
-    content: '';
-    position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    background: linear-gradient(135deg, #007cba, #00a8f0);
     border-radius: 14px;
+    opacity: 0.15;
     z-index: -1;
-    animation: shimmer 2s ease-in-out infinite;
 }
 
 @keyframes premiumGlow {
     0% {
-        box-shadow: 0 4px 12px rgba(0, 124, 186, 0.25);
-        transform: scale(1.02);
+        box-shadow: 0 6px 16px rgba(0, 124, 186, 0.3);
     }
     100% {
-        box-shadow: 0 8px 24px rgba(0, 124, 186, 0.5), 0 0 20px rgba(255, 107, 53, 0.3);
-        transform: scale(1.03);
-    }
-}
-
-@keyframes borderPulse {
-    0% {
-        opacity: 0.5;
-        background-position: 0% 50%;
-    }
-    50% {
-        opacity: 0.9;
-        background-position: 100% 50%;
-    }
-    100% {
-        opacity: 0.5;
-        background-position: 200% 50%;
-    }
-}
-
-@keyframes shimmer {
-    0% {
-        transform: translateX(-100%) rotate(45deg);
-    }
-    50% {
-        transform: translateX(100%) rotate(45deg);
-    }
-    100% {
-        transform: translateX(300%) rotate(45deg);
+        box-shadow: 0 8px 20px rgba(0, 124, 186, 0.4);
     }
 }
 
@@ -1076,16 +1031,6 @@ details summary {
     text-align: center;
     margin: 12px 0;
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-    animation: savingsPulse 3s ease-in-out infinite;
-}
-
-@keyframes savingsPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
 }
 
 .tier-header h4 {
