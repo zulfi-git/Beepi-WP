@@ -957,6 +957,12 @@ details summary {
 }
 
 /* Tier Selection Styles */
+.tier-selection {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
 .tier-comparison {
     display: grid;
     grid-template-columns: 1fr 1fr;
