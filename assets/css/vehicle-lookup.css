@@ -981,53 +981,82 @@ details summary {
 .tier-card.recommended {
     border-color: #007cba;
     box-shadow: 0 4px 12px rgba(0, 124, 186, 0.25);
-    animation: premiumGlow 2s ease-in-out infinite alternate;
+    animation: premiumGlow 1.5s ease-in-out infinite alternate;
     position: relative;
+    transform: scale(1.02);
 }
 
 .tier-card.recommended::before {
     content: '';
     position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    background: linear-gradient(45deg, #007cba, #00a8f0, #007cba);
-    border-radius: 15px;
-    opacity: 0.6;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(45deg, #007cba, #00a8f0, #ff6b35, #007cba);
+    border-radius: 16px;
+    opacity: 0.7;
     z-index: -1;
-    animation: borderPulse 2s ease-in-out infinite;
-    background-size: 200% 200%;
+    animation: borderPulse 1.5s ease-in-out infinite;
+    background-size: 300% 300%;
+}
+
+.tier-card.recommended::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    border-radius: 14px;
+    z-index: -1;
+    animation: shimmer 2s ease-in-out infinite;
 }
 
 @keyframes premiumGlow {
     0% {
         box-shadow: 0 4px 12px rgba(0, 124, 186, 0.25);
+        transform: scale(1.02);
     }
     100% {
-        box-shadow: 0 8px 20px rgba(0, 124, 186, 0.4);
+        box-shadow: 0 8px 24px rgba(0, 124, 186, 0.5), 0 0 20px rgba(255, 107, 53, 0.3);
+        transform: scale(1.03);
     }
 }
 
 @keyframes borderPulse {
     0% {
-        opacity: 0.4;
+        opacity: 0.5;
         background-position: 0% 50%;
     }
     50% {
-        opacity: 0.8;
+        opacity: 0.9;
         background-position: 100% 50%;
     }
     100% {
-        opacity: 0.4;
-        background-position: 0% 50%;
-    }6, 0.1);
+        opacity: 0.5;
+        background-position: 200% 50%;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(300%) rotate(45deg);
+    }
 }
 
 .tier-badge {
     position: absolute;
     top: -12px;
-    left: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     background: linear-gradient(135deg, #007cba 0%, #00a8f0 100%);
     color: white;
     padding: 8px 20px;
