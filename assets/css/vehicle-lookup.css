@@ -29,7 +29,7 @@
 
 .vehicle-lookup-container {
     background: transparent;
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
     padding: 0 1rem;
 }
@@ -957,12 +957,6 @@ details summary {
 }
 
 /* Tier Selection Styles */
-.tier-selection {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
 .tier-comparison {
     display: grid;
     grid-template-columns: 1fr 1fr;
