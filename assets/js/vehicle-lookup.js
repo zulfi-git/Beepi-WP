@@ -467,13 +467,18 @@ jQuery(document).ready(function($) {
                 <span class="sale-price">kr ${salePrice || regularPrice},-</span>
             </div>
             <div class="tier-purchase">
-                ${window.premiumVippsBuyButton || ''}
+                <div class="woo-vipps-buy-now" data-product-id="739" data-style="button"></div>
             </div>
         </div>`;
 
         html += '</div>';
 
         $ownerHistoryDiv.html(html);
+        
+        // Initialize Vipps button if available
+        if (typeof window.wooVippsBuyNow !== 'undefined') {
+            window.wooVippsBuyNow.init();
+        }
     }
 
     // Check URL parameters for successful payment
