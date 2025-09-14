@@ -31,6 +31,7 @@ $required_files = [
     'includes/class-vehicle-lookup-shortcode.php',
     'includes/class-vehicle-search-shortcode.php',
     'includes/class-vehicle-eu-search-shortcode.php',
+    'includes/class-popular-vehicles-shortcode.php',
     'includes/class-order-confirmation-shortcode.php',
     'includes/class-sms-handler.php',
     'includes/class-vehicle-lookup-admin.php'
@@ -60,6 +61,11 @@ try {
     if (class_exists('Vehicle_EU_Search_Shortcode')) {
         $eu_search = new Vehicle_EU_Search_Shortcode();
         $eu_search->init();
+    }
+
+    if (class_exists('Popular_Vehicles_Shortcode')) {
+        $popular_vehicles = new Popular_Vehicles_Shortcode();
+        $popular_vehicles->init();
     }
 
     if (class_exists('Order_Confirmation_Shortcode')) {
