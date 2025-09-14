@@ -246,7 +246,7 @@ jQuery(document).ready(function($) {
             const statusClass = status.toLowerCase();
             let icon = '✓';
             let cardClass = 'registration-card';
-            
+
             if (status === 'AVREGISTRERT') {
                 icon = '⚠️';
                 cardClass += ' warning';
@@ -313,7 +313,7 @@ jQuery(document).ready(function($) {
 
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
         const engineData = tekniskeData?.motorOgDrivverk;
-        
+
         let metricsHtml = '<div class="metrics-grid">';
 
         // Calculate vehicle age
@@ -727,15 +727,11 @@ jQuery(document).ready(function($) {
         const dimensjoner = tekniskeData?.dimensjoner;
 
         const weightInfo = {
-            'Lengde': tekniskeData?.dimensjoner?.lengde ? `${tekniskeData.dimensjoner.lengde} mm` : '---',
-            'Bredde': tekniskeData?.dimensjoner?.bredde ? `${tekniskeData.dimensjoner.bredde} mm` : '---',
-            'Høyde': tekniskeData?.dimensjoner?.hoyde ? `${tekniskeData.dimensjoner.hoyde} mm` : '---',
-            'Egenvekt': tekniskeData?.vekter?.egenvekt ? `${tekniskeData.vekter.egenvekt} kg` : '---',
-            'Nyttelast': tekniskeData?.vekter?.nyttelast ? `${tekniskeData.vekter.nyttelast} kg` : '---',
-            'Tillatt totalvekt': tekniskeData?.vekter?.tillattTotalvekt ? `${tekniskeData.vekter.tillattTotalvekt} kg` : '---',
-            'Tillatt tilhengervekt m/brems': tekniskeData?.vekter?.tillattTilhengervektMedBrems ? `${tekniskeData.vekter.tillattTilhengervektMedBrems} kg` : '---',
-            'Tillatt tilhengervekt u/brems': tekniskeData?.vekter?.tillattTilhengervektUtenBrems ? `${tekniskeData.vekter.tillattTilhengervektUtenBrems} kg` : '---',
-            'Tillatt vogntogvekt': tekniskeData?.vekter?.tillattVogntogvekt ? `${tekniskeData.vekter.tillattVogntogvekt} kg` : '---'
+            'Lengde': dimensjoner?.lengde ? dimensjoner.lengde + ' mm' : '',
+            'Bredde': dimensjoner?.bredde ? dimensjoner.bredde + ' mm' : '',
+            'Høyde': dimensjoner?.hoyde ? dimensjoner.hoyde + ' mm' : '',
+            'Egenvekt': vekter?.egenvekt ? vekter.egenvekt + ' kg' : '',
+            'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
         };
 
         $('.size-weight-table').html(
