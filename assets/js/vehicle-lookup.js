@@ -221,6 +221,8 @@ jQuery(document).ready(function($) {
         setRegNumberCookie(regNumber);
         displayVehicleHeader(vehicleData, regNumber);
         displayStatusInfo(vehicleData);
+        renderStatusCards(vehicleData);
+        renderMetricsGrid(vehicleData);
 
         // Show cache status notice
         displayCacheNotice(response.data);
@@ -248,6 +250,162 @@ jQuery(document).ready(function($) {
         }, 500);
 
         checkEUAnchor();
+    }
+
+    function renderStatusCards(vehicleData) {
+        const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
+        const statusText = vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || '';
+        const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
+
+        // Remove existing status cards
+        $('.status-cards-grid').remove();
+
+        let statusCardsHtml = '<div class="status-cards-grid">';
+
+        // Registration status card
+        if (status) {
+            const statusClass = status.toLowerCase();
+            let icon = '✓';
+            let cardClass = 'registration-card';
+            
+            if (status === 'AVREGISTRERT') {
+                icon = '⚠️';
+                cardClass += ' warning';
+            } else if (status === 'VRAKET') {
+                icon = '⛔';
+                cardClass += ' overdue';
+            }
+
+            statusCardsHtml += `
+                <div class="status-card ${cardClass}">
+                    <div class="status-icon">${icon}</div>
+                    <div class="status-content">
+                        <h3>Registrering</h3>
+                        <p>${statusText}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // EU control status card
+        if (status === 'REGISTRERT' && euDeadline) {
+            const today = new Date();
+            const deadline = new Date(euDeadline);
+            const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+            let euStatusClass = 'eu-card';
+            let euMessage = '';
+            let icon = '✓';
+
+            if (daysUntilDeadline < 0) {
+                euStatusClass += ' overdue';
+                const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
+                euMessage = `${monthsAgo} mnd siden`;
+                icon = '⛔';
+            } else if (daysUntilDeadline <= 30) {
+                euStatusClass += ' warning';
+                euMessage = `${daysUntilDeadline} dager igjen`;
+                icon = '⚠️';
+            } else {
+                const monthsLeft = Math.floor(daysUntilDeadline / 30);
+                euMessage = `${monthsLeft} mnd igjen`;
+            }
+
+            statusCardsHtml += `
+                <div class="status-card ${euStatusClass}">
+                    <div class="status-icon">${icon}</div>
+                    <div class="status-content">
+                        <h3>EU-kontroll</h3>
+                        <p>${euMessage}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        statusCardsHtml += '</div>';
+
+        // Insert after vehicle header
+        $('.vehicle-header').after(statusCardsHtml);
+    }
+
+    function renderMetricsGrid(vehicleData) {
+        // Remove existing metrics grid
+        $('.metrics-grid').remove();
+
+        const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
+        const engineData = tekniskeData?.motorOgDrivverk;
+        
+        let metricsHtml = '<div class="metrics-grid">';
+
+        // Calculate vehicle age
+        const regYear = vehicleData.forstegangsregistrering?.registrertForstegangNorgeDato?.split('-')[0];
+        if (regYear) {
+            const age = new Date().getFullYear() - parseInt(regYear);
+            metricsHtml += `
+                <div class="metric-card">
+                    <div class="metric-icon">📅</div>
+                    <div class="metric-content">
+                        <span class="metric-value">${age} år</span>
+                        <span class="metric-label">Alder</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Engine power
+        const nettoEffekt = engineData?.motor?.[0]?.nettoEffekt;
+        if (nettoEffekt) {
+            const kw = parseInt(nettoEffekt);
+            const hp = Math.round(kw * 1.341);
+            metricsHtml += `
+                <div class="metric-card">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-content">
+                        <span class="metric-value">${hp} hk</span>
+                        <span class="metric-label">Effekt</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Length
+        const length = tekniskeData?.dimensjoner?.lengde;
+        if (length) {
+            const lengthM = (length / 1000).toFixed(1);
+            metricsHtml += `
+                <div class="metric-card">
+                    <div class="metric-icon">📏</div>
+                    <div class="metric-content">
+                        <span class="metric-value">${lengthM}m</span>
+                        <span class="metric-label">Lengde</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Weight
+        const egenvekt = tekniskeData?.vekter?.egenvekt;
+        if (egenvekt) {
+            const weightT = (egenvekt / 1000).toFixed(1);
+            metricsHtml += `
+                <div class="metric-card">
+                    <div class="metric-icon">⚖️</div>
+                    <div class="metric-content">
+                        <span class="metric-value">${weightT}t</span>
+                        <span class="metric-label">Egenvekt</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        metricsHtml += '</div>';
+
+        // Insert after status cards or vehicle header
+        if ($('.status-cards-grid').length) {
+            $('.status-cards-grid').after(metricsHtml);
+        } else {
+            $('.vehicle-header').after(metricsHtml);
+        }
     }
 
     $form.on('submit', function(e) {
