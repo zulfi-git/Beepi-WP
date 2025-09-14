@@ -395,8 +395,10 @@ class Order_Confirmation_Shortcode {
 
                         // Size and weight info
                         const weightInfo = {
+                            'Lengde': dimensions?.lengde ? dimensions.lengde + ' mm' : '',
                             'Bredde': dimensions?.bredde ? dimensions.bredde + ' mm' : '',
                             'Høyde': dimensions?.hoyde ? dimensions.hoyde + ' mm' : '',
+                            'Egenvekt': vekter?.egenvekt ? vekter.egenvekt + ' kg' : '',
                             'Nyttelast': vekter?.nyttelast ? vekter.nyttelast + ' kg' : ''
                         };
 
