@@ -1295,29 +1295,29 @@ details summary {
 
 @media (max-width: 600px) {
     .status-cards-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
         margin: 1rem 0;
     }
-    
+
     .status-card {
         padding: 1rem;
     }
-    
+
     .metrics-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
         margin: 1rem 0;
     }
-    
+
     .metric-card {
         padding: 1rem;
     }
-    
+
     .metric-value {
         font-size: 1.1rem;
     }
-    
+
     .metric-label {
         font-size: 0.75rem;
     }
@@ -1433,11 +1433,11 @@ details summary {
     .owner-history-overlay {
         padding: 1rem;
     }
-    
+
     .owner-history-overlay h4 {
         font-size: 1rem;
     }
-    
+
     .owner-history-overlay .tier-price .sale-price,
     .owner-history-overlay .tier-price .price {
         font-size: 20px;
