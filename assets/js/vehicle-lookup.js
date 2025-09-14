@@ -33,7 +33,7 @@ jQuery(document).ready(function($) {
         }
     }
 
-    // Make expandAllAccordions available globally
+    // Make functions available globally for testing
     window.expandAllAccordions = function() {
         $('.accordion details').each(function() {
             $(this).attr('open', true);
@@ -51,11 +51,20 @@ jQuery(document).ready(function($) {
         $('.free-info-guide').slideUp(300);
     };
 
+    // Expose key functions for testing
+    window.displayVehicleHeader = displayVehicleHeader;
+    window.renderStatusCards = renderStatusCards;
+    window.renderMetricsGrid = renderMetricsGrid;
+    window.addVehicleTags = addVehicleTags;
+
     function resetFormState() {
         $resultsDiv.hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
         $('.cache-notice').remove();
+        $('.status-cards-grid').remove();
+        $('.metrics-grid').remove();
+        $('.vehicle-status, .eu-status').remove();
         $vehicleTitle.empty();
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
@@ -180,39 +189,9 @@ jQuery(document).ready(function($) {
     }
 
     function displayStatusInfo(vehicleData) {
-        const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
-        const statusText = vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || '';
-        const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
-
+        // This function is now deprecated in favor of renderStatusCards()
+        // Remove any old status elements that might still exist
         $('.vehicle-status, .eu-status').remove();
-
-        if (status) {
-            const statusClass = status.toLowerCase();
-            $vehicleSubtitle.after(`<p class="vehicle-status ${statusClass}"> ${statusText}</p>`);
-
-            if (status === 'REGISTRERT' && euDeadline) {
-                const today = new Date();
-                const deadline = new Date(euDeadline);
-                const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
-
-                let euStatusClass = '';
-                let euMessage = '';
-
-                if (daysUntilDeadline < 0) {
-                    euStatusClass = 'overdue';
-                    const monthsAgo = Math.abs(Math.floor(daysUntilDeadline / 30));
-                    euMessage = `EU-kontroll (${monthsAgo} mnd siden)`;
-                } else if (daysUntilDeadline <= 30) {
-                    euStatusClass = 'warning';
-                    euMessage = `EU-kontroll (${daysUntilDeadline} dager igjen)`;
-                } else {
-                    const monthsLeft = Math.floor(daysUntilDeadline / 30);
-                    euMessage = `EU-kontroll (${monthsLeft} mnd igjen)`;
-                }
-
-                $('.vehicle-status').after(`<p class="eu-status ${euStatusClass}">${euMessage}</p>`);
-            }
-        }
     }
 
     function processVehicleData(response, regNumber) {
