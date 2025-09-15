@@ -739,18 +739,56 @@ class Vehicle_Lookup_Admin {
 
 
     public function reset_analytics_data() {
-        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
+        // Log the incoming request for debugging
+        error_log('Reset analytics request received. POST data: ' . print_r($_POST, true));
+
+        // Check if user has permissions first
+        if (!current_user_can('manage_options')) {
+            error_log('Reset analytics failed: Insufficient permissions');
+            wp_send_json_error(array(
+                'message' => 'Insufficient permissions'
+            ));
+            return;
+        }
+
+        // Check nonce with better error handling
+        if (!isset($_POST['nonce'])) {
+            error_log('Reset analytics failed: No nonce provided');
+            wp_send_json_error(array(
+                'message' => 'Security token missing'
+            ));
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'vehicle_lookup_admin_nonce')) {
+            error_log('Reset analytics failed: Invalid nonce. Expected: vehicle_lookup_admin_nonce, Received nonce: ' . $_POST['nonce']);
+            wp_send_json_error(array(
+                'message' => 'Security check failed'
+            ));
+            return;
+        }
 
         global $wpdb;
+
+        if (!$wpdb) {
+            error_log('Reset analytics failed: Database connection not available');
+            wp_send_json_error(array(
+                'message' => 'Database connection not available'
+            ));
+            return;
+        }
+
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
 
         // Check if table exists first
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
 
         if (!$table_exists) {
+            error_log('Reset analytics failed: Analytics table does not exist');
             wp_send_json_error(array(
                 'message' => 'Analytics table does not exist'
             ));
+            return;
         }
 
         // Get count before deletion for verification
@@ -766,10 +804,15 @@ class Vehicle_Lookup_Admin {
             // Clear any cached data
             wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
 
+            // Log success
+            error_log("Successfully reset analytics data. Deleted {$count_before} records.");
+
             wp_send_json_success(array(
                 'message' => "Successfully deleted {$count_before} records"
             ));
         } else {
+            // Log the database error
+            error_log('Reset analytics failed: Failed to delete data. Database error: ' . $wpdb->last_error);
             wp_send_json_error(array(
                 'message' => 'Failed to reset analytics data. Database error: ' . $wpdb->last_error
             ));

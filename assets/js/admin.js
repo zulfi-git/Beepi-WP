@@ -21,19 +21,19 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     const data = response.data;
                     let statusClass = 'ok';
-                    
+
                     if (data.health_data && data.health_data.status === 'degraded') {
                         statusClass = 'warning';
                     }
-                    
+
                     statusDiv.html(
                         '<span class="status-indicator ' + statusClass + '">●</span> ' + data.message
                     );
-                    
+
                     if (data.details) {
                         detailsDiv.html('<small>' + data.details + '</small>').show();
                     }
-                    
+
                     if (data.health_data) {
                         displayHealthData(data.health_data);
                     }
@@ -80,6 +80,18 @@ jQuery(document).ready(function($) {
         const button = $(this);
         const originalText = button.html();
 
+        // Check if we have the necessary variables
+        if (typeof vehicleLookupAdmin === 'undefined') {
+            alert('Error: WordPress AJAX not properly configured. Please check if you are in a WordPress environment.');
+            button.prop('disabled', false).html(originalText);
+            return;
+        }
+
+        // Debug logging
+        console.log('Starting analytics reset...');
+        console.log('AJAX URL:', vehicleLookupAdmin.ajaxurl);
+        console.log('Nonce:', vehicleLookupAdmin.nonce);
+
         button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...');
 
         $.ajax({
@@ -89,18 +101,25 @@ jQuery(document).ready(function($) {
                 action: 'reset_analytics_data',
                 nonce: vehicleLookupAdmin.nonce
             },
+            beforeSend: function(xhr) {
+                console.log('Sending AJAX request...');
+            },
             success: function(response) {
+                console.log('AJAX response received:', response);
                 if (response.success) {
                     alert('Analytics data has been successfully reset: ' + response.data.message);
                     location.reload();
                 } else {
                     alert('Error resetting analytics data: ' + (response.data ? response.data.message : 'Unknown error'));
+                    console.error('Error details:', response.data);
                 }
             },
             error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
                 alert('Connection error while resetting analytics data: ' + error);
             },
             complete: function() {
+                console.log('AJAX request complete.');
                 button.prop('disabled', false).html(originalText);
             }
         });
@@ -126,13 +145,13 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     const healthData = response.data.health_data;
                     let statusClass = 'ok';
-                    
+
                     if (healthData.status === 'degraded') {
                         statusClass = 'warning';
                     }
-                    
+
                     statusDiv.html('<span class="status-indicator ' + statusClass + '">●</span> Upstream: ' + healthData.status);
-                    
+
                     if (healthData.upstream) {
                         const upstream = healthData.upstream;
                         let upstreamMsg = 'Vegvesen API: ' + upstream.status;
@@ -141,7 +160,7 @@ jQuery(document).ready(function($) {
                         }
                         detailsDiv.html('<small>' + upstreamMsg + '</small>').show();
                     }
-                    
+
                     displayHealthData(healthData);
                 } else {
                     statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
@@ -163,7 +182,7 @@ jQuery(document).ready(function($) {
         if (healthData.correlationId) {
             console.log('Health Check Correlation ID:', healthData.correlationId);
         }
-        
+
         // You can add more detailed health data display here if needed
         if (healthData.circuitBreaker && healthData.circuitBreaker.state !== 'CLOSED') {
             console.warn('Circuit Breaker State:', healthData.circuitBreaker.state);
