@@ -661,7 +661,7 @@ class Vehicle_Lookup_Admin {
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
 
-        $response = wp_remote_post($worker_url . '/report', array(
+        $response = wp_remote_post($worker_url . '/lookup', array(
             'headers' => array(
                 'Content-Type' => 'application/json',
                 'Origin' => get_site_url()
