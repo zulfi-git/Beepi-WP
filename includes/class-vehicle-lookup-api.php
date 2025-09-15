@@ -4,7 +4,7 @@ class VehicleLookupAPI {
     /**
      * Make API request to worker
      */
-    public function lookup($regNumber, $tier) {
+    public function lookup($regNumber) {
         $start_time = microtime(true);
         
         // Get worker URL and timeout from admin settings
@@ -17,8 +17,7 @@ class VehicleLookupAPI {
                 'Origin' => get_site_url()
             ),
             'body' => json_encode(array(
-                'registrationNumber' => $regNumber,
-                'tier' => $tier
+                'registrationNumber' => $regNumber
             )),
             'timeout' => $timeout
         ));

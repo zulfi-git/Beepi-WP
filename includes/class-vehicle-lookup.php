@@ -148,8 +148,8 @@ class Vehicle_Lookup {
         // Determine tier based on user's purchase status
         $tier = $this->access->determine_tier($regNumber);
 
-        // Make API request
-        $api_result = $this->api->lookup($regNumber, $tier);
+        // Make API request (tier handled internally by WordPress)
+        $api_result = $this->api->lookup($regNumber);
         $response_time = $api_result['response_time'];
         $result = $this->api->process_response($api_result['response'], $regNumber);
 
