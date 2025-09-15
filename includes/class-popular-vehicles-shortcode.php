@@ -93,23 +93,20 @@ class Popular_Vehicles_Shortcode {
     private function get_popular_searches($limit) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-
-        return $wpdb->get_results($wpdb->prepare("
+        
+        // Validate and sanitize limit parameter
+        $limit = absint($limit);
+        if ($limit < 1 || $limit > 100) {
+            $limit = 5; // Safe default
+        }
+        
+        // Use safer separate queries to avoid complex subquery injection risks
+        $popular_regs = $wpdb->get_results($wpdb->prepare("
             SELECT 
                 reg_number,
                 COUNT(*) as search_count,
-                MAX(lookup_time) as last_searched,
-                (SELECT CONCAT(
-                    COALESCE(JSON_UNQUOTE(JSON_EXTRACT(response_data, '$.responser[0].kjoretoydata.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke')), ''),
-                    ' ',
-                    COALESCE(JSON_UNQUOTE(JSON_EXTRACT(response_data, '$.responser[0].kjoretoydata.godkjenning.tekniskGodkjenning.tekniskeData.generelt.handelsbetegnelse[0]')), '')
-                ) FROM {$table_name} l2 
-                 WHERE l2.reg_number = l1.reg_number 
-                 AND l2.success = 1 
-                 AND l2.response_data IS NOT NULL
-                 ORDER BY l2.lookup_time DESC 
-                 LIMIT 1) as vehicle_info
-            FROM {$table_name} l1
+                MAX(lookup_time) as last_searched
+            FROM {$table_name}
             WHERE reg_number IS NOT NULL 
             AND reg_number != ''
             AND success = 1
@@ -118,5 +115,25 @@ class Popular_Vehicles_Shortcode {
             ORDER BY search_count DESC
             LIMIT %d
         ", $limit));
+        
+        // Safely get vehicle info for each registration number
+        foreach ($popular_regs as $search) {
+            $vehicle_info = $wpdb->get_var($wpdb->prepare("
+                SELECT CONCAT(
+                    COALESCE(JSON_UNQUOTE(JSON_EXTRACT(response_data, '$.responser[0].kjoretoydata.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke')), ''),
+                    ' ',
+                    COALESCE(JSON_UNQUOTE(JSON_EXTRACT(response_data, '$.responser[0].kjoretoydata.godkjenning.tekniskGodkjenning.tekniskeData.generelt.handelsbetegnelse[0]')), '')
+                ) FROM {$table_name}
+                WHERE reg_number = %s
+                AND success = 1 
+                AND response_data IS NOT NULL
+                ORDER BY lookup_time DESC 
+                LIMIT 1
+            ", $search->reg_number));
+            
+            $search->vehicle_info = $vehicle_info;
+        }
+        
+        return $popular_regs;
     }
 }

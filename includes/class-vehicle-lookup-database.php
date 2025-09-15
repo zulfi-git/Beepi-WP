@@ -27,6 +27,7 @@ class Vehicle_Lookup_Database {
             tier varchar(10) DEFAULT 'free',
             response_time_ms int,
             cached tinyint(1) DEFAULT 0,
+            response_data longtext DEFAULT NULL,
             PRIMARY KEY (id),
             KEY idx_reg_number (reg_number),
             KEY idx_lookup_time (lookup_time),
@@ -43,6 +44,9 @@ class Vehicle_Lookup_Database {
         
         // Ensure tier column exists for existing installations
         $this->add_tier_column();
+        
+        // Ensure response_data column exists for existing installations
+        $this->add_response_data_column();
     }
 
     /**
@@ -84,10 +88,54 @@ class Vehicle_Lookup_Database {
     }
 
     /**
+     * Add response_data column to existing table if it doesn't exist
+     */
+    private function add_response_data_column() {
+        $column_exists = $this->wpdb->get_results(
+            $this->wpdb->prepare(
+                "SHOW COLUMNS FROM {$this->table_name} LIKE %s",
+                'response_data'
+            )
+        );
+
+        if (empty($column_exists)) {
+            $this->wpdb->query(
+                "ALTER TABLE {$this->table_name} 
+                ADD COLUMN response_data longtext DEFAULT NULL AFTER cached"
+            );
+        }
+    }
+
+    /**
      * Log a lookup attempt
      */
-    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null, $tier = 'free') {
-        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null, $tier = 'free', $response_data = null) {
+        // Safely sanitize user agent to prevent injection
+        $user_agent = '';
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            // Use WordPress function if available, otherwise basic sanitization
+            if (function_exists('sanitize_text_field')) {
+                $user_agent = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+            } else {
+                // Basic sanitization fallback
+                $user_agent = strip_tags($_SERVER['HTTP_USER_AGENT']);
+                $user_agent = preg_replace('/[^\w\s\-\.\(\)\/]/', '', $user_agent);
+            }
+            // Additional length limiting for security
+            $user_agent = substr($user_agent, 0, 500);
+        }
+        
+        // Validate and sanitize all inputs
+        $reg_number = function_exists('sanitize_text_field') ? sanitize_text_field($reg_number) : strip_tags($reg_number);
+        $ip_address = filter_var($ip_address, FILTER_VALIDATE_IP) ? $ip_address : '';
+        $tier = in_array($tier, ['free', 'premium', 'business']) ? $tier : 'free';
+        $failure_type = $failure_type ? (function_exists('sanitize_text_field') ? sanitize_text_field($failure_type) : strip_tags($failure_type)) : null;
+        $response_time_ms = is_numeric($response_time_ms) ? absint($response_time_ms) : null;
+        
+        // Validate and sanitize response_data if provided
+        if ($response_data !== null) {
+            $response_data = is_string($response_data) ? $response_data : wp_json_encode($response_data);
+        }
         
         return $this->wpdb->insert(
             $this->table_name,
@@ -95,15 +143,16 @@ class Vehicle_Lookup_Database {
                 'reg_number' => strtoupper($reg_number),
                 'ip_address' => $ip_address,
                 'user_agent' => $user_agent,
-                'lookup_time' => current_time('mysql'),
+                'lookup_time' => function_exists('current_time') ? current_time('mysql') : date('Y-m-d H:i:s'),
                 'success' => $success ? 1 : 0,
-                'error_message' => $error_message,
+                'error_message' => $error_message ? (function_exists('sanitize_text_field') ? sanitize_text_field($error_message) : strip_tags($error_message)) : null,
                 'failure_type' => $failure_type,
                 'tier' => $tier,
                 'response_time_ms' => $response_time_ms,
-                'cached' => $cached ? 1 : 0
+                'cached' => $cached ? 1 : 0,
+                'response_data' => $response_data
             ),
-            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%d')
+            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%s')
         );
     }
 
@@ -153,8 +202,21 @@ class Vehicle_Lookup_Database {
      * Get hourly rate limit usage for IP
      */
     public function get_hourly_rate_limit($ip_address, $hour) {
-        $start_time = $hour . ':00:00';
-        $end_time = $hour . ':59:59';
+        // Validate IP address
+        if (!filter_var($ip_address, FILTER_VALIDATE_IP)) {
+            return 0;
+        }
+        
+        // Validate hour format (should be HH format like "14" for 2 PM)
+        if (!preg_match('/^\d{1,2}$/', $hour) || intval($hour) < 0 || intval($hour) > 23) {
+            return 0;
+        }
+        
+        // Use current date with validated hour
+        $current_date = function_exists('current_time') ? current_time('Y-m-d') : date('Y-m-d');
+        $hour = str_pad(intval($hour), 2, '0', STR_PAD_LEFT);
+        $start_time = $current_date . ' ' . $hour . ':00:00';
+        $end_time = $current_date . ' ' . $hour . ':59:59';
         
         $sql = "SELECT COUNT(*) FROM {$this->table_name} 
         WHERE ip_address = %s AND lookup_time >= %s AND lookup_time <= %s";
@@ -168,6 +230,11 @@ class Vehicle_Lookup_Database {
      * Get daily quota usage
      */
     public function get_daily_quota($date) {
+        // Validate date format (YYYY-MM-DD)
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !strtotime($date)) {
+            $date = function_exists('current_time') ? current_time('Y-m-d') : date('Y-m-d'); // Use current date if invalid
+        }
+        
         $start_date = $date . ' 00:00:00';
         $end_date = $date . ' 23:59:59';
         
@@ -198,7 +265,16 @@ class Vehicle_Lookup_Database {
      * Clean up old logs (older than specified days)
      */
     public function cleanup_old_logs($days = 90) {
-        $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$days} days"));
+        // Validate days parameter to prevent injection
+        $days = absint($days);
+        if ($days < 1 || $days > 3650) { // Max 10 years
+            $days = 90; // Safe default
+        }
+        
+        // Use safer date calculation
+        $cutoff_date = function_exists('current_time') ? current_time('mysql', true) : gmdate('Y-m-d H:i:s');
+        $cutoff_timestamp = strtotime($cutoff_date) - ($days * 24 * 60 * 60);
+        $cutoff_date = date('Y-m-d H:i:s', $cutoff_timestamp);
         
         return $this->wpdb->query(
             $this->wpdb->prepare(
