@@ -80,7 +80,7 @@ jQuery(document).ready(function($) {
         const button = $(this);
         const originalText = button.html();
 
-        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...ng...');
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: rotation 1s infinite linear;"></span> Resetting...');
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
