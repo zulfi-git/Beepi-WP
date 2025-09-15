@@ -37,23 +37,6 @@ class Vehicle_Lookup_Helpers {
             return strtoupper(sanitize_text_field($_GET['reg']));
         }
         
-        // Check URL path for registration number as fallback
-        $request_uri = $_SERVER['REQUEST_URI'];
-        $path_parts = explode('/', trim($request_uri, '/'));
-        
-        // Look for registration number in the last part of the path
-        if (!empty($path_parts)) {
-            $last_part = end($path_parts);
-            // Remove query string if present
-            $last_part = explode('?', $last_part)[0];
-            
-            foreach (self::get_valid_patterns() as $pattern) {
-                if (preg_match($pattern, $last_part)) {
-                    return strtoupper(sanitize_text_field($last_part));
-                }
-            }
-        }
-        
         return '';
     }
 
