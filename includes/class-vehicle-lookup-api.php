@@ -73,13 +73,13 @@ class VehicleLookupAPI {
                     // Map API error codes to user-friendly messages
                     switch ($error_code) {
                         case 'KJENNEMERKE_UKJENT':
-                            return array('error' => 'Fant ingen kjøretøy med dette registreringsnummeret', 'failure_type' => 'invalid_plate');
+                            return array('error' => 'Registreringsnummeret finnes ikke i det norske kjøretøyregisteret', 'failure_type' => 'invalid_plate');
                         case 'KJENNEMERKE_UGYLDIG':
                             return array('error' => 'Ugyldig registreringsnummer format', 'failure_type' => 'invalid_plate');
                         case 'TJENESTE_IKKE_TILGJENGELIG':
-                            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket', 'failure_type' => 'http_error');
+                            return array('error' => 'Vegvesenets tjeneste er ikke tilgjengelig for øyeblikket', 'failure_type' => 'http_error');
                         default:
-                            return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
+                            return array('error' => 'Kunne ikke hente kjøretøyinformasjon. Sjekk at registreringsnummeret er korrekt', 'failure_type' => 'invalid_plate');
                     }
                 }
 

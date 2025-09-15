@@ -86,7 +86,7 @@ jQuery(document).ready(function($) {
             url: vehicleLookupAdmin.ajaxurl,
             type: 'POST',
             data: {
-                action: 'vehicle_lookup_reset_analytics',
+                action: 'reset_analytics_data',
                 nonce: vehicleLookupAdmin.nonce
             },
             success: function(response) {
