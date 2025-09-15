@@ -7,10 +7,10 @@ class Vehicle_Lookup_Admin {
         add_action('admin_init', array($this, 'init_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
-        add_action('wp_ajax_vehicle_lookup_reset_analytics', array($this, 'reset_analytics_data'));
-        add_action('wp_ajax_clear_vehicle_cache', array($this, 'handle_clear_cache'));
+        add_action('wp_ajax_vehicle_lookup_check_upstream', array($this, 'check_upstream_health'));
         add_action('wp_ajax_clear_worker_cache', array($this, 'handle_clear_worker_cache'));
         add_action('wp_ajax_clear_local_cache', array($this, 'handle_clear_local_cache'));
+        add_action('wp_ajax_reset_analytics_data', array($this, 'reset_analytics_data'));
 
         // Ensure database table exists
         $this->ensure_database_table();
@@ -245,6 +245,7 @@ class Vehicle_Lookup_Admin {
                                 <span class="status-indicator checking">●</span> Checking...
                             </div>
                             <button type="button" class="button button-secondary" id="test-api">Test Connection</button>
+                            <button type="button" class="button button-secondary" id="check-upstream">Check Upstream</button>
                         </div>
                     </div>
                 </div>
@@ -342,14 +343,14 @@ class Vehicle_Lookup_Admin {
                         </button>
                         <p class="description" style="margin-top: 5px; max-width: 200px;">Permanently delete all historical lookup data and statistics.</p>
                     </div>
-                    
+
                     <div>
                         <button type="button" class="button button-secondary" id="clear-worker-cache">
                             <span class="dashicons dashicons-cloud" style="margin-top: 3px;"></span> Clear Worker Cache
                         </button>
                         <p class="description" style="margin-top: 5px; max-width: 200px;">Clear cached data on the remote worker server.</p>
                     </div>
-                    
+
                     <div>
                         <button type="button" class="button button-secondary" id="clear-local-cache">
                             <span class="dashicons dashicons-performance" style="margin-top: 3px;"></span> Clear Local Cache
@@ -694,6 +695,49 @@ class Vehicle_Lookup_Admin {
             ));
         }
     }
+
+    public function check_upstream_health() {
+        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
+
+        $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
+        $timeout = get_option('vehicle_lookup_timeout', 15);
+
+        $response = wp_remote_post($worker_url . '/health', array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+                'Origin' => get_site_url()
+            ),
+            'body' => json_encode(array(
+                'checkUpstream' => true
+            )),
+            'timeout' => $timeout
+        ));
+
+        if (is_wp_error($response)) {
+            wp_send_json_error(array(
+                'message' => 'Upstream check failed: ' . $response->get_error_message(),
+                'status' => 'degraded'
+            ));
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if ($status_code === 200 && isset($body['status']) && $body['status'] === 'healthy') {
+            wp_send_json_success(array(
+                'message' => 'Upstream service is healthy.',
+                'status' => 'healthy',
+                'details' => $body
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => 'Upstream service is degraded or check failed.',
+                'status' => isset($body['status']) ? $body['status'] : 'unknown',
+                'details' => $body
+            ));
+        }
+    }
+
 
     public function reset_analytics_data() {
         check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');

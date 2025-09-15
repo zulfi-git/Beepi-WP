@@ -1,12 +1,14 @@
 jQuery(document).ready(function($) {
 
-    // Test API connectivity
+    // Test API connectivity with health check
     $('#test-api').on('click', function() {
         const button = $(this);
         const statusDiv = $('#api-status');
+        const detailsDiv = $('#api-details');
 
-        button.prop('disabled', true).text('Testing...');
-        statusDiv.html('<span class="status-indicator checking">●</span> Testing connection...');
+        button.prop('disabled', true).text('Checking...');
+        statusDiv.html('<span class="status-indicator checking">●</span> Checking health...');
+        detailsDiv.hide();
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
@@ -17,20 +19,35 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
+                    const data = response.data;
+                    let statusClass = 'ok';
+                    
+                    if (data.health_data && data.health_data.status === 'degraded') {
+                        statusClass = 'warning';
+                    }
+                    
                     statusDiv.html(
-                        '<span class="status-indicator ok">●</span> ' +
-                        response.data.message +
-                        (response.data.response_time ? ' (' + response.data.response_time + ')' : '')
+                        '<span class="status-indicator ' + statusClass + '">●</span> ' + data.message
                     );
+                    
+                    if (data.details) {
+                        detailsDiv.html('<small>' + data.details + '</small>').show();
+                    }
+                    
+                    if (data.health_data) {
+                        displayHealthData(data.health_data);
+                    }
                 } else {
                     statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
+                    detailsDiv.hide();
                 }
             },
             error: function() {
                 statusDiv.html('<span class="status-indicator error">●</span> Connection test failed');
+                detailsDiv.hide();
             },
             complete: function() {
-                button.prop('disabled', false).text('Test Connection');
+                button.prop('disabled', false).text('Health Check');
             }
         });
     });
@@ -88,6 +105,70 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    // Check upstream health
+    $('#check-upstream').on('click', function() {
+        const button = $(this);
+        const statusDiv = $('#api-status');
+        const detailsDiv = $('#api-details');
+
+        button.prop('disabled', true).text('Checking...');
+        statusDiv.html('<span class="status-indicator checking">●</span> Checking upstream...');
+
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vehicle_lookup_check_upstream',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    const healthData = response.data.health_data;
+                    let statusClass = 'ok';
+                    
+                    if (healthData.status === 'degraded') {
+                        statusClass = 'warning';
+                    }
+                    
+                    statusDiv.html('<span class="status-indicator ' + statusClass + '">●</span> Upstream: ' + healthData.status);
+                    
+                    if (healthData.upstream) {
+                        const upstream = healthData.upstream;
+                        let upstreamMsg = 'Vegvesen API: ' + upstream.status;
+                        if (upstream.responseTime) {
+                            upstreamMsg += ' (' + upstream.responseTime + 'ms)';
+                        }
+                        detailsDiv.html('<small>' + upstreamMsg + '</small>').show();
+                    }
+                    
+                    displayHealthData(healthData);
+                } else {
+                    statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
+                    detailsDiv.hide();
+                }
+            },
+            error: function() {
+                statusDiv.html('<span class="status-indicator error">●</span> Upstream check failed');
+                detailsDiv.hide();
+            },
+            complete: function() {
+                button.prop('disabled', false).text('Check Upstream');
+            }
+        });
+    });
+
+    // Helper function to display health data
+    function displayHealthData(healthData) {
+        if (healthData.correlationId) {
+            console.log('Health Check Correlation ID:', healthData.correlationId);
+        }
+        
+        // You can add more detailed health data display here if needed
+        if (healthData.circuitBreaker && healthData.circuitBreaker.state !== 'CLOSED') {
+            console.warn('Circuit Breaker State:', healthData.circuitBreaker.state);
+        }
+    }
 
     // Clear worker cache
     $('#clear-worker-cache').on('click', function() {
