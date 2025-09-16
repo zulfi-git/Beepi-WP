@@ -143,25 +143,39 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    const healthData = response.data.health_data;
+                    const healthData = response.data.health_data || response.data.details || response.data;
                     let statusClass = 'ok';
+                    let statusText = 'healthy';
 
-                    if (healthData.status === 'degraded') {
-                        statusClass = 'warning';
+                    if (healthData && healthData.status) {
+                        statusText = healthData.status;
+                        if (healthData.status === 'degraded') {
+                            statusClass = 'warning';
+                        }
+                    } else {
+                        // Fallback based on response structure
+                        statusText = response.data.status || 'healthy';
+                        if (statusText === 'degraded') {
+                            statusClass = 'warning';
+                        }
                     }
 
-                    statusDiv.html('<span class="status-indicator ' + statusClass + '">●</span> Upstream: ' + healthData.status);
+                    statusDiv.html('<span class="status-indicator ' + statusClass + '">●</span> Upstream: ' + statusText);
 
-                    if (healthData.upstream) {
+                    if (healthData && healthData.upstream) {
                         const upstream = healthData.upstream;
                         let upstreamMsg = 'Vegvesen API: ' + upstream.status;
                         if (upstream.responseTime) {
                             upstreamMsg += ' (' + upstream.responseTime + 'ms)';
                         }
                         detailsDiv.html('<small>' + upstreamMsg + '</small>').show();
+                    } else {
+                        detailsDiv.hide();
                     }
 
-                    displayHealthData(healthData);
+                    if (healthData) {
+                        displayHealthData(healthData);
+                    }
                 } else {
                     statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
                     detailsDiv.hide();

@@ -722,17 +722,17 @@ class Vehicle_Lookup_Admin {
         $status_code = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
-        if ($status_code === 200 && isset($body['status']) && $body['status'] === 'healthy') {
+        if ($status_code === 200 && isset($body['status'])) {
             wp_send_json_success(array(
-                'message' => 'Upstream service is healthy.',
-                'status' => 'healthy',
-                'details' => $body
+                'message' => 'Upstream check completed.',
+                'health_data' => $body,
+                'status' => $body['status']
             ));
         } else {
             wp_send_json_error(array(
-                'message' => 'Upstream service is degraded or check failed.',
-                'status' => isset($body['status']) ? $body['status'] : 'unknown',
-                'details' => $body
+                'message' => 'Upstream service check failed.',
+                'health_data' => $body ?: array('status' => 'unknown'),
+                'status' => isset($body['status']) ? $body['status'] : 'unknown'
             ));
         }
     }
