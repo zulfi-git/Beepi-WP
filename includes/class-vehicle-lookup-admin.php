@@ -688,50 +688,25 @@ class Vehicle_Lookup_Admin {
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
 
-        // Log the health check attempt
-        error_log("Vehicle Lookup: Starting health check to {$worker_url}/health");
-
-        // Use GET method for health endpoint as documented
         $response = wp_remote_get($worker_url . '/health', array(
             'headers' => array(
-                'Origin' => get_site_url(),
-                'User-Agent' => 'WordPress Vehicle Lookup Plugin/' . VEHICLE_LOOKUP_VERSION
+                'Origin' => get_site_url()
             ),
-            'timeout' => $timeout,
-            'sslverify' => true
+            'timeout' => $timeout
         ));
 
         if (is_wp_error($response)) {
-            $error_message = $response->get_error_message();
-            error_log("Vehicle Lookup: Health check failed - " . $error_message);
-            wp_send_json_error(array(
-                'message' => 'Connection failed: ' . $error_message,
-                'error_code' => $response->get_error_code()
-            ));
+            wp_send_json_error('Connection failed: ' . $response->get_error_message());
             return;
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
         $raw_body = wp_remote_retrieve_body($response);
-        $body = json_decode($raw_body, true);
 
-        error_log("Vehicle Lookup: Health check response - Status: {$status_code}, Body length: " . strlen($raw_body));
-
-        if ($status_code === 200 && isset($body['status'])) {
-            wp_send_json_success(array(
-                'message' => 'Cloudflare Worker is responding correctly',
-                'status_code' => $status_code,
-                'health_data' => $body,
-                'status' => $body['status'],
-                'timestamp' => current_time('mysql')
-            ));
+        if ($status_code === 200) {
+            wp_send_json_success(json_decode($raw_body, true));
         } else {
-            error_log("Vehicle Lookup: Health check failed - Status: {$status_code}, Body: " . $raw_body);
-            wp_send_json_error(array(
-                'message' => 'Health check failed with status code: ' . $status_code,
-                'status_code' => $status_code,
-                'raw_response' => $raw_body
-            ));
+            wp_send_json_error('Health check failed with status: ' . $status_code);
         }
     }
 

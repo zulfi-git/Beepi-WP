@@ -31,50 +31,22 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    const data = response.data;
-                    const healthData = data.health_data;
-                    
-                    // Update Cloudflare status
-                    let cloudflareStatusClass = 'ok';
-                    let cloudflareStatusText = 'Online';
+                    const healthData = response.data;
 
-                    if (healthData && healthData.status === 'degraded') {
-                        cloudflareStatusClass = 'warning';
-                        cloudflareStatusText = 'Degraded';
-                    }
+                    // Display raw JSON
+                    detailsDiv.html('<pre>' + JSON.stringify(healthData, null, 2) + '</pre>').show();
 
-                    cloudflareStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass(cloudflareStatusClass);
-                    cloudflareStatusDiv.find('.status-text').text(cloudflareStatusText);
-
-                    // Update Vegvesen status based on circuit breaker
-                    let vegvesenStatusClass = 'ok';
-                    let vegvesenStatusText = 'Online';
-                    
-                    if (healthData && healthData.circuitBreaker) {
-                        const cbState = healthData.circuitBreaker.state;
-                        if (cbState === 'OPEN') {
-                            vegvesenStatusClass = 'error';
-                            vegvesenStatusText = 'Unavailable';
-                        } else if (cbState === 'HALF_OPEN') {
-                            vegvesenStatusClass = 'warning';
-                            vegvesenStatusText = 'Recovering';
-                        }
-                    }
-
-                    vegvesenStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass(vegvesenStatusClass);
-                    vegvesenStatusDiv.find('.status-text').text(vegvesenStatusText);
-
-                    // Display monitoring data
-                    if (healthData) {
-                        const monitoringData = extractMonitoringData(healthData);
-                        displayMonitoringData(monitoringData);
-                    }
+                    // Simple status indicators
+                    cloudflareStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass('ok');
+                    cloudflareStatusDiv.find('.status-text').text('Online');
+                    vegvesenStatusDiv.find('.status-light').removeClass('checking ok error warning unknown').addClass('ok');
+                    vegvesenStatusDiv.find('.status-text').text('Connected');
                 } else {
                     cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
                     cloudflareStatusDiv.find('.status-text').text('Error');
                     vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
                     vegvesenStatusDiv.find('.status-text').text('Unknown');
-                    detailsDiv.html('<small>Health check failed: ' + response.data.message + '</small>').show();
+                    detailsDiv.html('<small>Health check failed</small>').show();
                 }
             },
             error: function(xhr, status, error) {
@@ -83,30 +55,30 @@ jQuery(document).ready(function($) {
                 cloudflareStatusDiv.find('.status-text').text('Connection Failed');
                 vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
                 vegvesenStatusDiv.find('.status-text').text('Unknown');
-                
+
                 let errorMsg = 'Connection failed';
                 if (status === 'timeout') {
                     errorMsg = 'Request timed out (15s)';
                 } else if (status === 'error') {
                     errorMsg = 'Network error: ' + error;
                 }
-                
+
                 detailsDiv.html('<small style="color: #dc3232;">' + errorMsg + '</small>').show();
             }
         });
     }
 
-    
+
 
     function displayCachedHealthData(cachedData) {
         const statusDiv = $('#vegvesen-status');
         const healthData = cachedData.health_data;
         const monitoringData = cachedData.monitoring_data;
-        
+
         // Display status based on cached data
         let statusClass = 'unknown';
         let statusText = 'Unknown';
-        
+
         if (healthData && healthData.status) {
             if (healthData.status === 'healthy') {
                 statusClass = 'ok';
@@ -116,20 +88,20 @@ jQuery(document).ready(function($) {
                 statusText = 'Degraded';
             }
         }
-        
+
         statusDiv.find('.status-light').removeClass('checking ok warning error').addClass(statusClass);
         statusDiv.find('.status-text').text(statusText + ' (cached)');
-        
+
         // Display cached monitoring data
         displayMonitoringData(monitoringData);
-        
+
         console.log('Using cached health data (expires in ' + 
                    Math.round((HEALTH_CACHE_DURATION - (Date.now() - healthCheckCacheTime)) / 1000) + 's)');
     }
 
     function extractMonitoringData(healthData) {
         const monitoringData = {};
-        
+
         // Rate limiting information
         if (healthData.rateLimiting) {
             const rl = healthData.rateLimiting;
@@ -143,7 +115,7 @@ jQuery(document).ready(function($) {
                 active_ips_burst: (rl.activeIPsTracked && rl.activeIPsTracked.burst) || 0
             };
         }
-        
+
         // Cache information
         if (healthData.cache) {
             const cache = healthData.cache;
@@ -155,7 +127,7 @@ jQuery(document).ready(function($) {
                     Math.round((cache.entries / cache.maxSize) * 100) : 0
             };
         }
-        
+
         // Circuit breaker status
         if (healthData.circuitBreaker) {
             const cb = healthData.circuitBreaker;
@@ -167,13 +139,13 @@ jQuery(document).ready(function($) {
                 last_failure: cb.lastFailure
             };
         }
-        
+
         return monitoringData;
     }
 
     function displayMonitoringData(monitoringData) {
         const monitoringDiv = $('#monitoring-data');
-        
+
         if (!monitoringData || Object.keys(monitoringData).length === 0) {
             monitoringDiv.hide();
             return;
@@ -181,7 +153,7 @@ jQuery(document).ready(function($) {
 
         let html = '<div class="monitoring-details">';
         html += '<h4 style="margin: 0 0 10px 0; color: #374151;">Live Metrics</h4>';
-        
+
         // Rate limiting information
         if (monitoringData.rate_limiting) {
             const rl = monitoringData.rate_limiting;
@@ -195,7 +167,7 @@ jQuery(document).ready(function($) {
             html += '<strong>Active IPs:</strong> ' + rl.active_ips_hourly + ' hourly, ' + rl.active_ips_burst + ' burst';
             html += '</div>';
         }
-        
+
         // Cache information
         if (monitoringData.cache) {
             const cache = monitoringData.cache;
@@ -203,7 +175,7 @@ jQuery(document).ready(function($) {
             html += '<strong>Cache:</strong> ' + cache.entries + '/' + cache.max_size + ' entries (' + cache.utilization + '%)';
             html += '</div>';
         }
-        
+
         // Circuit breaker status
         if (monitoringData.circuit_breaker) {
             const cb = monitoringData.circuit_breaker;
@@ -220,13 +192,13 @@ jQuery(document).ready(function($) {
                 html += '</div>';
             }
         }
-        
+
         html += '</div>';
-        
+
         monitoringDiv.html(html).show();
 
         let html = '<div class="monitoring-details">';
-        
+
         // Quota Usage
         if (monitoringData.quota_usage) {
             const quota = monitoringData.quota_usage;
@@ -259,7 +231,7 @@ jQuery(document).ready(function($) {
         }
 
         html += '</div>';
-        
+
         monitoringDiv.html(html).show();
     }
 
@@ -269,7 +241,7 @@ jQuery(document).ready(function($) {
         setTimeout(function() {
             checkServiceStatus();
         }, 500);
-        
+
         // Also check every 30 seconds
         setInterval(function() {
             if ($('#cloudflare-status').length) {
@@ -344,7 +316,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    
+
 
     // Helper function to display health data
     function displayHealthData(healthData) {
