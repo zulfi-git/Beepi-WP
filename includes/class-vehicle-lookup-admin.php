@@ -685,14 +685,11 @@ class Vehicle_Lookup_Admin {
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
 
-        $response = wp_remote_post($worker_url . '/lookup', array(
+        // Use GET method for health endpoint as documented
+        $response = wp_remote_get($worker_url . '/health', array(
             'headers' => array(
-                'Content-Type' => 'application/json',
                 'Origin' => get_site_url()
             ),
-            'body' => json_encode(array(
-                'registrationNumber' => 'CO10101'
-            )),
             'timeout' => $timeout
         ));
 
@@ -703,17 +700,18 @@ class Vehicle_Lookup_Admin {
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
-        $response_time = wp_remote_retrieve_header($response, 'X-Response-Time');
+        $body = json_decode(wp_remote_retrieve_body($response), true);
 
-        if ($status_code === 200) {
+        if ($status_code === 200 && isset($body['status'])) {
             wp_send_json_success(array(
-                'message' => 'API is responding correctly',
+                'message' => 'Cloudflare Worker is responding correctly',
                 'status_code' => $status_code,
-                'response_time' => $response_time ?: 'Unknown'
+                'health_data' => $body,
+                'status' => $body['status']
             ));
         } else {
             wp_send_json_error(array(
-                'message' => 'API returned status code: ' . $status_code,
+                'message' => 'Health check failed with status code: ' . $status_code,
                 'status_code' => $status_code
             ));
         }

@@ -3,15 +3,18 @@ jQuery(document).ready(function($) {
     // Auto-check service status on page load
     function checkServiceStatus() {
         checkCloudflareStatus();
-        // Vegvesen status will be updated when Cloudflare check completes
     }
 
     function checkCloudflareStatus() {
-        const statusDiv = $('#cloudflare-status');
+        const cloudflareStatusDiv = $('#cloudflare-status');
+        const vegvesenStatusDiv = $('#vegvesen-status');
         const detailsDiv = $('#api-details');
 
-        statusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
-        statusDiv.find('.status-text').text('Checking...');
+        // Set both to checking state
+        cloudflareStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
+        cloudflareStatusDiv.find('.status-text').text('Checking...');
+        vegvesenStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
+        vegvesenStatusDiv.find('.status-text').text('Checking...');
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
@@ -23,127 +26,62 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     const data = response.data;
-                    let statusClass = 'ok';
-                    let statusText = 'Online';
+                    const healthData = data.health_data;
+                    
+                    // Update Cloudflare status
+                    let cloudflareStatusClass = 'ok';
+                    let cloudflareStatusText = 'Online';
 
-                    if (data.health_data && data.health_data.status === 'degraded') {
-                        statusClass = 'warning';
-                        statusText = 'Degraded';
+                    if (healthData && healthData.status === 'degraded') {
+                        cloudflareStatusClass = 'warning';
+                        cloudflareStatusText = 'Degraded';
                     }
 
-                    statusDiv.find('.status-light').removeClass('checking ok error warning').addClass(statusClass);
-                    statusDiv.find('.status-text').text(statusText);
+                    cloudflareStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass(cloudflareStatusClass);
+                    cloudflareStatusDiv.find('.status-text').text(cloudflareStatusText);
 
-                    if (data.details || (data.response_time && data.response_time !== 'Unknown')) {
-                        let details = 'Cloudflare Worker: ' + statusText;
-                        if (data.response_time && data.response_time !== 'Unknown') {
-                            details += ' (' + data.response_time + ')';
+                    // Update Vegvesen status based on circuit breaker
+                    let vegvesenStatusClass = 'ok';
+                    let vegvesenStatusText = 'Online';
+                    
+                    if (healthData && healthData.circuitBreaker) {
+                        const cbState = healthData.circuitBreaker.state;
+                        if (cbState === 'OPEN') {
+                            vegvesenStatusClass = 'error';
+                            vegvesenStatusText = 'Unavailable';
+                        } else if (cbState === 'HALF_OPEN') {
+                            vegvesenStatusClass = 'warning';
+                            vegvesenStatusText = 'Recovering';
                         }
-                        detailsDiv.html('<small>' + details + '</small>').show();
                     }
 
-                    // Now check upstream
-                    if (data.health_data) {
-                        displayHealthData(data.health_data);
-                        checkUpstreamStatus();
+                    vegvesenStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass(vegvesenStatusClass);
+                    vegvesenStatusDiv.find('.status-text').text(vegvesenStatusText);
+
+                    // Display monitoring data
+                    if (healthData) {
+                        const monitoringData = extractMonitoringData(healthData);
+                        displayMonitoringData(monitoringData);
                     }
                 } else {
-                    statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                    statusDiv.find('.status-text').text('Error');
-                    detailsDiv.html('<small>Cloudflare Worker: ' + response.data.message + '</small>').show();
+                    cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+                    cloudflareStatusDiv.find('.status-text').text('Error');
+                    vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+                    vegvesenStatusDiv.find('.status-text').text('Unknown');
+                    detailsDiv.html('<small>Health check failed: ' + response.data.message + '</small>').show();
                 }
             },
             error: function() {
-                statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                statusDiv.find('.status-text').text('Offline');
-                detailsDiv.html('<small>Cloudflare Worker: Connection failed</small>').show();
+                cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+                cloudflareStatusDiv.find('.status-text').text('Offline');
+                vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+                vegvesenStatusDiv.find('.status-text').text('Unknown');
+                detailsDiv.html('<small>Connection failed to health endpoint</small>').show();
             }
         });
     }
 
-    // Cache health check results for 5 minutes as recommended
-    let healthCheckCache = null;
-    let healthCheckCacheTime = 0;
-    const HEALTH_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-    function checkUpstreamStatus() {
-        const statusDiv = $('#vegvesen-status');
-        
-        // Check if we have cached results that are still fresh
-        const now = Date.now();
-        if (healthCheckCache && (now - healthCheckCacheTime) < HEALTH_CACHE_DURATION) {
-            displayCachedHealthData(healthCheckCache);
-            return;
-        }
-
-        statusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
-        statusDiv.find('.status-text').text('Checking...');
-
-        $.ajax({
-            url: vehicleLookupAdmin.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'vehicle_lookup_check_upstream',
-                nonce: vehicleLookupAdmin.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    const healthData = response.data.health_data || response.data.details || response.data;
-                    const monitoringData = response.data.monitoring_data || {};
-                    let statusClass = 'ok';
-                    let statusText = 'Online';
-
-                    if (healthData && healthData.status) {
-                        if (healthData.status === 'degraded') {
-                            statusClass = 'warning';
-                            statusText = 'Degraded';
-                        } else if (healthData.status === 'healthy') {
-                            statusClass = 'ok';
-                            statusText = 'Online';
-                        }
-                    }
-
-                    statusDiv.find('.status-light').removeClass('checking ok error warning').addClass(statusClass);
-                    statusDiv.find('.status-text').text(statusText);
-
-                    // Display API details
-                    if (healthData && healthData.upstream && healthData.upstream.responseTime) {
-                        const detailsDiv = $('#api-details');
-                        const currentDetails = detailsDiv.html();
-                        const vegvesenDetails = 'Vegvesen API: ' + statusText + ' (' + healthData.upstream.responseTime + 'ms)';
-                        detailsDiv.html(currentDetails + '<br><small>' + vegvesenDetails + '</small>').show();
-                    }
-
-                    // Display enhanced monitoring data
-                    displayMonitoringData(monitoringData);
-                    
-                    // Cache the results
-                    healthCheckCache = response.data;
-                    healthCheckCacheTime = Date.now();
-                    
-                    // Log correlation ID if available
-                    if (response.data.correlation_id) {
-                        console.log('Health Check Correlation ID:', response.data.correlation_id);
-                    }
-                } else {
-                    statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                    statusDiv.find('.status-text').text('Error');
-                    
-                    // Clear cache on error
-                    healthCheckCache = null;
-                    healthCheckCacheTime = 0;
-                }
-            },
-            error: function() {
-                statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                statusDiv.find('.status-text').text('Unknown');
-                
-                // Clear cache on error
-                healthCheckCache = null;
-                healthCheckCacheTime = 0;
-            }
-        });
-    }
+    
 
     function displayCachedHealthData(cachedData) {
         const statusDiv = $('#vegvesen-status');
@@ -172,6 +110,50 @@ jQuery(document).ready(function($) {
         
         console.log('Using cached health data (expires in ' + 
                    Math.round((HEALTH_CACHE_DURATION - (Date.now() - healthCheckCacheTime)) / 1000) + 's)');
+    }
+
+    function extractMonitoringData(healthData) {
+        const monitoringData = {};
+        
+        // Rate limiting information
+        if (healthData.rateLimiting) {
+            const rl = healthData.rateLimiting;
+            monitoringData.rate_limiting = {
+                daily_usage: rl.globalDailyUsage || 0,
+                daily_limit: rl.globalDailyLimit || 4500,
+                daily_remaining: rl.globalDailyRemaining || 0,
+                vegvesen_quota: rl.vegvesenQuotaUsage || '0/5000',
+                quota_utilization: rl.quotaUtilization || '0%',
+                active_ips_hourly: (rl.activeIPsTracked && rl.activeIPsTracked.hourly) || 0,
+                active_ips_burst: (rl.activeIPsTracked && rl.activeIPsTracked.burst) || 0
+            };
+        }
+        
+        // Cache information
+        if (healthData.cache) {
+            const cache = healthData.cache;
+            monitoringData.cache = {
+                entries: cache.entries || 0,
+                max_size: cache.maxSize || 1000,
+                ttl: cache.ttl || 3600,
+                utilization: (cache.entries && cache.maxSize) ? 
+                    Math.round((cache.entries / cache.maxSize) * 100) : 0
+            };
+        }
+        
+        // Circuit breaker status
+        if (healthData.circuitBreaker) {
+            const cb = healthData.circuitBreaker;
+            monitoringData.circuit_breaker = {
+                state: cb.state || 'CLOSED',
+                failure_count: cb.failureCount || 0,
+                success_rate: cb.successRate || '100%',
+                total_requests: cb.totalRequests || 0,
+                last_failure: cb.lastFailure
+            };
+        }
+        
+        return monitoringData;
     }
 
     function displayMonitoringData(monitoringData) {
