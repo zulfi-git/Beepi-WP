@@ -106,6 +106,18 @@ class VehicleLookupAPI {
 
         // Handle HTTP error status codes for non-structured responses
         if ($status_code !== 200) {
+            // Special handling for rate limiting
+            if ($status_code === 429) {
+                $retry_after = wp_remote_retrieve_header($response, 'Retry-After');
+                return array(
+                    'error' => 'For mange forespørsler. Prøv igjen om litt.',
+                    'failure_type' => 'rate_limit',
+                    'code' => 'RATE_LIMIT_EXCEEDED',
+                    'correlation_id' => null,
+                    'retry_after' => $retry_after ? intval($retry_after) : 60
+                );
+            }
+            
             return array(
                 'error' => 'Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.',
                 'failure_type' => 'http_error',
