@@ -61,8 +61,20 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Cache health check results for 5 minutes as recommended
+    let healthCheckCache = null;
+    let healthCheckCacheTime = 0;
+    const HEALTH_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
     function checkUpstreamStatus() {
         const statusDiv = $('#vegvesen-status');
+        
+        // Check if we have cached results that are still fresh
+        const now = Date.now();
+        if (healthCheckCache && (now - healthCheckCacheTime) < HEALTH_CACHE_DURATION) {
+            displayCachedHealthData(healthCheckCache);
+            return;
+        }
 
         statusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
         statusDiv.find('.status-text').text('Checking...');
@@ -104,16 +116,62 @@ jQuery(document).ready(function($) {
 
                     // Display enhanced monitoring data
                     displayMonitoringData(monitoringData);
+                    
+                    // Cache the results
+                    healthCheckCache = response.data;
+                    healthCheckCacheTime = Date.now();
+                    
+                    // Log correlation ID if available
+                    if (response.data.correlation_id) {
+                        console.log('Health Check Correlation ID:', response.data.correlation_id);
+                    }
                 } else {
                     statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
                     statusDiv.find('.status-text').text('Error');
+                    
+                    // Clear cache on error
+                    healthCheckCache = null;
+                    healthCheckCacheTime = 0;
                 }
             },
             error: function() {
                 statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
                 statusDiv.find('.status-text').text('Unknown');
+                
+                // Clear cache on error
+                healthCheckCache = null;
+                healthCheckCacheTime = 0;
             }
         });
+    }
+
+    function displayCachedHealthData(cachedData) {
+        const statusDiv = $('#vegvesen-status');
+        const healthData = cachedData.health_data;
+        const monitoringData = cachedData.monitoring_data;
+        
+        // Display status based on cached data
+        let statusClass = 'unknown';
+        let statusText = 'Unknown';
+        
+        if (healthData && healthData.status) {
+            if (healthData.status === 'healthy') {
+                statusClass = 'ok';
+                statusText = 'Healthy';
+            } else if (healthData.status === 'degraded') {
+                statusClass = 'warning';
+                statusText = 'Degraded';
+            }
+        }
+        
+        statusDiv.find('.status-light').removeClass('checking ok warning error').addClass(statusClass);
+        statusDiv.find('.status-text').text(statusText + ' (cached)');
+        
+        // Display cached monitoring data
+        displayMonitoringData(monitoringData);
+        
+        console.log('Using cached health data (expires in ' + 
+                   Math.round((HEALTH_CACHE_DURATION - (Date.now() - healthCheckCacheTime)) / 1000) + 's)');
     }
 
     function displayMonitoringData(monitoringData) {
@@ -123,6 +181,52 @@ jQuery(document).ready(function($) {
             monitoringDiv.hide();
             return;
         }
+
+        let html = '<div class="monitoring-details">';
+        html += '<h4 style="margin: 0 0 10px 0; color: #374151;">Live Metrics</h4>';
+        
+        // Rate limiting information
+        if (monitoringData.rate_limiting) {
+            const rl = monitoringData.rate_limiting;
+            html += '<div class="monitoring-item">';
+            html += '<strong>Daily Quota:</strong> ' + rl.daily_usage + '/' + rl.daily_limit + ' (' + rl.quota_utilization + ')';
+            html += '</div>';
+            html += '<div class="monitoring-item">';
+            html += '<strong>Vegvesen Quota:</strong> ' + rl.vegvesen_quota;
+            html += '</div>';
+            html += '<div class="monitoring-item">';
+            html += '<strong>Active IPs:</strong> ' + rl.active_ips_hourly + ' hourly, ' + rl.active_ips_burst + ' burst';
+            html += '</div>';
+        }
+        
+        // Cache information
+        if (monitoringData.cache) {
+            const cache = monitoringData.cache;
+            html += '<div class="monitoring-item">';
+            html += '<strong>Cache:</strong> ' + cache.entries + '/' + cache.max_size + ' entries (' + cache.utilization + '%)';
+            html += '</div>';
+        }
+        
+        // Circuit breaker status
+        if (monitoringData.circuit_breaker) {
+            const cb = monitoringData.circuit_breaker;
+            const stateColor = cb.state === 'CLOSED' ? '#00a32a' : (cb.state === 'OPEN' ? '#d63638' : '#dba617');
+            html += '<div class="monitoring-item">';
+            html += '<strong>Circuit Breaker:</strong> <span style="color: ' + stateColor + '">' + cb.state + '</span>';
+            if (cb.success_rate) {
+                html += ' (Success: ' + cb.success_rate + ')';
+            }
+            html += '</div>';
+            if (cb.total_requests > 0) {
+                html += '<div class="monitoring-item">';
+                html += '<strong>Requests:</strong> ' + cb.total_requests + ' total, ' + cb.failure_count + ' failures';
+                html += '</div>';
+            }
+        }
+        
+        html += '</div>';
+        
+        monitoringDiv.html(html).show();
 
         let html = '<div class="monitoring-details">';
         

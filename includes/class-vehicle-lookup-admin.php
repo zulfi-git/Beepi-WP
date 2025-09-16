@@ -725,21 +725,18 @@ class Vehicle_Lookup_Admin {
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
 
-        $response = wp_remote_post($worker_url . '/health', array(
+        // Use GET method as documented by Cloudflare team
+        $response = wp_remote_get($worker_url . '/health', array(
             'headers' => array(
-                'Content-Type' => 'application/json',
                 'Origin' => get_site_url()
             ),
-            'body' => json_encode(array(
-                'checkUpstream' => true
-            )),
             'timeout' => $timeout
         ));
 
         if (is_wp_error($response)) {
             wp_send_json_error(array(
-                'message' => 'Upstream check failed: ' . $response->get_error_message(),
-                'status' => 'degraded'
+                'message' => 'Health check failed: ' . $response->get_error_message(),
+                'status' => 'unknown'
             ));
         }
 
@@ -747,34 +744,58 @@ class Vehicle_Lookup_Admin {
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
         if ($status_code === 200 && isset($body['status'])) {
-            // Extract enhanced monitoring data
+            // Extract comprehensive monitoring data from new structure
             $monitoring_data = array();
             
-            if (isset($body['quotaUsage'])) {
-                $monitoring_data['quota_usage'] = $body['quotaUsage'];
+            // Rate limiting information
+            if (isset($body['rateLimiting'])) {
+                $rl = $body['rateLimiting'];
+                $monitoring_data['rate_limiting'] = array(
+                    'daily_usage' => $rl['globalDailyUsage'] ?? 0,
+                    'daily_limit' => $rl['globalDailyLimit'] ?? 4500,
+                    'daily_remaining' => $rl['globalDailyRemaining'] ?? 0,
+                    'vegvesen_quota' => $rl['vegvesenQuotaUsage'] ?? '0/5000',
+                    'quota_utilization' => $rl['quotaUtilization'] ?? '0%',
+                    'active_ips_hourly' => $rl['activeIPsTracked']['hourly'] ?? 0,
+                    'active_ips_burst' => $rl['activeIPsTracked']['burst'] ?? 0
+                );
             }
             
-            if (isset($body['vegvesenQuotaUtilization'])) {
-                $monitoring_data['vegvesen_utilization'] = $body['vegvesenQuotaUtilization'];
+            // Cache information
+            if (isset($body['cache'])) {
+                $cache = $body['cache'];
+                $monitoring_data['cache'] = array(
+                    'entries' => $cache['entries'] ?? 0,
+                    'max_size' => $cache['maxSize'] ?? 1000,
+                    'ttl' => $cache['ttl'] ?? 3600,
+                    'utilization' => isset($cache['entries'], $cache['maxSize']) ? 
+                        round(($cache['entries'] / $cache['maxSize']) * 100, 1) : 0
+                );
             }
             
-            if (isset($body['activeIPs'])) {
-                $monitoring_data['active_ips'] = $body['activeIPs'];
-            }
-            
-            if (isset($body['rateLimitConfig'])) {
-                $monitoring_data['rate_limit_config'] = $body['rateLimitConfig'];
+            // Circuit breaker status
+            if (isset($body['circuitBreaker'])) {
+                $cb = $body['circuitBreaker'];
+                $monitoring_data['circuit_breaker'] = array(
+                    'state' => $cb['state'] ?? 'CLOSED',
+                    'failure_count' => $cb['failureCount'] ?? 0,
+                    'success_rate' => $cb['successRate'] ?? '100%',
+                    'total_requests' => $cb['totalRequests'] ?? 0,
+                    'last_failure' => $cb['lastFailure']
+                );
             }
 
             wp_send_json_success(array(
-                'message' => 'Upstream check completed.',
+                'message' => 'Health check completed.',
                 'health_data' => $body,
                 'monitoring_data' => $monitoring_data,
-                'status' => $body['status']
+                'status' => $body['status'],
+                'correlation_id' => $body['correlationId'] ?? null,
+                'service_version' => $body['version'] ?? 'unknown'
             ));
         } else {
             wp_send_json_error(array(
-                'message' => 'Upstream service check failed.',
+                'message' => 'Health check failed with status code: ' . $status_code,
                 'health_data' => $body ?: array('status' => 'unknown'),
                 'status' => isset($body['status']) ? $body['status'] : 'unknown'
             ));
