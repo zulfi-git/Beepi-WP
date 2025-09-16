@@ -244,10 +244,7 @@ class Vehicle_Lookup_Admin {
                             <div class="service-status-grid">
                                 <div class="service-item">
                                     <div class="service-logo cloudflare-logo">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.31 12.78c-.14-.28-.42-.47-.75-.47H7.44c-.33 0-.61.19-.75.47l-2.25 4.5c-.14.28.07.63.38.63h17.36c.31 0 .52-.35.38-.63l-2.25-4.5z"/>
-                                            <path d="M12 2L6.44 12h11.12L12 2z"/>
-                                        </svg>
+                                        <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/cloudflare-logo.png'; ?>" alt="Cloudflare" width="24" height="24">
                                     </div>
                                     <div class="service-info">
                                         <div class="service-name">Cloudflare Worker</div>
@@ -260,10 +257,7 @@ class Vehicle_Lookup_Admin {
                                 
                                 <div class="service-item">
                                     <div class="service-logo vegvesen-logo">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2L6 8v6c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V8l-6-6z"/>
-                                            <path d="M9 12l2 2 4-4"/>
-                                        </svg>
+                                        <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/vegvesen-logo.webp'; ?>" alt="Statens Vegvesen" width="24" height="24">
                                     </div>
                                     <div class="service-info">
                                         <div class="service-name">Vegvesen API</div>
