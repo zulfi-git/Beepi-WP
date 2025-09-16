@@ -237,15 +237,44 @@ class Vehicle_Lookup_Admin {
 
                     <div class="status-card api">
                         <div class="card-header">
-                            <h3>API Status</h3>
+                            <h3>Service Status</h3>
                             <span class="dashicons dashicons-admin-plugins"></span>
                         </div>
                         <div class="card-content">
-                            <div class="api-status" id="api-status">
-                                <span class="status-indicator checking">●</span> Checking...
+                            <div class="service-status-grid">
+                                <div class="service-item">
+                                    <div class="service-logo cloudflare-logo">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.31 12.78c-.14-.28-.42-.47-.75-.47H7.44c-.33 0-.61.19-.75.47l-2.25 4.5c-.14.28.07.63.38.63h17.36c.31 0 .52-.35.38-.63l-2.25-4.5z"/>
+                                            <path d="M12 2L6.44 12h11.12L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="service-info">
+                                        <div class="service-name">Cloudflare Worker</div>
+                                        <div class="service-status" id="cloudflare-status">
+                                            <span class="status-light checking"></span>
+                                            <span class="status-text">Checking...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-item">
+                                    <div class="service-logo vegvesen-logo">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2L6 8v6c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V8l-6-6z"/>
+                                            <path d="M9 12l2 2 4-4"/>
+                                        </svg>
+                                    </div>
+                                    <div class="service-info">
+                                        <div class="service-name">Vegvesen API</div>
+                                        <div class="service-status" id="vegvesen-status">
+                                            <span class="status-light unknown"></span>
+                                            <span class="status-text">Pending...</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <button type="button" class="button button-secondary" id="test-api">Test Connection</button>
-                            <button type="button" class="button button-secondary" id="check-upstream">Check Upstream</button>
+                            <div class="api-details" id="api-details" style="display: none;"></div>
                         </div>
                     </div>
                 </div>

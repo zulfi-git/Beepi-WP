@@ -1,14 +1,17 @@
 jQuery(document).ready(function($) {
 
-    // Test API connectivity with health check
-    $('#test-api').on('click', function() {
-        const button = $(this);
-        const statusDiv = $('#api-status');
+    // Auto-check service status on page load
+    function checkServiceStatus() {
+        checkCloudflareStatus();
+        // Vegvesen status will be updated when Cloudflare check completes
+    }
+
+    function checkCloudflareStatus() {
+        const statusDiv = $('#cloudflare-status');
         const detailsDiv = $('#api-details');
 
-        button.prop('disabled', true).text('Checking...');
-        statusDiv.html('<span class="status-indicator checking">●</span> Checking health...');
-        detailsDiv.hide();
+        statusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
+        statusDiv.find('.status-text').text('Checking...');
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
@@ -21,41 +24,97 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     const data = response.data;
                     let statusClass = 'ok';
+                    let statusText = 'Online';
 
                     if (data.health_data && data.health_data.status === 'degraded') {
                         statusClass = 'warning';
+                        statusText = 'Degraded';
                     }
 
-                    statusDiv.html(
-                        '<span class="status-indicator ' + statusClass + '">●</span> ' + data.message
-                    );
+                    statusDiv.find('.status-light').removeClass('checking ok error warning').addClass(statusClass);
+                    statusDiv.find('.status-text').text(statusText);
 
-                    if (data.details) {
-                        detailsDiv.html('<small>' + data.details + '</small>').show();
+                    if (data.details || (data.response_time && data.response_time !== 'Unknown')) {
+                        let details = 'Cloudflare Worker: ' + statusText;
+                        if (data.response_time && data.response_time !== 'Unknown') {
+                            details += ' (' + data.response_time + ')';
+                        }
+                        detailsDiv.html('<small>' + details + '</small>').show();
                     }
 
+                    // Now check upstream
                     if (data.health_data) {
                         displayHealthData(data.health_data);
+                        checkUpstreamStatus();
                     }
                 } else {
-                    statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
-                    detailsDiv.hide();
+                    statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+                    statusDiv.find('.status-text').text('Error');
+                    detailsDiv.html('<small>Cloudflare Worker: ' + response.data.message + '</small>').show();
                 }
             },
             error: function() {
-                statusDiv.html('<span class="status-indicator error">●</span> Connection test failed');
-                detailsDiv.hide();
-            },
-            complete: function() {
-                button.prop('disabled', false).text('Health Check');
+                statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+                statusDiv.find('.status-text').text('Offline');
+                detailsDiv.html('<small>Cloudflare Worker: Connection failed</small>').show();
             }
         });
-    });
+    }
 
-    // Auto-check API status on page load
-    if ($('#api-status').length) {
+    function checkUpstreamStatus() {
+        const statusDiv = $('#vegvesen-status');
+
+        statusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
+        statusDiv.find('.status-text').text('Checking...');
+
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vehicle_lookup_check_upstream',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    const healthData = response.data.health_data || response.data.details || response.data;
+                    let statusClass = 'ok';
+                    let statusText = 'Online';
+
+                    if (healthData && healthData.status) {
+                        if (healthData.status === 'degraded') {
+                            statusClass = 'warning';
+                            statusText = 'Degraded';
+                        } else if (healthData.status === 'healthy') {
+                            statusClass = 'ok';
+                            statusText = 'Online';
+                        }
+                    }
+
+                    statusDiv.find('.status-light').removeClass('checking ok error warning').addClass(statusClass);
+                    statusDiv.find('.status-text').text(statusText);
+
+                    if (healthData && healthData.upstream && healthData.upstream.responseTime) {
+                        const detailsDiv = $('#api-details');
+                        const currentDetails = detailsDiv.html();
+                        const vegvesenDetails = 'Vegvesen API: ' + statusText + ' (' + healthData.upstream.responseTime + 'ms)';
+                        detailsDiv.html(currentDetails + '<br><small>' + vegvesenDetails + '</small>').show();
+                    }
+                } else {
+                    statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+                    statusDiv.find('.status-text').text('Error');
+                }
+            },
+            error: function() {
+                statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+                statusDiv.find('.status-text').text('Unknown');
+            }
+        });
+    }
+
+    // Auto-check service status on page load
+    if ($('#cloudflare-status').length) {
         setTimeout(function() {
-            $('#test-api').trigger('click');
+            checkServiceStatus();
         }, 1000);
     }
 
@@ -125,71 +184,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    // Check upstream health
-    $('#check-upstream').on('click', function() {
-        const button = $(this);
-        const statusDiv = $('#api-status');
-        const detailsDiv = $('#api-details');
-
-        button.prop('disabled', true).text('Checking...');
-        statusDiv.html('<span class="status-indicator checking">●</span> Checking upstream...');
-
-        $.ajax({
-            url: vehicleLookupAdmin.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'vehicle_lookup_check_upstream',
-                nonce: vehicleLookupAdmin.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    const healthData = response.data.health_data || response.data.details || response.data;
-                    let statusClass = 'ok';
-                    let statusText = 'healthy';
-
-                    if (healthData && healthData.status) {
-                        statusText = healthData.status;
-                        if (healthData.status === 'degraded') {
-                            statusClass = 'warning';
-                        }
-                    } else {
-                        // Fallback based on response structure
-                        statusText = response.data.status || 'healthy';
-                        if (statusText === 'degraded') {
-                            statusClass = 'warning';
-                        }
-                    }
-
-                    statusDiv.html('<span class="status-indicator ' + statusClass + '">●</span> Upstream: ' + statusText);
-
-                    if (healthData && healthData.upstream) {
-                        const upstream = healthData.upstream;
-                        let upstreamMsg = 'Vegvesen API: ' + upstream.status;
-                        if (upstream.responseTime) {
-                            upstreamMsg += ' (' + upstream.responseTime + 'ms)';
-                        }
-                        detailsDiv.html('<small>' + upstreamMsg + '</small>').show();
-                    } else {
-                        detailsDiv.hide();
-                    }
-
-                    if (healthData) {
-                        displayHealthData(healthData);
-                    }
-                } else {
-                    statusDiv.html('<span class="status-indicator error">●</span> ' + response.data.message);
-                    detailsDiv.hide();
-                }
-            },
-            error: function() {
-                statusDiv.html('<span class="status-indicator error">●</span> Upstream check failed');
-                detailsDiv.hide();
-            },
-            complete: function() {
-                button.prop('disabled', false).text('Check Upstream');
-            }
-        });
-    });
+    
 
     // Helper function to display health data
     function displayHealthData(healthData) {

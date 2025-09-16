@@ -101,42 +101,104 @@
     margin-top: 5px;
 }
 
-.api-status {
-    margin-bottom: 10px;
+.service-status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.status-indicator {
-    font-size: 16px;
-    margin-right: 5px;
+.service-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
 }
 
-.status-indicator.checking {
-    color: #dba617;
+.service-logo {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
 }
 
-.status-indicator.ok {
-    color: #00a32a;
+.cloudflare-logo {
+    background: #f38020;
+    color: white;
 }
 
-.status-indicator.error {
-    color: #d63638;
+.vegvesen-logo {
+    background: #1f4e79;
+    color: white;
 }
 
-.status-indicator.warning {
-    color: #dba617;
+.service-info {
+    flex: 1;
 }
 
-.api-details {
-    margin-top: 8px;
+.service-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1d2327;
+    margin-bottom: 4px;
+}
+
+.service-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-light {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-light.checking {
+    background: #dba617;
+    animation: pulse 2s infinite;
+}
+
+.status-light.ok {
+    background: #00a32a;
+}
+
+.status-light.error {
+    background: #d63638;
+}
+
+.status-light.warning {
+    background: #dba617;
+}
+
+.status-light.unknown {
+    background: #9ca3af;
+}
+
+.status-text {
+    font-size: 12px;
     color: #646970;
 }
 
-.api-buttons {
-    margin-top: 10px;
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
-.api-buttons .button {
-    margin-right: 8px;
+.api-details {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f1f3f4;
+    border-radius: 4px;
+    color: #646970;
+    font-size: 12px;
 }
 
 .recent-activity, .system-health {
