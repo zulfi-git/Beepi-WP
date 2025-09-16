@@ -144,4 +144,15 @@ class Vehicle_Lookup_Helpers {
             <div>⏱️ Svar på noen få sekunder</div>
         </div>';
     }
+
+    /**
+     * Validate correlation ID format from Cloudflare Worker
+     * Expected format: req-{timestamp}-{random}
+     */
+    public static function is_valid_correlation_id($correlationId) {
+        if (empty($correlationId) || !is_string($correlationId)) {
+            return false;
+        }
+        return preg_match('/^req-\d+-[a-z0-9]{9}$/', $correlationId) === 1;
+    }
 }

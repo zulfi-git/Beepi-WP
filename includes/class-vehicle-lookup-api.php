@@ -71,8 +71,27 @@ class VehicleLookupAPI {
             // This is a structured error response from the Cloudflare Worker
             $correlation_id = isset($data['correlationId']) ? $data['correlationId'] : null;
             
+            // Validate correlation ID format if present
+            if ($correlation_id && !Vehicle_Lookup_Helpers::is_valid_correlation_id($correlation_id)) {
+                error_log('Invalid correlation ID format: ' . $correlation_id);
+                $correlation_id = null; // Don't use invalid correlation IDs
+            }
+            
             // Map error codes to failure types for internal processing
             $failure_type = $this->map_error_code_to_failure_type($data['code']);
+            
+            // Handle circuit breaker state awareness for SERVICE_UNAVAILABLE
+            $circuit_breaker_state = null;
+            if ($data['code'] === 'SERVICE_UNAVAILABLE' && isset($data['circuitBreakerState'])) {
+                $circuit_breaker_state = $data['circuitBreakerState'];
+                
+                // Don't retry immediately when circuit breaker is open
+                if ($circuit_breaker_state === 'OPEN') {
+                    $failure_type = 'circuit_breaker_open';
+                    // Extend retry time for circuit breaker open state
+                    $data['retryAfter'] = isset($data['retryAfter']) ? max($data['retryAfter'], 60) : 60;
+                }
+            }
             
             return array(
                 'error' => $data['error'], // Use the human-readable error message directly
@@ -80,7 +99,8 @@ class VehicleLookupAPI {
                 'code' => $data['code'],
                 'correlation_id' => $correlation_id,
                 'timestamp' => isset($data['timestamp']) ? $data['timestamp'] : null,
-                'retry_after' => isset($data['retryAfter']) ? $data['retryAfter'] : null
+                'retry_after' => isset($data['retryAfter']) ? $data['retryAfter'] : null,
+                'circuit_breaker_state' => $circuit_breaker_state
             );
         }
 
