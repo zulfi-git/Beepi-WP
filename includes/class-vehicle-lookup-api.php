@@ -38,57 +38,153 @@ class VehicleLookupAPI {
     }
 
     /**
-     * Process API response with proper error handling
+     * Process API response with proper error handling for structured Cloudflare Worker responses
      */
     public function process_response($response, $regNumber) {
         if (is_wp_error($response)) {
-            return array('error' => 'Tilkoblingsfeil. Prøv igjen om litt.', 'failure_type' => 'connection_error');
+            return array(
+                'error' => 'Tilkoblingsfeil. Prøv igjen om litt.',
+                'failure_type' => 'connection_error',
+                'code' => 'CONNECTION_ERROR',
+                'correlation_id' => null
+            );
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
-        if ($status_code !== 200) {
-            return array('error' => 'Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.', 'failure_type' => 'http_error');
-        }
-
         $body = wp_remote_retrieve_body($response);
+        
+        // Try to parse JSON response first to check for structured errors
         $data = json_decode($body, true);
-
+        
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('JSON Decode Error: ' . json_last_error_msg());
-            return array('error' => 'Ugyldig svar fra server. Prøv igjen.', 'failure_type' => 'http_error');
+            return array(
+                'error' => 'Ugyldig svar fra server. Prøv igjen.',
+                'failure_type' => 'http_error',
+                'code' => 'INVALID_JSON',
+                'correlation_id' => null
+            );
+        }
+
+        // Handle structured error responses from Cloudflare Worker
+        if (isset($data['error']) && isset($data['code'])) {
+            // This is a structured error response from the Cloudflare Worker
+            $correlation_id = isset($data['correlationId']) ? $data['correlationId'] : null;
+            
+            // Map error codes to failure types for internal processing
+            $failure_type = $this->map_error_code_to_failure_type($data['code']);
+            
+            return array(
+                'error' => $data['error'], // Use the human-readable error message directly
+                'failure_type' => $failure_type,
+                'code' => $data['code'],
+                'correlation_id' => $correlation_id,
+                'timestamp' => isset($data['timestamp']) ? $data['timestamp'] : null,
+                'retry_after' => isset($data['retryAfter']) ? $data['retryAfter'] : null
+            );
+        }
+
+        // Handle HTTP error status codes for non-structured responses
+        if ($status_code !== 200) {
+            return array(
+                'error' => 'Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.',
+                'failure_type' => 'http_error',
+                'code' => 'HTTP_ERROR_' . $status_code,
+                'correlation_id' => null
+            );
         }
 
         if (empty($data)) {
             error_log('Empty Data Response for: ' . $regNumber);
-            return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'http_error');
+            return array(
+                'error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret',
+                'failure_type' => 'http_error',
+                'code' => 'EMPTY_RESPONSE',
+                'correlation_id' => null
+            );
         }
 
-        // Check if API returned an error in the response data
+        // Legacy handling for old Norwegian API error responses (backward compatibility)
         if (isset($data['responser']) && is_array($data['responser'])) {
             foreach ($data['responser'] as $respons) {
                 if (isset($respons['feilmelding'])) {
                     $error_code = $respons['feilmelding'];
 
-                    // Map API error codes to user-friendly messages
+                    // Map legacy API error codes to user-friendly messages
                     switch ($error_code) {
                         case 'KJENNEMERKE_UKJENT':
-                            return array('error' => 'Registreringsnummeret finnes ikke i det norske kjøretøyregisteret', 'failure_type' => 'invalid_plate');
+                            return array(
+                                'error' => 'Registreringsnummeret finnes ikke i det norske kjøretøyregisteret',
+                                'failure_type' => 'invalid_plate',
+                                'code' => 'KJENNEMERKE_UKJENT',
+                                'correlation_id' => null
+                            );
                         case 'KJENNEMERKE_UGYLDIG':
-                            return array('error' => 'Ugyldig registreringsnummer format', 'failure_type' => 'invalid_plate');
+                            return array(
+                                'error' => 'Ugyldig registreringsnummer format',
+                                'failure_type' => 'invalid_plate',
+                                'code' => 'UGYLDIG_KJENNEMERKE',
+                                'correlation_id' => null
+                            );
                         case 'TJENESTE_IKKE_TILGJENGELIG':
-                            return array('error' => 'Vegvesenets tjeneste er ikke tilgjengelig for øyeblikket', 'failure_type' => 'http_error');
+                            return array(
+                                'error' => 'Vegvesenets tjeneste er ikke tilgjengelig for øyeblikket',
+                                'failure_type' => 'http_error',
+                                'code' => 'SERVICE_UNAVAILABLE',
+                                'correlation_id' => null
+                            );
                         default:
-                            return array('error' => 'Kunne ikke hente kjøretøyinformasjon. Sjekk at registreringsnummeret er korrekt', 'failure_type' => 'invalid_plate');
+                            return array(
+                                'error' => 'Kunne ikke hente kjøretøyinformasjon. Sjekk at registreringsnummeret er korrekt',
+                                'failure_type' => 'invalid_plate',
+                                'code' => 'UNKNOWN_ERROR',
+                                'correlation_id' => null
+                            );
                     }
                 }
 
                 // Check if we have valid vehicle data
                 if (!isset($respons['kjoretoydata']) || empty($respons['kjoretoydata'])) {
-                    return array('error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret', 'failure_type' => 'invalid_plate');
+                    return array(
+                        'error' => 'Fant ingen kjøretøyinformasjon for dette registreringsnummeret',
+                        'failure_type' => 'invalid_plate',
+                        'code' => 'NO_DATA_AVAILABLE',
+                        'correlation_id' => null
+                    );
                 }
             }
         }
 
         return array('success' => true, 'data' => $data);
+    }
+
+    /**
+     * Map error codes from Cloudflare Worker to internal failure types
+     */
+    private function map_error_code_to_failure_type($error_code) {
+        switch ($error_code) {
+            case 'INVALID_INPUT':
+            case 'VALIDATION_ERROR':
+            case 'KJENNEMERKE_UKJENT':
+            case 'UGYLDIG_KJENNEMERKE':
+            case 'NOT_FOUND':
+            case 'NO_DATA_AVAILABLE':
+                return 'invalid_plate';
+                
+            case 'RATE_LIMIT_EXCEEDED':
+                return 'rate_limit';
+                
+            case 'AUTHENTICATION_FAILED':
+            case 'FORBIDDEN':
+                return 'auth_error';
+                
+            case 'SERVICE_UNAVAILABLE':
+            case 'TIMEOUT':
+            case 'NETWORK_ERROR':
+                return 'http_error';
+                
+            default:
+                return 'unknown_error';
+        }
     }
 }

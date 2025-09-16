@@ -28,12 +28,16 @@ class Vehicle_Lookup_Database {
             response_time_ms int,
             cached tinyint(1) DEFAULT 0,
             response_data longtext DEFAULT NULL,
+            error_code varchar(50) DEFAULT NULL,
+            correlation_id varchar(100) DEFAULT NULL,
             PRIMARY KEY (id),
             KEY idx_reg_number (reg_number),
             KEY idx_lookup_time (lookup_time),
             KEY idx_success (success),
             KEY idx_ip_address (ip_address),
-            KEY idx_tier (tier)
+            KEY idx_tier (tier),
+            KEY idx_error_code (error_code),
+            KEY idx_correlation_id (correlation_id)
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -47,6 +51,9 @@ class Vehicle_Lookup_Database {
         
         // Ensure response_data column exists for existing installations
         $this->add_response_data_column();
+        
+        // Ensure error tracking columns exist for existing installations
+        $this->add_error_tracking_columns();
     }
 
     /**
@@ -107,9 +114,46 @@ class Vehicle_Lookup_Database {
     }
 
     /**
-     * Log a lookup attempt
+     * Add error tracking columns to existing table if they don't exist
      */
-    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null, $tier = 'free', $response_data = null) {
+    private function add_error_tracking_columns() {
+        // Check and add error_code column
+        $error_code_exists = $this->wpdb->get_results(
+            $this->wpdb->prepare(
+                "SHOW COLUMNS FROM {$this->table_name} LIKE %s",
+                'error_code'
+            )
+        );
+
+        if (empty($error_code_exists)) {
+            $this->wpdb->query(
+                "ALTER TABLE {$this->table_name} 
+                ADD COLUMN error_code varchar(50) DEFAULT NULL AFTER response_data,
+                ADD INDEX idx_error_code (error_code)"
+            );
+        }
+
+        // Check and add correlation_id column
+        $correlation_id_exists = $this->wpdb->get_results(
+            $this->wpdb->prepare(
+                "SHOW COLUMNS FROM {$this->table_name} LIKE %s",
+                'correlation_id'
+            )
+        );
+
+        if (empty($correlation_id_exists)) {
+            $this->wpdb->query(
+                "ALTER TABLE {$this->table_name} 
+                ADD COLUMN correlation_id varchar(100) DEFAULT NULL AFTER error_code,
+                ADD INDEX idx_correlation_id (correlation_id)"
+            );
+        }
+    }
+
+    /**
+     * Log a lookup attempt with enhanced error tracking
+     */
+    public function log_lookup($reg_number, $ip_address, $success, $error_message = null, $response_time_ms = null, $cached = false, $failure_type = null, $tier = 'free', $response_data = null, $error_code = null, $correlation_id = null) {
         // Safely sanitize user agent to prevent injection
         $user_agent = '';
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -137,6 +181,10 @@ class Vehicle_Lookup_Database {
             $response_data = is_string($response_data) ? $response_data : wp_json_encode($response_data);
         }
         
+        // Sanitize error_code and correlation_id
+        $error_code = $error_code ? (function_exists('sanitize_text_field') ? sanitize_text_field($error_code) : strip_tags($error_code)) : null;
+        $correlation_id = $correlation_id ? (function_exists('sanitize_text_field') ? sanitize_text_field($correlation_id) : strip_tags($correlation_id)) : null;
+        
         return $this->wpdb->insert(
             $this->table_name,
             array(
@@ -150,9 +198,11 @@ class Vehicle_Lookup_Database {
                 'tier' => $tier,
                 'response_time_ms' => $response_time_ms,
                 'cached' => $cached ? 1 : 0,
-                'response_data' => $response_data
+                'response_data' => $response_data,
+                'error_code' => $error_code,
+                'correlation_id' => $correlation_id
             ),
-            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%s')
+            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s')
         );
     }
 

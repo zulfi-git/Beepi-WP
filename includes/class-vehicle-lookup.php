@@ -154,10 +154,32 @@ class Vehicle_Lookup {
         $result = $this->api->process_response($api_result['response'], $regNumber);
 
         if (isset($result['error'])) {
-            // This is an API error (like KJENNEMERKE_UKJENT) - log as failed lookup
+            // This is an API error - log as failed lookup with enhanced error data
             $failure_type = isset($result['failure_type']) ? $result['failure_type'] : 'unknown';
-            $this->db_handler->log_lookup($regNumber, $ip_address, false, $result['error'], $response_time, false, $failure_type);
-            wp_send_json_error($result['error']);
+            $error_code = isset($result['code']) ? $result['code'] : null;
+            $correlation_id = isset($result['correlation_id']) ? $result['correlation_id'] : null;
+            
+            $this->db_handler->log_lookup(
+                $regNumber, 
+                $ip_address, 
+                false, 
+                $result['error'], 
+                $response_time, 
+                false, 
+                $failure_type, 
+                'free', 
+                null, 
+                $error_code, 
+                $correlation_id
+            );
+            
+            // Return structured error data to frontend
+            wp_send_json_error(array(
+                'message' => $result['error'],
+                'code' => $error_code,
+                'correlation_id' => $correlation_id,
+                'retry_after' => isset($result['retry_after']) ? $result['retry_after'] : null
+            ));
         }
 
         $data = $result['data'];

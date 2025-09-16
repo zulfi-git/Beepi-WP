@@ -294,28 +294,241 @@ jQuery(document).ready(function($) {
                     }
 
                     $('.vehicle-info .vehicle-tags').remove();
+                    
+                    // Clear retry counters on successful lookup
+                    clearRetryCounters(regNumber);
+                    
                     processVehicleData(response, regNumber);
                 } else {
-                    // This handles cases where success is false - should show server error message
-                    $errorDiv.html(response.data || 'Kunne ikke hente kjøretøyinformasjon').show();
+                    // This handles cases where success is false - check for structured error data
+                    let errorMessage = 'Kunne ikke hente kjøretøyinformasjon';
+                    let errorCode = null;
+                    let correlationId = null;
+
+                    if (response.data) {
+                        if (typeof response.data === 'object' && response.data.message) {
+                            // Structured error response
+                            errorMessage = response.data.message;
+                            errorCode = response.data.code;
+                            correlationId = response.data.correlation_id;
+                        } else {
+                            // Simple error message
+                            errorMessage = response.data;
+                        }
+                    }
+
+                    // Track error analytics for failed responses
+                    trackVehicleLookupError(errorCode, correlationId, $('#regNumber').val().trim().toUpperCase(), 'success_false');
+
+                    // Attempt smart retry if applicable
+                    if (errorCode && !attemptSmartRetry(errorCode, correlationId, regNumber)) {
+                        $errorDiv.html(errorMessage).show();
+                    }
                 }
             },
             error: function(xhr, status, error) {
                 let errorMessage = 'En feil oppstod: ';
+                let errorCode = null;
+                let correlationId = null;
+                let retryAfter = null;
+
                 if (status === 'timeout') {
                     errorMessage = 'Forespørsel tok for lang tid. Vennligst prøv igjen.';
                 } else if (xhr.responseJSON && xhr.responseJSON.data) {
-                    errorMessage = xhr.responseJSON.data;
+                    // Check if it's structured error data
+                    if (typeof xhr.responseJSON.data === 'object' && xhr.responseJSON.data.message) {
+                        errorMessage = xhr.responseJSON.data.message;
+                        errorCode = xhr.responseJSON.data.code;
+                        correlationId = xhr.responseJSON.data.correlation_id;
+                        retryAfter = xhr.responseJSON.data.retry_after;
+                    } else {
+                        // Backward compatibility for simple error messages
+                        errorMessage = xhr.responseJSON.data;
+                    }
                 } else if (error) {
                     errorMessage += error;
                 }
-                $errorDiv.html(errorMessage).show();
+
+                // Log structured error data for debugging
+                if (errorCode || correlationId) {
+                    console.group('🔴 Vehicle Lookup Error');
+                    console.log('Message:', errorMessage);
+                    if (errorCode) console.log('Code:', errorCode);
+                    if (correlationId) console.log('Correlation ID:', correlationId);
+                    if (retryAfter) console.log('Retry After:', retryAfter + 'ms');
+                    console.groupEnd();
+                }
+
+                // Handle specific error codes with enhanced UX
+                if (errorCode === 'RATE_LIMIT_EXCEEDED' && retryAfter) {
+                    const retrySeconds = Math.ceil(retryAfter / 1000);
+                    errorMessage += ` Prøv igjen om ${retrySeconds} sekunder.`;
+                    
+                    // Auto-retry after the specified time
+                    setTimeout(function() {
+                        $submitButton.removeClass('loading').prop('disabled', false);
+                        if (correlationId) {
+                            console.log('🔄 Auto-retrying after rate limit (Correlation ID: ' + correlationId + ')');
+                        }
+                    }, retryAfter);
+                } else if (errorCode) {
+                    // Attempt smart retry for other error codes
+                    if (!attemptSmartRetry(errorCode, correlationId, regNumber)) {
+                        // No retry strategy available, show error normally
+                        let displayMessage = errorMessage;
+                        if (correlationId && window.location.hostname.includes('debug')) {
+                            displayMessage += ` (Ref: ${correlationId.substring(0, 8)})`;
+                        }
+                        $errorDiv.html(displayMessage).show();
+                    }
+                    return; // Exit early since retry will handle the rest
+                }
+
+                // Display user-friendly error message with optional correlation ID for support
+                let displayMessage = errorMessage;
+                if (correlationId && window.location.hostname.includes('debug')) {
+                    displayMessage += ` (Ref: ${correlationId.substring(0, 8)})`;
+                }
+
+                $errorDiv.html(displayMessage).show();
+
+                // Track error analytics
+                trackVehicleLookupError(errorCode, correlationId, $('#regNumber').val().trim().toUpperCase(), 'ajax_error');
             },
             complete: function() {
                 setLoadingState(false);
             }
         });
     });
+
+    /**
+     * Track vehicle lookup errors for analytics and monitoring
+     */
+    function trackVehicleLookupError(errorCode, correlationId, registrationNumber, context) {
+        // Console logging for debugging
+        if (errorCode || correlationId) {
+            console.group('📊 Error Analytics');
+            console.log('Context:', context);
+            console.log('Error Code:', errorCode || 'N/A');
+            console.log('Correlation ID:', correlationId || 'N/A');
+            console.log('Registration Number:', registrationNumber || 'N/A');
+            console.groupEnd();
+        }
+
+        // Google Analytics 4 tracking (if available)
+        if (typeof gtag === 'function' && errorCode) {
+            gtag('event', 'vehicle_lookup_error', {
+                'error_code': errorCode,
+                'correlation_id': correlationId,
+                'registration_number': registrationNumber,
+                'context': context,
+                'custom_map': {
+                    'metric1': errorCode
+                }
+            });
+        }
+
+        // Custom analytics tracking (if available)
+        if (typeof window.analyticsTracker === 'function') {
+            window.analyticsTracker('error', {
+                type: 'vehicle_lookup_error',
+                code: errorCode,
+                correlation_id: correlationId,
+                registration_number: registrationNumber,
+                context: context,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        // Store error in session storage for support purposes
+        try {
+            const errorLog = JSON.parse(sessionStorage.getItem('vehicle_lookup_errors') || '[]');
+            errorLog.push({
+                timestamp: new Date().toISOString(),
+                code: errorCode,
+                correlation_id: correlationId,
+                registration_number: registrationNumber,
+                context: context
+            });
+            
+            // Keep only last 10 errors
+            if (errorLog.length > 10) {
+                errorLog.splice(0, errorLog.length - 10);
+            }
+            
+            sessionStorage.setItem('vehicle_lookup_errors', JSON.stringify(errorLog));
+        } catch (e) {
+            console.warn('Could not store error log in session storage:', e);
+        }
+    }
+
+    /**
+     * Implement smart retry logic for specific error codes
+     */
+    function attemptSmartRetry(errorCode, correlationId, originalRegNumber) {
+        const retryStrategies = {
+            'TIMEOUT': {
+                delay: 2000,
+                maxAttempts: 2,
+                message: '⏱️ Forsøker på nytt på grunn av timeout...'
+            },
+            'NETWORK_ERROR': {
+                delay: 1500,
+                maxAttempts: 3,
+                message: '🌐 Tilkoblingsproblem - forsøker på nytt...'
+            },
+            'SERVICE_UNAVAILABLE': {
+                delay: 5000,
+                maxAttempts: 1,
+                message: '🔧 Tjenesten er midlertidig utilgjengelig - forsøker på nytt...'
+            }
+        };
+
+        const strategy = retryStrategies[errorCode];
+        if (!strategy) return false;
+
+        // Check if we've already exceeded retry attempts for this session
+        const retryKey = `retry_${errorCode}_${originalRegNumber}`;
+        const currentAttempts = parseInt(sessionStorage.getItem(retryKey) || '0');
+        
+        if (currentAttempts >= strategy.maxAttempts) {
+            console.log(`❌ Max retry attempts (${strategy.maxAttempts}) exceeded for ${errorCode}`);
+            return false;
+        }
+
+        // Show retry message
+        $errorDiv.html(strategy.message).show().addClass('retrying');
+
+        // Increment retry counter
+        sessionStorage.setItem(retryKey, (currentAttempts + 1).toString());
+
+        // Perform retry after delay
+        setTimeout(() => {
+            console.log(`🔄 Smart retry attempt ${currentAttempts + 1}/${strategy.maxAttempts} for ${errorCode} (Correlation: ${correlationId})`);
+            
+            // Reset form state and retry
+            resetFormState();
+            $errorDiv.removeClass('retrying');
+            $('#regNumber').val(originalRegNumber);
+            $form.trigger('submit');
+        }, strategy.delay);
+
+        return true;
+    }
+
+    /**
+     * Clear retry counters when successful lookup occurs
+     */
+    function clearRetryCounters(regNumber) {
+        const keysToRemove = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+            const key = sessionStorage.key(i);
+            if (key && key.startsWith('retry_') && key.endsWith(`_${regNumber}`)) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(key => sessionStorage.removeItem(key));
+    }
 
     function renderOwnerInfo(vehicleData) {
         if (!vehicleData.eierskap?.eier) return;
@@ -362,8 +575,29 @@ jQuery(document).ready(function($) {
         document.cookie = `vehicle_reg_number=${regNumber};path=/;max-age=3600`;
     }
 
-    // Add CSS for the new owner history section
+    // Add CSS for the new owner history section and error states
     const ownerHistoryCss = `
+        /* Error retry states */
+        .vehicle-lookup-error.retrying {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .vehicle-lookup-error.retrying::before {
+            content: "🔄 ";
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         .owner-history-container .content-wrapper {
             position: relative;
             overflow: hidden;
