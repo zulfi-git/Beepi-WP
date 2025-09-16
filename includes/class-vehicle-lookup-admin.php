@@ -275,6 +275,7 @@ class Vehicle_Lookup_Admin {
                                 </div>
                             </div>
                             <div class="api-details" id="api-details" style="display: none;"></div>
+                            <div class="monitoring-data" id="monitoring-data" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
@@ -752,9 +753,29 @@ class Vehicle_Lookup_Admin {
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
         if ($status_code === 200 && isset($body['status'])) {
+            // Extract enhanced monitoring data
+            $monitoring_data = array();
+            
+            if (isset($body['quotaUsage'])) {
+                $monitoring_data['quota_usage'] = $body['quotaUsage'];
+            }
+            
+            if (isset($body['vegvesenQuotaUtilization'])) {
+                $monitoring_data['vegvesen_utilization'] = $body['vegvesenQuotaUtilization'];
+            }
+            
+            if (isset($body['activeIPs'])) {
+                $monitoring_data['active_ips'] = $body['activeIPs'];
+            }
+            
+            if (isset($body['rateLimitConfig'])) {
+                $monitoring_data['rate_limit_config'] = $body['rateLimitConfig'];
+            }
+
             wp_send_json_success(array(
                 'message' => 'Upstream check completed.',
                 'health_data' => $body,
+                'monitoring_data' => $monitoring_data,
                 'status' => $body['status']
             ));
         } else {

@@ -77,6 +77,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     const healthData = response.data.health_data || response.data.details || response.data;
+                    const monitoringData = response.data.monitoring_data || {};
                     let statusClass = 'ok';
                     let statusText = 'Online';
 
@@ -93,12 +94,16 @@ jQuery(document).ready(function($) {
                     statusDiv.find('.status-light').removeClass('checking ok error warning').addClass(statusClass);
                     statusDiv.find('.status-text').text(statusText);
 
+                    // Display API details
                     if (healthData && healthData.upstream && healthData.upstream.responseTime) {
                         const detailsDiv = $('#api-details');
                         const currentDetails = detailsDiv.html();
                         const vegvesenDetails = 'Vegvesen API: ' + statusText + ' (' + healthData.upstream.responseTime + 'ms)';
                         detailsDiv.html(currentDetails + '<br><small>' + vegvesenDetails + '</small>').show();
                     }
+
+                    // Display enhanced monitoring data
+                    displayMonitoringData(monitoringData);
                 } else {
                     statusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
                     statusDiv.find('.status-text').text('Error');
@@ -109,6 +114,52 @@ jQuery(document).ready(function($) {
                 statusDiv.find('.status-text').text('Unknown');
             }
         });
+    }
+
+    function displayMonitoringData(monitoringData) {
+        const monitoringDiv = $('#monitoring-data');
+        
+        if (!monitoringData || Object.keys(monitoringData).length === 0) {
+            monitoringDiv.hide();
+            return;
+        }
+
+        let html = '<div class="monitoring-details">';
+        
+        // Quota Usage
+        if (monitoringData.quota_usage) {
+            const quota = monitoringData.quota_usage;
+            const percentage = quota.limit > 0 ? Math.round((quota.used / quota.limit) * 100) : 0;
+            html += '<div class="monitoring-item">';
+            html += '<strong>Vegvesen Quota:</strong> ' + quota.used + '/' + quota.limit + ' (' + percentage + '%)';
+            html += '</div>';
+        }
+
+        // Vegvesen Utilization
+        if (monitoringData.vegvesen_utilization) {
+            html += '<div class="monitoring-item">';
+            html += '<strong>Utilization:</strong> ' + monitoringData.vegvesen_utilization + '%';
+            html += '</div>';
+        }
+
+        // Active IPs
+        if (monitoringData.active_ips) {
+            html += '<div class="monitoring-item">';
+            html += '<strong>Active IPs:</strong> ' + monitoringData.active_ips;
+            html += '</div>';
+        }
+
+        // Rate Limit Config
+        if (monitoringData.rate_limit_config) {
+            const config = monitoringData.rate_limit_config;
+            html += '<div class="monitoring-item">';
+            html += '<strong>Rate Limit:</strong> ' + (config.perMinute || 'N/A') + '/min, ' + (config.perHour || 'N/A') + '/hour';
+            html += '</div>';
+        }
+
+        html += '</div>';
+        
+        monitoringDiv.html(html).show();
     }
 
     // Auto-check service status on page load
