@@ -10,18 +10,24 @@ jQuery(document).ready(function($) {
         const vegvesenStatusDiv = $('#vegvesen-status');
         const detailsDiv = $('#api-details');
 
+        console.log('Starting health check request...');
+
         // Set both to checking state
         cloudflareStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
         cloudflareStatusDiv.find('.status-text').text('Checking...');
         vegvesenStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
-        vegvesenStatusDiv.find('.status-text').text('Checking...');
+        vegvesenStatusDiv.find('.status-text').text('Pending...');
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
             type: 'POST',
+            timeout: 15000, // 15 second timeout
             data: {
                 action: 'vehicle_lookup_test_api',
                 nonce: vehicleLookupAdmin.nonce
+            },
+            beforeSend: function() {
+                console.log('Health check AJAX request sent...');
             },
             success: function(response) {
                 if (response.success) {
@@ -71,12 +77,21 @@ jQuery(document).ready(function($) {
                     detailsDiv.html('<small>Health check failed: ' + response.data.message + '</small>').show();
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('Health check failed:', status, error, xhr);
                 cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                cloudflareStatusDiv.find('.status-text').text('Offline');
+                cloudflareStatusDiv.find('.status-text').text('Connection Failed');
                 vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
                 vegvesenStatusDiv.find('.status-text').text('Unknown');
-                detailsDiv.html('<small>Connection failed to health endpoint</small>').show();
+                
+                let errorMsg = 'Connection failed';
+                if (status === 'timeout') {
+                    errorMsg = 'Request timed out (15s)';
+                } else if (status === 'error') {
+                    errorMsg = 'Network error: ' + error;
+                }
+                
+                detailsDiv.html('<small style="color: #dc3232;">' + errorMsg + '</small>').show();
             }
         });
     }
@@ -250,9 +265,17 @@ jQuery(document).ready(function($) {
 
     // Auto-check service status on page load
     if ($('#cloudflare-status').length) {
+        console.log('Starting health check...');
         setTimeout(function() {
             checkServiceStatus();
-        }, 1000);
+        }, 500);
+        
+        // Also check every 30 seconds
+        setInterval(function() {
+            if ($('#cloudflare-status').length) {
+                checkServiceStatus();
+            }
+        }, 30000);
     }
 
     // Refresh stats every 30 seconds
