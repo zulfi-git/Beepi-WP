@@ -231,10 +231,15 @@ class Vehicle_Lookup_Admin {
                         </div>
                         <div class="metric-content">
                             <div class="big-number"><?php echo number_format($stats['today_total']); ?></div>
-                            <?php if ($trend_percentage > 0): ?>
+                            <?php if ($trend_percentage !== null && $trend_percentage >= 0): ?>
                             <div class="metric-trend <?php echo $trend_direction; ?>">
-                                <span class="dashicons dashicons-arrow-<?php echo $trend_direction === 'up' ? 'up-alt' : 'down-alt'; ?>"></span>
-                                <?php echo $trend_direction === 'up' ? '+' : ''; ?><?php echo $trend_percentage; ?>% vs yesterday
+                                <?php if ($trend_percentage > 0): ?>
+                                    <span class="dashicons dashicons-arrow-<?php echo $trend_direction === 'up' ? 'up-alt' : 'down-alt'; ?>"></span>
+                                    <?php echo $trend_direction === 'up' ? '+' : ''; ?><?php echo $trend_percentage; ?>% vs yesterday
+                                <?php else: ?>
+                                    <span class="dashicons dashicons-minus"></span>
+                                    No change vs yesterday
+                                <?php endif; ?>
                             </div>
                             <?php else: ?>
                             <div class="metric-trend">
