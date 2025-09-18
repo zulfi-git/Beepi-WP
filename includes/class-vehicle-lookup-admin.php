@@ -713,6 +713,21 @@ class Vehicle_Lookup_Admin {
     public function check_upstream_health() {
         check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
 
+        // Cache key for health check results
+        $cache_key = 'vehicle_lookup_health_check';
+        $cache_ttl = 420; // 7 minutes (420 seconds) - middle of recommended 5-10 minutes
+
+        // Check for cached results first
+        $cached_result = get_transient($cache_key);
+        if ($cached_result !== false) {
+            // Return cached results with indicator
+            $cached_result['message'] = 'Health check completed (cached).';
+            $cached_result['cached'] = true;
+            $cached_result['cache_expires_in'] = get_option('_transient_timeout_' . $cache_key) - time();
+            wp_send_json_success($cached_result);
+            return;
+        }
+
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
 
@@ -725,10 +740,13 @@ class Vehicle_Lookup_Admin {
         ));
 
         if (is_wp_error($response)) {
+            // Don't cache error responses
             wp_send_json_error(array(
                 'message' => 'Health check failed: ' . $response->get_error_message(),
-                'status' => 'unknown'
+                'status' => 'unknown',
+                'cached' => false
             ));
+            return;
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
@@ -776,19 +794,28 @@ class Vehicle_Lookup_Admin {
                 );
             }
 
-            wp_send_json_success(array(
+            $result_data = array(
                 'message' => 'Health check completed.',
                 'health_data' => $body,
                 'monitoring_data' => $monitoring_data,
                 'status' => $body['status'],
                 'correlation_id' => $body['correlationId'] ?? null,
-                'service_version' => $body['version'] ?? 'unknown'
-            ));
+                'service_version' => $body['version'] ?? 'unknown',
+                'cached' => false,
+                'cache_ttl' => $cache_ttl
+            );
+
+            // Cache the successful result
+            set_transient($cache_key, $result_data, $cache_ttl);
+
+            wp_send_json_success($result_data);
         } else {
+            // Don't cache failed health checks
             wp_send_json_error(array(
                 'message' => 'Health check failed with status code: ' . $status_code,
                 'health_data' => $body ?: array('status' => 'unknown'),
-                'status' => isset($body['status']) ? $body['status'] : 'unknown'
+                'status' => isset($body['status']) ? $body['status'] : 'unknown',
+                'cached' => false
             ));
         }
     }

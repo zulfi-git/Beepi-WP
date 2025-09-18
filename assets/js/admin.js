@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             timeout: 15000, // 15 second timeout
             data: {
-                action: 'vehicle_lookup_test_api',
+                action: 'vehicle_lookup_check_upstream',
                 nonce: vehicleLookupAdmin.nonce
             },
             beforeSend: function() {
@@ -32,43 +32,208 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     const healthData = response.data;
-
-                    // Display raw JSON
-                    detailsDiv.html('<pre>' + JSON.stringify(healthData, null, 2) + '</pre>').show();
-
-                    // Simple status indicators
-                    cloudflareStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass('ok');
-                    cloudflareStatusDiv.find('.status-text').text('Online');
-                    vegvesenStatusDiv.find('.status-light').removeClass('checking ok error warning unknown').addClass('ok');
-                    vegvesenStatusDiv.find('.status-text').text('Connected');
+                    
+                    // Update cache expiry tracking for smart intervals
+                    updateCacheExpiryTracking(healthData);
+                    
+                    // Handle Cloudflare Worker Status
+                    updateCloudflareStatus(healthData);
+                    
+                    // Handle Vegvesen API Status
+                    updateVegvesenStatus(healthData);
+                    
+                    // Display monitoring data if available
+                    if (healthData.monitoring_data) {
+                        displayMonitoringData(healthData.monitoring_data);
+                    }
+                    
+                    // Show cache status if response is cached
+                    if (healthData.cached) {
+                        showCacheInfo(healthData);
+                    }
+                    
                 } else {
-                    cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                    cloudflareStatusDiv.find('.status-text').text('Error');
-                    vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
-                    vegvesenStatusDiv.find('.status-text').text('Unknown');
-                    detailsDiv.html('<small>Health check failed</small>').show();
+                    handleHealthCheckError(response);
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Health check failed:', status, error, xhr);
-                cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
-                cloudflareStatusDiv.find('.status-text').text('Connection Failed');
-                vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
-                vegvesenStatusDiv.find('.status-text').text('Unknown');
-
-                let errorMsg = 'Connection failed';
-                if (status === 'timeout') {
-                    errorMsg = 'Request timed out (15s)';
-                } else if (status === 'error') {
-                    errorMsg = 'Network error: ' + error;
-                }
-
-                detailsDiv.html('<small style="color: #dc3232;">' + errorMsg + '</small>').show();
+                handleHealthCheckNetworkError(xhr, status, error);
             }
         });
     }
 
+    // Enhanced status handling functions
+    function updateCloudflareStatus(healthData) {
+        const cloudflareStatusDiv = $('#cloudflare-status');
+        
+        // Worker is online if we got a successful response
+        cloudflareStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass('ok');
+        
+        let statusText = 'Online';
+        if (healthData.cached) {
+            statusText += ' (cached)';
+        }
+        if (healthData.service_version && healthData.service_version !== 'unknown') {
+            statusText += ' v' + healthData.service_version;
+        }
+        
+        cloudflareStatusDiv.find('.status-text').text(statusText);
+    }
 
+    function updateVegvesenStatus(healthData) {
+        const vegvesenStatusDiv = $('#vegvesen-status');
+        
+        if (!healthData.health_data || !healthData.health_data.status) {
+            vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning error').addClass('unknown');
+            vegvesenStatusDiv.find('.status-text').text('Unknown');
+            return;
+        }
+
+        const status = healthData.health_data.status;
+        let statusClass = 'unknown';
+        let statusText = 'Unknown';
+
+        // Handle different health states
+        switch(status.toLowerCase()) {
+            case 'healthy':
+                statusClass = 'ok';
+                statusText = 'Healthy';
+                break;
+            case 'degraded':
+                statusClass = 'warning';
+                statusText = 'Degraded';
+                break;
+            case 'unhealthy':
+                statusClass = 'error';
+                statusText = 'Unhealthy';
+                break;
+            default:
+                statusClass = 'warning';
+                statusText = status;
+        }
+
+        // Check circuit breaker state
+        if (healthData.monitoring_data && healthData.monitoring_data.circuit_breaker) {
+            const cbState = healthData.monitoring_data.circuit_breaker.state;
+            if (cbState === 'OPEN') {
+                statusClass = 'error';
+                statusText = 'Circuit Breaker OPEN';
+            } else if (cbState === 'HALF_OPEN') {
+                statusClass = 'warning';
+                statusText = 'Circuit Breaker Testing';
+            }
+        }
+
+        if (healthData.cached) {
+            statusText += ' (cached)';
+        }
+
+        vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning error unknown').addClass(statusClass);
+        vegvesenStatusDiv.find('.status-text').text(statusText);
+    }
+
+    function showCacheInfo(healthData) {
+        const detailsDiv = $('#api-details');
+        let cacheInfo = '<div style="padding: 10px; background: #f0f9ff; border-left: 3px solid #0ea5e9; margin: 10px 0;">';
+        cacheInfo += '<strong>Using Cached Data</strong><br>';
+        if (healthData.cache_expires_in) {
+            const minutes = Math.floor(healthData.cache_expires_in / 60);
+            const seconds = healthData.cache_expires_in % 60;
+            cacheInfo += 'Expires in: ' + minutes + 'm ' + seconds + 's<br>';
+        }
+        cacheInfo += 'Cache TTL: ' + (healthData.cache_ttl ? Math.floor(healthData.cache_ttl / 60) + ' minutes' : 'Unknown');
+        cacheInfo += '</div>';
+        detailsDiv.html(cacheInfo).show();
+    }
+
+    function handleHealthCheckError(response) {
+        const cloudflareStatusDiv = $('#cloudflare-status');
+        const vegvesenStatusDiv = $('#vegvesen-status');
+        const detailsDiv = $('#api-details');
+
+        cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+        cloudflareStatusDiv.find('.status-text').text('API Error');
+        
+        vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+        vegvesenStatusDiv.find('.status-text').text('Unknown');
+
+        let errorMessage = 'Health check failed';
+        let helpText = '';
+
+        if (response.data && response.data.message) {
+            errorMessage = response.data.message;
+            
+            // Provide specific help for common error scenarios
+            if (errorMessage.includes('Health check failed:')) {
+                helpText = '<br><strong>Possible causes:</strong><br>• Worker endpoint is down<br>• Network connectivity issues<br>• Authentication problems';
+            } else if (errorMessage.includes('status code:')) {
+                helpText = '<br><strong>Action needed:</strong><br>• Check worker configuration<br>• Verify endpoint URL is correct';
+            }
+        }
+
+        detailsDiv.html('<div style="color: #dc3232; padding: 10px; border-left: 3px solid #dc3232; background: #fef2f2;">' + 
+                       '<strong>Error:</strong> ' + errorMessage + helpText + 
+                       '</div>').show();
+    }
+
+    function handleHealthCheckNetworkError(xhr, status, error) {
+        const cloudflareStatusDiv = $('#cloudflare-status');
+        const vegvesenStatusDiv = $('#vegvesen-status');
+        const detailsDiv = $('#api-details');
+
+        cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+        vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+
+        let errorMessage = 'Connection failed';
+        let statusText = 'Connection Failed';
+        let helpText = '';
+
+        // Enhanced error messaging based on error type
+        switch(status) {
+            case 'timeout':
+                errorMessage = 'Request timed out after 15 seconds';
+                statusText = 'Timeout';
+                helpText = '• Server may be overloaded<br>• Check network connectivity<br>• Try again in a few minutes';
+                break;
+            case 'error':
+                if (xhr.status === 0) {
+                    errorMessage = 'Network error - Unable to connect';
+                    statusText = 'No Connection';
+                    helpText = '• Check internet connection<br>• Server may be down<br>• Firewall blocking request';
+                } else if (xhr.status >= 500) {
+                    errorMessage = 'Server error (HTTP ' + xhr.status + ')';
+                    statusText = 'Server Error';
+                    helpText = '• Internal server error<br>• Worker may be experiencing issues<br>• Try again later';
+                } else if (xhr.status >= 400) {
+                    errorMessage = 'Client error (HTTP ' + xhr.status + ')';
+                    statusText = 'Client Error';
+                    helpText = '• Authentication may be required<br>• Check configuration settings<br>• Verify endpoint URL';
+                } else {
+                    errorMessage = 'Network error: ' + error;
+                    statusText = 'Network Error';
+                    helpText = '• Check network connectivity<br>• Server may be unreachable';
+                }
+                break;
+            case 'abort':
+                errorMessage = 'Request was cancelled';
+                statusText = 'Cancelled';
+                helpText = '• Request was interrupted<br>• Try refreshing the page';
+                break;
+            default:
+                errorMessage = 'Unknown error occurred';
+                statusText = 'Error';
+                helpText = '• Unexpected error<br>• Try refreshing the page<br>• Check browser console for details';
+        }
+
+        cloudflareStatusDiv.find('.status-text').text(statusText);
+        vegvesenStatusDiv.find('.status-text').text('Unknown');
+
+        detailsDiv.html('<div style="color: #dc3232; padding: 10px; border-left: 3px solid #dc3232; background: #fef2f2;">' + 
+                       '<strong>Connection Error:</strong> ' + errorMessage + '<br>' +
+                       '<strong>Troubleshooting:</strong><br>' + helpText + 
+                       '</div>').show();
+    }
 
     function displayCachedHealthData(cachedData) {
         const statusDiv = $('#vegvesen-status');
@@ -235,27 +400,50 @@ jQuery(document).ready(function($) {
         monitoringDiv.html(html).show();
     }
 
-    // Auto-check service status on page load
-    if ($('#cloudflare-status').length) {
-        console.log('Starting health check...');
-        setTimeout(function() {
-            checkServiceStatus();
-        }, 500);
+    // Smart cache-aware health checking
+    let healthCheckInterval;
+    let lastCacheExpiryTime = 0;
 
-        // Also check every 30 seconds
-        setInterval(function() {
-            if ($('#cloudflare-status').length) {
+    function startSmartHealthMonitoring() {
+        if ($('#cloudflare-status').length) {
+            console.log('Starting smart health monitoring...');
+            
+            // Initial check after 500ms
+            setTimeout(function() {
                 checkServiceStatus();
-            }
-        }, 30000);
+            }, 500);
+
+            // Set up smart interval checking
+            healthCheckInterval = setInterval(function() {
+                if ($('#cloudflare-status').length) {
+                    const now = Date.now() / 1000; // Current time in seconds
+                    
+                    // If we know when cache expires, check 30 seconds before expiry
+                    if (lastCacheExpiryTime > 0 && now < (lastCacheExpiryTime - 30)) {
+                        console.log('Cache still valid, skipping health check. Next check in ' + Math.round((lastCacheExpiryTime - 30) - now) + ' seconds');
+                        return;
+                    }
+                    
+                    // Make a fresh health check
+                    checkServiceStatus();
+                }
+            }, 30000); // Check every 30 seconds, but respect cache
+        }
     }
 
-    // Refresh stats every 30 seconds
-    setInterval(function() {
-        if ($('.vehicle-lookup-admin').length && window.location.href.indexOf('vehicle-lookup') !== -1) {
-            location.reload();
+    function updateCacheExpiryTracking(healthData) {
+        if (healthData.cached && healthData.cache_expires_in) {
+            lastCacheExpiryTime = (Date.now() / 1000) + healthData.cache_expires_in;
+            console.log('Cache expires at: ' + new Date(lastCacheExpiryTime * 1000).toLocaleString());
+        } else if (!healthData.cached && healthData.cache_ttl) {
+            // Fresh data, cache will expire after TTL
+            lastCacheExpiryTime = (Date.now() / 1000) + healthData.cache_ttl;
+            console.log('Fresh data cached, expires at: ' + new Date(lastCacheExpiryTime * 1000).toLocaleString());
         }
-    }, 30000);
+    }
+
+    // Start smart monitoring
+    startSmartHealthMonitoring();
 
     // Add tooltips to help text
     $('.description').each(function() {
