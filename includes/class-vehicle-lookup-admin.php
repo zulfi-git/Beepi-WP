@@ -197,9 +197,11 @@ class Vehicle_Lookup_Admin {
         $stats = $this->get_lookup_stats($db_handler);
 
         // Calculate business metrics
-        $quota_percentage = ($quota_used / $quota_limit) * 100;
+        $quota_percentage = $quota_limit > 0 ? ($quota_used / $quota_limit) * 100 : 0;
         $avg_response_time = $this->calculate_avg_response_time($db_handler);
-        $trend_direction = $this->get_usage_trend($db_handler);
+        $trend_data = $this->get_usage_trend($db_handler);
+        $trend_direction = $trend_data['direction'];
+        $trend_percentage = $trend_data['percentage'];
         
         ?>
         <div class="wrap vehicle-lookup-admin">
@@ -229,10 +231,17 @@ class Vehicle_Lookup_Admin {
                         </div>
                         <div class="metric-content">
                             <div class="big-number"><?php echo number_format($stats['today_total']); ?></div>
+                            <?php if ($trend_percentage > 0): ?>
                             <div class="metric-trend <?php echo $trend_direction; ?>">
                                 <span class="dashicons dashicons-arrow-<?php echo $trend_direction === 'up' ? 'up-alt' : 'down-alt'; ?>"></span>
-                                <?php echo $trend_direction === 'up' ? '+' : '-'; ?>15% vs yesterday
+                                <?php echo $trend_direction === 'up' ? '+' : ''; ?><?php echo $trend_percentage; ?>% vs yesterday
                             </div>
+                            <?php else: ?>
+                            <div class="metric-trend">
+                                <span class="dashicons dashicons-chart-line"></span>
+                                No comparison data
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -1076,9 +1085,18 @@ class Vehicle_Lookup_Admin {
         ");
         
         if ($yesterday_count == 0) {
-            return 'up'; // Default to up if no yesterday data
+            return array(
+                'direction' => 'up',
+                'percentage' => 0
+            );
         }
         
-        return ($today_count >= $yesterday_count) ? 'up' : 'down';
+        $percentage = round(abs(($today_count - $yesterday_count) / $yesterday_count) * 100, 1);
+        $direction = ($today_count >= $yesterday_count) ? 'up' : 'down';
+        
+        return array(
+            'direction' => $direction,
+            'percentage' => $percentage
+        );
     }
 }
