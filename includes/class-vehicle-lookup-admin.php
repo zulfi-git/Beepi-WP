@@ -150,18 +150,25 @@ class Vehicle_Lookup_Admin {
             return;
         }
 
+        // Dynamic cache busting using file modification time
+        $css_file = VEHICLE_LOOKUP_PLUGIN_DIR . 'assets/css/admin.css';
+        $js_file = VEHICLE_LOOKUP_PLUGIN_DIR . 'assets/js/admin.js';
+        
+        $css_version = file_exists($css_file) ? filemtime($css_file) : '1.0.0';
+        $js_version = file_exists($js_file) ? filemtime($js_file) : '1.0.0';
+
         wp_enqueue_style(
             'vehicle-lookup-admin-style',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/admin.css',
             array(),
-            '1.0.0'
+            $css_version
         );
 
         wp_enqueue_script(
             'vehicle-lookup-admin-script',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/admin.js',
             array('jquery'),
-            '1.0.1',
+            $js_version,
             true
         );
 
