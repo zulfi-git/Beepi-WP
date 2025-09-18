@@ -161,7 +161,7 @@ class Vehicle_Lookup_Admin {
             'vehicle-lookup-admin-script',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/admin.js',
             array('jquery'),
-            '1.0.0',
+            '1.0.1',
             true
         );
 
