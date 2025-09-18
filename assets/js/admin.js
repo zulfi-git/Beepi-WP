@@ -581,4 +581,93 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    // Dual-Audience Dashboard Functions
+    function initializeDualAudienceDashboard() {
+        // Set up toggle for developer section
+        $('#toggle-developer').on('click', function() {
+            const developerContent = $('#developer-content');
+            const button = $(this);
+            
+            if (developerContent.is(':visible')) {
+                // Hide developer section
+                developerContent.slideUp(300);
+                button.html('<span class="dashicons dashicons-arrow-down-alt2"></span> Show Technical Details');
+            } else {
+                // Show developer section
+                developerContent.slideDown(300);
+                button.html('<span class="dashicons dashicons-arrow-up-alt2"></span> Hide Technical Details');
+            }
+        });
+
+        // Initialize overall status indicator
+        updateOverallStatus('checking', 'Checking Service Status...');
+    }
+
+    function updateOverallStatus(status, message) {
+        const overallStatusDiv = $('#overall-status');
+        const statusLight = overallStatusDiv.find('.status-light');
+        const statusText = overallStatusDiv.find('.status-text');
+        
+        if (statusLight.length && statusText.length) {
+            // Remove all status classes and add the new one
+            statusLight.removeClass('ok error warning unknown checking').addClass(status);
+            statusText.text(message);
+            
+            // Update the overall status indicator styling
+            overallStatusDiv.removeClass('status-ok status-error status-warning status-unknown status-checking')
+                            .addClass('status-' + status);
+        }
+    }
+
+    // Enhanced health check integration
+    function enhanceHealthCheckForBusinessView() {
+        // Hook into existing health check success
+        $(document).ajaxSuccess(function(event, xhr, settings) {
+            if (settings.data && settings.data.includes('vehicle_lookup_check_upstream')) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        const healthData = response.data;
+                        
+                        // Determine overall system status
+                        setTimeout(function() {
+                            const cloudflareOk = $('#cloudflare-status .status-light').hasClass('ok');
+                            const vegvesenOk = $('#vegvesen-status .status-light').hasClass('ok');
+                            
+                            if (cloudflareOk && vegvesenOk) {
+                                updateOverallStatus('ok', 'All Systems Operational');
+                            } else if (cloudflareOk || vegvesenOk) {
+                                updateOverallStatus('warning', 'Some Services Degraded');
+                            } else {
+                                updateOverallStatus('error', 'Service Issues Detected');
+                            }
+                            
+                            // Check circuit breaker state
+                            if (healthData.monitoring_data && healthData.monitoring_data.circuit_breaker) {
+                                const cbState = healthData.monitoring_data.circuit_breaker.state;
+                                if (cbState === 'OPEN' || cbState === 'HALF_OPEN') {
+                                    updateOverallStatus('warning', 'Service Temporarily Degraded');
+                                }
+                            }
+                        }, 100);
+                    }
+                } catch (e) {
+                    // Silent fail for non-health check responses
+                }
+            }
+        });
+
+        // Hook into health check failures
+        $(document).ajaxError(function(event, xhr, settings) {
+            if (settings.data && settings.data.includes('vehicle_lookup_check_upstream')) {
+                updateOverallStatus('error', 'Connection Failed');
+            }
+        });
+    }
+
+    // Initialize dual-audience dashboard
+    initializeDualAudienceDashboard();
+    enhanceHealthCheckForBusinessView();
+
 });
