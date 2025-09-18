@@ -328,13 +328,9 @@ class Vehicle_Lookup_Admin {
             <div class="developer-section">
                 <div class="section-header">
                     <h2><span class="dashicons dashicons-admin-tools"></span> Developer & Technical Details</h2>
-                    <button type="button" class="button button-secondary toggle-developer" id="toggle-developer">
-                        <span class="dashicons dashicons-arrow-down-alt2"></span>
-                        Show Technical Details
-                    </button>
                 </div>
                 
-                <div class="developer-content" id="developer-content" style="display: none;">
+                <div class="developer-content" id="developer-content">
                     <!-- Technical Metrics -->
                     <div class="tech-metrics">
                         <div class="tech-card">

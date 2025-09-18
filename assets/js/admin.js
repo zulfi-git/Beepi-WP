@@ -584,22 +584,6 @@ jQuery(document).ready(function($) {
 
     // Dual-Audience Dashboard Functions
     function initializeDualAudienceDashboard() {
-        // Set up toggle for developer section
-        $('#toggle-developer').on('click', function() {
-            const developerContent = $('#developer-content');
-            const button = $(this);
-            
-            if (developerContent.is(':visible')) {
-                // Hide developer section
-                developerContent.slideUp(300);
-                button.html('<span class="dashicons dashicons-arrow-down-alt2"></span> Show Technical Details');
-            } else {
-                // Show developer section
-                developerContent.slideDown(300);
-                button.html('<span class="dashicons dashicons-arrow-up-alt2"></span> Hide Technical Details');
-            }
-        });
-
         // Initialize overall status indicator
         updateOverallStatus('checking', 'Checking Service Status...');
     }
