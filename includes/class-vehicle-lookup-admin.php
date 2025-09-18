@@ -410,28 +410,7 @@ class Vehicle_Lookup_Admin {
                         <div class="monitoring-data" id="monitoring-data" style="display: none;"></div>
                     </div>
 
-                    <!-- Health Checks -->
-                    <div class="system-health">
-                        <h4><span class="dashicons dashicons-shield-alt"></span> System Health</h4>
-                        <div class="health-checks">
-                            <div class="health-item">
-                                <span class="dashicons dashicons-yes-alt health-ok"></span>
-                                <span>WordPress Version: <?php echo get_bloginfo('version'); ?></span>
-                            </div>
-                            <div class="health-item">
-                                <span class="dashicons dashicons-yes-alt health-ok"></span>
-                                <span>PHP Version: <?php echo PHP_VERSION; ?></span>
-                            </div>
-                            <div class="health-item">
-                                <span class="dashicons dashicons-<?php echo $cache_stats['entries'] > 0 ? 'yes-alt health-ok' : 'warning health-warning'; ?>"></span>
-                                <span>Cache Functioning: <?php echo $cache_stats['entries'] > 0 ? 'Yes' : 'No entries'; ?></span>
-                            </div>
-                            <div class="health-item">
-                                <span class="dashicons dashicons-<?php echo function_exists('wp_remote_post') ? 'yes-alt health-ok' : 'dismiss health-error'; ?>"></span>
-                                <span>HTTP Requests: <?php echo function_exists('wp_remote_post') ? 'Available' : 'Disabled'; ?></span>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
