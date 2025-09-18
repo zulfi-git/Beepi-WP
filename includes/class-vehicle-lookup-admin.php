@@ -320,6 +320,19 @@ class Vehicle_Lookup_Admin {
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="service-item">
+                            <div class="service-logo openai-logo">
+                                <span class="dashicons dashicons-admin-comments" style="font-size: 24px; color: #10a37f;"></span>
+                            </div>
+                            <div class="service-info">
+                                <div class="service-name">AI Summary Service</div>
+                                <div class="service-status" id="ai-summary-status">
+                                    <span class="status-light unknown"></span>
+                                    <span class="status-text">Pending...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -343,6 +356,24 @@ class Vehicle_Lookup_Admin {
                                 <div class="tech-stat">
                                     <strong><?php echo number_format($quota_limit - $quota_used); ?></strong>
                                     <span>Quota remaining</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tech-card">
+                            <h4><span class="dashicons dashicons-admin-comments"></span> AI Summary Service</h4>
+                            <div class="tech-stats">
+                                <div class="tech-stat" id="ai-model-info">
+                                    <strong>-</strong>
+                                    <span>Model in use</span>
+                                </div>
+                                <div class="tech-stat" id="ai-cache-entries">
+                                    <strong>-</strong>
+                                    <span>Cached summaries</span>
+                                </div>
+                                <div class="tech-stat" id="ai-timeout-setting">
+                                    <strong>-</strong>
+                                    <span>Timeout (ms)</span>
                                 </div>
                             </div>
                         </div>

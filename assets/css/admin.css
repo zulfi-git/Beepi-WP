@@ -137,6 +137,11 @@
     object-fit: contain;
 }
 
+.service-logo .dashicons {
+    color: #10a37f;
+    font-size: 32px;
+}
+
 .service-info {
     flex: 1;
 }

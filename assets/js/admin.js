@@ -42,6 +42,9 @@ jQuery(document).ready(function($) {
                     // Handle Vegvesen API Status
                     updateVegvesenStatus(healthData);
                     
+                    // Handle AI Summary Status
+                    updateAiSummaryStatus(healthData);
+                    
                     // Display monitoring data if available
                     if (healthData.monitoring_data) {
                         displayMonitoringData(healthData.monitoring_data);
@@ -133,6 +136,37 @@ jQuery(document).ready(function($) {
         vegvesenStatusDiv.find('.status-text').text(statusText);
     }
 
+    function updateAiSummaryStatus(healthData) {
+        const aiSummaryDiv = $('#ai-summary-status');
+        const aiData = healthData.aiSummaries;
+        
+        let statusClass = 'unknown';
+        let statusText = 'Unknown';
+        
+        if (!aiData) {
+            statusClass = 'unknown';
+            statusText = 'No Data';
+        } else if (!aiData.enabled) {
+            statusClass = 'warning';
+            statusText = 'API Key Missing';
+        } else {
+            statusClass = 'ok';
+            statusText = `Active (${aiData.model})`;
+            
+            // Update developer section with AI details
+            $('#ai-model-info strong').text(aiData.model || '-');
+            $('#ai-cache-entries strong').text(aiData.entries || '0');
+            $('#ai-timeout-setting strong').text(aiData.timeoutMs || '10000');
+        }
+        
+        if (healthData.cached) {
+            statusText += ' (cached)';
+        }
+        
+        aiSummaryDiv.find('.status-light').removeClass('checking ok warning error unknown').addClass(statusClass);
+        aiSummaryDiv.find('.status-text').text(statusText);
+    }
+
     function showCacheInfo(healthData) {
         const detailsDiv = $('#api-details');
         let cacheInfo = '<div style="padding: 10px; background: #f0f9ff; border-left: 3px solid #0ea5e9; margin: 10px 0;">';
@@ -150,6 +184,7 @@ jQuery(document).ready(function($) {
     function handleHealthCheckError(response) {
         const cloudflareStatusDiv = $('#cloudflare-status');
         const vegvesenStatusDiv = $('#vegvesen-status');
+        const aiSummaryStatusDiv = $('#ai-summary-status');
         const detailsDiv = $('#api-details');
 
         cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
@@ -157,6 +192,9 @@ jQuery(document).ready(function($) {
         
         vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
         vegvesenStatusDiv.find('.status-text').text('Unknown');
+        
+        aiSummaryStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+        aiSummaryStatusDiv.find('.status-text').text('Unknown');
 
         let errorMessage = 'Health check failed';
         let helpText = '';
@@ -180,10 +218,12 @@ jQuery(document).ready(function($) {
     function handleHealthCheckNetworkError(xhr, status, error) {
         const cloudflareStatusDiv = $('#cloudflare-status');
         const vegvesenStatusDiv = $('#vegvesen-status');
+        const aiSummaryStatusDiv = $('#ai-summary-status');
         const detailsDiv = $('#api-details');
 
         cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
         vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+        aiSummaryStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
 
         let errorMessage = 'Connection failed';
         let statusText = 'Connection Failed';
@@ -228,6 +268,7 @@ jQuery(document).ready(function($) {
 
         cloudflareStatusDiv.find('.status-text').text(statusText);
         vegvesenStatusDiv.find('.status-text').text('Unknown');
+        aiSummaryStatusDiv.find('.status-text').text('Unknown');
 
         detailsDiv.html('<div style="color: #dc3232; padding: 10px; border-left: 3px solid #dc3232; background: #fef2f2;">' + 
                        '<strong>Connection Error:</strong> ' + errorMessage + '<br>' +
@@ -618,9 +659,17 @@ jQuery(document).ready(function($) {
                         setTimeout(function() {
                             const cloudflareOk = $('#cloudflare-status .status-light').hasClass('ok');
                             const vegvesenOk = $('#vegvesen-status .status-light').hasClass('ok');
+                            const aiSummaryOk = $('#ai-summary-status .status-light').hasClass('ok');
+                            const aiSummaryWarning = $('#ai-summary-status .status-light').hasClass('warning');
                             
-                            if (cloudflareOk && vegvesenOk) {
-                                updateOverallStatus('ok', 'All Systems Operational');
+                            if (cloudflareOk && vegvesenOk && (aiSummaryOk || aiSummaryWarning)) {
+                                if (aiSummaryWarning) {
+                                    updateOverallStatus('warning', 'AI Features Limited');
+                                } else {
+                                    updateOverallStatus('ok', 'All Systems Operational');
+                                }
+                            } else if (cloudflareOk && vegvesenOk) {
+                                updateOverallStatus('warning', 'Core Services OK, AI Unknown');
                             } else if (cloudflareOk || vegvesenOk) {
                                 updateOverallStatus('warning', 'Some Services Degraded');
                             } else {
