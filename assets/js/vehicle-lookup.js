@@ -264,15 +264,28 @@ jQuery(document).ready(function($) {
 
         setLoadingState(true);
 
+        // Check for AI summary request (checkbox, URL param, or global setting)
+        const includeSummary = $('#include-ai-summary').is(':checked') || 
+                              new URLSearchParams(window.location.search).get('ai') === 'true' ||
+                              window.vehicleLookupConfig?.includeSummary === true;
+
+        // Build request data
+        const requestData = {
+            action: 'vehicle_lookup',
+            nonce: vehicleLookupAjax.nonce,
+            regNumber: regNumber
+        };
+
+        // Add AI summary flag if requested
+        if (includeSummary) {
+            requestData.includeSummary = true;
+        }
+
         // Make AJAX request
         $.ajax({
             url: vehicleLookupAjax.ajaxurl,
             type: 'POST',
-            data: {
-                action: 'vehicle_lookup',
-                nonce: vehicleLookupAjax.nonce,
-                regNumber: regNumber
-            },
+            data: requestData,
             dataType: 'json',
             contentType: 'application/x-www-form-urlencoded',
             timeout: 15000,

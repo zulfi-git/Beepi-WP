@@ -107,6 +107,7 @@ class Vehicle_Lookup {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
         $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
+        $includeSummary = isset($_POST['includeSummary']) ? (bool)$_POST['includeSummary'] : false;
         $ip_address = $this->access->get_client_ip();
         $start_time = microtime(true);
 
@@ -132,15 +133,16 @@ class Vehicle_Lookup {
             wp_send_json_error('Daglig grense nådd. Prøv igjen i morgen.');
         }
 
-        // Check cache first
-        $cached_data = $this->cache->get($regNumber);
+        // Check cache first (include AI summary flag in cache key)
+        $cache_key = $includeSummary ? $regNumber . '_ai' : $regNumber;
+        $cached_data = $this->cache->get($cache_key);
         if ($cached_data !== false) {
             $response_time = round((microtime(true) - $start_time) * 1000);
             $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, true);
             
             // Add cache metadata to response
             $cached_data['is_cached'] = true;
-            $cached_data['cache_time'] = $this->cache->get_cache_time($regNumber);
+            $cached_data['cache_time'] = $this->cache->get_cache_time($cache_key);
             
             wp_send_json_success($cached_data);
         }
@@ -149,7 +151,7 @@ class Vehicle_Lookup {
         $tier = $this->access->determine_tier($regNumber);
 
         // Make API request (tier handled internally by WordPress)
-        $api_result = $this->api->lookup($regNumber);
+        $api_result = $this->api->lookup($regNumber, $includeSummary);
         $response_time = $api_result['response_time'];
         $result = $this->api->process_response($api_result['response'], $regNumber);
 
@@ -184,8 +186,9 @@ class Vehicle_Lookup {
 
         $data = $result['data'];
 
-        // Cache successful response
-        $this->cache->set($regNumber, $data);
+        // Cache successful response (separate cache for AI summaries)
+        $cache_key = $includeSummary ? $regNumber . '_ai' : $regNumber;
+        $this->cache->set($cache_key, $data);
 
         // Add cache metadata to response
         $data['is_cached'] = false;

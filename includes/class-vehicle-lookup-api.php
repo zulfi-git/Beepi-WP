@@ -3,22 +3,33 @@ class VehicleLookupAPI {
     
     /**
      * Make API request to worker
+     * 
+     * @param string $regNumber Registration number
+     * @param bool $includeSummary Whether to include AI summary (default: false)
      */
-    public function lookup($regNumber) {
+    public function lookup($regNumber, $includeSummary = false) {
         $start_time = microtime(true);
         
         // Get worker URL and timeout from admin settings
         $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
         $timeout = get_option('vehicle_lookup_timeout', 15);
         
+        // Build request body
+        $request_body = array(
+            'registrationNumber' => $regNumber
+        );
+        
+        // Add includeSummary flag if requested
+        if ($includeSummary) {
+            $request_body['includeSummary'] = true;
+        }
+        
         $response = wp_remote_post($worker_url . '/lookup', array(
             'headers' => array(
                 'Content-Type' => 'application/json',
                 'Origin' => get_site_url()
             ),
-            'body' => json_encode(array(
-                'registrationNumber' => $regNumber
-            )),
+            'body' => json_encode($request_body),
             'timeout' => $timeout
         ));
 
