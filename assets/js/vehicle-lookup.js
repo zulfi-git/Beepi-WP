@@ -264,22 +264,13 @@ jQuery(document).ready(function($) {
 
         setLoadingState(true);
 
-        // Check for AI summary request (checkbox, URL param, or global setting)
-        const includeSummary = $('#include-ai-summary').is(':checked') || 
-                              new URLSearchParams(window.location.search).get('ai') === 'true' ||
-                              window.vehicleLookupConfig?.includeSummary === true;
-
-        // Build request data
+        // Always request AI summaries for all users
         const requestData = {
             action: 'vehicle_lookup',
             nonce: vehicleLookupAjax.nonce,
-            regNumber: regNumber
+            regNumber: regNumber,
+            includeSummary: true  // AI summaries enabled for all users
         };
-
-        // Add AI summary flag if requested
-        if (includeSummary) {
-            requestData.includeSummary = true;
-        }
 
         // Make AJAX request
         $.ajax({
@@ -985,6 +976,79 @@ jQuery(document).ready(function($) {
             'Neste kontroll': vehicleData.periodiskKjoretoyKontroll?.kontrollfrist,
             'Status': vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse
         };
+    }
+
+    function renderAiSummary(aiSummary) {
+        if (!aiSummary) return;
+
+        // Create AI summary HTML with accordion structure matching existing pattern
+        const aiSectionHtml = `
+            <details class="ai-summary-section" data-free="true">
+                <summary><span>AI Kjøretøyanalyse</span><span>🧠</span></summary>
+                <div class="details-content">
+                    <div class="ai-summary-content">
+                        ${aiSummary.summary ? `
+                            <div class="ai-section">
+                                <h4 class="ai-section-title">📋 Sammendrag</h4>
+                                <p class="ai-summary-text">${aiSummary.summary}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${aiSummary.highlights && aiSummary.highlights.length > 0 ? `
+                            <div class="ai-section">
+                                <h4 class="ai-section-title">⭐ Høydepunkter</h4>
+                                <ul class="ai-highlights">
+                                    ${aiSummary.highlights.map(highlight => 
+                                        `<li class="ai-highlight-item">${highlight}</li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        ${aiSummary.recommendation ? `
+                            <div class="ai-section">
+                                <h4 class="ai-section-title">💡 Anbefaling</h4>
+                                <p class="ai-recommendation">${aiSummary.recommendation}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${aiSummary.marketInsights ? `
+                            <div class="ai-section">
+                                <h4 class="ai-section-title">📊 Markedsanalyse</h4>
+                                <p class="ai-market-insights">${aiSummary.marketInsights}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${aiSummary.redFlags && aiSummary.redFlags.length > 0 ? `
+                            <div class="ai-section">
+                                <h4 class="ai-section-title">⚠️ Røde flagg</h4>
+                                <ul class="ai-red-flags">
+                                    ${aiSummary.redFlags.map(flag => 
+                                        `<li class="ai-red-flag-item">${flag}</li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="ai-attribution">
+                            <small class="ai-meta">
+                                ${aiSummary.aiGenerated ? 
+                                    `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}` : 
+                                    'Fallback-sammendrag'
+                                }
+                                ${aiSummary.generatedAt ? 
+                                    ` • ${new Date(aiSummary.generatedAt).toLocaleString('no-NO')}` : 
+                                    ''
+                                }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        `;
+
+        // Insert AI summary at the beginning of the accordion
+        $('.accordion').prepend(aiSectionHtml);
     }
 
     function createInfoItem(label, value) {
