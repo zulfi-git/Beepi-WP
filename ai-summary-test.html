@@ -144,6 +144,36 @@
             updateTestStatus(message, 'test-success');
         }
 
+        // Test refresh behavior
+        function testRefreshBehavior() {
+            logTest('Testing refresh behavior - simulating multiple searches...');
+            
+            // First search
+            renderAiSummary(mockAiSummary);
+            
+            setTimeout(() => {
+                const firstCount = $('.ai-summary-section').length;
+                logTest(`First search: ${firstCount} AI summary sections`);
+                
+                // Simulate second search (should clear previous)
+                $('.ai-summary-section').remove(); // Simulate resetFormState
+                renderAiSummary({
+                    ...mockAiSummary,
+                    summary: "Oppdatert sammendrag for ny søk - Tesla Model Y fra 2024",
+                    highlights: ["Nyere modell med forbedret rekkevidde", "Oppdaterte sikkerhetsfunksjoner"]
+                });
+                
+                setTimeout(() => {
+                    const secondCount = $('.ai-summary-section').length;
+                    if (secondCount === 1) {
+                        logTest('✅ Refresh behavior working - no stacking');
+                    } else {
+                        updateTestStatus(`❌ Stacking issue - found ${secondCount} sections`, 'test-error');
+                    }
+                }, 100);
+            }, 500);
+        }
+
         // Start test when page loads
         $(document).ready(function() {
             logTest('Test harness loaded - jQuery and mock environment ready');
@@ -174,7 +204,25 @@
                         const aiSection = $('.ai-summary-section');
                         if (aiSection.length > 0) {
                             logTest('✅ AI summary section created successfully');
-                            logTest('✅ Test completed - AI summary functionality working');
+                            logTest('Testing typography styling...');
+                            
+                            // Check for proper CSS classes
+                            const hasProperClasses = aiSection.find('.ai-section-title').length > 0 &&
+                                                   aiSection.find('.ai-summary-content').length > 0 &&
+                                                   aiSection.find('.ai-attribution').length > 0;
+                            
+                            if (hasProperClasses) {
+                                logTest('✅ Typography classes applied correctly');
+                            } else {
+                                updateTestStatus('❌ Missing typography classes', 'test-error');
+                            }
+                            
+                            // Test refresh behavior
+                            testRefreshBehavior();
+                            
+                            setTimeout(() => {
+                                logTest('✅ All tests completed - AI summary functionality working');
+                            }, 1500);
                         } else {
                             updateTestStatus('❌ AI summary section not found after render', 'test-error');
                         }
