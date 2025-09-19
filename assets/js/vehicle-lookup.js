@@ -56,6 +56,9 @@ jQuery(document).ready(function($) {
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
         $('.cache-notice').remove();
+        // Clear AI summary sections to prevent stacking
+        $('.ai-summary-section').remove();
+        $('.ai-summary-error').remove();
         $vehicleTitle.empty();
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
@@ -989,6 +992,10 @@ jQuery(document).ready(function($) {
 
     function renderAiSummary(aiSummary) {
         if (!aiSummary) return;
+
+        // Remove any existing AI summary sections to prevent duplicates
+        $('.ai-summary-section').remove();
+        $('.ai-summary-error').remove();
 
         try {
             // Create DOM elements safely to prevent XSS
