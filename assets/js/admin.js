@@ -138,7 +138,7 @@ jQuery(document).ready(function($) {
 
     function updateAiSummaryStatus(healthData) {
         const aiSummaryDiv = $('#ai-summary-status');
-        const aiData = healthData.aiSummaries;
+        const aiData = healthData.health_data?.aiSummaries;
         
         let statusClass = 'unknown';
         let statusText = 'Unknown';
