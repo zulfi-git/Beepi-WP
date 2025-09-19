@@ -1162,6 +1162,182 @@ details summary {
     border-color: rgba(23, 162, 184, 0.2);
 }
 
+/* AI Summary Styling */
+.ai-summary-section {
+    background: linear-gradient(135deg, #f8feff 0%, #f0f9ff 100%);
+    border: 2px solid #e0f2fe !important;
+    position: relative;
+}
+
+.ai-summary-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0ea5e9, #3b82f6, #6366f1);
+    border-radius: 20px 20px 0 0;
+}
+
+.ai-summary-section summary {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    color: #0c4a6e !important;
+    font-weight: 700 !important;
+    position: relative;
+}
+
+.ai-summary-section summary:hover {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important;
+}
+
+.ai-summary-section[open] {
+    border-color: #0ea5e9 !important;
+    box-shadow: 0 8px 40px rgba(14, 165, 233, 0.15) !important;
+}
+
+.ai-summary-content {
+    padding: 1.5rem;
+    background: #ffffff;
+}
+
+.ai-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.ai-section:hover {
+    background: #f1f5f9;
+    border-left-color: #3b82f6;
+    transform: translateX(2px);
+}
+
+.ai-section:last-child {
+    margin-bottom: 0;
+}
+
+.ai-section-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin: 0 0 0.75rem 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ai-summary-text,
+.ai-recommendation,
+.ai-market-insights {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #334155;
+    margin: 0;
+}
+
+.ai-highlights,
+.ai-red-flags {
+    margin: 0;
+    padding-left: 1.25rem;
+    list-style: none;
+}
+
+.ai-highlight-item,
+.ai-red-flag-item {
+    position: relative;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #475569;
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+.ai-highlight-item::before {
+    content: '✓';
+    position: absolute;
+    left: -1rem;
+    color: #059669;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.ai-red-flag-item::before {
+    content: '⚠';
+    position: absolute;
+    left: -1rem;
+    color: #dc2626;
+    font-size: 0.85rem;
+}
+
+.ai-red-flag-item {
+    color: #991b1b;
+}
+
+.ai-attribution {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.ai-meta {
+    font-size: 0.8rem !important;
+    color: #64748b !important;
+    font-style: italic;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.ai-meta::before {
+    content: '🤖';
+    font-size: 0.75rem;
+}
+
+/* AI Summary Error Styling */
+.ai-summary-error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Mobile optimizations for AI Summary */
+@media (max-width: 768px) {
+    .ai-summary-content {
+        padding: 1rem;
+    }
+    
+    .ai-section {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .ai-section-title {
+        font-size: 0.95rem !important;
+    }
+    
+    .ai-summary-text,
+    .ai-recommendation,
+    .ai-market-insights {
+        font-size: 0.9rem;
+    }
+    
+    .ai-highlight-item,
+    .ai-red-flag-item {
+        font-size: 0.85rem;
+    }
+}
+
 /* Owner History Premium Upsell Styles */
 .owner-history-container {
     position: relative;
