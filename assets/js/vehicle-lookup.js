@@ -225,6 +225,11 @@ jQuery(document).ready(function($) {
         // Show cache status notice
         displayCacheNotice(response.data);
 
+        // Render AI summary if available (always requested for all users)
+        if (response.data.aiSummary) {
+            renderAiSummary(response.data.aiSummary);
+        }
+
         // Always show basic info for free
         renderBasicInfo(vehicleData);
         renderRegistrationInfo(vehicleData);
