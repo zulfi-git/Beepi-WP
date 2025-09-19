@@ -227,7 +227,11 @@ jQuery(document).ready(function($) {
 
         // Render AI summary if available (always requested for all users)
         if (response.data.aiSummary) {
-            renderAiSummary(response.data.aiSummary);
+            if (typeof renderAiSummary === 'function') {
+                renderAiSummary(response.data.aiSummary);
+            } else {
+                console.warn('AI Summary: renderAiSummary function not available');
+            }
         }
 
         // Always show basic info for free
@@ -986,74 +990,119 @@ jQuery(document).ready(function($) {
     function renderAiSummary(aiSummary) {
         if (!aiSummary) return;
 
-        // Create AI summary HTML with accordion structure matching existing pattern
-        const aiSectionHtml = `
-            <details class="ai-summary-section" data-free="true">
-                <summary><span>AI Kjøretøyanalyse</span><span>🧠</span></summary>
-                <div class="details-content">
-                    <div class="ai-summary-content">
-                        ${aiSummary.summary ? `
-                            <div class="ai-section">
-                                <h4 class="ai-section-title">📋 Sammendrag</h4>
-                                <p class="ai-summary-text">${aiSummary.summary}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${aiSummary.highlights && aiSummary.highlights.length > 0 ? `
-                            <div class="ai-section">
-                                <h4 class="ai-section-title">⭐ Høydepunkter</h4>
-                                <ul class="ai-highlights">
-                                    ${aiSummary.highlights.map(highlight => 
-                                        `<li class="ai-highlight-item">${highlight}</li>`
-                                    ).join('')}
-                                </ul>
-                            </div>
-                        ` : ''}
-                        
-                        ${aiSummary.recommendation ? `
-                            <div class="ai-section">
-                                <h4 class="ai-section-title">💡 Anbefaling</h4>
-                                <p class="ai-recommendation">${aiSummary.recommendation}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${aiSummary.marketInsights ? `
-                            <div class="ai-section">
-                                <h4 class="ai-section-title">📊 Markedsanalyse</h4>
-                                <p class="ai-market-insights">${aiSummary.marketInsights}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${aiSummary.redFlags && aiSummary.redFlags.length > 0 ? `
-                            <div class="ai-section">
-                                <h4 class="ai-section-title">⚠️ Røde flagg</h4>
-                                <ul class="ai-red-flags">
-                                    ${aiSummary.redFlags.map(flag => 
-                                        `<li class="ai-red-flag-item">${flag}</li>`
-                                    ).join('')}
-                                </ul>
-                            </div>
-                        ` : ''}
-                        
-                        <div class="ai-attribution">
-                            <small class="ai-meta">
-                                ${aiSummary.aiGenerated ? 
-                                    `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}` : 
-                                    'Fallback-sammendrag'
-                                }
-                                ${aiSummary.generatedAt ? 
-                                    ` • ${new Date(aiSummary.generatedAt).toLocaleString('no-NO')}` : 
-                                    ''
-                                }
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </details>
-        `;
+        try {
+            // Create DOM elements safely to prevent XSS
+            const $aiSection = $('<details class="ai-summary-section" data-free="true">');
+            const $summary = $('<summary>').append(
+                $('<span>').text('AI Kjøretøyanalyse'),
+                $('<span>').text('🧠')
+            );
+            const $detailsContent = $('<div class="details-content">');
+            const $aiContent = $('<div class="ai-summary-content">');
 
-        // Insert AI summary at the beginning of the accordion
-        $('.accordion').prepend(aiSectionHtml);
+            // Safely add summary section
+            if (aiSummary.summary) {
+                const $summarySection = $('<div class="ai-section">');
+                $summarySection.append(
+                    $('<h4 class="ai-section-title">').text('📋 Sammendrag'),
+                    $('<p class="ai-summary-text">').text(aiSummary.summary)
+                );
+                $aiContent.append($summarySection);
+            }
+
+            // Safely add highlights
+            if (aiSummary.highlights && Array.isArray(aiSummary.highlights) && aiSummary.highlights.length > 0) {
+                const $highlightsSection = $('<div class="ai-section">');
+                const $highlightsList = $('<ul class="ai-highlights">');
+                
+                aiSummary.highlights.forEach(highlight => {
+                    if (typeof highlight === 'string') {
+                        $highlightsList.append(
+                            $('<li class="ai-highlight-item">').text(highlight)
+                        );
+                    }
+                });
+                
+                $highlightsSection.append(
+                    $('<h4 class="ai-section-title">').text('⭐ Høydepunkter'),
+                    $highlightsList
+                );
+                $aiContent.append($highlightsSection);
+            }
+
+            // Safely add recommendation
+            if (aiSummary.recommendation) {
+                const $recommendationSection = $('<div class="ai-section">');
+                $recommendationSection.append(
+                    $('<h4 class="ai-section-title">').text('💡 Anbefaling'),
+                    $('<p class="ai-recommendation">').text(aiSummary.recommendation)
+                );
+                $aiContent.append($recommendationSection);
+            }
+
+            // Safely add market insights
+            if (aiSummary.marketInsights) {
+                const $marketSection = $('<div class="ai-section">');
+                $marketSection.append(
+                    $('<h4 class="ai-section-title">').text('📊 Markedsanalyse'),
+                    $('<p class="ai-market-insights">').text(aiSummary.marketInsights)
+                );
+                $aiContent.append($marketSection);
+            }
+
+            // Safely add red flags
+            if (aiSummary.redFlags && Array.isArray(aiSummary.redFlags) && aiSummary.redFlags.length > 0) {
+                const $redFlagsSection = $('<div class="ai-section">');
+                const $redFlagsList = $('<ul class="ai-red-flags">');
+                
+                aiSummary.redFlags.forEach(flag => {
+                    if (typeof flag === 'string') {
+                        $redFlagsList.append(
+                            $('<li class="ai-red-flag-item">').text(flag)
+                        );
+                    }
+                });
+                
+                $redFlagsSection.append(
+                    $('<h4 class="ai-section-title">').text('⚠️ Røde flagg'),
+                    $redFlagsList
+                );
+                $aiContent.append($redFlagsSection);
+            }
+
+            // Safely add attribution
+            const $attribution = $('<div class="ai-attribution">');
+            const $meta = $('<small class="ai-meta">');
+            
+            let metaText = aiSummary.aiGenerated ? 
+                `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}` : 
+                'Fallback-sammendrag';
+            
+            if (aiSummary.generatedAt) {
+                const generatedDate = new Date(aiSummary.generatedAt);
+                if (!isNaN(generatedDate.getTime())) {
+                    metaText += ` • ${generatedDate.toLocaleString('no-NO')}`;
+                }
+            }
+            
+            $meta.text(metaText);
+            $attribution.append($meta);
+            $aiContent.append($attribution);
+
+            // Assemble the complete structure
+            $detailsContent.append($aiContent);
+            $aiSection.append($summary, $detailsContent);
+
+            // Insert AI summary at the beginning of the accordion
+            $('.accordion').prepend($aiSection);
+
+        } catch (error) {
+            console.error('Error rendering AI summary:', error);
+            // Fallback: show a simple error message
+            const $errorSection = $('<div class="ai-summary-error" style="padding: 10px; margin: 10px 0; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">');
+            $errorSection.text('AI-sammendrag kunne ikke vises');
+            $('.accordion').prepend($errorSection);
+        }
     }
 
     function createInfoItem(label, value) {
