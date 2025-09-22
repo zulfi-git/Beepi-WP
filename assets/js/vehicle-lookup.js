@@ -1185,10 +1185,10 @@ jQuery(document).ready(function($) {
             .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
             .appendTo('head');
         
-        // Assemble AI section and add to accordion
+        // Assemble AI section and add to beginning of accordion (matching renderAiSummary position)
         $detailsContent.append($aiContent);
         $aiSection.append($summary, $detailsContent);
-        $('.accordion').append($aiSection);
+        $('.accordion').prepend($aiSection);
     }
 
     /**

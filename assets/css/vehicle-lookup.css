@@ -1202,22 +1202,14 @@ details summary {
 }
 
 .ai-section {
-    margin-bottom: 0.75rem;
-    padding: 0.5rem;
+    margin-bottom: 0;
+    padding: 0.75rem 0.5rem;
     background: #f8fafc;
-    border-radius: 12px;
-    border-left: 4px solid #e2e8f0;
-    transition: all 0.2s ease;
-}
-
-.ai-section:hover {
-    background: #f1f5f9;
-    border-left-color: #3b82f6;
-    transform: translateX(2px);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .ai-section:last-child {
-    margin-bottom: 0;
+    border-bottom: none;
 }
 
 .ai-section-title {
