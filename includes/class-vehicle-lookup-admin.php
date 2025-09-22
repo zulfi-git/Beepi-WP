@@ -879,11 +879,15 @@ class Vehicle_Lookup_Admin {
                     'vegvesen_quota' => $rl['vegvesenQuotaUsage'] ?? '0/5000',
                     'quota_utilization' => $rl['quotaUtilization'] ?? '0%',
                     'active_ips_hourly' => $rl['activeIPsTracked']['hourly'] ?? 0,
-                    'active_ips_burst' => $rl['activeIPsTracked']['burst'] ?? 0
+                    'active_ips_burst' => $rl['activeIPsTracked']['burst'] ?? 0,
+                    // Enhanced tracking for two-endpoint system
+                    'vehicle_endpoint_usage' => $rl['vehicleEndpointUsage'] ?? 0,
+                    'ai_endpoint_usage' => $rl['aiEndpointUsage'] ?? 0,
+                    'ai_generation_rate' => $rl['aiGenerationRate'] ?? 0
                 );
             }
             
-            // Cache information
+            // Cache information with enhanced AI summary tracking
             if (isset($body['cache'])) {
                 $cache = $body['cache'];
                 $monitoring_data['cache'] = array(
@@ -891,7 +895,29 @@ class Vehicle_Lookup_Admin {
                     'max_size' => $cache['maxSize'] ?? 1000,
                     'ttl' => $cache['ttl'] ?? 3600,
                     'utilization' => isset($cache['entries'], $cache['maxSize']) ? 
-                        round(($cache['entries'] / $cache['maxSize']) * 100, 1) : 0
+                        round(($cache['entries'] / $cache['maxSize']) * 100, 1) : 0,
+                    // Separate cache metrics for two-endpoint system
+                    'vehicle_cache_entries' => $cache['vehicleCacheEntries'] ?? 0,
+                    'ai_cache_entries' => $cache['aiCacheEntries'] ?? 0,
+                    'vehicle_hit_rate' => $cache['vehicleHitRate'] ?? '0%',
+                    'ai_hit_rate' => $cache['aiHitRate'] ?? '0%',
+                    'ai_cache_ttl' => $cache['aiCacheTtl'] ?? 86400  // 24 hours
+                );
+            }
+            
+            // AI Summary Service Status
+            if (isset($body['aiSummary'])) {
+                $ai = $body['aiSummary'];
+                $monitoring_data['ai_summary'] = array(
+                    'status' => $ai['status'] ?? 'unknown',
+                    'model' => $ai['model'] ?? 'gpt-4o-mini',
+                    'timeout' => $ai['timeout'] ?? 25000,
+                    'active_generations' => $ai['activeGenerations'] ?? 0,
+                    'completed_today' => $ai['completedToday'] ?? 0,
+                    'failed_today' => $ai['failedToday'] ?? 0,
+                    'avg_generation_time' => $ai['avgGenerationTime'] ?? 0,
+                    'generation_success_rate' => $ai['generationSuccessRate'] ?? '100%',
+                    'cache_utilization' => $ai['cacheUtilization'] ?? '0%'
                 );
             }
             
@@ -903,7 +929,21 @@ class Vehicle_Lookup_Admin {
                     'failure_count' => $cb['failureCount'] ?? 0,
                     'success_rate' => $cb['successRate'] ?? '100%',
                     'total_requests' => $cb['totalRequests'] ?? 0,
-                    'last_failure' => $cb['lastFailure']
+                    'last_failure' => $cb['lastFailure'],
+                    // Enhanced circuit breaker for two-endpoint system
+                    'vehicle_circuit_state' => $cb['vehicleCircuitState'] ?? 'CLOSED',
+                    'ai_circuit_state' => $cb['aiCircuitState'] ?? 'CLOSED'
+                );
+            }
+            
+            // Two-endpoint system performance metrics
+            if (isset($body['performance'])) {
+                $perf = $body['performance'];
+                $monitoring_data['performance'] = array(
+                    'vehicle_avg_latency' => $perf['vehicleAvgLatency'] ?? 0,
+                    'ai_avg_latency' => $perf['aiAvgLatency'] ?? 0,
+                    'cache_hit_improvement' => $perf['cacheHitImprovement'] ?? '0%',
+                    'timeout_elimination' => $perf['timeoutElimination'] ?? true
                 );
             }
 

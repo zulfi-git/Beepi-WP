@@ -116,9 +116,10 @@ jQuery(document).ready(function($) {
                 statusText = status;
         }
 
-        // Check circuit breaker state
+        // Check circuit breaker state for vehicle endpoint
         if (healthData.monitoring_data && healthData.monitoring_data.circuit_breaker) {
-            const cbState = healthData.monitoring_data.circuit_breaker.state;
+            const cbState = healthData.monitoring_data.circuit_breaker.vehicle_circuit_state || 
+                           healthData.monitoring_data.circuit_breaker.state; // fallback to legacy
             if (cbState === 'OPEN') {
                 statusClass = 'error';
                 statusText = 'Circuit Breaker OPEN';
@@ -138,7 +139,9 @@ jQuery(document).ready(function($) {
 
     function updateAiSummaryStatus(healthData) {
         const aiSummaryDiv = $('#ai-summary-status');
-        const aiData = healthData.health_data?.aiSummaries;
+        
+        // Check for enhanced AI summary monitoring data from two-endpoint system
+        const aiData = healthData.monitoring_data?.ai_summary || healthData.health_data?.aiSummaries;
         
         let statusClass = 'unknown';
         let statusText = 'Unknown';
@@ -146,14 +149,69 @@ jQuery(document).ready(function($) {
         if (!aiData) {
             statusClass = 'unknown';
             statusText = 'No Data';
+        } else if (healthData.monitoring_data?.ai_summary) {
+            // New enhanced AI summary monitoring
+            const status = aiData.status;
+            
+            if (status === 'operational') {
+                statusClass = 'ok';
+                statusText = 'Operational';
+                if (aiData.active_generations > 0) {
+                    statusText += ` (${aiData.active_generations} generating)`;
+                }
+            } else if (status === 'degraded') {
+                statusClass = 'warning';
+                statusText = 'Degraded Performance';
+            } else if (status === 'down') {
+                statusClass = 'error';
+                statusText = 'Service Down';
+            } else if (status === 'limited') {
+                statusClass = 'warning';
+                statusText = 'Rate Limited';
+            }
+            
+            // Update enhanced AI metrics for two-endpoint system
+            $('#ai-model-info strong').text(aiData.model || '-');
+            $('#ai-timeout-setting strong').text((aiData.timeout || 25000) + 'ms');
+            
+            // Use proper AI cache entries from enhanced monitoring
+            const aiCacheEntries = healthData.monitoring_data?.cache?.ai_cache_entries;
+            if (aiCacheEntries !== undefined) {
+                $('#ai-cache-entries strong').text(aiCacheEntries + ' cached');
+            } else {
+                $('#ai-cache-entries strong').text((aiData.completed_today || 0) + ' today');
+            }
+            
+            // Display generation success rate if available
+            if (aiData.generation_success_rate) {
+                const successRateElement = $('#ai-success-rate strong');
+                if (successRateElement.length) {
+                    successRateElement.text(aiData.generation_success_rate);
+                }
+            }
+            
+            // Check AI circuit breaker state
+            if (healthData.monitoring_data?.circuit_breaker?.ai_circuit_state) {
+                const aiCbState = healthData.monitoring_data.circuit_breaker.ai_circuit_state;
+                if (aiCbState === 'OPEN') {
+                    statusClass = 'error';
+                    statusText = 'AI Circuit Breaker OPEN';
+                } else if (aiCbState === 'HALF_OPEN') {
+                    statusClass = 'warning';
+                    statusText = 'AI Circuit Testing';
+                }
+            }
+            
         } else if (!aiData.enabled) {
+            // Legacy AI summary data
             statusClass = 'warning';
             statusText = 'API Key Missing';
         } else {
+            // Legacy AI summary data  
             statusClass = 'ok';
             statusText = `Active (${aiData.model})`;
             
-            // Update developer section with AI details
+            // Update developer section with AI details (legacy format)
             $('#ai-model-info strong').text(aiData.model || '-');
             $('#ai-cache-entries strong').text(aiData.entries || '0');
             $('#ai-timeout-setting strong').text(aiData.timeoutMs || '10000');
@@ -374,27 +432,76 @@ jQuery(document).ready(function($) {
             html += '</div>';
         }
 
-        // Cache information
+        // Enhanced cache information for two-endpoint system
         if (monitoringData.cache) {
             const cache = monitoringData.cache;
             html += '<div class="monitoring-item">';
-            html += '<strong>Cache:</strong> ' + cache.entries + '/' + cache.max_size + ' entries (' + cache.utilization + '%)';
+            html += '<strong>Total Cache:</strong> ' + cache.entries + '/' + cache.max_size + ' entries (' + cache.utilization + '%)';
             html += '</div>';
+            
+            // Separate cache metrics if available
+            if (cache.vehicle_cache_entries !== undefined || cache.ai_cache_entries !== undefined) {
+                html += '<div class="monitoring-item">';
+                html += '<strong>Vehicle Cache:</strong> ' + (cache.vehicle_cache_entries || 0) + ' entries (' + (cache.vehicle_hit_rate || '0%') + ' hit rate)';
+                html += '</div>';
+                html += '<div class="monitoring-item">';
+                html += '<strong>AI Cache:</strong> ' + (cache.ai_cache_entries || 0) + ' entries (' + (cache.ai_hit_rate || '0%') + ' hit rate)';
+                html += '</div>';
+                if (cache.ai_cache_ttl) {
+                    html += '<div class="monitoring-item">';
+                    html += '<strong>AI Cache TTL:</strong> ' + Math.floor(cache.ai_cache_ttl / 3600) + ' hours';
+                    html += '</div>';
+                }
+            }
         }
 
-        // Circuit breaker status
+        // AI Summary Service Performance
+        if (monitoringData.ai_summary) {
+            const ai = monitoringData.ai_summary;
+            html += '<div class="monitoring-item">';
+            html += '<strong>AI Summaries:</strong> ' + (ai.completed_today || 0) + ' completed, ' + (ai.failed_today || 0) + ' failed';
+            html += '</div>';
+            if (ai.avg_generation_time) {
+                html += '<div class="monitoring-item">';
+                html += '<strong>AI Generation Time:</strong> ' + ai.avg_generation_time + 'ms avg';
+                html += '</div>';
+            }
+        }
+
+        // Performance Metrics for Two-Endpoint System
+        if (monitoringData.performance) {
+            const perf = monitoringData.performance;
+            html += '<div class="monitoring-item">';
+            html += '<strong>Vehicle Latency:</strong> ' + perf.vehicle_avg_latency + 'ms avg';
+            html += '</div>';
+            html += '<div class="monitoring-item">';
+            html += '<strong>AI Latency:</strong> ' + perf.ai_avg_latency + 'ms avg';
+            html += '</div>';
+            if (perf.cache_hit_improvement) {
+                html += '<div class="monitoring-item">';
+                html += '<strong>Cache Performance:</strong> ' + perf.cache_hit_improvement + ' improvement';
+                html += '</div>';
+            }
+        }
+
+        // Enhanced circuit breaker status for two-endpoint system
         if (monitoringData.circuit_breaker) {
             const cb = monitoringData.circuit_breaker;
-            const stateColor = cb.state === 'CLOSED' ? '#00a32a' : (cb.state === 'OPEN' ? '#d63638' : '#dba617');
-            html += '<div class="monitoring-item">';
-            html += '<strong>Circuit Breaker:</strong> <span style="color: ' + stateColor + '">' + cb.state + '</span>';
-            if (cb.success_rate) {
-                html += ' (Success: ' + cb.success_rate + ')';
-            }
-            html += '</div>';
-            if (cb.total_requests > 0) {
+            
+            // Overall circuit breaker state
+            if (cb.state) {
                 html += '<div class="monitoring-item">';
-                html += '<strong>Requests:</strong> ' + cb.total_requests + ' total, ' + cb.failure_count + ' failures';
+                html += '<strong>Circuit Breaker:</strong> ' + cb.state + ' (' + (cb.success_rate || '100%') + ' success)';
+                html += '</div>';
+            }
+            
+            // Separate circuit breaker states for two-endpoint system
+            if (cb.vehicle_circuit_state || cb.ai_circuit_state) {
+                html += '<div class="monitoring-item">';
+                html += '<strong>Vehicle Circuit:</strong> ' + (cb.vehicle_circuit_state || 'CLOSED');
+                html += '</div>';
+                html += '<div class="monitoring-item">';
+                html += '<strong>AI Circuit:</strong> ' + (cb.ai_circuit_state || 'CLOSED');
                 html += '</div>';
             }
         }
