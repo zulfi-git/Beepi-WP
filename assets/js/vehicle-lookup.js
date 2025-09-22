@@ -251,8 +251,8 @@ jQuery(document).ready(function($) {
         // Populate owner history section
         populateOwnerHistoryTable();
 
-        // Open basic info sections by default
-        $('.accordion details[data-free="true"]').attr('open', true);
+        // Open ALL accordion sections by default for mobile-first experience
+        $('.accordion details').attr('open', true);
         $resultsDiv.show();
 
         $('html, body').animate({
@@ -1154,12 +1154,19 @@ jQuery(document).ready(function($) {
      * Show AI generation status to user
      */
     function showAiGenerationStatus(message, progress) {
-        // Remove any existing AI status sections
-        $('.ai-generation-status').remove();
+        // Remove any existing AI summary sections and create loading placeholder
+        $('.ai-summary-section').remove();
         
-        const $statusSection = $('<div class="ai-generation-status" style="padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 8px;">');
+        // Create AI section with loading status inside
+        const $aiSection = $('<details class="ai-summary-section" open>');
+        const $summary = $('<summary>').append(
+            $('<span>').text('AI Kjøretøyanalyse'),
+            $('<span>').text('🧠')
+        );
+        const $detailsContent = $('<div class="details-content">');
+        const $aiContent = $('<div class="ai-summary-content ai-generation-status">');
         
-        const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px;">');
+        const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.5rem; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 8px;">');
         const $spinner = $('<div class="ai-spinner" style="width: 20px; height: 20px; border: 2px solid #e0e0e0; border-top: 2px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;">');
         const $statusText = $('<span style="color: #1976d2; font-weight: 500;">').text(message);
         
@@ -1167,9 +1174,9 @@ jQuery(document).ready(function($) {
         
         if (progress) {
             const $progressText = $('<div style="font-size: 0.9em; color: #666; margin-top: 5px;">').text(`Fremgang: ${progress}`);
-            $statusSection.append($statusHeader, $progressText);
+            $aiContent.append($statusHeader, $progressText);
         } else {
-            $statusSection.append($statusHeader);
+            $aiContent.append($statusHeader);
         }
         
         // Add CSS animation
@@ -1178,8 +1185,10 @@ jQuery(document).ready(function($) {
             .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
             .appendTo('head');
         
-        // Insert at the beginning of the accordion
-        $('.accordion').prepend($statusSection);
+        // Assemble AI section and add to accordion
+        $detailsContent.append($aiContent);
+        $aiSection.append($summary, $detailsContent);
+        $('.accordion').append($aiSection);
     }
 
     /**
@@ -1188,7 +1197,9 @@ jQuery(document).ready(function($) {
     function startAiSummaryPolling(regNumber, attempt = 1, maxAttempts = 15) {
         // Don't poll more than maxAttempts times (15 attempts = ~30 seconds with 2s intervals)
         if (attempt > maxAttempts) {
-            $('.ai-generation-status').remove();
+            $('.ai-summary-section .ai-summary-content').html(
+                '<div class="ai-summary-error">AI sammendrag tok for lang tid å generere.</div>'
+            );
             console.warn('AI summary polling timeout after', maxAttempts, 'attempts');
             return;
         }
@@ -1212,8 +1223,8 @@ jQuery(document).ready(function($) {
                         const aiData = response.data;
                         
                         if (aiData.status === 'complete' && aiData.summary) {
-                            // AI summary is ready!
-                            $('.ai-generation-status').remove();
+                            // AI summary is ready! Replace loading section
+                            $('.ai-summary-section').remove();
                             renderAiSummary(aiData.summary);
                             
                             console.log('✅ AI summary generated successfully');
@@ -1222,8 +1233,10 @@ jQuery(document).ready(function($) {
                             showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
                             startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
                         } else if (aiData.status === 'error') {
-                            // Generation failed
-                            $('.ai-generation-status').remove();
+                            // Generation failed - show error in AI section
+                            $('.ai-summary-section .ai-summary-content').html(
+                                '<div class="ai-summary-error">AI sammendrag kunne ikke genereres. Prøv igjen senere.</div>'
+                            );
                             console.warn('AI summary generation failed:', aiData.error);
                         }
                     } else {
@@ -1242,7 +1255,9 @@ jQuery(document).ready(function($) {
                             startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
                         }, retryDelay);
                     } else {
-                        $('.ai-generation-status').remove();
+                        $('.ai-summary-section .ai-summary-content').html(
+                            '<div class="ai-summary-error">AI sammendrag ikke tilgjengelig for øyeblikket.</div>'
+                        );
                         console.warn('AI summary polling failed after', maxAttempts, 'attempts');
                     }
                 }
