@@ -38,6 +38,10 @@ class Vehicle_Lookup {
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
         add_action('wp_ajax_nopriv_vehicle_lookup', array($this, 'handle_lookup'));
+        
+        // AI summary polling endpoint
+        add_action('wp_ajax_vehicle_lookup_ai_poll', array($this, 'handle_ai_summary_poll'));
+        add_action('wp_ajax_nopriv_vehicle_lookup_ai_poll', array($this, 'handle_ai_summary_poll'));
 
         // Add rewrite rules for /sok/ URLs
         add_action('init', array($this, 'add_rewrite_rules'));
@@ -106,7 +110,7 @@ class Vehicle_Lookup {
     public function handle_lookup() {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
-        $regNumber = isset($_POST['regNumber']) ? sanitize_text_field($_POST['regNumber']) : '';
+        $regNumber = isset($_POST['regNumber']) ? strtoupper(trim(sanitize_text_field($_POST['regNumber']))) : '';
         $includeSummary = isset($_POST['includeSummary']) ? (bool)$_POST['includeSummary'] : false;
         $ip_address = $this->access->get_client_ip();
         $start_time = microtime(true);
@@ -133,18 +137,41 @@ class Vehicle_Lookup {
             wp_send_json_error('Daglig grense nådd. Prøv igjen i morgen.');
         }
 
-        // Check cache first (include AI summary flag in cache key)
-        $cache_key = $includeSummary ? $regNumber . '_ai' : $regNumber;
-        $cached_data = $this->cache->get($cache_key);
-        if ($cached_data !== false) {
+        // Check vehicle data cache (always separate from AI summaries in new system)
+        $vehicle_cache_key = $regNumber;
+        $cached_vehicle_data = $this->cache->get($vehicle_cache_key);
+        if ($cached_vehicle_data !== false) {
             $response_time = round((microtime(true) - $start_time) * 1000);
             $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, true);
             
             // Add cache metadata to response
-            $cached_data['is_cached'] = true;
-            $cached_data['cache_time'] = $this->cache->get_cache_time($cache_key);
+            $cached_vehicle_data['is_cached'] = true;
+            $cached_vehicle_data['cache_time'] = $this->cache->get_cache_time($vehicle_cache_key);
             
-            wp_send_json_success($cached_data);
+            // For the new system, always include AI status if summary was requested
+            if ($includeSummary) {
+                // Check if we have AI summary ready in separate cache
+                $ai_cache_key = $regNumber . '_ai_summary';
+                $cached_ai_summary = $this->cache->get($ai_cache_key);
+                
+                if ($cached_ai_summary !== false && isset($cached_ai_summary['status']) && $cached_ai_summary['status'] === 'complete') {
+                    // AI summary is ready and cached
+                    $cached_vehicle_data['aiSummary'] = $cached_ai_summary;
+                } else {
+                    // AI summary needs to be generated - trigger background generation
+                    $this->trigger_ai_generation_async($regNumber);
+                    
+                    // Return generating status while it processes in background
+                    $cached_vehicle_data['aiSummary'] = array(
+                        'status' => 'generating',
+                        'startedAt' => current_time('c'),
+                        'progress' => null,
+                        'pollUrl' => '/ai-summary/' . urlencode($regNumber)
+                    );
+                }
+            }
+            
+            wp_send_json_success($cached_vehicle_data);
         }
 
         // Determine tier based on user's purchase status
@@ -186,16 +213,79 @@ class Vehicle_Lookup {
 
         $data = $result['data'];
 
-        // Cache successful response (separate cache for AI summaries)
-        $cache_key = $includeSummary ? $regNumber . '_ai' : $regNumber;
-        $this->cache->set($cache_key, $data);
+        // Cache vehicle data separately from AI summaries (new two-endpoint system)
+        $vehicle_cache_key = $regNumber;
+        
+        // Extract and cache only vehicle data (without AI summary)
+        $vehicle_data = $data;
+        if (isset($vehicle_data['aiSummary'])) {
+            unset($vehicle_data['aiSummary']); // Don't cache AI summary with vehicle data
+        }
+        $this->cache->set($vehicle_cache_key, $vehicle_data);
+        
+        // If response includes AI summary status, add it back for this response
+        if ($includeSummary && isset($data['aiSummary'])) {
+            $vehicle_data['aiSummary'] = $data['aiSummary'];
+        }
 
-        // Add cache metadata to response
-        $data['is_cached'] = false;
-        $data['cache_time'] = current_time('c'); // ISO 8601 format
+        // Add cache metadata to response  
+        $vehicle_data['is_cached'] = false;
+        $vehicle_data['cache_time'] = current_time('c'); // ISO 8601 format
 
         // Log successful lookup (HTTP 200 with valid vehicle data)
         $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, false, null, $tier);
+
+        wp_send_json_success($vehicle_data);
+    }
+
+    /**
+     * Handle AJAX AI summary polling requests
+     */
+    public function handle_ai_summary_poll() {
+        check_ajax_referer('vehicle_lookup_nonce', 'nonce');
+
+        $regNumber = isset($_POST['regNumber']) ? strtoupper(trim(sanitize_text_field($_POST['regNumber']))) : '';
+        $ip_address = $this->access->get_client_ip();
+
+        if (empty($regNumber)) {
+            wp_send_json_error('Vennligst skriv inn et registreringsnummer');
+        }
+
+        if (!$this->api->validate_registration_number($regNumber)) {
+            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
+        }
+
+        // Check rate limiting for polling requests
+        if (!$this->access->check_rate_limit()) {
+            wp_send_json_error('For mange forespørsler. Vennligst vent litt før du prøver igjen.');
+        }
+
+        // Check AI summary cache first
+        $ai_cache_key = $regNumber . '_ai_summary';
+        $cached_ai_summary = $this->cache->get($ai_cache_key);
+        if ($cached_ai_summary !== false) {
+            wp_send_json_success($cached_ai_summary);
+        }
+
+        // Make API request to poll AI summary endpoint
+        $api_result = $this->api->poll_ai_summary($regNumber);
+        $result = $this->api->process_ai_summary_response($api_result['response'], $regNumber);
+
+        if (isset($result['error'])) {
+            // Return structured error data to frontend
+            wp_send_json_error(array(
+                'message' => $result['error'],
+                'code' => isset($result['code']) ? $result['code'] : null,
+                'correlation_id' => isset($result['correlation_id']) ? $result['correlation_id'] : null
+            ));
+        }
+
+        $data = $result['data'];
+
+        // Cache completed AI summary (only when status is "complete")
+        if (isset($data['status']) && $data['status'] === 'complete' && isset($data['summary'])) {
+            $this->cache->set($ai_cache_key, $data, 86400); // Cache for 24 hours
+        }
 
         wp_send_json_success($data);
     }
@@ -212,6 +302,48 @@ class Vehicle_Lookup {
      */
     public function get_quota_status() {
         return $this->access->get_quota_status();
+    }
+
+    /**
+     * Trigger AI generation asynchronously for cached vehicle data
+     */
+    private function trigger_ai_generation_async($regNumber) {
+        // Check if AI generation is already in progress (avoid duplicate requests)
+        $generation_key = $regNumber . '_ai_generating';
+        $generation_lock = $this->cache->get($generation_key);
+        
+        if ($generation_lock !== false) {
+            // AI generation already triggered within the last 5 minutes
+            return;
+        }
+        
+        // Set a short-term lock to prevent duplicate generation requests
+        $this->cache->set($generation_key, current_time('c'), 300); // 5 minute lock
+        
+        // Make a non-blocking background request to trigger AI generation
+        $api_result = $this->api->lookup($regNumber, true);
+        
+        // Process response to ensure AI generation is started
+        if (!isset($api_result['error'])) {
+            $result = $this->api->process_response($api_result['response'], $regNumber);
+            
+            // If successful and AI summary status returned, update our expectations
+            if (isset($result['data']['aiSummary'])) {
+                $ai_cache_key = $regNumber . '_ai_summary';
+                
+                // Store AI generation status in cache
+                $ai_status = array(
+                    'status' => $result['data']['aiSummary']['status'],
+                    'startedAt' => current_time('c'),
+                    'progress' => isset($result['data']['aiSummary']['progress']) ? $result['data']['aiSummary']['progress'] : null
+                );
+                
+                // Cache the status (but don't cache incomplete summaries)
+                if ($ai_status['status'] !== 'complete') {
+                    $this->cache->set($ai_cache_key, $ai_status, 1800); // 30 minute temporary cache
+                }
+            }
+        }
     }
 
     /**

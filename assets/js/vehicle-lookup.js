@@ -276,12 +276,12 @@ jQuery(document).ready(function($) {
 
         setLoadingState(true);
 
-        // Always request AI summaries for all users
+        // Phase 1: Always request AI summary generation for all users
         const requestData = {
             action: 'vehicle_lookup',
             nonce: vehicleLookupAjax.nonce,
             regNumber: regNumber,
-            includeSummary: true  // AI summaries enabled for all users
+            includeSummary: true  // Triggers AI generation in background
         };
 
         // Make AJAX request
@@ -314,7 +314,11 @@ jQuery(document).ready(function($) {
                     // Clear retry counters on successful lookup
                     clearRetryCounters(regNumber);
                     
+                    // Phase 1: Process vehicle data immediately
                     processVehicleData(response, regNumber);
+                    
+                    // Phase 2: Check for AI summary status and start polling if needed
+                    checkAndStartAiSummaryPolling(response.data, regNumber);
                 } else {
                     // This handles cases where success is false - check for structured error data
                     let errorMessage = 'Kunne ikke hente kjøretøyinformasjon';
@@ -1118,6 +1122,134 @@ jQuery(document).ready(function($) {
             <span>${value || '-'}</span>
         </div>`;
     }
+
+    /**
+     * Phase 2: Check AI summary status and start polling if needed
+     */
+    function checkAndStartAiSummaryPolling(responseData, regNumber) {
+        // Check if response has AI summary data
+        if (responseData.aiSummary) {
+            // If AI summary is already complete, render it
+            if (responseData.aiSummary.status === 'complete' && responseData.aiSummary.summary) {
+                renderAiSummary(responseData.aiSummary.summary);
+                return;
+            }
+            
+            // If AI summary is generating, start polling
+            if (responseData.aiSummary.status === 'generating') {
+                showAiGenerationStatus('AI sammendrag genereres...', responseData.aiSummary.progress);
+                startAiSummaryPolling(regNumber);
+                return;
+            }
+            
+            // If there was an error with AI generation
+            if (responseData.aiSummary.status === 'error') {
+                console.warn('AI summary generation failed:', responseData.aiSummary.error);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Show AI generation status to user
+     */
+    function showAiGenerationStatus(message, progress) {
+        // Remove any existing AI status sections
+        $('.ai-generation-status').remove();
+        
+        const $statusSection = $('<div class="ai-generation-status" style="padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 8px;">');
+        
+        const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px;">');
+        const $spinner = $('<div class="ai-spinner" style="width: 20px; height: 20px; border: 2px solid #e0e0e0; border-top: 2px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;">');
+        const $statusText = $('<span style="color: #1976d2; font-weight: 500;">').text(message);
+        
+        $statusHeader.append($spinner, $statusText);
+        
+        if (progress) {
+            const $progressText = $('<div style="font-size: 0.9em; color: #666; margin-top: 5px;">').text(`Fremgang: ${progress}`);
+            $statusSection.append($statusHeader, $progressText);
+        } else {
+            $statusSection.append($statusHeader);
+        }
+        
+        // Add CSS animation
+        $('<style>')
+            .prop('type', 'text/css')
+            .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
+            .appendTo('head');
+        
+        // Insert at the beginning of the accordion
+        $('.accordion').prepend($statusSection);
+    }
+
+    /**
+     * Start polling for AI summary completion
+     */
+    function startAiSummaryPolling(regNumber, attempt = 1, maxAttempts = 15) {
+        // Don't poll more than maxAttempts times (15 attempts = ~30 seconds with 2s intervals)
+        if (attempt > maxAttempts) {
+            $('.ai-generation-status').remove();
+            console.warn('AI summary polling timeout after', maxAttempts, 'attempts');
+            return;
+        }
+        
+        const pollDelay = attempt === 1 ? 1000 : 2000; // First poll after 1s, then every 2s
+        
+        setTimeout(() => {
+            $.ajax({
+                url: vehicleLookupAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vehicle_lookup_ai_poll',
+                    nonce: vehicleLookupAjax.nonce,
+                    regNumber: regNumber.toUpperCase().trim()
+                },
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded',
+                timeout: 10000,
+                success: function(response) {
+                    if (response.success && response.data) {
+                        const aiData = response.data;
+                        
+                        if (aiData.status === 'complete' && aiData.summary) {
+                            // AI summary is ready!
+                            $('.ai-generation-status').remove();
+                            renderAiSummary(aiData.summary);
+                            
+                            console.log('✅ AI summary generated successfully');
+                        } else if (aiData.status === 'generating') {
+                            // Still generating, update progress and continue polling
+                            showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
+                            startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                        } else if (aiData.status === 'error') {
+                            // Generation failed
+                            $('.ai-generation-status').remove();
+                            console.warn('AI summary generation failed:', aiData.error);
+                        }
+                    } else {
+                        // API error, retry with exponential backoff
+                        const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt - 1), 10000);
+                        setTimeout(() => {
+                            startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                        }, retryDelay);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle polling errors gracefully
+                    if (attempt < maxAttempts) {
+                        const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt), 10000);
+                        setTimeout(() => {
+                            startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                        }, retryDelay);
+                    } else {
+                        $('.ai-generation-status').remove();
+                        console.warn('AI summary polling failed after', maxAttempts, 'attempts');
+                    }
+                }
+            });
+        }, pollDelay);
+    }
+
     // Add CSS for timeline margin
     $('.timeline').css('margin', '20px 0 50px 0');
 
