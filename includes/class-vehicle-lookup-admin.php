@@ -375,6 +375,36 @@ class Vehicle_Lookup_Admin {
                                     <strong>-</strong>
                                     <span>Timeout (ms)</span>
                                 </div>
+                                <div class="tech-stat" id="ai-active-generations">
+                                    <strong>-</strong>
+                                    <span>Active generations</span>
+                                </div>
+                                <div class="tech-stat" id="ai-success-rate">
+                                    <strong>-</strong>
+                                    <span>AI success rate</span>
+                                </div>
+                                <div class="tech-stat" id="ai-avg-generation-time">
+                                    <strong>-</strong>
+                                    <span>Avg generation time</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tech-card">
+                            <h4><span class="dashicons dashicons-clock"></span> Performance Tracking</h4>
+                            <div class="tech-stats">
+                                <div class="tech-stat" id="vehicle-latency">
+                                    <strong>-</strong>
+                                    <span>Vehicle API latency</span>
+                                </div>
+                                <div class="tech-stat" id="ai-latency">
+                                    <strong>-</strong>
+                                    <span>AI API latency</span>
+                                </div>
+                                <div class="tech-stat" id="cache-performance-improvement">
+                                    <strong>-</strong>
+                                    <span>Cache improvement</span>
+                                </div>
                             </div>
                         </div>
 
@@ -383,11 +413,37 @@ class Vehicle_Lookup_Admin {
                             <div class="tech-stats">
                                 <div class="tech-stat">
                                     <strong><?php echo $cache_stats['entries']; ?></strong>
-                                    <span>Cached entries</span>
+                                    <span>Total cached entries</span>
                                 </div>
                                 <div class="tech-stat">
                                     <strong><?php echo $cache_stats['hit_rate']; ?>%</strong>
-                                    <span>Hit rate</span>
+                                    <span>Overall hit rate</span>
+                                </div>
+                                <div class="tech-stat" id="vehicle-cache-entries">
+                                    <strong>-</strong>
+                                    <span>Vehicle cache entries</span>
+                                </div>
+                                <div class="tech-stat" id="ai-cache-hit-rate">
+                                    <strong>-</strong>
+                                    <span>AI cache hit rate</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tech-card">
+                            <h4><span class="dashicons dashicons-shield"></span> Circuit Breaker Status</h4>
+                            <div class="tech-stats">
+                                <div class="tech-stat" id="vehicle-circuit-status">
+                                    <strong>-</strong>
+                                    <span>Vehicle circuit</span>
+                                </div>
+                                <div class="tech-stat" id="ai-circuit-status">
+                                    <strong>-</strong>
+                                    <span>AI circuit</span>
+                                </div>
+                                <div class="tech-stat" id="circuit-success-rate">
+                                    <strong>-</strong>
+                                    <span>Success rate</span>
                                 </div>
                             </div>
                         </div>

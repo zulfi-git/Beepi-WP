@@ -135,6 +135,9 @@ jQuery(document).ready(function($) {
 
         vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning error unknown').addClass(statusClass);
         vegvesenStatusDiv.find('.status-text').text(statusText);
+        
+        // Update enhanced dashboard metrics after status update
+        updateEnhancedDashboardMetrics(healthData);
     }
 
     function updateAiSummaryStatus(healthData) {
@@ -190,6 +193,17 @@ jQuery(document).ready(function($) {
                 }
             }
             
+            // Update enhanced AI metrics for new dashboard elements
+            if (aiData.active_generations !== undefined) {
+                $('#ai-active-generations strong').text(aiData.active_generations);
+            }
+            if (aiData.success_rate !== undefined) {
+                $('#ai-success-rate strong').text(aiData.success_rate + '%');
+            }
+            if (aiData.avg_generation_time !== undefined) {
+                $('#ai-avg-generation-time strong').text(aiData.avg_generation_time + 'ms');
+            }
+            
             // Check AI circuit breaker state
             if (healthData.monitoring_data?.circuit_breaker?.ai_circuit_state) {
                 const aiCbState = healthData.monitoring_data.circuit_breaker.ai_circuit_state;
@@ -223,6 +237,61 @@ jQuery(document).ready(function($) {
         
         aiSummaryDiv.find('.status-light').removeClass('checking ok warning error unknown').addClass(statusClass);
         aiSummaryDiv.find('.status-text').text(statusText);
+        
+        // Update enhanced dashboard metrics after status update
+        updateEnhancedDashboardMetrics(healthData);
+    }
+    
+    // Function to update all enhanced dashboard metrics from two-endpoint monitoring
+    function updateEnhancedDashboardMetrics(healthData) {
+        const monitoringData = healthData.monitoring_data || {};
+        
+        // Enhanced Cache Performance metrics
+        if (monitoringData.cache) {
+            const cache = monitoringData.cache;
+            
+            if (cache.vehicle_cache_entries !== undefined) {
+                $('#vehicle-cache-entries strong').text(cache.vehicle_cache_entries);
+            }
+            
+            if (cache.ai_cache_hit_rate !== undefined) {
+                $('#ai-cache-hit-rate strong').text(cache.ai_cache_hit_rate + '%');
+            }
+        }
+        
+        // Circuit Breaker Status
+        if (monitoringData.circuit_breaker) {
+            const cb = monitoringData.circuit_breaker;
+            
+            if (cb.vehicle_circuit_state) {
+                $('#vehicle-circuit-status strong').text(cb.vehicle_circuit_state);
+            }
+            
+            if (cb.ai_circuit_state) {
+                $('#ai-circuit-status strong').text(cb.ai_circuit_state);
+            }
+            
+            if (cb.success_rate) {
+                $('#circuit-success-rate strong').text(cb.success_rate);
+            }
+        }
+        
+        // Performance Tracking
+        if (monitoringData.performance) {
+            const perf = monitoringData.performance;
+            
+            if (perf.vehicle_latency !== undefined) {
+                $('#vehicle-latency strong').text(perf.vehicle_latency + 'ms');
+            }
+            
+            if (perf.ai_latency !== undefined) {
+                $('#ai-latency strong').text(perf.ai_latency + 'ms');
+            }
+            
+            if (perf.cache_hit_improvement) {
+                $('#cache-performance-improvement strong').text(perf.cache_hit_improvement);
+            }
+        }
     }
 
     function showCacheInfo(healthData) {
