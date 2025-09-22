@@ -22,28 +22,23 @@ jQuery(document).ready(function($) {
     function checkEUAnchor() {
         if (window.location.hash === '#EU') {
             setTimeout(function() {
-                const regAccordion = $('details summary span:contains("Reg. og EU-kontroll")').closest('details');
-                if (regAccordion.length) {
-                    regAccordion.attr('open', true);
+                const regSection = $('.section-title:contains("Reg. og EU-kontroll")').closest('.section');
+                if (regSection.length) {
                     $('html, body').animate({
-                        scrollTop: regAccordion.offset().top - 100
+                        scrollTop: regSection.offset().top - 100
                     }, 800);
                 }
             }, 1000);
         }
     }
 
-    // Make expandAllAccordions available globally
+    // All sections are now always visible - no expand/collapse needed
     window.expandAllAccordions = function() {
-        $('.accordion details').each(function() {
-            $(this).attr('open', true);
-        });
-
-        // Scroll to first accordion
-        const firstAccordion = $('.accordion details').first();
-        if (firstAccordion.length) {
+        // Scroll to first section (all are already visible)
+        const firstSection = $('.accordion .section').first();
+        if (firstSection.length) {
             $('html, body').animate({
-                scrollTop: firstAccordion.offset().top - 150
+                scrollTop: firstSection.offset().top - 150
             }, 600);
         }
 
@@ -251,8 +246,7 @@ jQuery(document).ready(function($) {
         // Populate owner history section
         populateOwnerHistoryTable();
 
-        // Open ALL accordion sections by default for mobile-first experience
-        $('.accordion details').attr('open', true);
+        // No need to manage accordion open/close - all sections are always visible
         $resultsDiv.show();
 
         $('html, body').animate({
@@ -1002,13 +996,13 @@ jQuery(document).ready(function($) {
         $('.ai-summary-error').remove();
 
         try {
-            // Create DOM elements safely to prevent XSS
-            const $aiSection = $('<details class="ai-summary-section" data-free="true">');
-            const $summary = $('<summary>').append(
-                $('<span>').text('AI Kjøretøyanalyse'),
-                $('<span>').text('🧠')
+            // Create DOM elements safely to prevent XSS (no accordion, always visible)
+            const $aiSection = $('<div class="ai-summary-section section">');
+            const $sectionHeader = $('<div class="section-header">').append(
+                $('<span class="section-title">').text('AI Kjøretøyanalyse'),
+                $('<span class="section-icon">').text('🧠')
             );
-            const $detailsContent = $('<div class="details-content">');
+            const $sectionContent = $('<div class="section-content">');
             const $aiContent = $('<div class="ai-summary-content">');
 
             // Safely add summary section
@@ -1101,8 +1095,8 @@ jQuery(document).ready(function($) {
             $aiContent.append($attribution);
 
             // Assemble the complete structure
-            $detailsContent.append($aiContent);
-            $aiSection.append($summary, $detailsContent);
+            $sectionContent.append($aiContent);
+            $aiSection.append($sectionHeader, $sectionContent);
 
             // Insert AI summary at the beginning of the accordion
             $('.accordion').prepend($aiSection);
@@ -1157,13 +1151,13 @@ jQuery(document).ready(function($) {
         // Remove any existing AI summary sections and create loading placeholder
         $('.ai-summary-section').remove();
         
-        // Create AI section with loading status inside
-        const $aiSection = $('<details class="ai-summary-section" open>');
-        const $summary = $('<summary>').append(
-            $('<span>').text('AI Kjøretøyanalyse'),
-            $('<span>').text('🧠')
+        // Create AI section with loading status inside (no accordion, always visible)
+        const $aiSection = $('<div class="ai-summary-section section">');
+        const $sectionHeader = $('<div class="section-header">').append(
+            $('<span class="section-title">').text('AI Kjøretøyanalyse'),
+            $('<span class="section-icon">').text('🧠')
         );
-        const $detailsContent = $('<div class="details-content">');
+        const $sectionContent = $('<div class="section-content">');
         const $aiContent = $('<div class="ai-summary-content ai-generation-status">');
         
         const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.5rem; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 8px;">');
@@ -1185,9 +1179,9 @@ jQuery(document).ready(function($) {
             .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
             .appendTo('head');
         
-        // Assemble AI section and add to beginning of accordion (matching renderAiSummary position)
-        $detailsContent.append($aiContent);
-        $aiSection.append($summary, $detailsContent);
+        // Assemble AI section and add to beginning of accordion (no collapsible behavior)
+        $sectionContent.append($aiContent);
+        $aiSection.append($sectionHeader, $sectionContent);
         $('.accordion').prepend($aiSection);
     }
 

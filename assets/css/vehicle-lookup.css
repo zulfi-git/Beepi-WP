@@ -315,54 +315,38 @@
     gap: 0.5rem;
 }
 
-.accordion details {
+.section {
     background: #ffffff;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0,0,0,0.1);
     border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
 }
 
-.accordion details:hover {
-    box-shadow: 0 6px 32px rgba(0,0,0,0.12);
-    border-color: #cbd5e1;
-}
-
-.accordion details[open] {
-    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
-    border-color: #3b82f6;
-}
-
-.accordion summary {
+.section-header {
     padding: 0.75rem;
     font-weight: 700;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    cursor: pointer;
-    list-style: none;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    transition: all 0.3s ease;
     font-size: 0.9rem;
     color: #0f172a;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-.accordion summary:hover {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-}
-
-.accordion summary span:first-child {
+.section-title {
     flex: 1;
+    font-weight: 700;
 }
 
-.accordion summary::-webkit-details-marker {
-    display: none;
+.section-icon {
+    font-size: 1rem;
 }
 
-.details-content {
+.section-content {
     padding: 0;
 }
 

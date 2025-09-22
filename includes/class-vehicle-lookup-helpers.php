@@ -108,24 +108,24 @@ class Vehicle_Lookup_Helpers {
         foreach ($accordion_sections as $section) {
             if ($section[2] === 'eierhistorikk-content') {
                 $html .= sprintf(
-                    '<details>
-                        <summary><span>%s</span><span>%s</span></summary>
-                        <div class="details-content">
+                    '<div class="section">
+                        <div class="section-header"><span class="section-title">%s</span><span class="section-icon">%s</span></div>
+                        <div class="section-content">
                             <div class="owner-history-container">
                                 <div id="%s"></div>
                             </div>
                         </div>
-                    </details>',
+                    </div>',
                     $section[0], $section[1], $section[2]
                 );
             } else {
                 $html .= sprintf(
-                    '<details>
-                        <summary><span>%s</span><span>%s</span></summary>
-                        <div class="details-content">
+                    '<div class="section">
+                        <div class="section-header"><span class="section-title">%s</span><span class="section-icon">%s</span></div>
+                        <div class="section-content">
                             <table class="info-table %s"></table>
                         </div>
-                    </details>',
+                    </div>',
                     $section[0], $section[1], $section[2]
                 );
             }
