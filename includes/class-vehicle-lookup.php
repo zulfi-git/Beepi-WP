@@ -276,8 +276,8 @@ class Vehicle_Lookup {
         }
 
         // Call main lookup endpoint to get both AI and market data status
-        $api_result = $this->api->lookup_vehicle($regNumber, true); // includeSummary = true
-        $result = $this->api->process_vehicle_response($api_result['response'], $regNumber);
+        $api_result = $this->api->lookup($regNumber, true); // includeSummary = true
+        $result = $this->api->process_response($api_result['response'], $regNumber);
 
         if (isset($result['error'])) {
             // Return structured error data to frontend
