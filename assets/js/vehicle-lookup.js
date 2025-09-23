@@ -1224,25 +1224,58 @@ jQuery(document).ready(function($) {
                 timeout: 10000,
                 success: function(response) {
                     if (response.success && response.data) {
-                        const aiData = response.data;
+                        const pollingData = response.data;
                         
-                        if (aiData.status === 'complete' && aiData.summary) {
-                            // AI summary is ready! Replace loading section
-                            $('.ai-summary-section').remove();
-                            renderAiSummary(aiData.summary);
+                        // Handle AI summary data
+                        if (pollingData.aiSummary) {
+                            const aiData = pollingData.aiSummary;
                             
-                            console.log('✅ AI summary generated successfully');
-                        } else if (aiData.status === 'generating') {
-                            // Still generating, update progress and continue polling
-                            showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
-                            startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
-                        } else if (aiData.status === 'error') {
-                            // Generation failed - show error in AI section
-                            $('.ai-summary-section .ai-summary-content').html(
-                                '<div class="ai-summary-error">AI sammendrag kunne ikke genereres. Prøv igjen senere.</div>'
-                            );
-                            console.warn('AI summary generation failed:', aiData.error);
+                            if (aiData.status === 'complete' && aiData.summary) {
+                                // AI summary is ready! Replace loading section
+                                $('.ai-summary-section').remove();
+                                renderAiSummary(aiData.summary);
+                                
+                                console.log('✅ AI summary generated successfully');
+                            } else if (aiData.status === 'generating') {
+                                // Still generating, update progress and continue polling
+                                showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
+                                // Continue polling for AI
+                                startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                                return; // Don't process market listings yet, still waiting for AI
+                            } else if (aiData.status === 'error') {
+                                // Generation failed - show error in AI section
+                                $('.ai-summary-section .ai-summary-content').html(
+                                    '<div class="ai-summary-error">AI sammendrag kunne ikke genereres. Prøv igjen senere.</div>'
+                                );
+                                console.warn('AI summary generation failed:', aiData.error);
+                            }
                         }
+                        
+                        // Handle market listings data
+                        if (pollingData.marketListings) {
+                            const marketData = pollingData.marketListings;
+                            
+                            if (marketData.status === 'complete') {
+                                // Market listings are ready!
+                                renderMarketListings(marketData);
+                                console.log('✅ Market listings generated successfully');
+                            } else if (marketData.status === 'generating') {
+                                // Still generating, continue polling
+                                startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                                return;
+                            }
+                        }
+                        
+                        // If we get here and no data is generating, stop polling
+                        if (!pollingData.aiSummary || pollingData.aiSummary.status !== 'generating') {
+                            if (!pollingData.marketListings || pollingData.marketListings.status !== 'generating') {
+                                // Both completed or errored, stop polling
+                                return;
+                            }
+                        }
+                        
+                        // Continue polling if either is still generating
+                        startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
                     } else {
                         // API error, retry with exponential backoff
                         const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt - 1), 10000);
@@ -1399,47 +1432,12 @@ jQuery(document).ready(function($) {
     }
 
     // Function to start market listings polling
+    // NOTE: Market listings now use the unified AI polling endpoint
     function startMarketListingsPolling(regNumber, attemptCount = 0) {
-        const maxAttempts = 30; // Poll for up to 5 minutes (10s intervals)
-        const pollInterval = 10000; // 10 seconds
-
-        if (attemptCount >= maxAttempts) {
-            console.log('Market listings polling timeout for:', regNumber);
-            showMarketListingsTimeout();
-            return;
-        }
-
-        setTimeout(() => {
-            $.ajax({
-                url: vehicleLookupAjax.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'vehicle_lookup_ai_poll', // Reuse AI polling endpoint
-                    regNumber: regNumber,
-                    nonce: vehicleLookupAjax.nonce
-                },
-                success: function(response) {
-                    if (response.success && response.data && response.data.marketListings) {
-                        if (response.data.marketListings.status === 'complete') {
-                            console.log('Market listings complete for:', regNumber);
-                            renderMarketListings(response.data.marketListings);
-                        } else if (response.data.marketListings.status === 'generating') {
-                            // Continue polling
-                            startMarketListingsPolling(regNumber, attemptCount + 1);
-                        }
-                    } else {
-                        // Continue polling on unclear responses
-                        startMarketListingsPolling(regNumber, attemptCount + 1);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Market listings polling error:', error);
-                    if (attemptCount < maxAttempts - 1) {
-                        startMarketListingsPolling(regNumber, attemptCount + 1);
-                    }
-                }
-            });
-        }, pollInterval);
+        // Market listings polling is now handled by the unified AI polling system
+        // This function is kept for backward compatibility but redirects to AI polling
+        console.log('Market listings polling redirected to unified AI polling system');
+        startAiSummaryPolling(regNumber, 1, 15); // Use AI polling system
     }
 
     // Function to show market listings timeout
