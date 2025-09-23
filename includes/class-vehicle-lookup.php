@@ -239,7 +239,7 @@ class Vehicle_Lookup {
     }
 
     /**
-     * Handle AJAX AI summary polling requests
+     * Handle AJAX AI summary and market listings polling requests
      */
     public function handle_ai_summary_poll() {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
@@ -260,16 +260,24 @@ class Vehicle_Lookup {
             wp_send_json_error('For mange forespørsler. Vennligst vent litt før du prøver igjen.');
         }
 
-        // Check AI summary cache first
+        // Check cache for both AI summary and market listings
         $ai_cache_key = $regNumber . '_ai_summary';
+        $market_cache_key = $regNumber . '_market_listings';
+        
         $cached_ai_summary = $this->cache->get($ai_cache_key);
-        if ($cached_ai_summary !== false) {
-            wp_send_json_success($cached_ai_summary);
+        $cached_market_listings = $this->cache->get($market_cache_key);
+        
+        // If both are cached and complete, return both
+        if ($cached_ai_summary !== false && $cached_market_listings !== false) {
+            wp_send_json_success(array(
+                'aiSummary' => $cached_ai_summary,
+                'marketListings' => $cached_market_listings
+            ));
         }
 
-        // Make API request to poll AI summary endpoint
-        $api_result = $this->api->poll_ai_summary($regNumber);
-        $result = $this->api->process_ai_summary_response($api_result['response'], $regNumber);
+        // Call main lookup endpoint to get both AI and market data status
+        $api_result = $this->api->lookup_vehicle($regNumber, true); // includeSummary = true
+        $result = $this->api->process_vehicle_response($api_result['response'], $regNumber);
 
         if (isset($result['error'])) {
             // Return structured error data to frontend
@@ -281,13 +289,31 @@ class Vehicle_Lookup {
         }
 
         $data = $result['data'];
-
-        // Cache completed AI summary (only when status is "complete")
-        if (isset($data['status']) && $data['status'] === 'complete' && isset($data['summary'])) {
-            $this->cache->set($ai_cache_key, $data, 86400); // Cache for 24 hours
+        
+        // Prepare response with both AI and market data
+        $response_data = array();
+        
+        // Handle AI summary
+        if (isset($data['aiSummary'])) {
+            $response_data['aiSummary'] = $data['aiSummary'];
+            
+            // Cache completed AI summary
+            if (isset($data['aiSummary']['status']) && $data['aiSummary']['status'] === 'complete' && isset($data['aiSummary']['summary'])) {
+                $this->cache->set($ai_cache_key, $data['aiSummary'], 86400); // Cache for 24 hours
+            }
+        }
+        
+        // Handle market listings
+        if (isset($data['marketListings'])) {
+            $response_data['marketListings'] = $data['marketListings'];
+            
+            // Cache completed market listings
+            if (isset($data['marketListings']['status']) && $data['marketListings']['status'] === 'complete') {
+                $this->cache->set($market_cache_key, $data['marketListings'], 86400); // Cache for 24 hours
+            }
         }
 
-        wp_send_json_success($data);
+        wp_send_json_success($response_data);
     }
 
     /**
