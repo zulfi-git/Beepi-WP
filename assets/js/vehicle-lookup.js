@@ -1168,9 +1168,9 @@ jQuery(document).ready(function($) {
         const $sectionContent = $('<div class="section-content">');
         const $aiContent = $('<div class="ai-summary-content ai-generation-status">');
         
-        const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.5rem; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 8px;">');
-        const $spinner = $('<div class="ai-spinner" style="width: 20px; height: 20px; border: 2px solid #e0e0e0; border-top: 2px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;">');
-        const $statusText = $('<span style="color: #1976d2; font-weight: 500;">').text(message);
+        const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
+        const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
+        const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text(message);
         
         $statusHeader.append($spinner, $statusText);
         
@@ -1181,11 +1181,13 @@ jQuery(document).ready(function($) {
             $aiContent.append($statusHeader);
         }
         
-        // Add CSS animation
-        $('<style>')
-            .prop('type', 'text/css')
-            .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
-            .appendTo('head');
+        // Add CSS animation if not already present
+        if (!$('head style[data-spinner-animation]').length) {
+            $('<style data-spinner-animation="true">')
+                .prop('type', 'text/css')
+                .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
+                .appendTo('head');
+        }
         
         // Assemble AI section and add to beginning of accordion (no collapsible behavior)
         $sectionContent.append($aiContent);
@@ -1290,9 +1292,9 @@ jQuery(document).ready(function($) {
 
             if (marketData.status === 'generating') {
                 // Show loading state for market listings
-                const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.5rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
-                const $spinner = $('<div class="loading-spinner">');
-                const $statusText = $('<span style="color: #475569; font-size: 0.9rem;">').text('Henter markedsdata...');
+                const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
+                const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
+                const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text('Henter markedsdata...');
                 
                 $statusHeader.append($spinner, $statusText);
                 $marketContent.append($statusHeader);
