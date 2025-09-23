@@ -1242,15 +1242,15 @@ details summary {
 }
 
 .ai-red-flag-item::before {
-    content: '⚠';
+    content: '•';
     position: absolute;
     left: -1rem;
-    color: #dc2626;
+    color: #6b7280;
     font-size: 0.85rem;
 }
 
 .ai-red-flag-item {
-    color: #991b1b;
+    color: #374151;
 }
 
 .ai-attribution {
