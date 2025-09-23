@@ -232,6 +232,11 @@ jQuery(document).ready(function($) {
             }
         }
 
+        // Render market listings if available
+        if (response.data.marketListings) {
+            renderMarketListings(response.data.marketListings);
+        }
+
         // Always show basic info for free
         renderBasicInfo(vehicleData);
         renderRegistrationInfo(vehicleData);
@@ -313,6 +318,9 @@ jQuery(document).ready(function($) {
                     
                     // Phase 2: Check for AI summary status and start polling if needed
                     checkAndStartAiSummaryPolling(response.data, regNumber);
+                    
+                    // Phase 3: Check for market listings status and start polling if needed
+                    checkAndStartMarketListingsPolling(response.data, regNumber);
                 } else {
                     // This handles cases where success is false - check for structured error data
                     let errorMessage = 'Kunne ikke hente kjøretøyinformasjon';
@@ -1257,6 +1265,188 @@ jQuery(document).ready(function($) {
                 }
             });
         }, pollDelay);
+    }
+
+    // Function to render market listings
+    function renderMarketListings(marketData) {
+        // Remove any existing market listings sections and create new one
+        $('.market-listings-section').remove();
+        $('.market-listings-error').remove();
+
+        if (!marketData) {
+            console.log('No market listings data provided');
+            return;
+        }
+
+        try {
+            // Create market listings section with status-based content
+            const $marketSection = $('<div class="market-listings-section section">');
+            const $sectionHeader = $('<div class="section-header">').append(
+                $('<span class="section-title">').text('Markedsanalyse'),
+                $('<span class="section-icon">').text('📊')
+            );
+            const $sectionContent = $('<div class="section-content">');
+            const $marketContent = $('<div class="market-listings-content">');
+
+            if (marketData.status === 'generating') {
+                // Show loading state for market listings
+                const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.5rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
+                const $spinner = $('<div class="loading-spinner">');
+                const $statusText = $('<span style="color: #475569; font-size: 0.9rem;">').text('Henter markedsdata...');
+                
+                $statusHeader.append($spinner, $statusText);
+                $marketContent.append($statusHeader);
+            } else if (marketData.status === 'complete') {
+                // Show completed market listings
+                if (marketData.listings && Array.isArray(marketData.listings) && marketData.listings.length > 0) {
+                    // Add market summary if available
+                    if (marketData.marketSummary) {
+                        const $summarySection = $('<div class="market-section">');
+                        const $summaryHeader = $('<h4 class="market-section-title">').text('📈 Markedsoversikt');
+                        const $summaryContent = $('<div class="market-summary">');
+                        
+                        const summary = marketData.marketSummary;
+                        let summaryText = '';
+                        
+                        if (summary.averagePrice) {
+                            summaryText += `Gjennomsnittspris: ${parseInt(summary.averagePrice).toLocaleString('no-NO')} kr. `;
+                        }
+                        if (summary.priceRange) {
+                            summaryText += `Prisområde: ${summary.priceRange.replace('-', ' - ')} kr. `;
+                        }
+                        if (summary.totalFound) {
+                            summaryText += `${summary.totalFound} lignende kjøretøy funnet.`;
+                        }
+                        
+                        $summaryContent.append($('<p class="market-summary-text">').text(summaryText));
+                        $summarySection.append($summaryHeader, $summaryContent);
+                        $marketContent.append($summarySection);
+                    }
+
+                    // Add listings section
+                    const $listingsSection = $('<div class="market-section">');
+                    const $listingsHeader = $('<h4 class="market-section-title">').text('🚗 Lignende kjøretøy til salgs');
+                    const $listingsList = $('<div class="market-listings">');
+                    
+                    marketData.listings.slice(0, 5).forEach(listing => { // Show max 5 listings
+                        const $listingItem = $('<div class="market-listing-item">');
+                        
+                        const title = listing.title || 'Ukjent kjøretøy';
+                        const price = listing.price ? `${parseInt(listing.price).toLocaleString('no-NO')} kr` : 'Pris ikke oppgitt';
+                        const mileage = listing.mileage ? `${parseInt(listing.mileage).toLocaleString('no-NO')} km` : '';
+                        const location = listing.location || '';
+                        
+                        let listingHtml = `<div class="listing-title">${title}</div>`;
+                        listingHtml += `<div class="listing-price">${price}</div>`;
+                        
+                        if (mileage || location) {
+                            listingHtml += '<div class="listing-details">';
+                            if (mileage) listingHtml += `<span class="listing-mileage">${mileage}</span>`;
+                            if (location) listingHtml += `<span class="listing-location">${location}</span>`;
+                            listingHtml += '</div>';
+                        }
+                        
+                        if (listing.url) {
+                            listingHtml += `<a href="${listing.url}" target="_blank" class="listing-link" rel="noopener">Se annonse →</a>`;
+                        }
+                        
+                        $listingItem.html(listingHtml);
+                        $listingsList.append($listingItem);
+                    });
+                    
+                    $listingsSection.append($listingsHeader, $listingsList);
+                    $marketContent.append($listingsSection);
+                } else {
+                    // No listings found
+                    const $noDataSection = $('<div class="market-section">');
+                    const $noDataText = $('<p class="market-no-data">').text('Ingen lignende kjøretøy funnet i markedet for øyeblikket.');
+                    $noDataSection.append($noDataText);
+                    $marketContent.append($noDataSection);
+                }
+            }
+
+            $sectionContent.append($marketContent);
+            $marketSection.append($sectionHeader, $sectionContent);
+            
+            // Insert market listings section after AI summary or basic info
+            const $aiSection = $('.ai-summary-section');
+            if ($aiSection.length) {
+                $aiSection.after($marketSection);
+            } else {
+                $('.basic-info-section').after($marketSection);
+            }
+
+        } catch (error) {
+            console.error('Error rendering market listings:', error);
+            const $errorSection = $('<div class="market-listings-error">');
+            $errorSection.html('<p style="color: #dc2626; padding: 1rem; text-align: center;">Kunne ikke vise markedsdata. Prøv igjen senere.</p>');
+            $('.basic-info-section').after($errorSection);
+        }
+    }
+
+    // Function to check and start market listings polling
+    function checkAndStartMarketListingsPolling(data, regNumber) {
+        if (!data.marketListings) {
+            return; // No market listings data
+        }
+
+        if (data.marketListings.status === 'generating') {
+            console.log('Market listings generating, starting polling for:', regNumber);
+            startMarketListingsPolling(regNumber);
+        }
+    }
+
+    // Function to start market listings polling
+    function startMarketListingsPolling(regNumber, attemptCount = 0) {
+        const maxAttempts = 30; // Poll for up to 5 minutes (10s intervals)
+        const pollInterval = 10000; // 10 seconds
+
+        if (attemptCount >= maxAttempts) {
+            console.log('Market listings polling timeout for:', regNumber);
+            showMarketListingsTimeout();
+            return;
+        }
+
+        setTimeout(() => {
+            $.ajax({
+                url: vehicleLookupAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vehicle_lookup_ai_poll', // Reuse AI polling endpoint
+                    regNumber: regNumber,
+                    nonce: vehicleLookupAjax.nonce
+                },
+                success: function(response) {
+                    if (response.success && response.data && response.data.marketListings) {
+                        if (response.data.marketListings.status === 'complete') {
+                            console.log('Market listings complete for:', regNumber);
+                            renderMarketListings(response.data.marketListings);
+                        } else if (response.data.marketListings.status === 'generating') {
+                            // Continue polling
+                            startMarketListingsPolling(regNumber, attemptCount + 1);
+                        }
+                    } else {
+                        // Continue polling on unclear responses
+                        startMarketListingsPolling(regNumber, attemptCount + 1);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Market listings polling error:', error);
+                    if (attemptCount < maxAttempts - 1) {
+                        startMarketListingsPolling(regNumber, attemptCount + 1);
+                    }
+                }
+            });
+        }, pollInterval);
+    }
+
+    // Function to show market listings timeout
+    function showMarketListingsTimeout() {
+        $('.market-listings-section .market-listings-content').html(
+            '<div style="padding: 1rem; text-align: center; color: #64748b;">' +
+            '<p>Markedsdata tar lenger tid enn forventet å hente. Prøv å oppdatere siden om litt.</p>' +
+            '</div>'
+        );
     }
 
     // Add CSS for timeline margin

@@ -1446,3 +1446,177 @@ details summary {
         font-size: 20px;
     }
 }
+
+/* Market Listings Styling */
+.market-listings-section {
+    background: linear-gradient(135deg, #f8feff 0%, #f0f9ff 100%);
+    border: 2px solid #e0f2fe !important;
+    position: relative;
+}
+
+.market-listings-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0ea5e9 0%, #06b6d4 100%);
+    border-radius: 8px 8px 0 0;
+}
+
+.market-listings-section .section-header {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    color: #0c4a6e !important;
+    font-weight: 700 !important;
+    position: relative;
+}
+
+.market-listings-content {
+    padding: 0.5rem;
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+.market-section {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: #fafafa;
+    border-radius: 8px;
+    border-left: 4px solid #0ea5e9;
+}
+
+.market-section-title {
+    margin: 0 0 0.75rem 0;
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.market-summary-text {
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.market-listings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.market-listing-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: border-color 0.2s ease;
+}
+
+.market-listing-item:hover {
+    border-color: #0ea5e9;
+}
+
+.listing-title {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.listing-price {
+    font-weight: 700;
+    color: #059669;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.listing-details {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.listing-mileage::before {
+    content: '🛣️ ';
+}
+
+.listing-location::before {
+    content: '📍 ';
+}
+
+.listing-link {
+    display: inline-block;
+    color: #0ea5e9;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.listing-link:hover {
+    color: #0284c7;
+    text-decoration: underline;
+}
+
+.market-no-data {
+    text-align: center;
+    color: #64748b;
+    font-style: italic;
+    margin: 1rem 0;
+}
+
+/* Desktop scaling for market listings */
+@media (min-width: 768px) {
+    .market-listings-content {
+        padding: 1rem;
+    }
+    
+    .market-section {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .market-listings {
+        gap: 1rem;
+    }
+    
+    .market-listing-item {
+        padding: 1rem;
+    }
+    
+    .listing-title {
+        font-size: 1rem;
+    }
+    
+    .listing-details {
+        gap: 1.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .market-listings-content {
+        padding: 1.5rem;
+    }
+    
+    .market-section {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .market-listing-item {
+        padding: 1.25rem;
+    }
+    
+    .listing-title {
+        font-size: 1.1rem;
+    }
+    
+    .listing-details {
+        font-size: 0.9rem;
+    }
+}
