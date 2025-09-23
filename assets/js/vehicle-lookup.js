@@ -1069,7 +1069,7 @@ jQuery(document).ready(function($) {
                 });
                 
                 $redFlagsSection.append(
-                    $('<h4 class="ai-section-title">').text('⚠️ Røde flagg'),
+                    $('<h4 class="ai-section-title">').text('🤔 Ting å vurdere'),
                     $redFlagsList
                 );
                 $aiContent.append($redFlagsSection);
