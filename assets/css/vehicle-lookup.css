@@ -1509,33 +1509,90 @@ details summary {
 .market-listing-item {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 0.75rem;
-    transition: border-color 0.2s ease;
+    border-radius: 12px;
+    padding: 0;
+    transition: all 0.2s ease;
+    overflow: hidden;
 }
 
 .market-listing-item:hover {
     border-color: #0ea5e9;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Mobile-first card layout */
+.listing-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.listing-image {
+    width: 100%;
+    height: 120px;
+    overflow: hidden;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.listing-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+
+.listing-image img:hover {
+    transform: scale(1.02);
+}
+
+.listing-content {
+    padding: 0.75rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.listing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
 }
 
 .listing-title {
     font-weight: 600;
     color: #1e293b;
     font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+    line-height: 1.3;
+    flex: 1;
+}
+
+.listing-year {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
 }
 
 .listing-price {
     font-weight: 700;
     color: #059669;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    margin: 0;
 }
 
 .listing-details {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
+    gap: 0.25rem;
     font-size: 0.8rem;
     color: #64748b;
 }
@@ -1569,7 +1626,28 @@ details summary {
     margin: 1rem 0;
 }
 
-/* Desktop scaling for market listings */
+/* Tablet and desktop responsive improvements */
+@media (min-width: 640px) {
+    .listing-card {
+        flex-direction: row;
+    }
+    
+    .listing-image {
+        width: 140px;
+        height: 100px;
+        flex-shrink: 0;
+    }
+    
+    .listing-content {
+        padding: 1rem;
+    }
+    
+    .listing-details {
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
+
 @media (min-width: 768px) {
     .market-listings-content {
         padding: 1rem;
@@ -1584,12 +1662,17 @@ details summary {
         gap: 1rem;
     }
     
-    .market-listing-item {
-        padding: 1rem;
+    .listing-image {
+        width: 160px;
+        height: 120px;
     }
     
     .listing-title {
         font-size: 1rem;
+    }
+    
+    .listing-price {
+        font-size: 1.2rem;
     }
     
     .listing-details {
@@ -1608,12 +1691,21 @@ details summary {
         margin-bottom: 1.5rem;
     }
     
-    .market-listing-item {
+    .listing-image {
+        width: 180px;
+        height: 140px;
+    }
+    
+    .listing-content {
         padding: 1.25rem;
     }
     
     .listing-title {
         font-size: 1.1rem;
+    }
+    
+    .listing-price {
+        font-size: 1.3rem;
     }
     
     .listing-details {

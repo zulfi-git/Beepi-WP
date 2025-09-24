@@ -1339,7 +1339,7 @@ jQuery(document).ready(function($) {
             // Create market listings section with status-based content
             const $marketSection = $('<div class="market-listings-section section">');
             const $sectionHeader = $('<div class="section-header">').append(
-                $('<span class="section-title">').text('Markedsanalyse'),
+                $('<span class="section-title">').text('Siste annonser på finn.no'),
                 $('<span class="section-icon">').text('📊')
             );
             const $sectionContent = $('<div class="section-content">');
@@ -1385,17 +1385,41 @@ jQuery(document).ready(function($) {
                     const $listingsHeader = $('<h4 class="market-section-title">').text('🚗 Lignende kjøretøy til salgs');
                     const $listingsList = $('<div class="market-listings">');
                     
-                    marketData.listings.slice(0, 5).forEach(listing => { // Show max 5 listings
+                    marketData.listings.slice(0, 3).forEach(listing => { // Show max 3 listings for mobile optimization
                         const $listingItem = $('<div class="market-listing-item">');
                         
                         const title = listing.title || 'Ukjent kjøretøy';
                         const price = listing.price ? `${parseInt(listing.price).toLocaleString('no-NO')} kr` : 'Pris ikke oppgitt';
+                        const year = listing.year || '';
                         const mileage = listing.mileage ? `${parseInt(listing.mileage).toLocaleString('no-NO')} km` : '';
                         const location = listing.location || '';
+                        const image = listing.image || '';
                         
-                        let listingHtml = `<div class="listing-title">${title}</div>`;
+                        // Create mobile-first card layout with image
+                        let listingHtml = '<div class="listing-card">';
+                        
+                        // Image section (left/top on mobile)
+                        if (image) {
+                            listingHtml += `<div class="listing-image">
+                                <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                            </div>`;
+                        }
+                        
+                        // Content section
+                        listingHtml += '<div class="listing-content">';
+                        
+                        // Header with title and year
+                        listingHtml += '<div class="listing-header">';
+                        listingHtml += `<div class="listing-title">${title}</div>`;
+                        if (year) {
+                            listingHtml += `<div class="listing-year">${year}</div>`;
+                        }
+                        listingHtml += '</div>';
+                        
+                        // Price prominently displayed
                         listingHtml += `<div class="listing-price">${price}</div>`;
                         
+                        // Key details in mobile-friendly format
                         if (mileage || location) {
                             listingHtml += '<div class="listing-details">';
                             if (mileage) listingHtml += `<span class="listing-mileage">${mileage}</span>`;
@@ -1403,9 +1427,13 @@ jQuery(document).ready(function($) {
                             listingHtml += '</div>';
                         }
                         
+                        // Action link
                         if (listing.url) {
                             listingHtml += `<a href="${listing.url}" target="_blank" class="listing-link" rel="noopener">Se annonse →</a>`;
                         }
+                        
+                        listingHtml += '</div>'; // Close listing-content
+                        listingHtml += '</div>'; // Close listing-card
                         
                         $listingItem.html(listingHtml);
                         $listingsList.append($listingItem);
