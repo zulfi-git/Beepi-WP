@@ -65,6 +65,33 @@ class VehicleLookupAPI {
     }
 
     /**
+     * Phase 2b: Poll for market listings generation status
+     * 
+     * @param string $regNumber Registration number
+     */
+    public function poll_market_listings($regNumber) {
+        $start_time = microtime(true);
+        
+        // Get worker URL and timeout from admin settings
+        $worker_url = get_option('vehicle_lookup_worker_url', VEHICLE_LOOKUP_WORKER_URL);
+        $timeout = get_option('vehicle_lookup_timeout', 15);
+        
+        $response = wp_remote_get($worker_url . '/market-listings/' . urlencode($regNumber), array(
+            'headers' => array(
+                'Origin' => get_site_url()
+            ),
+            'timeout' => $timeout
+        ));
+
+        $response_time = round((microtime(true) - $start_time) * 1000);
+        
+        return array(
+            'response' => $response,
+            'response_time' => $response_time
+        );
+    }
+
+    /**
      * Validate Norwegian registration number format
      */
     public function validate_registration_number($regNumber) {
@@ -307,6 +334,59 @@ class VehicleLookupAPI {
         }
 
         // Return the AI summary response data directly
+        return array('success' => true, 'data' => $data);
+    }
+
+    /**
+     * Process market listings polling response with proper error handling
+     */
+    public function process_market_listings_response($response, $regNumber) {
+        if (is_wp_error($response)) {
+            return array(
+                'error' => 'Tilkoblingsfeil ved henting av markedsdata. Prøv igjen om litt.',
+                'failure_type' => 'connection_error',
+                'code' => 'CONNECTION_ERROR',
+                'correlation_id' => null
+            );
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+        
+        // Try to parse JSON response
+        $data = json_decode($body, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('Market Listings JSON Decode Error: ' . json_last_error_msg());
+            return array(
+                'error' => 'Ugyldig svar fra markedsdata tjeneste. Prøv igjen.',
+                'failure_type' => 'http_error',
+                'code' => 'INVALID_JSON',
+                'correlation_id' => null
+            );
+        }
+
+        // Handle HTTP error status codes
+        if ($status_code !== 200) {
+            return array(
+                'error' => 'Markedsdata tjeneste ikke tilgjengelig. Prøv igjen senere.',
+                'failure_type' => 'http_error',
+                'code' => 'HTTP_ERROR_' . $status_code,
+                'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null
+            );
+        }
+
+        // Validate response has required fields
+        if (!isset($data['status'])) {
+            return array(
+                'error' => 'Ugyldig markedsdata respons.',
+                'failure_type' => 'http_error',
+                'code' => 'INVALID_RESPONSE',
+                'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null
+            );
+        }
+
+        // Return the market listings response data directly
         return array('success' => true, 'data' => $data);
     }
 

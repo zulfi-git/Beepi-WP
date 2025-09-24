@@ -298,12 +298,24 @@ class Vehicle_Lookup {
         if ($cached_market_listings !== false) {
             $response_data['marketListings'] = $cached_market_listings;
         } else {
-            // For market listings, we need to make a status check - use a simple cache lookup
-            // If no cached market data, return generating status
-            $response_data['marketListings'] = array(
-                'status' => 'generating',
-                'message' => 'Market data is being processed. Please wait.'
-            );
+            // If no cached market data, check actual market listings status from API
+            $market_api_result = $this->api->poll_market_listings($regNumber);
+            $market_result = $this->api->process_market_listings_response($market_api_result['response'], $regNumber);
+            
+            if (isset($market_result['error'])) {
+                // Return market polling error
+                $response_data['marketListings'] = array(
+                    'status' => 'error',
+                    'message' => $market_result['error']
+                );
+            } else {
+                $response_data['marketListings'] = $market_result['data'];
+                
+                // Cache completed market listings
+                if (isset($market_result['data']['status']) && $market_result['data']['status'] === 'complete' && isset($market_result['data']['listings'])) {
+                    $this->cache->set($market_cache_key, $market_result['data'], 86400);
+                }
+            }
         }
 
         wp_send_json_success($response_data);
