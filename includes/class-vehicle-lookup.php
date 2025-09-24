@@ -267,54 +267,48 @@ class Vehicle_Lookup {
         $cached_ai_summary = $this->cache->get($ai_cache_key);
         $cached_market_listings = $this->cache->get($market_cache_key);
         
-        // If both are cached and complete, return both
-        if ($cached_ai_summary !== false && $cached_market_listings !== false) {
-            wp_send_json_success(array(
-                'aiSummary' => $cached_ai_summary,
-                'marketListings' => $cached_market_listings
-            ));
-        }
-
-        // Call main lookup endpoint to get both AI and market data status
-        $api_result = $this->api->lookup($regNumber, true); // includeSummary = true
-        $result = $this->api->process_response($api_result['response'], $regNumber);
-
-        if (isset($result['error'])) {
-            // Return structured error data to frontend
-            wp_send_json_error(array(
-                'message' => $result['error'],
-                'code' => isset($result['code']) ? $result['code'] : null,
-                'correlation_id' => isset($result['correlation_id']) ? $result['correlation_id'] : null
-            ));
-        }
-
-        $data = $result['data'];
-        
-        // Prepare response with both AI and market data
+        // Prepare response data from cache only - don't trigger new API calls
         $response_data = array();
         
-        // Handle AI summary
-        if (isset($data['aiSummary'])) {
-            $response_data['aiSummary'] = $data['aiSummary'];
+        // Return cached AI summary if available
+        if ($cached_ai_summary !== false) {
+            $response_data['aiSummary'] = $cached_ai_summary;
+        } else {
+            // If no cached AI summary, use the dedicated AI polling endpoint
+            $api_result = $this->api->poll_ai_summary($regNumber);
+            $ai_result = $this->api->process_ai_summary_response($api_result['response'], $regNumber);
             
-            // Cache completed AI summary
-            if (isset($data['aiSummary']['status']) && $data['aiSummary']['status'] === 'complete' && isset($data['aiSummary']['summary'])) {
-                $this->cache->set($ai_cache_key, $data['aiSummary'], 86400); // Cache for 24 hours
+            if (isset($ai_result['error'])) {
+                // Return AI polling error but continue with market data
+                $response_data['aiSummary'] = array(
+                    'status' => 'error',
+                    'message' => $ai_result['error']
+                );
+            } else {
+                $response_data['aiSummary'] = $ai_result['data'];
+                
+                // Cache completed AI summary
+                if (isset($ai_result['data']['status']) && $ai_result['data']['status'] === 'complete' && isset($ai_result['data']['summary'])) {
+                    $this->cache->set($ai_cache_key, $ai_result['data'], 86400);
+                }
             }
         }
         
-        // Handle market listings
-        if (isset($data['marketListings'])) {
-            $response_data['marketListings'] = $data['marketListings'];
-            
-            // Cache completed market listings
-            if (isset($data['marketListings']['status']) && $data['marketListings']['status'] === 'complete') {
-                $this->cache->set($market_cache_key, $data['marketListings'], 86400); // Cache for 24 hours
-            }
+        // Return cached market listings if available
+        if ($cached_market_listings !== false) {
+            $response_data['marketListings'] = $cached_market_listings;
+        } else {
+            // For market listings, we need to make a status check - use a simple cache lookup
+            // If no cached market data, return generating status
+            $response_data['marketListings'] = array(
+                'status' => 'generating',
+                'message' => 'Market data is being processed. Please wait.'
+            );
         }
 
         wp_send_json_success($response_data);
     }
+
 
     /**
      * Get rate limit status for current IP
