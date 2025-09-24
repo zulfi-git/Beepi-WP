@@ -1229,29 +1229,35 @@ jQuery(document).ready(function($) {
                         const pollingData = response.data;
                         console.log('Polling data structure:', pollingData);
                         
+                        // Track completion status
+                        let aiComplete = false;
+                        let marketComplete = false;
+                        
                         // Handle AI summary data
                         if (pollingData.aiSummary) {
                             console.log('AI Summary data:', pollingData.aiSummary);
                             const aiData = pollingData.aiSummary;
                             
                             if (aiData.status === 'complete' && aiData.summary) {
-                                // AI summary is ready! Replace loading section
-                                $('.ai-summary-section').remove();
-                                renderAiSummary(aiData.summary);
-                                
-                                console.log('✅ AI summary generated successfully');
+                                // AI summary is ready! Only render if not already rendered
+                                if (!$('.ai-summary-section .ai-summary-content .vehicle-overview').length) {
+                                    $('.ai-summary-section').remove();
+                                    renderAiSummary(aiData.summary);
+                                    console.log('✅ AI summary generated successfully');
+                                }
+                                aiComplete = true;
                             } else if (aiData.status === 'generating') {
-                                // Still generating, update progress and continue polling
-                                showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
-                                // Continue polling for AI
-                                startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
-                                return; // Don't process market listings yet, still waiting for AI
+                                // Still generating, update progress only if not already complete
+                                if (!$('.ai-summary-section .ai-summary-content .vehicle-overview').length) {
+                                    showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
+                                }
                             } else if (aiData.status === 'error') {
                                 // Generation failed - show error in AI section
                                 $('.ai-summary-section .ai-summary-content').html(
                                     '<div class="ai-summary-error">AI sammendrag kunne ikke genereres. Prøv igjen senere.</div>'
                                 );
                                 console.warn('AI summary generation failed:', aiData.error);
+                                aiComplete = true; // Stop polling for AI
                             }
                         }
                         
@@ -1260,27 +1266,37 @@ jQuery(document).ready(function($) {
                             console.log('Market listings data:', pollingData.marketListings);
                             const marketData = pollingData.marketListings;
                             
-                            if (marketData.status === 'complete') {
-                                // Market listings are ready!
-                                renderMarketListings(marketData);
-                                console.log('✅ Market listings generated successfully');
+                            if (marketData.status === 'complete' && marketData.listings) {
+                                // Market listings are ready! Only render if not already rendered
+                                if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+                                    renderMarketListings(marketData);
+                                    console.log('✅ Market listings generated successfully');
+                                }
+                                marketComplete = true;
                             } else if (marketData.status === 'generating') {
-                                // Still generating, continue polling
-                                startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
-                                return;
+                                // Still generating, show loading state if not already showing content
+                                if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+                                    showMarketListingsGenerationStatus('Markedsdata hentes...');
+                                }
+                            } else if (marketData.status === 'error') {
+                                // Generation failed - show error
+                                showMarketListingsTimeout();
+                                console.warn('Market listings generation failed:', marketData.error);
+                                marketComplete = true; // Stop polling for market data
                             }
                         }
                         
-                        // If we get here and no data is generating, stop polling
-                        if (!pollingData.aiSummary || pollingData.aiSummary.status !== 'generating') {
-                            if (!pollingData.marketListings || pollingData.marketListings.status !== 'generating') {
-                                // Both completed or errored, stop polling
-                                return;
-                            }
-                        }
+                        // Determine if we should continue polling
+                        const aiStillGenerating = pollingData.aiSummary && pollingData.aiSummary.status === 'generating';
+                        const marketStillGenerating = pollingData.marketListings && pollingData.marketListings.status === 'generating';
                         
-                        // Continue polling if either is still generating
-                        startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                        // Only continue polling if either section is still generating
+                        if (aiStillGenerating || marketStillGenerating) {
+                            console.log('Continuing polling - AI:', aiStillGenerating ? 'generating' : 'done', 'Market:', marketStillGenerating ? 'generating' : 'done');
+                            startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
+                        } else {
+                            console.log('✅ Polling complete - both AI and market data finished');
+                        }
                     } else {
                         console.log('Polling failed - no success or data:', response);
                         // API error, retry with exponential backoff
@@ -1444,6 +1460,22 @@ jQuery(document).ready(function($) {
         // This function is kept for backward compatibility but redirects to AI polling
         console.log('Market listings polling redirected to unified AI polling system');
         startAiSummaryPolling(regNumber, 1, 15); // Use AI polling system
+    }
+
+    // Function to show market listings generation status
+    function showMarketListingsGenerationStatus(message) {
+        // Only update if market listings section doesn't already have content
+        if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+            const $statusContent = $('<div style="padding: 1rem; text-align: center; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
+            const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; justify-content: center;">');
+            const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
+            const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text(message);
+            
+            $statusHeader.append($spinner, $statusText);
+            $statusContent.append($statusHeader);
+            
+            $('.market-listings-section .market-listings-content').html($statusContent);
+        }
     }
 
     // Function to show market listings timeout
