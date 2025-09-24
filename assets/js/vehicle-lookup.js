@@ -1223,11 +1223,15 @@ jQuery(document).ready(function($) {
                 contentType: 'application/x-www-form-urlencoded',
                 timeout: 10000,
                 success: function(response) {
+                    console.log('Polling response received:', response);
+                    
                     if (response.success && response.data) {
                         const pollingData = response.data;
+                        console.log('Polling data structure:', pollingData);
                         
                         // Handle AI summary data
                         if (pollingData.aiSummary) {
+                            console.log('AI Summary data:', pollingData.aiSummary);
                             const aiData = pollingData.aiSummary;
                             
                             if (aiData.status === 'complete' && aiData.summary) {
@@ -1253,6 +1257,7 @@ jQuery(document).ready(function($) {
                         
                         // Handle market listings data
                         if (pollingData.marketListings) {
+                            console.log('Market listings data:', pollingData.marketListings);
                             const marketData = pollingData.marketListings;
                             
                             if (marketData.status === 'complete') {
@@ -1277,6 +1282,7 @@ jQuery(document).ready(function($) {
                         // Continue polling if either is still generating
                         startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
                     } else {
+                        console.log('Polling failed - no success or data:', response);
                         // API error, retry with exponential backoff
                         const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt - 1), 10000);
                         setTimeout(() => {
