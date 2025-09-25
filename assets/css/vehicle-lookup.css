@@ -1712,3 +1712,56 @@ details summary {
         font-size: 0.9rem;
     }
 }
+
+/* OpenAI Logo Styling */
+.openai-logo-inline {
+    transition: opacity 0.2s ease;
+    filter: grayscale(10%);
+}
+
+.openai-logo-inline:hover {
+    opacity: 1 !important;
+}
+
+.openai-logo-loading {
+    transition: opacity 0.2s ease;
+    filter: grayscale(20%);
+}
+
+/* Responsive OpenAI logo sizing */
+@media (max-width: 640px) {
+    .openai-logo-inline {
+        width: 14px !important;
+        height: 14px !important;
+        margin-left: 4px !important;
+    }
+    
+    .openai-logo-loading {
+        width: 12px !important;
+        height: 12px !important;
+        margin-left: 3px !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .openai-logo-inline {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    .openai-logo-loading {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+/* Service logo styling (dashboard) */
+.service-logo img {
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.service-logo.openai-logo img {
+    background: white;
+    padding: 2px;
+}
