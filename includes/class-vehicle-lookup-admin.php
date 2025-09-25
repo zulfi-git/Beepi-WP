@@ -198,7 +198,6 @@ class Vehicle_Lookup_Admin {
 
         // Calculate business metrics
         $quota_percentage = $quota_limit > 0 ? ($quota_used / $quota_limit) * 100 : 0;
-        $avg_response_time = $this->calculate_avg_response_time($db_handler);
         $trend_data = $this->get_usage_trend($db_handler);
         $trend_direction = $trend_data['direction'];
         $trend_percentage = $trend_data['percentage'];
@@ -250,16 +249,6 @@ class Vehicle_Lookup_Admin {
                         </div>
                     </div>
 
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="dashicons dashicons-performance"></span>
-                            <h3>Performance</h3>
-                        </div>
-                        <div class="metric-content">
-                            <div class="big-number"><?php echo $avg_response_time; ?>s</div>
-                            <div class="metric-status good">Average Response Time</div>
-                        </div>
-                    </div>
 
                     <div class="metric-card">
                         <div class="metric-header">
