@@ -1007,7 +1007,7 @@ jQuery(document).ready(function($) {
             // Create DOM elements safely to prevent XSS (no accordion, always visible)
             const $aiSection = $('<div class="ai-summary-section section">');
             const $sectionHeader = $('<div class="section-header">').append(
-                $('<span class="section-title">').text('AI Kjøretøyanalyse'),
+                $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="assets/images/openai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
                 $('<span class="section-icon">').text('🧠')
             );
             const $sectionContent = $('<div class="section-content">');
@@ -1162,7 +1162,7 @@ jQuery(document).ready(function($) {
         // Create AI section with loading status inside (no accordion, always visible)
         const $aiSection = $('<div class="ai-summary-section section">');
         const $sectionHeader = $('<div class="section-header">').append(
-            $('<span class="section-title">').text('AI Kjøretøyanalyse'),
+            $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="assets/images/openai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
             $('<span class="section-icon">').text('🧠')
         );
         const $sectionContent = $('<div class="section-content">');
@@ -1170,7 +1170,7 @@ jQuery(document).ready(function($) {
         
         const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
         const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
-        const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text(message);
+        const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').html(message + ' <img src="assets/images/openai-logo.png" alt="OpenAI" class="openai-logo-loading" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle; opacity: 0.7;">');
         
         $statusHeader.append($spinner, $statusText);
         
