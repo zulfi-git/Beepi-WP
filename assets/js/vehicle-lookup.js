@@ -1430,6 +1430,21 @@ jQuery(document).ready(function($) {
                     });
 
                     $marketContent.append($listingsList);
+                    
+                    // Add "Vis flere annonser på Finn.no" button if searchUrl is available
+                    if (marketData.searchUrl) {
+                        const $viewMoreButton = $('<a>')
+                            .attr({
+                                'href': marketData.searchUrl,
+                                'target': '_blank',
+                                'rel': 'noopener noreferrer',
+                                'class': 'finn-view-more-btn'
+                            })
+                            .text('Vis flere annonser på Finn.no →');
+                        
+                        const $buttonWrapper = $('<div class="finn-view-more-wrapper">').append($viewMoreButton);
+                        $marketContent.append($buttonWrapper);
+                    }
                 } else {
                     // No listings found
                     const $noDataText = $('<p class="market-no-data">').text('Ingen lignende kjøretøy funnet i markedet for øyeblikket.');
