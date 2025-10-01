@@ -1356,33 +1356,7 @@ jQuery(document).ready(function($) {
             } else if (marketData.status === 'complete') {
                 // Show completed market listings
                 if (marketData.listings && Array.isArray(marketData.listings) && marketData.listings.length > 0) {
-                    // Add market summary if available
-                    if (marketData.marketSummary) {
-                        const $summarySection = $('<div class="market-section">');
-                        const $summaryHeader = $('<h4 class="market-section-title">').text('📈 Markedsoversikt');
-                        const $summaryContent = $('<div class="market-summary">');
-
-                        const summary = marketData.marketSummary;
-                        let summaryText = '';
-
-                        if (summary.averagePrice) {
-                            summaryText += `Gjennomsnittspris: ${parseInt(summary.averagePrice).toLocaleString('no-NO')} kr. `;
-                        }
-                        if (summary.priceRange) {
-                            summaryText += `Prisområde: ${summary.priceRange.replace('-', ' - ')} kr. `;
-                        }
-                        if (summary.totalFound) {
-                            summaryText += `${summary.totalFound} lignende kjøretøy funnet.`;
-                        }
-
-                        $summaryContent.append($('<p class="market-summary-text">').text(summaryText));
-                        $summarySection.append($summaryHeader, $summaryContent);
-                        $marketContent.append($summarySection);
-                    }
-
-                    // Add listings section
-                    const $listingsSection = $('<div class="market-section">');
-                    const $listingsHeader = $('<h4 class="market-section-title">').text('🚗 Lignende kjøretøy til salgs');
+                    // Display listings directly without wrapper sections
                     const $listingsList = $('<div class="market-listings">');
 
                     marketData.listings.slice(0, 3).forEach(listing => { // Show max 3 listings for mobile optimization
@@ -1439,14 +1413,11 @@ jQuery(document).ready(function($) {
                         $listingsList.append($listingItem);
                     });
 
-                    $listingsSection.append($listingsHeader, $listingsList);
-                    $marketContent.append($listingsSection);
+                    $marketContent.append($listingsList);
                 } else {
                     // No listings found
-                    const $noDataSection = $('<div class="market-section">');
                     const $noDataText = $('<p class="market-no-data">').text('Ingen lignende kjøretøy funnet i markedet for øyeblikket.');
-                    $noDataSection.append($noDataText);
-                    $marketContent.append($noDataSection);
+                    $marketContent.append($noDataText);
                 }
             }
 
