@@ -1184,18 +1184,13 @@ jQuery(document).ready(function($) {
         const $sectionContent = $('<div class="section-content">');
         const $aiContent = $('<div class="ai-summary-content ai-generation-status">');
 
-        const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
-        const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
-        const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').html(message + ' <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png" alt="OpenAI" class="openai-logo-loading" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle; opacity: 0.7;">');
-
-        $statusHeader.append($spinner, $statusText);
-
-        if (progress) {
-            const $progressText = $('<div style="font-size: 0.9em; color: #666; margin-top: 5px;">').text(`Fremgang: ${progress}`);
-            $aiContent.append($statusHeader, $progressText);
-        } else {
-            $aiContent.append($statusHeader);
-        }
+        // Single centered loading message
+        const $loadingContainer = $('<div style="padding: 1.5rem; text-align: center;">');
+        const $spinner = $('<div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem auto;">');
+        const $statusText = $('<div style="color: #64748b; font-size: 0.875rem; font-weight: 500;">').text('Genererer analyse...');
+        
+        $loadingContainer.append($spinner, $statusText);
+        $aiContent.append($loadingContainer);
 
         // Add CSS animation if not already present
         if (!$('head style[data-spinner-animation]').length) {
@@ -1218,7 +1213,7 @@ jQuery(document).ready(function($) {
         // Don't poll more than maxAttempts times (15 attempts = ~30 seconds with 2s intervals)
         if (attempt > maxAttempts) {
             $('.ai-summary-section .ai-summary-content').html(
-                '<div class="ai-summary-error">AI sammendrag tok for lang tid å generere.</div>'
+                '<div style="padding: 1.5rem; text-align: center; color: #64748b; font-size: 0.875rem;">Analysen tar lenger tid enn forventet. Prøv å oppdatere siden.</div>'
             );
             console.warn('AI summary polling timeout after', maxAttempts, 'attempts');
             return;
@@ -1270,7 +1265,7 @@ jQuery(document).ready(function($) {
                             } else if (aiData.status === 'error') {
                                 // Generation failed - show error in AI section
                                 $('.ai-summary-section .ai-summary-content').html(
-                                    '<div class="ai-summary-error">AI sammendrag kunne ikke genereres. Prøv igjen senere.</div>'
+                                    '<div style="padding: 1.5rem; text-align: center; color: #64748b; font-size: 0.875rem;">Kunne ikke generere analyse. Prøv igjen senere.</div>'
                                 );
                                 console.warn('AI summary generation failed:', aiData.error);
                                 aiComplete = true; // Stop polling for AI
@@ -1496,24 +1491,19 @@ jQuery(document).ready(function($) {
     function showMarketListingsGenerationStatus(message) {
         // Only update if market listings section doesn't already have content
         if (!$('.market-listings-section .market-listings-content .market-listing').length) {
-            const $statusContent = $('<div style="padding: 1rem; text-align: center; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
-            const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; justify-content: center;">');
-            const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
-            const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text(message);
-
-            $statusHeader.append($spinner, $statusText);
-            $statusContent.append($statusHeader);
-
-            $('.market-listings-section .market-listings-content').html($statusContent);
+            const $loadingContainer = $('<div style="padding: 1.5rem; text-align: center;">');
+            const $spinner = $('<div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem auto;">');
+            const $statusText = $('<div style="color: #64748b; font-size: 0.875rem; font-weight: 500;">').text('Henter markedsdata...');
+            
+            $loadingContainer.append($spinner, $statusText);
+            $('.market-listings-section .market-listings-content').html($loadingContainer);
         }
     }
 
     // Function to show market listings timeout
     function showMarketListingsTimeout() {
         $('.market-listings-section .market-listings-content').html(
-            '<div style="padding: 1rem; text-align: center; color: #64748b;">' +
-            '<p>Markedsdata tar lenger tid enn forventet å hente. Prøv å oppdatere siden om litt.</p>' +
-            '</div>'
+            '<div style="padding: 1.5rem; text-align: center; color: #64748b; font-size: 0.875rem;">Markedsdata tar lenger tid enn forventet. Prøv å oppdatere siden.</div>'
         );
     }
 
