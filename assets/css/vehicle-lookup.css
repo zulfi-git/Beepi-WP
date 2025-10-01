@@ -411,8 +411,6 @@
     width: 45%;
     font-weight: 600;
     font-size: var(--font-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.05rem;
     background-color: var(--bg-light);
 }
 
