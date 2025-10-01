@@ -1013,8 +1013,8 @@ jQuery(document).ready(function($) {
                     'alt': 'OpenAI',
                     'class': 'section-icon-logo'
                 }).css({
-                    'width': '50px',
-                    'height': 'auto',
+                    'height': '40px',
+                    'width': 'auto',
                     'opacity': '0.85'
                 })
             );
