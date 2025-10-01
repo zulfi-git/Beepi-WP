@@ -1473,31 +1473,8 @@ details summary {
 }
 
 .market-listings-content {
-    padding: 0.5rem;
-    background: #ffffff;
-    border-radius: 8px;
-}
-
-.market-section {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    background: #fafafa;
-    border-radius: 8px;
-    border-left: 4px solid #0ea5e9;
-}
-
-.market-section-title {
-    margin: 0 0 0.75rem 0;
-    color: #1e293b;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.market-summary-text {
-    margin: 0;
-    color: #475569;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    padding: 0;
+    background: transparent;
 }
 
 .market-listings {
@@ -1655,15 +1632,6 @@ details summary {
 }
 
 @media (min-width: 768px) {
-    .market-listings-content {
-        padding: 1rem;
-    }
-    
-    .market-section {
-        padding: 0.75rem;
-        margin-bottom: 1rem;
-    }
-    
     .market-listings {
         gap: 1rem;
     }
@@ -1688,15 +1656,6 @@ details summary {
 }
 
 @media (min-width: 1024px) {
-    .market-listings-content {
-        padding: 1.5rem;
-    }
-    
-    .market-section {
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
     .listing-image {
         width: 180px;
         height: 140px;
