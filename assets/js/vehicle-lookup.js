@@ -1025,7 +1025,7 @@ jQuery(document).ready(function($) {
             if (aiSummary.summary) {
                 const $summarySection = $('<div class="ai-section">');
                 $summarySection.append(
-                    $('<h4 class="ai-section-title">').text('📋 Sammendrag'),
+                    $('<h4 class="ai-section-title">').text('Sammendrag'),
                     $('<p class="ai-summary-text">').text(aiSummary.summary)
                 );
                 $aiContent.append($summarySection);
@@ -1045,7 +1045,7 @@ jQuery(document).ready(function($) {
                 });
 
                 $highlightsSection.append(
-                    $('<h4 class="ai-section-title">').text('⭐ Høydepunkter'),
+                    $('<h4 class="ai-section-title">').text('Høydepunkter'),
                     $highlightsList
                 );
                 $aiContent.append($highlightsSection);
@@ -1055,7 +1055,7 @@ jQuery(document).ready(function($) {
             if (aiSummary.recommendation) {
                 const $recommendationSection = $('<div class="ai-section">');
                 $recommendationSection.append(
-                    $('<h4 class="ai-section-title">').text('💡 Anbefaling'),
+                    $('<h4 class="ai-section-title">').text('Anbefaling'),
                     $('<p class="ai-recommendation">').text(aiSummary.recommendation)
                 );
                 $aiContent.append($recommendationSection);
@@ -1065,7 +1065,7 @@ jQuery(document).ready(function($) {
             if (aiSummary.marketInsights) {
                 const $marketSection = $('<div class="ai-section">');
                 $marketSection.append(
-                    $('<h4 class="ai-section-title">').text('📊 Markedsanalyse'),
+                    $('<h4 class="ai-section-title">').text('Markedsanalyse'),
                     $('<p class="ai-market-insights">').text(aiSummary.marketInsights)
                 );
                 $aiContent.append($marketSection);
@@ -1085,7 +1085,7 @@ jQuery(document).ready(function($) {
                 });
 
                 $redFlagsSection.append(
-                    $('<h4 class="ai-section-title">').text('🤔 Ting å vurdere'),
+                    $('<h4 class="ai-section-title">').text('Ting å vurdere'),
                     $redFlagsList
                 );
                 $aiContent.append($redFlagsSection);
@@ -1188,7 +1188,7 @@ jQuery(document).ready(function($) {
         const $loadingContainer = $('<div style="padding: 1.5rem; text-align: center;">');
         const $spinner = $('<div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem auto;">');
         const $statusText = $('<div style="color: #64748b; font-size: 0.875rem; font-weight: 500;">').text('Genererer analyse...');
-        
+
         $loadingContainer.append($spinner, $statusText);
         $aiContent.append($loadingContainer);
 
@@ -1425,7 +1425,7 @@ jQuery(document).ready(function($) {
                     });
 
                     $marketContent.append($listingsList);
-                    
+
                     // Add "Vis flere annonser på Finn.no" button if searchUrl is available
                     if (marketData.searchUrl) {
                         const $viewMoreButton = $('<a>')
@@ -1436,7 +1436,7 @@ jQuery(document).ready(function($) {
                                 'class': 'finn-view-more-btn'
                             })
                             .text('Vis flere annonser på Finn.no →');
-                        
+
                         const $buttonWrapper = $('<div class="finn-view-more-wrapper">').append($viewMoreButton);
                         $marketContent.append($buttonWrapper);
                     }
@@ -1494,7 +1494,7 @@ jQuery(document).ready(function($) {
             const $loadingContainer = $('<div style="padding: 1.5rem; text-align: center;">');
             const $spinner = $('<div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem auto;">');
             const $statusText = $('<div style="color: #64748b; font-size: 0.875rem; font-weight: 500;">').text('Henter markedsdata...');
-            
+
             $loadingContainer.append($spinner, $statusText);
             $('.market-listings-section .market-listings-content').html($loadingContainer);
         }
