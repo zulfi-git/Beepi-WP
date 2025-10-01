@@ -1007,8 +1007,16 @@ jQuery(document).ready(function($) {
             // Create DOM elements safely to prevent XSS (no accordion, always visible)
             const $aiSection = $('<div class="ai-summary-section section">');
             const $sectionHeader = $('<div class="section-header">').append(
-                $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
-                $('<span class="section-icon">').text('🧠')
+                $('<span class="section-title">').text('AI Kjøretøyanalyse'),
+                $('<img>').attr({
+                    'src': vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png',
+                    'alt': 'OpenAI',
+                    'class': 'section-icon-logo'
+                }).css({
+                    'width': '50px',
+                    'height': 'auto',
+                    'opacity': '0.85'
+                })
             );
             const $sectionContent = $('<div class="section-content">');
             const $aiContent = $('<div class="ai-summary-content">');
@@ -1162,8 +1170,16 @@ jQuery(document).ready(function($) {
         // Create AI section with loading status inside (no accordion, always visible)
         const $aiSection = $('<div class="ai-summary-section section">');
         const $sectionHeader = $('<div class="section-header">').append(
-            $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
-            $('<span class="section-icon">').text('🧠')
+            $('<span class="section-title">').text('AI Kjøretøyanalyse'),
+            $('<img>').attr({
+                'src': vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png',
+                'alt': 'OpenAI',
+                'class': 'section-icon-logo'
+            }).css({
+                'width': '50px',
+                'height': 'auto',
+                'opacity': '0.85'
+            })
         );
         const $sectionContent = $('<div class="section-content">');
         const $aiContent = $('<div class="ai-summary-content ai-generation-status">');
