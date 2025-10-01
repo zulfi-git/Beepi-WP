@@ -1725,8 +1725,8 @@ details summary {
 .openai-logo-inline {
     transition: opacity 0.2s ease;
     filter: grayscale(10%);
-    width: 16px !important;
-    height: 3.95px !important; /* 16 * (739/3000) = 3.95px */
+    height: 20px !important;
+    width: auto !important;
     margin-left: 6px !important;
     vertical-align: middle !important;
     opacity: 0.8 !important;
@@ -1739,37 +1739,41 @@ details summary {
 .openai-logo-loading {
     transition: opacity 0.2s ease;
     filter: grayscale(20%);
-    width: 14px !important;
-    height: 3.45px !important; /* 14 * (739/3000) = 3.45px */
+    height: 20px !important;
+    width: auto !important;
     margin-left: 4px !important;
     vertical-align: middle !important;
     opacity: 0.7 !important;
 }
 
-/* Responsive OpenAI logo sizing - maintaining aspect ratio */
+/* Finn.no Logo Styling */
+.finnno-logo-inline {
+    transition: opacity 0.2s ease;
+    height: 20px !important;
+    width: auto !important;
+    margin-left: 6px !important;
+    vertical-align: middle !important;
+    opacity: 0.8 !important;
+}
+
+.finnno-logo-inline:hover {
+    opacity: 1 !important;
+}
+
+/* Responsive logo sizing */
 @media (max-width: 640px) {
-    .openai-logo-inline {
-        width: 14px !important;
-        height: 3.45px !important; /* 14 * (739/3000) */
-        margin-left: 4px !important;
-    }
-    
-    .openai-logo-loading {
-        width: 12px !important;
-        height: 2.96px !important; /* 12 * (739/3000) */
-        margin-left: 3px !important;
+    .openai-logo-inline,
+    .openai-logo-loading,
+    .finnno-logo-inline {
+        height: 18px !important;
     }
 }
 
 @media (min-width: 768px) {
-    .openai-logo-inline {
-        width: 18px !important;
-        height: 4.43px !important; /* 18 * (739/3000) */
-    }
-    
-    .openai-logo-loading {
-        width: 16px !important;
-        height: 3.95px !important; /* 16 * (739/3000) */
+    .openai-logo-inline,
+    .openai-logo-loading,
+    .finnno-logo-inline {
+        height: 20px !important;
     }
 }
 
