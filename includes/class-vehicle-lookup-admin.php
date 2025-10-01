@@ -312,7 +312,7 @@ class Vehicle_Lookup_Admin {
                         
                         <div class="service-item">
                             <div class="service-logo openai-logo">
-                                <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/openai-logo.png'; ?>" alt="OpenAI" width="24" height="24">
+                                <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/open-ai-logo.png'; ?>" alt="OpenAI" width="24" height="24">
                             </div>
                             <div class="service-info">
                                 <div class="service-name">AI Summary Service</div>

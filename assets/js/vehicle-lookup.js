@@ -309,16 +309,16 @@ jQuery(document).ready(function($) {
                     }
 
                     $('.vehicle-info .vehicle-tags').remove();
-                    
+
                     // Clear retry counters on successful lookup
                     clearRetryCounters(regNumber);
-                    
+
                     // Phase 1: Process vehicle data immediately
                     processVehicleData(response, regNumber);
-                    
+
                     // Phase 2: Check for AI summary status and start polling if needed
                     checkAndStartAiSummaryPolling(response.data, regNumber);
-                    
+
                     // Phase 3: Check for market listings status and start polling if needed
                     checkAndStartMarketListingsPolling(response.data, regNumber);
                 } else {
@@ -385,7 +385,7 @@ jQuery(document).ready(function($) {
                 if (errorCode === 'RATE_LIMIT_EXCEEDED' && retryAfter) {
                     const retrySeconds = Math.ceil(retryAfter / 1000);
                     errorMessage += ` Prøv igjen om ${retrySeconds} sekunder.`;
-                    
+
                     // Auto-retry after the specified time
                     setTimeout(function() {
                         $submitButton.removeClass('loading').prop('disabled', false);
@@ -472,12 +472,12 @@ jQuery(document).ready(function($) {
                 registration_number: registrationNumber,
                 context: context
             });
-            
+
             // Keep only last 10 errors
             if (errorLog.length > 10) {
                 errorLog.splice(0, errorLog.length - 10);
             }
-            
+
             sessionStorage.setItem('vehicle_lookup_errors', JSON.stringify(errorLog));
         } catch (e) {
             console.warn('Could not store error log in session storage:', e);
@@ -512,7 +512,7 @@ jQuery(document).ready(function($) {
         // Check if we've already exceeded retry attempts for this session
         const retryKey = `retry_${errorCode}_${originalRegNumber}`;
         const currentAttempts = parseInt(sessionStorage.getItem(retryKey) || '0');
-        
+
         if (currentAttempts >= strategy.maxAttempts) {
             console.log(`❌ Max retry attempts (${strategy.maxAttempts}) exceeded for ${errorCode}`);
             return false;
@@ -527,7 +527,7 @@ jQuery(document).ready(function($) {
         // Perform retry after delay
         setTimeout(() => {
             console.log(`🔄 Smart retry attempt ${currentAttempts + 1}/${strategy.maxAttempts} for ${errorCode} (Correlation: ${correlationId})`);
-            
+
             // Reset form state and retry
             resetFormState();
             $errorDiv.removeClass('retrying');
@@ -609,17 +609,17 @@ jQuery(document).ready(function($) {
             margin: 10px 0;
             border: 1px solid #ffeaa7;
         }
-        
+
         .vehicle-lookup-error.retrying::before {
             content: "🔄 ";
             animation: spin 2s linear infinite;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         .owner-history-container .content-wrapper {
             position: relative;
             overflow: hidden;
@@ -1007,7 +1007,7 @@ jQuery(document).ready(function($) {
             // Create DOM elements safely to prevent XSS (no accordion, always visible)
             const $aiSection = $('<div class="ai-summary-section section">');
             const $sectionHeader = $('<div class="section-header">').append(
-                $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/openai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
+                $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
                 $('<span class="section-icon">').text('🧠')
             );
             const $sectionContent = $('<div class="section-content">');
@@ -1027,7 +1027,7 @@ jQuery(document).ready(function($) {
             if (aiSummary.highlights && Array.isArray(aiSummary.highlights) && aiSummary.highlights.length > 0) {
                 const $highlightsSection = $('<div class="ai-section">');
                 const $highlightsList = $('<ul class="ai-highlights">');
-                
+
                 aiSummary.highlights.forEach(highlight => {
                     if (typeof highlight === 'string') {
                         $highlightsList.append(
@@ -1035,7 +1035,7 @@ jQuery(document).ready(function($) {
                         );
                     }
                 });
-                
+
                 $highlightsSection.append(
                     $('<h4 class="ai-section-title">').text('⭐ Høydepunkter'),
                     $highlightsList
@@ -1067,7 +1067,7 @@ jQuery(document).ready(function($) {
             if (aiSummary.redFlags && Array.isArray(aiSummary.redFlags) && aiSummary.redFlags.length > 0) {
                 const $redFlagsSection = $('<div class="ai-section">');
                 const $redFlagsList = $('<ul class="ai-red-flags">');
-                
+
                 aiSummary.redFlags.forEach(flag => {
                     if (typeof flag === 'string') {
                         $redFlagsList.append(
@@ -1075,7 +1075,7 @@ jQuery(document).ready(function($) {
                         );
                     }
                 });
-                
+
                 $redFlagsSection.append(
                     $('<h4 class="ai-section-title">').text('🤔 Ting å vurdere'),
                     $redFlagsList
@@ -1086,18 +1086,18 @@ jQuery(document).ready(function($) {
             // Safely add attribution
             const $attribution = $('<div class="ai-attribution">');
             const $meta = $('<small class="ai-meta">');
-            
-            let metaText = aiSummary.aiGenerated ? 
-                `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}` : 
+
+            let metaText = aiSummary.aiGenerated ?
+                `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}` :
                 'Fallback-sammendrag';
-            
+
             if (aiSummary.generatedAt) {
                 const generatedDate = new Date(aiSummary.generatedAt);
                 if (!isNaN(generatedDate.getTime())) {
                     metaText += ` • ${generatedDate.toLocaleString('no-NO')}`;
                 }
             }
-            
+
             $meta.text(metaText);
             $attribution.append($meta);
             $aiContent.append($attribution);
@@ -1136,14 +1136,14 @@ jQuery(document).ready(function($) {
                 renderAiSummary(responseData.aiSummary.summary);
                 return;
             }
-            
+
             // If AI summary is generating, start polling
             if (responseData.aiSummary.status === 'generating') {
                 showAiGenerationStatus('AI sammendrag genereres...', responseData.aiSummary.progress);
                 startAiSummaryPolling(regNumber);
                 return;
             }
-            
+
             // If there was an error with AI generation
             if (responseData.aiSummary.status === 'error') {
                 console.warn('AI summary generation failed:', responseData.aiSummary.error);
@@ -1158,29 +1158,29 @@ jQuery(document).ready(function($) {
     function showAiGenerationStatus(message, progress) {
         // Remove any existing AI summary sections and create loading placeholder
         $('.ai-summary-section').remove();
-        
+
         // Create AI section with loading status inside (no accordion, always visible)
         const $aiSection = $('<div class="ai-summary-section section">');
         const $sectionHeader = $('<div class="section-header">').append(
-            $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/openai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
+            $('<span class="section-title">').html('AI Kjøretøyanalyse <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png" alt="OpenAI" class="openai-logo-inline" style="width: 16px; height: 16px; margin-left: 6px; vertical-align: middle; opacity: 0.8;">'),
             $('<span class="section-icon">').text('🧠')
         );
         const $sectionContent = $('<div class="section-content">');
         const $aiContent = $('<div class="ai-summary-content ai-generation-status">');
-        
+
         const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
         const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
-        const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').html(message + ' <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/openai-logo.png" alt="OpenAI" class="openai-logo-loading" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle; opacity: 0.7;">');
-        
+        const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').html(message + ' <img src="' + vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png" alt="OpenAI" class="openai-logo-loading" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle; opacity: 0.7;">');
+
         $statusHeader.append($spinner, $statusText);
-        
+
         if (progress) {
             const $progressText = $('<div style="font-size: 0.9em; color: #666; margin-top: 5px;">').text(`Fremgang: ${progress}`);
             $aiContent.append($statusHeader, $progressText);
         } else {
             $aiContent.append($statusHeader);
         }
-        
+
         // Add CSS animation if not already present
         if (!$('head style[data-spinner-animation]').length) {
             $('<style data-spinner-animation="true">')
@@ -1188,7 +1188,7 @@ jQuery(document).ready(function($) {
                 .html('@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }')
                 .appendTo('head');
         }
-        
+
         // Assemble AI section and add to beginning of accordion (no collapsible behavior)
         $sectionContent.append($aiContent);
         $aiSection.append($sectionHeader, $sectionContent);
@@ -1207,9 +1207,9 @@ jQuery(document).ready(function($) {
             console.warn('AI summary polling timeout after', maxAttempts, 'attempts');
             return;
         }
-        
+
         const pollDelay = attempt === 1 ? 1000 : 2000; // First poll after 1s, then every 2s
-        
+
         setTimeout(() => {
             $.ajax({
                 url: vehicleLookupAjax.ajaxurl,
@@ -1224,20 +1224,20 @@ jQuery(document).ready(function($) {
                 timeout: 10000,
                 success: function(response) {
                     console.log('Polling response received:', response);
-                    
+
                     if (response.success && response.data) {
                         const pollingData = response.data;
                         console.log('Polling data structure:', pollingData);
-                        
+
                         // Track completion status
                         let aiComplete = false;
                         let marketComplete = false;
-                        
+
                         // Handle AI summary data
                         if (pollingData.aiSummary) {
                             console.log('AI Summary data:', pollingData.aiSummary);
                             const aiData = pollingData.aiSummary;
-                            
+
                             if (aiData.status === 'complete' && aiData.summary) {
                                 // AI summary is ready! Only render if not already rendered
                                 if (!$('.ai-summary-section .ai-summary-content .vehicle-overview').length) {
@@ -1260,12 +1260,12 @@ jQuery(document).ready(function($) {
                                 aiComplete = true; // Stop polling for AI
                             }
                         }
-                        
+
                         // Handle market listings data
                         if (pollingData.marketListings) {
                             console.log('Market listings data:', pollingData.marketListings);
                             const marketData = pollingData.marketListings;
-                            
+
                             if (marketData.status === 'complete' && marketData.listings) {
                                 // Market listings are ready! Only render if not already rendered
                                 if (!$('.market-listings-section .market-listings-content .market-listing').length) {
@@ -1285,11 +1285,11 @@ jQuery(document).ready(function($) {
                                 marketComplete = true; // Stop polling for market data
                             }
                         }
-                        
+
                         // Determine if we should continue polling
                         const aiStillGenerating = pollingData.aiSummary && pollingData.aiSummary.status === 'generating';
                         const marketStillGenerating = pollingData.marketListings && pollingData.marketListings.status === 'generating';
-                        
+
                         // Only continue polling if either section is still generating
                         if (aiStillGenerating || marketStillGenerating) {
                             console.log('Continuing polling - AI:', aiStillGenerating ? 'generating' : 'done', 'Market:', marketStillGenerating ? 'generating' : 'done');
@@ -1347,10 +1347,10 @@ jQuery(document).ready(function($) {
 
             if (marketData.status === 'generating') {
                 // Show loading state for market listings
-                const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
+                const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 0.75rem; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1px solid #cbd5e1; border-radius: 8px;">');
                 const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
                 const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text('Henter markedsdata...');
-                
+
                 $statusHeader.append($spinner, $statusText);
                 $marketContent.append($statusHeader);
             } else if (marketData.status === 'complete') {
@@ -1361,10 +1361,10 @@ jQuery(document).ready(function($) {
                         const $summarySection = $('<div class="market-section">');
                         const $summaryHeader = $('<h4 class="market-section-title">').text('📈 Markedsoversikt');
                         const $summaryContent = $('<div class="market-summary">');
-                        
+
                         const summary = marketData.marketSummary;
                         let summaryText = '';
-                        
+
                         if (summary.averagePrice) {
                             summaryText += `Gjennomsnittspris: ${parseInt(summary.averagePrice).toLocaleString('no-NO')} kr. `;
                         }
@@ -1374,7 +1374,7 @@ jQuery(document).ready(function($) {
                         if (summary.totalFound) {
                             summaryText += `${summary.totalFound} lignende kjøretøy funnet.`;
                         }
-                        
+
                         $summaryContent.append($('<p class="market-summary-text">').text(summaryText));
                         $summarySection.append($summaryHeader, $summaryContent);
                         $marketContent.append($summarySection);
@@ -1384,30 +1384,30 @@ jQuery(document).ready(function($) {
                     const $listingsSection = $('<div class="market-section">');
                     const $listingsHeader = $('<h4 class="market-section-title">').text('🚗 Lignende kjøretøy til salgs');
                     const $listingsList = $('<div class="market-listings">');
-                    
+
                     marketData.listings.slice(0, 3).forEach(listing => { // Show max 3 listings for mobile optimization
                         const $listingItem = $('<div class="market-listing-item">');
-                        
+
                         const title = listing.title || 'Ukjent kjøretøy';
                         const price = listing.price ? `${parseInt(listing.price).toLocaleString('no-NO')} kr` : 'Pris ikke oppgitt';
                         const year = listing.year || '';
                         const mileage = listing.mileage ? `${parseInt(listing.mileage).toLocaleString('no-NO')} km` : '';
                         const location = listing.location || '';
                         const image = listing.image || '';
-                        
+
                         // Create mobile-first card layout with image
                         let listingHtml = '<div class="listing-card">';
-                        
+
                         // Image section (left/top on mobile)
                         if (image) {
                             listingHtml += `<div class="listing-image">
                                 <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'">
                             </div>`;
                         }
-                        
+
                         // Content section
                         listingHtml += '<div class="listing-content">';
-                        
+
                         // Header with title and year
                         listingHtml += '<div class="listing-header">';
                         listingHtml += `<div class="listing-title">${title}</div>`;
@@ -1415,10 +1415,10 @@ jQuery(document).ready(function($) {
                             listingHtml += `<div class="listing-year">${year}</div>`;
                         }
                         listingHtml += '</div>';
-                        
+
                         // Price prominently displayed
                         listingHtml += `<div class="listing-price">${price}</div>`;
-                        
+
                         // Key details in mobile-friendly format
                         if (mileage || location) {
                             listingHtml += '<div class="listing-details">';
@@ -1426,19 +1426,19 @@ jQuery(document).ready(function($) {
                             if (location) listingHtml += `<span class="listing-location">${location}</span>`;
                             listingHtml += '</div>';
                         }
-                        
+
                         // Action link
                         if (listing.url) {
                             listingHtml += `<a href="${listing.url}" target="_blank" class="listing-link" rel="noopener">Se annonse →</a>`;
                         }
-                        
+
                         listingHtml += '</div>'; // Close listing-content
                         listingHtml += '</div>'; // Close listing-card
-                        
+
                         $listingItem.html(listingHtml);
                         $listingsList.append($listingItem);
                     });
-                    
+
                     $listingsSection.append($listingsHeader, $listingsList);
                     $marketContent.append($listingsSection);
                 } else {
@@ -1452,7 +1452,7 @@ jQuery(document).ready(function($) {
 
             $sectionContent.append($marketContent);
             $marketSection.append($sectionHeader, $sectionContent);
-            
+
             // Insert market listings section after AI summary or basic info
             const $aiSection = $('.ai-summary-section');
             if ($aiSection.length) {
@@ -1498,10 +1498,10 @@ jQuery(document).ready(function($) {
             const $statusHeader = $('<div style="display: flex; align-items: center; gap: 10px; justify-content: center;">');
             const $spinner = $('<div class="loading-spinner" style="width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top: 2px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite;">');
             const $statusText = $('<span style="color: #475569; font-size: 0.9rem; font-weight: 500;">').text(message);
-            
+
             $statusHeader.append($spinner, $statusText);
             $statusContent.append($statusHeader);
-            
+
             $('.market-listings-section .market-listings-content').html($statusContent);
         }
     }
