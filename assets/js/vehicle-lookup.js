@@ -1351,7 +1351,15 @@ jQuery(document).ready(function($) {
             const $marketSection = $('<div class="market-listings-section section">');
             const $sectionHeader = $('<div class="section-header">').append(
                 $('<span class="section-title">').text('Siste annonser på finn.no'),
-                $('<span class="section-icon">').text('📊')
+                $('<img>').attr({
+                    'src': vehicleLookupAjax.plugin_url + '/assets/images/finnno-logo.png',
+                    'alt': 'Finn.no',
+                    'class': 'section-icon-logo'
+                }).css({
+                    'width': '50px',
+                    'height': 'auto',
+                    'opacity': '0.85'
+                })
             );
             const $sectionContent = $('<div class="section-content">');
             const $marketContent = $('<div class="market-listings-content">');
