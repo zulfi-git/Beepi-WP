@@ -1183,8 +1183,8 @@ details summary {
 
 /* AI Summary Styling */
 .ai-summary-section {
-    background: var(--gradient-blue-light);
-    border: 2px solid var(--bg-blue-lighter) !important;
+    background: var(--gradient-light);
+    border: 2px solid var(--border-light) !important;
     position: relative;
 }
 
@@ -1200,19 +1200,19 @@ details summary {
 }
 
 .ai-summary-section summary {
-    background: var(--gradient-blue-light) !important;
-    color: var(--primary-blue-dark) !important;
+    background: var(--gradient-light) !important;
+    color: var(--text-primary) !important;
     font-weight: 700 !important;
     position: relative;
 }
 
 .ai-summary-section summary:hover {
-    background: linear-gradient(135deg, var(--bg-blue-lighter) 0%, var(--primary-blue-light) 100%) !important;
+    background: var(--gradient-light) !important;
 }
 
 .ai-summary-section[open] {
-    border-color: var(--primary-blue) !important;
-    box-shadow: var(--shadow-blue) !important;
+    border-color: var(--border-light) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 .ai-summary-content {
@@ -1305,7 +1305,7 @@ details summary {
 }
 
 .ai-meta::before {
-    content: '🤖';
+    content: '';
     font-size: var(--font-xs);
 }
 
@@ -1474,8 +1474,8 @@ details summary {
 
 /* Market Listings Styling */
 .market-listings-section {
-    background: var(--gradient-blue-light);
-    border: 2px solid var(--bg-blue-lighter) !important;
+    background: var(--gradient-light);
+    border: 2px solid var(--border-light) !important;
     position: relative;
 }
 
@@ -1491,8 +1491,8 @@ details summary {
 }
 
 .market-listings-section .section-header {
-    background: var(--gradient-blue-light) !important;
-    color: var(--primary-blue-dark) !important;
+    background: var(--gradient-light) !important;
+    color: var(--text-primary) !important;
     font-weight: 700 !important;
     position: relative;
 }
@@ -1511,16 +1511,9 @@ details summary {
 .market-listing-item {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 0;
-    transition: all 0.2s ease;
     overflow: hidden;
-}
-
-.market-listing-item:hover {
-    border-color: var(--primary-blue);
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
-    transform: translateY(-1px);
 }
 
 /* Mobile-first card layout */
@@ -1588,6 +1581,7 @@ details summary {
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .listing-price {
