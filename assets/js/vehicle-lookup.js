@@ -1013,7 +1013,7 @@ jQuery(document).ready(function($) {
                     'alt': 'OpenAI',
                     'class': 'section-icon-logo'
                 }).css({
-                    'height': '40px',
+                    'height': '20px',
                     'width': 'auto',
                     'opacity': '0.85'
                 })
@@ -1356,7 +1356,7 @@ jQuery(document).ready(function($) {
                     'alt': 'Finn.no',
                     'class': 'section-icon-logo'
                 }).css({
-                    'height': '40px',
+                    'height': '20px',
                     'width': 'auto',
                     'opacity': '0.85'
                 })
