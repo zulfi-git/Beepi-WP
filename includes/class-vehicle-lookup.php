@@ -60,10 +60,6 @@ class Vehicle_Lookup {
             'index.php?pagename=sok&reg_number=$matches[1]',
             'top'
         );
-
-        // Always flush rewrite rules when this plugin is activated
-        // This ensures the rules are properly registered
-        flush_rewrite_rules();
     }
 
     /**

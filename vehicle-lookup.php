@@ -95,4 +95,11 @@ function vehicle_lookup_activate() {
         $db_handler = new Vehicle_Lookup_Database();
         $db_handler->create_table();
     }
+
+    if (class_exists('Vehicle_Lookup')) {
+        $vehicle_lookup = new Vehicle_Lookup();
+        $vehicle_lookup->add_rewrite_rules();
+    }
+
+    flush_rewrite_rules();
 }
