@@ -1092,23 +1092,20 @@ jQuery(document).ready(function($) {
             }
 
             // Safely add attribution
-            const $attribution = $('<div class="ai-attribution">');
             const $meta = $('<small class="ai-meta">');
 
-            let metaText = aiSummary.aiGenerated ?
-                `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}` :
-                'Fallback-sammendrag';
+            let metaText = `AI-generert med ${aiSummary.model || 'gpt-4o-mini'}`;
 
-            if (aiSummary.generatedAt) {
-                const generatedDate = new Date(aiSummary.generatedAt);
+            // Use completedAt from API response
+            if (aiSummary.completedAt) {
+                const generatedDate = new Date(aiSummary.completedAt);
                 if (!isNaN(generatedDate.getTime())) {
                     metaText += ` • ${generatedDate.toLocaleString('no-NO')}`;
                 }
             }
 
             $meta.text(metaText);
-            $attribution.append($meta);
-            $aiContent.append($attribution);
+            $aiContent.append($meta);
 
             // Assemble the complete structure
             $sectionContent.append($aiContent);
