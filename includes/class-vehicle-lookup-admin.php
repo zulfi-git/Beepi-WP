@@ -11,6 +11,8 @@ class Vehicle_Lookup_Admin {
         add_action('wp_ajax_clear_worker_cache', array($this, 'handle_clear_worker_cache'));
         add_action('wp_ajax_clear_local_cache', array($this, 'handle_clear_local_cache'));
         add_action('wp_ajax_reset_analytics_data', array($this, 'reset_analytics_data'));
+        add_action('admin_post_vehicle_lookup_flush_rewrites', array($this, 'handle_rewrite_flush_request'));
+        add_action('admin_notices', array($this, 'maybe_show_flush_notice'));
 
         // Ensure database table exists
         $this->ensure_database_table();
@@ -450,6 +452,18 @@ class Vehicle_Lookup_Admin {
                                 </div>
                             </div>
                         </div>
+
+                        <div class="tech-card">
+                            <h4><span class="dashicons dashicons-update"></span> Permalenker</h4>
+                            <p><?php echo esc_html__('Hvis de egendefinerte URL-ene for kjøretøysøk slutter å fungere, kan du regenerere omskrivningsreglene her.', 'vehicle-lookup'); ?></p>
+                            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                                <?php wp_nonce_field('vehicle_lookup_flush_rewrites'); ?>
+                                <input type="hidden" name="action" value="vehicle_lookup_flush_rewrites">
+                                <button type="submit" class="button">
+                                    <?php esc_html_e('Regenerer /sok/ permalenker', 'vehicle-lookup'); ?>
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                     <!-- Detailed Activity Stats -->
@@ -721,6 +735,47 @@ class Vehicle_Lookup_Admin {
         wp_send_json_success(array(
             'message' => 'Cache cleared successfully'
         ));
+    }
+
+    public function handle_rewrite_flush_request() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Du har ikke tilgang til denne handlingen.', 'vehicle-lookup'));
+        }
+
+        check_admin_referer('vehicle_lookup_flush_rewrites');
+
+        if (class_exists('Vehicle_Lookup')) {
+            $vehicle_lookup = new Vehicle_Lookup();
+            $vehicle_lookup->add_rewrite_rules();
+        }
+
+        flush_rewrite_rules();
+
+        $redirect = wp_get_referer();
+        if (!$redirect || strpos($redirect, 'vehicle-lookup') === false) {
+            $redirect = add_query_arg('page', 'vehicle-lookup', admin_url('admin.php'));
+        }
+
+        $redirect = add_query_arg('vehicle_lookup_flush', 'success', $redirect);
+
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    public function maybe_show_flush_notice() {
+        if (!is_admin() || !isset($_GET['vehicle_lookup_flush'])) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $status = sanitize_text_field(wp_unslash($_GET['vehicle_lookup_flush']));
+
+        if ($status === 'success') {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Permalenkene for /sok/ er regenerert.', 'vehicle-lookup') . '</p></div>';
+        }
     }
 
     private function get_lookup_stats($db_handler) {
