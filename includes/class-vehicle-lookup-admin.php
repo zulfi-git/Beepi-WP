@@ -344,8 +344,8 @@ class Vehicle_Lookup_Admin {
                                     <strong><?php echo $rate_limit_total; ?></strong>
                                     <span>Requests this hour</span>
                                 </div>
-                                <div class="tech-stat">
-                                    <strong><?php echo number_format($quota_limit - $quota_used); ?></strong>
+                                <div class="tech-stat" id="quota-remaining-wrapper">
+                                    <strong id="quota-remaining-value"><?php echo number_format($quota_limit - $quota_used); ?></strong>
                                     <span>Quota remaining</span>
                                 </div>
                             </div>

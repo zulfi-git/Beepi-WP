@@ -308,17 +308,27 @@ jQuery(document).ready(function($) {
         // Performance Tracking
         if (monitoringData.performance) {
             const perf = monitoringData.performance;
-            
+
             if (perf.vehicle_latency !== undefined) {
                 $('#vehicle-latency strong').text(perf.vehicle_latency + 'ms');
             }
-            
+
             if (perf.ai_latency !== undefined) {
                 $('#ai-latency strong').text(perf.ai_latency + 'ms');
             }
-            
+
             if (perf.cache_hit_improvement) {
                 $('#cache-performance-improvement strong').text(perf.cache_hit_improvement);
+            }
+        }
+
+        // Rate limiting details
+        const rateLimiting = monitoringData.rate_limiting;
+        if (rateLimiting && rateLimiting.daily_remaining !== undefined && rateLimiting.daily_remaining !== null) {
+            const quotaRemainingElement = $('#quota-remaining-value');
+            if (quotaRemainingElement.length) {
+                const formattedValue = Number(rateLimiting.daily_remaining).toLocaleString();
+                quotaRemainingElement.text(formattedValue);
             }
         }
     }
