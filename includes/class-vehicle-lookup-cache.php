@@ -32,18 +32,22 @@ class VehicleLookupCache {
     /**
      * Cache API response
      */
-    public function set($regNumber, $data) {
+    public function set($regNumber, $data, $ttl = null) {
         $cache_key = $this->get_cache_key($regNumber);
-        
+
         // Store cache time with the data
         $cache_data = array(
             'data' => $data,
             'cache_time' => current_time('c')
         );
-        
+
         // Use admin setting for cache duration, fallback to constant if not set
-        $cache_duration = get_option('vehicle_lookup_cache_duration', VEHICLE_LOOKUP_CACHE_DURATION);
-        
+        if ($ttl === null) {
+            $cache_duration = get_option('vehicle_lookup_cache_duration', VEHICLE_LOOKUP_CACHE_DURATION);
+        } else {
+            $cache_duration = $ttl;
+        }
+
         set_transient($cache_key, $cache_data, $cache_duration);
     }
 
