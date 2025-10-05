@@ -990,24 +990,45 @@ class Vehicle_Lookup_Admin {
             // Cache information with enhanced AI summary tracking
             if (isset($body['cache'])) {
                 $cache = $body['cache'];
+
+                $ai_hit_rate_raw = $cache['aiHitRate'] ?? $cache['aiCacheHitRate'] ?? null;
+                $ai_hit_rate_value = null;
+
+                if (is_numeric($ai_hit_rate_raw)) {
+                    $ai_hit_rate_value = (float) $ai_hit_rate_raw;
+                } elseif (is_string($ai_hit_rate_raw)) {
+                    $ai_hit_rate_value = (float) str_replace('%', '', $ai_hit_rate_raw);
+                }
+
                 $monitoring_data['cache'] = array(
                     'entries' => $cache['entries'] ?? 0,
                     'max_size' => $cache['maxSize'] ?? 1000,
                     'ttl' => $cache['ttl'] ?? 3600,
-                    'utilization' => isset($cache['entries'], $cache['maxSize']) ? 
+                    'utilization' => isset($cache['entries'], $cache['maxSize']) ?
                         round(($cache['entries'] / $cache['maxSize']) * 100, 1) : 0,
                     // Separate cache metrics for two-endpoint system
                     'vehicle_cache_entries' => $cache['vehicleCacheEntries'] ?? 0,
                     'ai_cache_entries' => $cache['aiCacheEntries'] ?? 0,
                     'vehicle_hit_rate' => $cache['vehicleHitRate'] ?? '0%',
-                    'ai_hit_rate' => $cache['aiHitRate'] ?? '0%',
+                    'ai_hit_rate' => $ai_hit_rate_raw ?? '0%',
+                    'ai_cache_hit_rate' => $ai_hit_rate_value,
                     'ai_cache_ttl' => $cache['aiCacheTtl'] ?? 86400  // 24 hours
                 );
             }
-            
+
             // AI Summary Service Status
             if (isset($body['aiSummary'])) {
                 $ai = $body['aiSummary'];
+
+                $ai_success_rate_raw = $ai['generationSuccessRate'] ?? $ai['successRate'] ?? null;
+                $ai_success_rate_value = null;
+
+                if (is_numeric($ai_success_rate_raw)) {
+                    $ai_success_rate_value = (float) $ai_success_rate_raw;
+                } elseif (is_string($ai_success_rate_raw)) {
+                    $ai_success_rate_value = (float) str_replace('%', '', $ai_success_rate_raw);
+                }
+
                 $monitoring_data['ai_summary'] = array(
                     'status' => $ai['status'] ?? 'unknown',
                     'model' => $ai['model'] ?? 'gpt-4o-mini',
@@ -1016,7 +1037,8 @@ class Vehicle_Lookup_Admin {
                     'completed_today' => $ai['completedToday'] ?? 0,
                     'failed_today' => $ai['failedToday'] ?? 0,
                     'avg_generation_time' => $ai['avgGenerationTime'] ?? 0,
-                    'generation_success_rate' => $ai['generationSuccessRate'] ?? '100%',
+                    'generation_success_rate' => $ai_success_rate_raw ?? '100%',
+                    'success_rate' => $ai_success_rate_value,
                     'cache_utilization' => $ai['cacheUtilization'] ?? '0%'
                 );
             }
