@@ -440,20 +440,6 @@ class Vehicle_Lookup_Admin {
                         </div>
 
                         <div class="tech-card">
-                            <h4><span class="dashicons dashicons-admin-tools"></span> System Info</h4>
-                            <div class="tech-stats">
-                                <div class="tech-stat">
-                                    <strong>WP <?php echo get_bloginfo('version'); ?></strong>
-                                    <span>WordPress</span>
-                                </div>
-                                <div class="tech-stat">
-                                    <strong>PHP <?php echo PHP_VERSION; ?></strong>
-                                    <span>PHP Version</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tech-card">
                             <h4><span class="dashicons dashicons-update"></span> Permalenker</h4>
                             <p><?php echo esc_html__('Hvis de egendefinerte URL-ene for kjøretøysøk slutter å fungere, kan du regenerere omskrivningsreglene her.', 'vehicle-lookup'); ?></p>
                             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
