@@ -283,6 +283,17 @@ Currently **no automated tests** exist. See [REFACTOR_PLAN.md](./REFACTOR_PLAN.m
 Manual testing files:
 - `test-structured-errors.html` - Error handling scenarios
 - `ai-summary-test.html` - AI summary generation
+- `test-plate-normalization.sh` - Plate normalization integration test (PHP & JavaScript)
+
+#### Running Standalone Tests
+
+The `test-plate-normalization.sh` script can run independently without WordPress:
+
+```bash
+bash test-plate-normalization.sh
+```
+
+This script mocks WordPress functions (`get_query_var`, `sanitize_text_field`, `esc_attr`) to allow testing the `Vehicle_Lookup_Helpers` class in standalone mode. This approach ensures dependencies are available without loading the full WordPress environment.
 
 ---
 
