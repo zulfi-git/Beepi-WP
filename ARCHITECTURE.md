@@ -420,7 +420,7 @@ A: It combines dashboard rendering, settings management, analytics calculations,
 A: Yes! Start with helper functions and cache operations. See testing recommendations in [REFACTOR_PLAN.md](./REFACTOR_PLAN.md).
 
 **Q: Is this production-ready?**  
-A: Yes, it's currently running in production (v7.0.1). The refactoring is for maintainability, not stability.
+A: Yes, it's currently running in production (v7.0.3). The refactoring is for maintainability, not stability.
 
 **Q: What's the biggest risk?**  
 A: Rewrite rules being flushed on every request. This should be fixed immediately.

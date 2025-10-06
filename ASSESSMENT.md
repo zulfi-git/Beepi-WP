@@ -4,7 +4,7 @@
 
 ## Overview
 - **Project type:** WordPress plugin that exposes vehicle lookup functionality backed by a Cloudflare Worker.
-- **Version:** 7.0.1
+- **Version:** 7.0.3
 - **Primary entry point:** `vehicle-lookup.php` bootstraps helper, data, API, caching, access control, WooCommerce integration, and multiple shortcode classes before wiring activation hooks and admin UI initialization.
 - **Total LOC:** ~4,100 PHP lines + ~2,400 JS/CSS lines across 14 classes
 
