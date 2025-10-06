@@ -45,7 +45,9 @@ public static function normalize_plate($plate) {
 - `class-order-confirmation-shortcode.php` - Order meta retrieval (handle_payment_complete, render_shortcode)
 
 ### JavaScript
-A helper function `normalizePlate()` is used throughout the JavaScript codebase:
+A helper function `normalizePlate()` is defined in a standalone module and used throughout the JavaScript codebase:
+
+**Module:** `assets/js/normalize-plate.js`
 
 ```javascript
 function normalizePlate(plate) {
@@ -54,10 +56,13 @@ function normalizePlate(plate) {
 }
 ```
 
+This module exports the function for both Node.js (CommonJS) and browser environments (global scope).
+
 **Used in:**
 - `vehicle-lookup.js` - Main form submission, error tracking, polling, purchase handling
 - `class-vehicle-search-shortcode.php` - Search form inline JavaScript
 - `class-vehicle-eu-search-shortcode.php` - EU search form inline JavaScript
+- `test-plate-normalization.sh` - Integration tests
 
 ## Benefits
 

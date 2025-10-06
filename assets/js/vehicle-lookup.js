@@ -10,15 +10,8 @@ jQuery(document).ready(function($) {
     const $vehicleInfo = $('.vehicle-info');
     const $submitButton = $form.find('button');
 
-    /**
-     * Normalize Norwegian registration plate
-     * - Convert to uppercase
-     * - Remove all spaces
-     */
-    function normalizePlate(plate) {
-        if (!plate) return '';
-        return plate.toString().replace(/\s+/g, '').toUpperCase();
-    }
+    // normalizePlate is now provided by normalize-plate.js
+    // It's available globally as window.normalizePlate
 
     function formatDate(dateString) {
         if (!dateString) return '';
