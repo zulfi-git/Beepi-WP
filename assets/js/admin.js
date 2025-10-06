@@ -1,34 +1,5 @@
 jQuery(document).ready(function($) {
 
-    function formatPercentValue(value) {
-        if (value === null || value === undefined || value === '') {
-            return null;
-        }
-
-        if (typeof value === 'number') {
-            if (!Number.isFinite(value)) {
-                return null;
-            }
-            return `${Number.isInteger(value) ? value : Number(value.toFixed(1))}%`;
-        }
-
-        const stringValue = value.toString().trim();
-        if (stringValue === '') {
-            return null;
-        }
-
-        if (stringValue.includes('%')) {
-            return stringValue;
-        }
-
-        const numeric = Number(stringValue);
-        if (!Number.isNaN(numeric)) {
-            return `${Number.isInteger(numeric) ? numeric : Number(numeric.toFixed(1))}%`;
-        }
-
-        return stringValue;
-    }
-
     // Auto-check service status on page load
     function checkServiceStatus() {
         checkCloudflareStatus();
@@ -214,18 +185,20 @@ jQuery(document).ready(function($) {
                 $('#ai-cache-entries strong').text((aiData.completed_today || 0) + ' today');
             }
             
-            const successRateElement = $('#ai-success-rate strong');
-            if (successRateElement.length) {
-                const successRateValue = aiData.success_rate ?? aiData.generation_success_rate ?? aiData.successRate;
-                const formattedSuccessRate = formatPercentValue(successRateValue);
-                if (formattedSuccessRate) {
-                    successRateElement.text(formattedSuccessRate);
+            // Display generation success rate if available
+            if (aiData.generation_success_rate) {
+                const successRateElement = $('#ai-success-rate strong');
+                if (successRateElement.length) {
+                    successRateElement.text(aiData.generation_success_rate);
                 }
             }
-
+            
             // Update enhanced AI metrics for new dashboard elements
             if (aiData.active_generations !== undefined) {
                 $('#ai-active-generations strong').text(aiData.active_generations);
+            }
+            if (aiData.success_rate !== undefined) {
+                $('#ai-success-rate strong').text(aiData.success_rate + '%');
             }
             if (aiData.avg_generation_time !== undefined) {
                 $('#ai-avg-generation-time strong').text(aiData.avg_generation_time + 'ms');
@@ -281,10 +254,8 @@ jQuery(document).ready(function($) {
                 $('#vehicle-cache-entries strong').text(cache.vehicle_cache_entries);
             }
             
-            const aiHitRateValue = cache.ai_cache_hit_rate ?? cache.ai_hit_rate;
-            const formattedAiHitRate = formatPercentValue(aiHitRateValue);
-            if (formattedAiHitRate) {
-                $('#ai-cache-hit-rate strong').text(formattedAiHitRate);
+            if (cache.ai_cache_hit_rate !== undefined) {
+                $('#ai-cache-hit-rate strong').text(cache.ai_cache_hit_rate + '%');
             }
         }
         
@@ -308,27 +279,17 @@ jQuery(document).ready(function($) {
         // Performance Tracking
         if (monitoringData.performance) {
             const perf = monitoringData.performance;
-
+            
             if (perf.vehicle_latency !== undefined) {
                 $('#vehicle-latency strong').text(perf.vehicle_latency + 'ms');
             }
-
+            
             if (perf.ai_latency !== undefined) {
                 $('#ai-latency strong').text(perf.ai_latency + 'ms');
             }
-
+            
             if (perf.cache_hit_improvement) {
                 $('#cache-performance-improvement strong').text(perf.cache_hit_improvement);
-            }
-        }
-
-        // Rate limiting details
-        const rateLimiting = monitoringData.rate_limiting;
-        if (rateLimiting && rateLimiting.daily_remaining !== undefined && rateLimiting.daily_remaining !== null) {
-            const quotaRemainingElement = $('#quota-remaining-value');
-            if (quotaRemainingElement.length) {
-                const formattedValue = Number(rateLimiting.daily_remaining).toLocaleString();
-                quotaRemainingElement.text(formattedValue);
             }
         }
     }
@@ -552,9 +513,8 @@ jQuery(document).ready(function($) {
                 html += '<div class="monitoring-item">';
                 html += '<strong>Vehicle Cache:</strong> ' + (cache.vehicle_cache_entries || 0) + ' entries (' + (cache.vehicle_hit_rate || '0%') + ' hit rate)';
                 html += '</div>';
-                const aiHitRateDisplay = formatPercentValue(cache.ai_cache_hit_rate ?? cache.ai_hit_rate) || '0%';
                 html += '<div class="monitoring-item">';
-                html += '<strong>AI Cache:</strong> ' + (cache.ai_cache_entries || 0) + ' entries (' + aiHitRateDisplay + ' hit rate)';
+                html += '<strong>AI Cache:</strong> ' + (cache.ai_cache_entries || 0) + ' entries (' + (cache.ai_hit_rate || '0%') + ' hit rate)';
                 html += '</div>';
                 if (cache.ai_cache_ttl) {
                     html += '<div class="monitoring-item">';

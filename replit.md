@@ -4,31 +4,12 @@ This is a WordPress-based vehicle lookup service for Norwegian vehicle registrat
 
 # Recent Changes (October 2025)
 
-## App-Like Mobile Experience (Latest Update)
-- **Card-Based UI**: Transformed entire interface into floating white cards on light gray background (#f5f5f9) for modern app feel
-- **Subtle Shadows**: Replaced heavy borders with soft floating shadows (0 2px 8px rgba(0,0,0,0.06))
-- **Progressive Disclosure**: AI summary section now uses collapsible `<details>` element with preview text (first 120 chars) - starts collapsed by default
-- **Horizontal Scroll Carousel**: Market listings now scroll horizontally with:
-  - Smooth swipe gestures and touch scrolling
-  - Scroll-snap behavior for precise card alignment
-  - Fixed card widths (280px mobile → 360px desktop)
-  - Custom styled scrollbar
-- **CRO Optimization**: Moved tier selection cards higher in layout - now appears immediately after AI summary for better conversion
-- **Smooth Animations**: Added staggered animations throughout:
-  - fadeIn, slideUp, and scaleIn keyframe animations
-  - Sequential delays on sections (100ms increments)
-  - Touch ripple effects on all buttons (CTA, purchase)
-  - Enhanced hover states with micro-interactions
-- **Transition System**: Introduced CSS variables for consistent timing (150ms fast, 250ms base, 350ms slow)
-- **Better Spacing**: Applied 8px grid system with improved breathing room between cards (1rem gaps)
-- **Touch Targets**: All interactive elements meet 44px minimum for mobile usability
-
 ## Unified Design System Implementation
 - **Color System**: Consolidated from 12+ blue shades to one primary blue (#0ea5e9) with consistent hover states (#0284c7, #0369a1)
 - **Typography Scale**: Established 6-tier font size system (xs: 0.75rem, sm: 0.875rem, base: 1rem, lg: 1.125rem, xl: 1.25rem, 2xl: 1.5rem)
 - **Text Colors**: Reduced from 8+ gray variations to 3 semantic colors (primary: #1e293b, secondary: #64748b, muted: #94a3b8)
 - **Font Family**: Added system font stack for consistent cross-platform typography
-- **CSS Variables**: All colors, fonts, gradients, shadows, and transitions now use CSS custom properties for maintainability
+- **CSS Variables**: All colors, fonts, gradients, and shadows now use CSS custom properties for maintainability
 
 ## Mobile-First UI Enhancements
 - Streamlined dashboard by removing average response time and system info sections
@@ -38,9 +19,9 @@ This is a WordPress-based vehicle lookup service for Norwegian vehicle registrat
 - Fixed year badge positioning with CSS truncation for long vehicle titles
 
 ## Visual Cohesion Improvements
-- All cards have consistent 12px border-radius and floating shadows
+- AI summary section and market listings now share identical blue gradient styling (#0ea5e9)
 - All interactive elements (links, buttons) use unified primary blue with consistent hover effects
-- Pricing tiers updated to use new blue scheme with subtle shadows
+- Pricing tiers updated to use new blue scheme (removed old #007cba, #00a8f0)
 - All sections now follow the same border-radius, shadow, and spacing patterns
 
 # User Preferences

@@ -11,8 +11,6 @@ class Vehicle_Lookup_Admin {
         add_action('wp_ajax_clear_worker_cache', array($this, 'handle_clear_worker_cache'));
         add_action('wp_ajax_clear_local_cache', array($this, 'handle_clear_local_cache'));
         add_action('wp_ajax_reset_analytics_data', array($this, 'reset_analytics_data'));
-        add_action('admin_post_vehicle_lookup_flush_rewrites', array($this, 'handle_rewrite_flush_request'));
-        add_action('admin_notices', array($this, 'maybe_show_flush_notice'));
 
         // Ensure database table exists
         $this->ensure_database_table();
@@ -344,8 +342,8 @@ class Vehicle_Lookup_Admin {
                                     <strong><?php echo $rate_limit_total; ?></strong>
                                     <span>Requests this hour</span>
                                 </div>
-                                <div class="tech-stat" id="quota-remaining-wrapper">
-                                    <strong id="quota-remaining-value"><?php echo number_format($quota_limit - $quota_used); ?></strong>
+                                <div class="tech-stat">
+                                    <strong><?php echo number_format($quota_limit - $quota_used); ?></strong>
                                     <span>Quota remaining</span>
                                 </div>
                             </div>
@@ -440,15 +438,17 @@ class Vehicle_Lookup_Admin {
                         </div>
 
                         <div class="tech-card">
-                            <h4><span class="dashicons dashicons-update"></span> Permalenker</h4>
-                            <p><?php echo esc_html__('Hvis de egendefinerte URL-ene for kjøretøysøk slutter å fungere, kan du regenerere omskrivningsreglene her.', 'vehicle-lookup'); ?></p>
-                            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                                <?php wp_nonce_field('vehicle_lookup_flush_rewrites'); ?>
-                                <input type="hidden" name="action" value="vehicle_lookup_flush_rewrites">
-                                <button type="submit" class="button">
-                                    <?php esc_html_e('Regenerer /sok/ permalenker', 'vehicle-lookup'); ?>
-                                </button>
-                            </form>
+                            <h4><span class="dashicons dashicons-admin-tools"></span> System Info</h4>
+                            <div class="tech-stats">
+                                <div class="tech-stat">
+                                    <strong>WP <?php echo get_bloginfo('version'); ?></strong>
+                                    <span>WordPress</span>
+                                </div>
+                                <div class="tech-stat">
+                                    <strong>PHP <?php echo PHP_VERSION; ?></strong>
+                                    <span>PHP Version</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -723,47 +723,6 @@ class Vehicle_Lookup_Admin {
         ));
     }
 
-    public function handle_rewrite_flush_request() {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Du har ikke tilgang til denne handlingen.', 'vehicle-lookup'));
-        }
-
-        check_admin_referer('vehicle_lookup_flush_rewrites');
-
-        if (class_exists('Vehicle_Lookup')) {
-            $vehicle_lookup = new Vehicle_Lookup();
-            $vehicle_lookup->add_rewrite_rules();
-        }
-
-        flush_rewrite_rules();
-
-        $redirect = wp_get_referer();
-        if (!$redirect || strpos($redirect, 'vehicle-lookup') === false) {
-            $redirect = add_query_arg('page', 'vehicle-lookup', admin_url('admin.php'));
-        }
-
-        $redirect = add_query_arg('vehicle_lookup_flush', 'success', $redirect);
-
-        wp_safe_redirect($redirect);
-        exit;
-    }
-
-    public function maybe_show_flush_notice() {
-        if (!is_admin() || !isset($_GET['vehicle_lookup_flush'])) {
-            return;
-        }
-
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-
-        $status = sanitize_text_field(wp_unslash($_GET['vehicle_lookup_flush']));
-
-        if ($status === 'success') {
-            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Permalenkene for /sok/ er regenerert.', 'vehicle-lookup') . '</p></div>';
-        }
-    }
-
     private function get_lookup_stats($db_handler) {
         $today = date('Y-m-d');
         $start_date = $today . ' 00:00:00';
@@ -976,45 +935,24 @@ class Vehicle_Lookup_Admin {
             // Cache information with enhanced AI summary tracking
             if (isset($body['cache'])) {
                 $cache = $body['cache'];
-
-                $ai_hit_rate_raw = $cache['aiHitRate'] ?? $cache['aiCacheHitRate'] ?? null;
-                $ai_hit_rate_value = null;
-
-                if (is_numeric($ai_hit_rate_raw)) {
-                    $ai_hit_rate_value = (float) $ai_hit_rate_raw;
-                } elseif (is_string($ai_hit_rate_raw)) {
-                    $ai_hit_rate_value = (float) str_replace('%', '', $ai_hit_rate_raw);
-                }
-
                 $monitoring_data['cache'] = array(
                     'entries' => $cache['entries'] ?? 0,
                     'max_size' => $cache['maxSize'] ?? 1000,
                     'ttl' => $cache['ttl'] ?? 3600,
-                    'utilization' => isset($cache['entries'], $cache['maxSize']) ?
+                    'utilization' => isset($cache['entries'], $cache['maxSize']) ? 
                         round(($cache['entries'] / $cache['maxSize']) * 100, 1) : 0,
                     // Separate cache metrics for two-endpoint system
                     'vehicle_cache_entries' => $cache['vehicleCacheEntries'] ?? 0,
                     'ai_cache_entries' => $cache['aiCacheEntries'] ?? 0,
                     'vehicle_hit_rate' => $cache['vehicleHitRate'] ?? '0%',
-                    'ai_hit_rate' => $ai_hit_rate_raw ?? '0%',
-                    'ai_cache_hit_rate' => $ai_hit_rate_value,
+                    'ai_hit_rate' => $cache['aiHitRate'] ?? '0%',
                     'ai_cache_ttl' => $cache['aiCacheTtl'] ?? 86400  // 24 hours
                 );
             }
-
+            
             // AI Summary Service Status
             if (isset($body['aiSummary'])) {
                 $ai = $body['aiSummary'];
-
-                $ai_success_rate_raw = $ai['generationSuccessRate'] ?? $ai['successRate'] ?? null;
-                $ai_success_rate_value = null;
-
-                if (is_numeric($ai_success_rate_raw)) {
-                    $ai_success_rate_value = (float) $ai_success_rate_raw;
-                } elseif (is_string($ai_success_rate_raw)) {
-                    $ai_success_rate_value = (float) str_replace('%', '', $ai_success_rate_raw);
-                }
-
                 $monitoring_data['ai_summary'] = array(
                     'status' => $ai['status'] ?? 'unknown',
                     'model' => $ai['model'] ?? 'gpt-4o-mini',
@@ -1023,8 +961,7 @@ class Vehicle_Lookup_Admin {
                     'completed_today' => $ai['completedToday'] ?? 0,
                     'failed_today' => $ai['failedToday'] ?? 0,
                     'avg_generation_time' => $ai['avgGenerationTime'] ?? 0,
-                    'generation_success_rate' => $ai_success_rate_raw ?? '100%',
-                    'success_rate' => $ai_success_rate_value,
+                    'generation_success_rate' => $ai['generationSuccessRate'] ?? '100%',
                     'cache_utilization' => $ai['cacheUtilization'] ?? '0%'
                 );
             }

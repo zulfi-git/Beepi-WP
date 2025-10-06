@@ -7,27 +7,6 @@ channel = "stable-24_05"
 expertMode = true
 
 [workflows]
-runButton = "Project"
-
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "PHP Server"
-
-[[workflows.workflow]]
-name = "PHP Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "php -S 0.0.0.0:5000 -t ."
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [[ports]]
 localPort = 5000
