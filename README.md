@@ -20,7 +20,8 @@
 📋 **[Assessment](./ASSESSMENT.md)** - Current state, strengths, and known issues  
 🔧 **[Refactor Plan](./REFACTOR_PLAN.md)** - Detailed improvement roadmap with implementation phases  
 🏗️ **[Architecture](./ARCHITECTURE.md)** - System diagrams, data flows, and technical details  
-📝 **[Development Notes](./replit.md)** - Recent changes and implementation details
+📝 **[Development Notes](./replit.md)** - Recent changes and implementation details  
+🔤 **[Plate Normalization](./PLATE_NORMALIZATION.md)** - Registration plate handling documentation
 
 ---
 
@@ -30,6 +31,7 @@ Beepi Vehicle Lookup enables WordPress/WooCommerce sites to provide Norwegian ve
 
 ### Core Features
 - ✅ **Vehicle Lookup** - Search by Norwegian registration number
+- ✅ **Plate Normalization** - Automatic uppercase and space removal for consistent lookups
 - ✅ **Owner Details** - Purchase owner information (5-69 NOK via WooCommerce)
 - ✅ **AI Summaries** - OpenAI-generated vehicle descriptions
 - ✅ **Market Listings** - Current Finn.no marketplace data
@@ -124,6 +126,12 @@ beepi-vehicle-lookup/
 ---
 
 ## Usage Examples
+
+### Plate Format Flexibility
+
+Users can enter plates in any format - the plugin automatically normalizes them:
+- `AB12345`, `ab12345`, `AB 12345`, `ab 12 345` → All normalized to `AB12345`
+- See [PLATE_NORMALIZATION.md](./PLATE_NORMALIZATION.md) for details
 
 ### Basic Vehicle Lookup
 
