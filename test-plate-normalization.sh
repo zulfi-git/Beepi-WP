@@ -10,7 +10,7 @@ echo ""
 # Test PHP normalization
 echo "Testing PHP normalize_plate()..."
 php -r '
-require_once "includes/class-vehicle-lookup-helpers.php";
+require_once __DIR__ . "/includes/class-vehicle-lookup-helpers.php";
 
 $test_plates = ["AB12345", "ab12345", "AB 12345", "ab 12 345", "  AB12345  "];
 $results = [];
