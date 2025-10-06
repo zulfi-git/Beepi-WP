@@ -11,12 +11,15 @@ function normalizePlate(plate) {
     return plate.toString().replace(/\s+/g, '').toUpperCase();
 }
 
-// Export for Node.js (CommonJS)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = normalizePlate;
-}
-
-// Export for browser (global scope)
-if (typeof window !== 'undefined') {
-    window.normalizePlate = normalizePlate;
-}
+// UMD (Universal Module Definition) export
+(function (root, factory) {
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = factory();
+    } else if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else {
+        root.normalizePlate = factory();
+    }
+})(typeof self !== 'undefined' ? self : this, function () {
+    return normalizePlate;
+});
