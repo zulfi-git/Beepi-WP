@@ -43,7 +43,7 @@
 ## Known Issues & Technical Debt
 
 ### High Priority
-1. **Performance Issue:** `flush_rewrite_rules()` runs on every request via `add_rewrite_rules`, which can be expensive; moving it to activation/deactivation hooks would reduce runtime overhead.
+1. ~~**Performance Issue:** `flush_rewrite_rules()` runs on every request via `add_rewrite_rules`, which can be expensive; moving it to activation/deactivation hooks would reduce runtime overhead.~~ **FIXED** ✅
 2. **Monolithic Admin Class:** `Vehicle_Lookup_Admin` (1,197 lines) handles too many responsibilities (dashboard, settings, analytics, AJAX handlers). Should be split into focused classes.
 
 ### Medium Priority
@@ -64,7 +64,7 @@
 ## Suggested Action Items
 
 ### Immediate (Quick Wins - 1-2 days)
-1. ✅ Fix rewrite rules flushing issue (move to activation/deactivation hooks)
+1. ~~✅ Fix rewrite rules flushing issue (move to activation/deactivation hooks)~~ **COMPLETED** ✅
 2. ✅ Remove duplicate rate_limit registration
 3. ✅ Extract `format_phone_number()` to Helpers class (eliminate duplication)
 4. ✅ Add local logo fallbacks for manufacturer icons

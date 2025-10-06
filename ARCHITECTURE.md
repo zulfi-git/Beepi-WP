@@ -270,7 +270,8 @@ TTL: 43200 seconds (12 hours)
 
 ### Activation (`vehicle_lookup_activate()`)
 1. Create database table via `Vehicle_Lookup_Database::create_table()`
-2. Flush rewrite rules (register `/sok/{reg}` routes)
+2. Register custom rewrite rules for `/sok/{reg}` routes
+3. Flush rewrite rules to activate custom routes
 
 ### Deactivation (`vehicle_lookup_deactivate()`)
 1. Flush rewrite rules (clean up routes)
@@ -280,7 +281,7 @@ TTL: 43200 seconds (12 hours)
 1. Initialize subsystems (API, Cache, Access, WooCommerce)
 2. Register WordPress hooks:
    - `wp_enqueue_scripts` - Load frontend assets
-   - `init` - Add rewrite rules (⚠️ performance issue)
+   - `query_vars` - Add custom query variables for rewrite rules
    - `wp_ajax_*` - Register AJAX endpoints
    - `wp_scheduled_delete` - Database cleanup
 3. Initialize shortcodes
@@ -345,7 +346,7 @@ TTL: 43200 seconds (12 hours)
 - **Cache Hit Rate**: Logged in database for monitoring
 
 ### Known Performance Issues
-1. ⚠️ Rewrite rules added on every `init` hook (should be activation-only)
+1. ~~⚠️ Rewrite rules added on every `init` hook (should be activation-only)~~ **FIXED** ✅
 2. ⚠️ Admin dashboard makes multiple database queries (could be optimized)
 3. ⚠️ External logo loading blocks rendering (should have fallback)
 
@@ -423,7 +424,8 @@ A: Yes! Start with helper functions and cache operations. See testing recommenda
 A: Yes, it's currently running in production (v7.0.3). The refactoring is for maintainability, not stability.
 
 **Q: What's the biggest risk?**  
-A: Rewrite rules being flushed on every request. This should be fixed immediately.
+~~A: Rewrite rules being flushed on every request. This should be fixed immediately.~~ **FIXED** ✅  
+A: The monolithic admin class handling too many responsibilities. Should be split for better maintainability.
 
 **Q: Where should new features go?**  
 A: New AJAX endpoints → separate handler class; New admin features → split admin classes; New shortcodes → new shortcode class.

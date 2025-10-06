@@ -43,8 +43,7 @@ class Vehicle_Lookup {
         add_action('wp_ajax_vehicle_lookup_ai_poll', array($this, 'handle_ai_summary_poll'));
         add_action('wp_ajax_nopriv_vehicle_lookup_ai_poll', array($this, 'handle_ai_summary_poll'));
 
-        // Add rewrite rules for /sok/ URLs
-        add_action('init', array($this, 'add_rewrite_rules'));
+        // Add query vars filter (rewrite rules registered on activation)
         add_filter('query_vars', array($this, 'add_query_vars'));
 
         // Database cleanup hook
