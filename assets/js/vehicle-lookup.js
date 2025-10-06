@@ -19,6 +19,21 @@ jQuery(document).ready(function($) {
         return `${day}.${month}.${year}`;
     }
 
+    function formatDateTime(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+        
+        return `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
+    }
+
     function checkEUAnchor() {
         if (window.location.hash === '#EU') {
             setTimeout(function() {
@@ -1013,7 +1028,7 @@ jQuery(document).ready(function($) {
                     'alt': 'OpenAI',
                     'class': 'section-icon-logo'
                 }).css({
-                    'height': '40px',
+                    'height': '20px',
                     'width': 'auto',
                     'opacity': '0.85'
                 })
@@ -1100,10 +1115,14 @@ jQuery(document).ready(function($) {
                 'Fallback-sammendrag';
 
             if (aiSummary.generatedAt) {
-                const generatedDate = new Date(aiSummary.generatedAt);
-                if (!isNaN(generatedDate.getTime())) {
-                    metaText += ` • ${generatedDate.toLocaleString('no-NO')}`;
+                const formattedDateTime = formatDateTime(aiSummary.generatedAt);
+                if (formattedDateTime) {
+                    metaText += ` • ${formattedDateTime}`;
                 }
+            }
+
+            if (aiSummary.correlationId) {
+                metaText += ` • ${aiSummary.correlationId}`;
             }
 
             $meta.text(metaText);
@@ -1176,8 +1195,8 @@ jQuery(document).ready(function($) {
                 'alt': 'OpenAI',
                 'class': 'section-icon-logo'
             }).css({
-                'width': '50px',
-                'height': 'auto',
+                'height': '20px',
+                'width': 'auto',
                 'opacity': '0.85'
             })
         );
@@ -1356,7 +1375,7 @@ jQuery(document).ready(function($) {
                     'alt': 'Finn.no',
                     'class': 'section-icon-logo'
                 }).css({
-                    'height': '40px',
+                    'height': '20px',
                     'width': 'auto',
                     'opacity': '0.85'
                 })
@@ -1448,6 +1467,27 @@ jQuery(document).ready(function($) {
                         const $buttonWrapper = $('<div class="finn-view-more-wrapper">').append($viewMoreButton);
                         $marketContent.append($buttonWrapper);
                     }
+
+                    // Add attribution with completedAt and correlationId
+                    const $attribution = $('<div class="ai-attribution">');
+                    const $meta = $('<small class="ai-meta">');
+
+                    let metaText = 'Fullført markedsanalyse';
+
+                    if (marketData.completedAt) {
+                        const formattedDateTime = formatDateTime(marketData.completedAt);
+                        if (formattedDateTime) {
+                            metaText += ` • ${formattedDateTime}`;
+                        }
+                    }
+
+                    if (marketData.correlationId) {
+                        metaText += ` • ${marketData.correlationId}`;
+                    }
+
+                    $meta.text(metaText);
+                    $attribution.append($meta);
+                    $marketContent.append($attribution);
                 } else {
                     // No listings found
                     const $noDataText = $('<p class="market-no-data">').text('Ingen lignende kjøretøy funnet i markedet for øyeblikket.');
