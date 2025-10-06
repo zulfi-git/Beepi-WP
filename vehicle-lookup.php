@@ -95,4 +95,15 @@ function vehicle_lookup_activate() {
         $db_handler = new Vehicle_Lookup_Database();
         $db_handler->create_table();
     }
+    
+    // Flush rewrite rules to register custom routes
+    flush_rewrite_rules();
+}
+
+// Plugin deactivation hook
+register_deactivation_hook(__FILE__, 'vehicle_lookup_deactivate');
+
+function vehicle_lookup_deactivate() {
+    // Flush rewrite rules to remove custom routes
+    flush_rewrite_rules();
 }
