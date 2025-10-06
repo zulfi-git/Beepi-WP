@@ -33,11 +33,7 @@ class Vehicle_Search_Shortcode {
 
         <script>
         jQuery(document).ready(function($) {
-            // Normalize plate: uppercase and remove all spaces
-            function normalizePlate(plate) {
-                if (!plate) return '';
-                return plate.toString().replace(/\s+/g, '').toUpperCase();
-            }
+            // normalizePlate is provided globally by normalize-plate.js
 
             $('#vehicle-search-form').on('submit', function(e) {
                 const regNumber = normalizePlate($('#searchRegNumber').val());

@@ -81,10 +81,19 @@ class Vehicle_Lookup {
             VEHICLE_LOOKUP_VERSION . '.' . time()
         );
 
+        // Enqueue normalize-plate module first
+        wp_enqueue_script(
+            'normalize-plate',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/normalize-plate.js',
+            array(),
+            VEHICLE_LOOKUP_VERSION . '.' . time(),
+            true
+        );
+
         wp_enqueue_script(
             'vehicle-lookup-script',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/vehicle-lookup.js',
-            array('jquery'),
+            array('jquery', 'normalize-plate'),
             VEHICLE_LOOKUP_VERSION . '.' . time(),
             true
         );
