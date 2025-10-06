@@ -5,6 +5,13 @@
 [![Version](https://img.shields.io/badge/version-7.0.1-blue.svg)](./vehicle-lookup.php)
 [![WordPress](https://img.shields.io/badge/WordPress-6.x-blue.svg)](https://wordpress.org)
 [![WooCommerce](https://img.shields.io/badge/WooCommerce-8.x-purple.svg)](https://woocommerce.com)
+[![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](https://www.php.net)
+[![License](https://img.shields.io/badge/license-Proprietary-red.svg)](./LICENSE)
+[![Maintenance](https://img.shields.io/badge/Maintained-Yes-green.svg)](https://github.com/zulfi-git/Beepi-WP/graphs/commit-activity)
+[![Status](https://img.shields.io/badge/status-Production-success.svg)](./README.md)
+[![Last Commit](https://img.shields.io/github/last-commit/zulfi-git/Beepi-WP)](https://github.com/zulfi-git/Beepi-WP/commits/main)
+[![Code Size](https://img.shields.io/github/languages/code-size/zulfi-git/Beepi-WP)](https://github.com/zulfi-git/Beepi-WP)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/zulfi-git/Beepi-WP/blob/main/.github/dependabot.yml)
 
 ---
 
