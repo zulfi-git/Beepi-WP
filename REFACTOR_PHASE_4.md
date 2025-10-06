@@ -757,11 +757,11 @@ class AdminAjaxTest extends TestCase {
     
     /** @test */
     public function clear_worker_cache_succeeds() {
-        $mockCache = Mockery::mock('VehicleLookupCache');
+        // Use Mockery's alias to mock class instantiation
+        $mockCache = Mockery::mock('alias:VehicleLookupCache');
         $mockCache->shouldReceive('clear_worker_cache')->once()->andReturn(true);
         
-        // Mock cache instantiation
-        Functions\when('VehicleLookupCache')->justReturn($mockCache);
+        // No need to mock as a function; alias handles instantiation
         
         Functions\expect('wp_send_json_success')
             ->once()
