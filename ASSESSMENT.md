@@ -27,5 +27,5 @@
 
 ## Suggested Next Steps
 1. Relocate rewrite-rule flushing to plugin activation/deactivation logic and ensure rewrite rules are added idempotently at runtime.【F:includes/class-vehicle-lookup.php†L57-L67】
-2. Audit admin option registration for duplicates and align sanitation callbacks across settings to prevent drift.【F:includes/class-vehicle-lookup-admin.php†L75-L145】
+2. Audit admin option registration for duplicates and align sanitization callbacks across settings to prevent drift.【F:includes/class-vehicle-lookup-admin.php†L75-L145】
 3. Evaluate hosting manufacturer icon assets locally or through a cached proxy to avoid runtime failures when third-party assets are unavailable.【F:assets/js/vehicle-lookup.js†L124-L138】
