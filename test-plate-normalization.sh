@@ -40,7 +40,7 @@ PHP_EXIT=$?
 echo ""
 echo "Testing JavaScript normalizePlate()..."
 node -e '
-const { normalizePlate } = require("./assets/js/normalize-plate.js");
+const normalizePlate = require("./assets/js/normalize-plate.js");
 
 const testPlates = ["AB12345", "ab12345", "AB 12345", "ab 12 345", "  AB12345  "];
 const results = {};
