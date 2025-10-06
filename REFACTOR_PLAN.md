@@ -131,16 +131,18 @@ css/
 
 ### 5. **Performance Issues** (Priority: HIGH)
 
-**Problem**: Rewrite rules flushed on every request
-- `Vehicle_Lookup::add_rewrite_rules()` hooked to `init` action
-- Calls `add_rewrite_rule()` on every page load
-- Comment in ASSESSMENT.md mentions this should be in activation/deactivation
+~~**Problem**: Rewrite rules flushed on every request~~
+~~- `Vehicle_Lookup::add_rewrite_rules()` hooked to `init` action~~
+~~- Calls `add_rewrite_rule()` on every page load~~
+~~- Comment in ASSESSMENT.md mentions this should be in activation/deactivation~~
 
-**Impact**:
-- Unnecessary overhead on every request
-- WordPress performance best practice violation
+**Status**: **FIXED** ✅
 
-**Recommendation**: ✅ **Already documented in ASSESSMENT.md, needs implementation**
+**Solution Implemented**:
+- Removed `add_action('init', array($this, 'add_rewrite_rules'))` hook
+- Moved rewrite rule registration to activation hook
+- Rewrite rules now only registered during plugin activation
+- Query vars filter remains in init (required for runtime)
 
 ### 6. **Duplicate Setting Registration** (Priority: MEDIUM)
 
@@ -196,7 +198,7 @@ tests/
 ### Phase 1: Quick Wins (1-2 days)
 **Goal**: Fix documented issues without major restructuring
 
-- [ ] Fix rewrite rules (move to activation/deactivation hooks)
+- [x] Fix rewrite rules (move to activation/deactivation hooks) **COMPLETED** ✅
 - [ ] Remove duplicate rate_limit registration
 - [ ] Extract `format_phone_number()` to Helpers class
 - [ ] Remove duplicate WooCommerce methods from Vehicle_Lookup
@@ -329,7 +331,7 @@ tests/
 ## Maintenance Recommendations
 
 ### Immediate (Do Now)
-1. Fix rewrite rules flushing issue
+1. ~~Fix rewrite rules flushing issue~~ **COMPLETED** ✅
 2. Remove duplicate setting registration
 3. Document all AJAX endpoint contracts
 4. Add PHPUnit to development dependencies
