@@ -4,7 +4,7 @@ class Vehicle_Lookup_Helpers {
     /**
      * Normalize Norwegian registration plate
      * - Convert to uppercase
-     * - Remove all whitespace characters
+     * - Remove all whitespace characters (including Unicode whitespace)
      * 
      * @param string $plate Registration plate number
      * @return string Normalized plate number
@@ -17,8 +17,11 @@ class Vehicle_Lookup_Helpers {
         // Convert to string if needed
         $plate = (string) $plate;
         
-        // Remove all whitespace characters and convert to uppercase
-        return strtoupper(preg_replace('/\s+/', '', $plate));
+        // Remove all whitespace characters (including Unicode whitespace) and convert to uppercase
+        // \p{Z} = all Unicode separator characters (spaces)
+        // \p{C} = all Unicode control characters (including zero-width spaces)
+        // \s = ASCII whitespace for backwards compatibility
+        return strtoupper(preg_replace('/[\p{Z}\p{C}\s]+/u', '', $plate));
     }
     
     /**
