@@ -711,7 +711,7 @@ class AdminAjaxTest extends TestCase {
             ->justReturn($cachedData);
         
         Functions\when('get_option')
-            ->with(Mockery::pattern('/_transient_timeout_/'), Mockery::any())
+            ->with(Mockery::pattern('/^_transient_timeout_/'), Mockery::any())
             ->justReturn(time() + 300);
         
         Functions\expect('wp_send_json_success')
