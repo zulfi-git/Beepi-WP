@@ -1,0 +1,62 @@
+/* CSS Variables - Core design tokens */
+:root {
+    /* Unified Primary Colors */
+    --primary-blue: #0ea5e9;
+    --primary-blue-hover: #0284c7;
+    --primary-blue-dark: #0369a1;
+    --primary-blue-light: #7dd3fc;
+    --primary-green: #10b981;
+    --primary-green-hover: #059669;
+    --primary-orange: #ff5b24;
+    --primary-orange-hover: #ff4400;
+    
+    /* Unified Text Colors (3 semantic grays) */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    
+    /* Background Colors */
+    --bg-white: #ffffff;
+    --bg-light: #f8fafc;
+    --bg-lighter: #f1f5f9;
+    --bg-blue-light: #f0f9ff;
+    --bg-blue-lighter: #e0f2fe;
+    
+    /* Border Colors */
+    --border-light: #e2e8f0;
+    --border-lighter: #f1f5f9;
+    --border-blue: #0ea5e9;
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.1);
+    --shadow-blue: 0 8px 40px rgba(14, 165, 233, 0.15);
+    
+    /* Gradients */
+    --gradient-light: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    --gradient-white: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    --gradient-blue: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    --gradient-blue-light: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    --gradient-green: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradient-orange: linear-gradient(135deg, #ff5b24 0%, #ff4400 100%);
+    --gradient-yellow: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    --gradient-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    
+    /* Border Radius */
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-xl: 20px;
+    
+    /* Typography Scale (6 consistent sizes) */
+    --font-xs: 0.75rem;
+    --font-sm: 0.875rem;
+    --font-base: 1rem;
+    --font-lg: 1.125rem;
+    --font-xl: 1.25rem;
+    --font-2xl: 1.5rem;
+    
+    /* Font Family */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

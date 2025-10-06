@@ -73,10 +73,50 @@ class Vehicle_Lookup {
      * Enqueue required scripts and styles
      */
     public function enqueue_scripts() {
+        // Enqueue modular CSS files in proper dependency order
+        // 1. Variables first (defines CSS custom properties)
         wp_enqueue_style(
-            'vehicle-lookup-style',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/vehicle-lookup.css',
+            'vehicle-lookup-variables',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/variables.css',
             array(),
+            VEHICLE_LOOKUP_VERSION . '.' . time()
+        );
+        
+        // 2. Core component styles (depend on variables)
+        wp_enqueue_style(
+            'vehicle-lookup-forms',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/forms.css',
+            array('vehicle-lookup-variables'),
+            VEHICLE_LOOKUP_VERSION . '.' . time()
+        );
+        
+        wp_enqueue_style(
+            'vehicle-lookup-results',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/results.css',
+            array('vehicle-lookup-variables'),
+            VEHICLE_LOOKUP_VERSION . '.' . time()
+        );
+        
+        // 3. Feature-specific styles
+        wp_enqueue_style(
+            'vehicle-lookup-ai-summary',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/ai-summary.css',
+            array('vehicle-lookup-variables'),
+            VEHICLE_LOOKUP_VERSION . '.' . time()
+        );
+        
+        wp_enqueue_style(
+            'vehicle-lookup-market',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/market.css',
+            array('vehicle-lookup-variables'),
+            VEHICLE_LOOKUP_VERSION . '.' . time()
+        );
+        
+        // 4. Responsive and additional components (may override other styles)
+        wp_enqueue_style(
+            'vehicle-lookup-responsive',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/responsive.css',
+            array('vehicle-lookup-variables', 'vehicle-lookup-forms', 'vehicle-lookup-results'),
             VEHICLE_LOOKUP_VERSION . '.' . time()
         );
 

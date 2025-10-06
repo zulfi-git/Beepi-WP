@@ -1,2 +1,5 @@
 
 attached_assets/
+
+# CSS backup files
+*.css.bak
