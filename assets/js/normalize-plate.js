@@ -13,7 +13,7 @@ function normalizePlate(plate) {
 
 // Export for Node.js (CommonJS)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { normalizePlate };
+    module.exports = normalizePlate;
 }
 
 // Export for browser (global scope)
