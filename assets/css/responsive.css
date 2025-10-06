@@ -461,30 +461,6 @@
 }
 
 /* Market Listings Styling */
-.market-listings-section {
-    background: var(--gradient-light);
-    border: 2px solid var(--border-light) !important;
-    position: relative;
-}
-
-.market-listings-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-blue-hover) 100%);
-    border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
-}
-
-.market-listings-section .section-header {
-    background: var(--gradient-light) !important;
-    color: var(--text-primary) !important;
-    font-weight: 700 !important;
-    position: relative;
-}
-
 .market-listings-content {
     padding: 0;
     background: transparent;
