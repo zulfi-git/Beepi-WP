@@ -1,0 +1,164 @@
+/* Form and Input Styles */
+
+.vehicle-lookup-container {
+    background: transparent;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    font-family: var(--font-family);
+}
+
+.plate-form {
+    display: flex;
+    justify-content: center;
+    margin: 1rem auto;
+}
+
+.plate-input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-white);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+}
+
+.plate-flag {
+    background-color: var(--primary-blue);
+    color: white;
+    font-size: var(--font-2xl);
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+}
+
+.plate-country {
+    font-size: var(--font-xs);
+    margin-top: -4px;
+}
+
+.plate-input {
+    border: none;
+    font-size: var(--font-2xl);
+    padding: 0.4rem 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    width: 150px;
+    text-align: center;
+    outline: none;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+}
+
+.plate-search-button {
+    background-color: var(--primary-green);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: var(--font-base);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    height: 100%;
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+}
+
+.plate-search-button:hover {
+    background-color: var(--primary-green-hover);
+    transform: translateY(-1px);
+}
+
+.plate-search-button .button-text {
+    font-weight: 600;
+}
+
+.vehicle-search-container {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.vehicle-results {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.vehicle-header {
+    margin: 1rem 0;
+    padding: 1.5rem;
+    border-bottom: none;
+    background: var(--gradient-light);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.vehicle-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: contain;
+    margin: 0 auto 0.75rem;
+    display: block;
+    background: var(--gradient-white);
+    padding: 10px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-lighter);
+    transition: transform 0.2s ease;
+}
+
+.vehicle-logo:hover {
+    transform: scale(1.05);
+}
+
+.vehicle-info {
+    text-align: center;
+}
+
+.vehicle-title {
+    margin: 0;
+    font-size: var(--font-2xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    text-align: center;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+}
+
+.vehicle-subtitle {
+    margin: 0.5rem 0 0;
+    font-size: var(--font-base);
+    color: var(--text-secondary);
+    text-align: center;
+    font-weight: 500;
+}
+
+.vehicle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--font-xs);
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background-color: var(--bg-lighter);
+    color: var(--text-primary);
+}
+
