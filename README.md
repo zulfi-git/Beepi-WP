@@ -20,8 +20,7 @@
 📋 **[Assessment](./ASSESSMENT.md)** - Current state, strengths, and known issues  
 🔧 **[Refactor Plan](./REFACTOR_PLAN.md)** - Detailed improvement roadmap with implementation phases  
 🏗️ **[Architecture](./ARCHITECTURE.md)** - System diagrams, data flows, and technical details  
-📝 **[Development Notes](./replit.md)** - Recent changes and implementation details  
-🔤 **[Plate Normalization](./PLATE_NORMALIZATION.md)** - Registration plate handling documentation
+📝 **[Development Notes](./replit.md)** - Recent changes and implementation details
 
 ---
 
@@ -48,41 +47,6 @@ Beepi Vehicle Lookup enables WordPress/WooCommerce sites to provide Norwegian ve
 - **AI**: OpenAI GPT (via worker)
 - **SMS**: Twilio
 - **Payment**: Vipps, WooCommerce Payments
-
----
-
-## Installation
-
-### Requirements
-- WordPress 6.0+
-- WooCommerce 8.0+
-- PHP 7.4+
-- MySQL 5.7+ or MariaDB 10.2+
-
-### Setup Steps
-
-1. **Upload plugin files** to `/wp-content/plugins/beepi-vehicle-lookup/`
-
-2. **Activate plugin** in WordPress admin
-
-3. **Configure settings** at `Vehicle Lookup > Settings`:
-   - Worker URL: `https://lookup.beepi.no` (default)
-   - Timeout: 15 seconds (default)
-   - Rate Limit: 100 requests/hour per IP (default)
-   - Cache Duration: 12 hours (default)
-   - Daily Quota: 5000 lookups/day (default)
-
-4. **Create WooCommerce products** for owner details:
-   - Basic owner info (Product ID: 62)
-   - Premium owner package (Product ID: 739)
-
-5. **Add shortcodes** to your pages:
-
-```
-[vehicle_lookup product_id="62"]  <!-- Main lookup interface -->
-[vehicle_search]                   <!-- Simple search form -->
-[popular_vehicles]                 <!-- Most searched vehicles -->
-```
 
 ---
 
@@ -114,160 +78,18 @@ beepi-vehicle-lookup/
 │   │   ├── vehicle-lookup.css      # Frontend styles (1,788 lines) ⚠️
 │   │   └── admin.css               # Admin styles (801 lines)
 │   └── images/                     # Logos and icons
-└── docs/                           # Documentation (you are here)
-    ├── ASSESSMENT.md               # Current state overview
-    ├── REFACTOR_PLAN.md            # Improvement roadmap
-    ├── ARCHITECTURE.md             # Technical documentation
-    └── README.md                   # This file
+├── ASSESSMENT.md               # Current state overview
+├── REFACTOR_PLAN.md            # Improvement roadmap
+├── ARCHITECTURE.md             # Technical documentation
+├── replit.md                   # Development notes
+└── README.md                   # This file
 ```
 
 ⚠️ = Files identified for potential refactoring (see [REFACTOR_PLAN.md](./REFACTOR_PLAN.md))
 
 ---
 
-## Usage Examples
-
-### Plate Format Flexibility
-
-Users can enter plates in any format - the plugin automatically normalizes them:
-- `AB12345`, `ab12345`, `AB 12345`, `ab 12 345` → All normalized to `AB12345`
-- See [PLATE_NORMALIZATION.md](./PLATE_NORMALIZATION.md) for details
-
-### Basic Vehicle Lookup
-
-```php
-// In your WordPress page/post:
-[vehicle_lookup product_id="62"]
-```
-
-### Search Form (Redirects to Results Page)
-
-```php
-[vehicle_search results_page="/sok" button_text="Søk"]
-```
-
-### Popular Vehicles Widget
-
-```php
-[popular_vehicles limit="10" days="30"]
-```
-
-### Programmatic Lookup
-
-```php
-// Get vehicle data
-$lookup = new Vehicle_Lookup();
-$result = $lookup->handle_lookup();
-
-// Check cache
-$cache = new VehicleLookupCache();
-$cached_data = $cache->get('XX12345');
-
-// Query analytics
-$db = new Vehicle_Lookup_Database();
-$stats = $db->get_stats('2024-10-01', '2024-10-31');
-```
-
----
-
-## API Endpoints (AJAX)
-
-### Frontend Endpoints
-
-**Vehicle Lookup**
-```javascript
-POST /wp-admin/admin-ajax.php
-{
-    action: 'vehicle_lookup',
-    nonce: '...',
-    regNumber: 'XX12345',
-    includeSummary: true
-}
-```
-
-**AI Summary Polling**
-```javascript
-POST /wp-admin/admin-ajax.php
-{
-    action: 'vehicle_lookup_ai_poll',
-    nonce: '...',
-    regNumber: 'XX12345'
-}
-```
-
-### Admin Endpoints
-
-- `vehicle_lookup_test_api` - Test API connectivity
-- `vehicle_lookup_check_upstream` - Check upstream service health
-- `clear_worker_cache` - Clear Cloudflare Worker cache
-- `clear_local_cache` - Clear WordPress transient cache
-- `reset_analytics_data` - Reset analytics database
-
----
-
-## Configuration Options
-
-Access via `Vehicle Lookup > Settings` in WordPress admin:
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Worker URL | `https://lookup.beepi.no` | Cloudflare Worker endpoint |
-| Timeout | 15 seconds | API request timeout |
-| Rate Limit | 100/hour | Requests per hour per IP |
-| Cache Duration | 12 hours | Local cache TTL |
-| Daily Quota | 5000 | Max lookups per day |
-| Log Retention | 90 days | Analytics data retention |
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-**Lookups failing with timeout errors**
-- Check Worker URL is accessible
-- Increase timeout in settings
-- Verify Cloudflare Worker is running
-
-**Rate limit errors**
-- Administrators bypass rate limits
-- Increase rate limit in settings
-- Check IP detection is working correctly
-
-**Cache not working**
-- Clear both local and worker cache
-- Verify transient functionality
-- Check database for cache entries
-
-**SMS not sending**
-- Verify Twilio credentials
-- Check phone number formatting
-- Review SMS Handler logs in error_log
-
-### Debug Mode
-
-Enable WordPress debug logging in `wp-config.php`:
-
-```php
-define('WP_DEBUG', true);
-define('WP_DEBUG_LOG', true);
-define('WP_DEBUG_DISPLAY', false);
-```
-
-Check logs at `/wp-content/debug.log`
-
----
-
 ## Development
-
-### Running Locally
-
-This plugin is developed and tested on WordPress 6.x with PHP 7.4+.
-
-1. Clone repository to `/wp-content/plugins/beepi-vehicle-lookup/`
-2. Activate plugin in WordPress admin
-3. Configure worker URL (use staging: `https://staging.lookup.beepi.no`)
-4. Test with demo data
 
 ### Code Style
 
@@ -283,17 +105,6 @@ Currently **no automated tests** exist. See [REFACTOR_PLAN.md](./REFACTOR_PLAN.m
 Manual testing files:
 - `test-structured-errors.html` - Error handling scenarios
 - `ai-summary-test.html` - AI summary generation
-- `test-plate-normalization.sh` - Plate normalization integration test (PHP & JavaScript)
-
-#### Running Standalone Tests
-
-The `test-plate-normalization.sh` script can run independently without WordPress:
-
-```bash
-bash test-plate-normalization.sh
-```
-
-This script mocks WordPress functions (`get_query_var`, `sanitize_text_field`, `esc_attr`) to allow testing the `Vehicle_Lookup_Helpers` class in standalone mode. This approach ensures dependencies are available without loading the full WordPress environment.
 
 ---
 
@@ -355,48 +166,18 @@ See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for complete roadmap.
 
 ## Contributing
 
-This is a production plugin for Beepi.no. Internal development only.
+**Proprietary Software** - © 2025 Beepi.no  
+Internal development only.
 
 ### Internal Contributors
 - Follow the refactor plan when making changes
-- Add tests for new functionality
 - Update documentation for API changes
-- Run manual test suite before deployment
-
----
-
-## License & Credits
-
-**Proprietary Software** - © 2024 Beepi.no  
-Internal use only.
-
-### Dependencies
-- WordPress 6.x
-- WooCommerce 8.x
-- Cloudflare Workers
-- OpenAI API
-- Twilio API
-- Statens Vegvesen API
-
----
-
-## Support
-
-**Internal Team**: See Slack #beepi-dev channel  
-**Documentation Issues**: Update this README or related docs  
-**Bug Reports**: Create GitHub issue with reproduction steps
 
 ---
 
 ## Version History
 
 ### v7.0.3 (Current)
-- Plate normalization implementation (always uppercase, no spaces)
-- Improved cache hit rate through consistent plate formatting
-- Fixed inconsistencies in vehicle lookups and market listings
-- Enhanced coordination between frontend and backend worker
-
-### v7.0.1
 - Unified design system with CSS variables
 - Mobile-first UI improvements
 - Enhanced error handling with correlation IDs
@@ -405,15 +186,6 @@ Internal use only.
 
 ### Previous Versions
 See git history for detailed changelog.
-
----
-
-## Additional Resources
-
-- [WordPress Plugin Development](https://developer.wordpress.org/plugins/)
-- [WooCommerce Documentation](https://woocommerce.com/documentation/)
-- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
-- [Statens Vegvesen API](https://www.vegvesen.no/)
 
 ---
 
