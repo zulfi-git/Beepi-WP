@@ -10,6 +10,13 @@ echo ""
 # Test PHP normalization
 echo "Testing PHP normalize_plate()..."
 php -r '
+$autoloader = __DIR__ . "/vendor/autoload.php";
+if (file_exists($autoloader)) {
+    require_once $autoloader;
+} else {
+    fwrite(STDERR, "Autoloader not found at $autoloader. Please run `composer install` or ensure dependencies are loaded.\n");
+    exit(2);
+}
 // Mock WordPress functions for standalone testing without loading WordPress
 // This allows the test to run independently while ensuring class dependencies are available
 if (!function_exists("get_query_var")) {
