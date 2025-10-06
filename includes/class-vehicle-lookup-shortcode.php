@@ -29,20 +29,9 @@ class Vehicle_Lookup_Shortcode {
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
-            <section class="lookup-hero">
-                <span class="hero-badge">Oppslag på sekunder</span>
-                <h2 class="hero-heading">Få full innsikt i bilen før du bestemmer deg</h2>
-                <p class="hero-subheading">Skriv inn registreringsnummeret for å hente gratis teknisk informasjon og lås opp komplett eierskaps- og skaderapporter ved behov.</p>
-                <ul class="hero-benefits">
-                    <li>🔍 Gratis tekniske data og EU-status uten innlogging</li>
-                    <li>⚡ Premium rapport levert umiddelbart etter betaling</li>
-                    <li>🛡️ Data direkte fra Statens vegvesen og andre kilder</li>
-                </ul>
-            </section>
             <form id="vehicle-lookup-form" class="plate-form">
                 <?php echo $this->render_plate_input($reg_number); ?>
             </form>
-            <p class="form-footnote">Vi lagrer ikke registreringsnummeret ditt. Rapporten leveres digitalt med Vipps-betaling.</p>
         <?php
         return ob_get_clean();
     }
@@ -81,31 +70,22 @@ class Vehicle_Lookup_Shortcode {
         ob_start();
         ?>
         <div class="owner-section">
-            <div id="owner-info-container" class="owner-info-container">
-                <aside id="free-info-guide" class="free-info-guide">
+            <div id="owner-info-container">
+                <div id="free-info-guide" class="free-info-guide">
                     <div class="guide-content">
-                        <span class="guide-badge">Gratis innsikt</span>
-                        <h3>Se gratis data før du kjøper rapport</h3>
-                        <p>Åpne seksjonene under for å lese teknisk info, EU-status og historikk uten kostnad. Perfekt for raske vurderinger.</p>
-                        <ul class="guide-benefits">
-                            <li>✅ Tekniske spesifikasjoner og dimensjoner</li>
-                            <li>✅ EU-kontroll og registreringsstatus</li>
-                            <li>✅ Dekkinformasjon og merknader</li>
-                        </ul>
-                        <button type="button" class="explore-free-btn" onclick="expandAllAccordions()">Vis gratis informasjon</button>
+                        <h4>💡 Se gratis informasjon</h4>
+                        <p>Utforsk tekniske detaljer, EU-kontroll status og mer i boksene nedenfor - helt gratis!</p>
+                        <button type="button" class="explore-free-btn" onclick="expandAllAccordions()">Utforsk gratis info</button>
                     </div>
-                </aside>
+                </div>
 
-                <section id="tier-selection" class="tier-selection">
-                    <div class="tier-selection-heading">
-                        <h3>Velg rapporttype</h3>
-                        <p>Lås opp mer dokumentasjon for tryggere kjøp. Rapportene leveres digitalt på sekunder.</p>
-                    </div>
+                <div id="tier-selection">
+                    <h3>Velg rapporttype</h3>
                     <div class="tier-comparison">
-                        <article class="tier-card basic-tier">
-                            <header class="tier-header">
+                        <!-- Basic Tier -->
+                        <div class="tier-card basic-tier">
+                            <div class="tier-header">
                                 <h4><?php echo $basic_product ? esc_html($basic_product->get_name()) : 'Basic rapport'; ?></h4>
-                                <p class="tier-tagline">Rask statusrapport med de viktigste fakta</p>
                                 <div class="tier-price">
                                     <?php if ($basic_sale): ?>
                                         <span class="regular-price"><?php echo esc_html($basic_price); ?> kr</span>
@@ -114,28 +94,25 @@ class Vehicle_Lookup_Shortcode {
                                         <span class="price"><?php echo esc_html($basic_price); ?> kr</span>
                                     <?php endif; ?>
                                 </div>
-                            </header>
-                            <ul class="tier-features">
-                                <li class="feature-item">✓ Nåværende eier</li>
-                                <li class="feature-item">✓ Alle tekniske detaljer</li>
-                                <li class="feature-item">✓ EU-kontroll status</li>
-                            </ul>
-                            <div class="tier-meta">
-                                <p>Leveres umiddelbart etter betaling.</p>
+                            </div>
+                            <div class="tier-features">
+                                <div class="feature-item">✓ Nåværende eier</div>
+                                <div class="feature-item">✓ Alle tekniske detaljer</div>
+                                <div class="feature-item">✓ EU-kontroll status</div>
                             </div>
                             <div class="tier-purchase">
                                 <?php echo do_shortcode("[woo_vipps_buy_now id=62 /]"); ?>
                             </div>
-                        </article>
+                        </div>
 
-                        <article class="tier-card premium-tier recommended">
-                            <span class="tier-badge">Mest populær</span>
-                            <header class="tier-header">
+                        <!-- Premium Tier -->
+                        <div class="tier-card premium-tier recommended">
+                            <div class="tier-badge">Mest populær</div>
+                            <div class="tier-header">
                                 <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
-                                <p class="tier-tagline">Komplett trygghet med hele historikken</p>
                                 <?php
-                                if ($premium_sale && $premium_sale < $premium_price):
-                                    // Calculate percentage discount if there's a sale price
+                                // Calculate percentage discount if there's a sale price
+                                if ($premium_sale && $premium_sale < $premium_price): 
                                     $discount_percentage = round((($premium_price - $premium_sale) / $premium_price) * 100);
                                     ?>
                                     <div class="savings-display">
@@ -150,19 +127,16 @@ class Vehicle_Lookup_Shortcode {
                                         <span class="price"><?php echo esc_html($premium_price); ?> kr</span>
                                     <?php endif; ?>
                                 </div>
-                            </header>
-                            <ul class="tier-features">
-                                <li class="feature-item">✓ Alt fra Basic rapport</li>
-                                <li class="feature-item">✓ Komplett eierhistorikk</li>
-                                <li class="feature-item">✓ Skadehistorikk og kilometerstand</li>
-                                <li class="feature-item">✓ Detaljert kjøretøyrapport</li>
-                                <li class="feature-item">✓ Import- og avgiftsinformasjon</li>
-                            </ul>
-                            <div class="tier-meta">
-                                <p>Vipps-betaling og rapport sendt til e-post og SMS.</p>
+                            </div>
+                            <div class="tier-features">
+                                <div class="feature-item">✓ Alt fra Basic rapport</div>
+                                <div class="feature-item">✓ Komplett eierhistorikk</div>
+                                <div class="feature-item">✓ Skadehistorikk</div>
+                                <div class="feature-item">✓ Detaljert kjøretøyrapport</div>
+                                <div class="feature-item">✓ Import</div>
                             </div>
                             <div class="tier-purchase">
-                                <?php
+                                <?php 
                                 $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
                                 echo $vipps_button;
                                 ?>
@@ -170,15 +144,10 @@ class Vehicle_Lookup_Shortcode {
                                 window.premiumVippsBuyButton = <?php echo json_encode($vipps_button); ?>;
                                 </script>
                             </div>
-                        </article>
-                    </div>
-                    <div class="tier-checkout-safety">
-                        <div class="benefit-item">🔒 Kryptert betaling med Vipps</div>
-                        <div class="benefit-item">📄 Kvittering og rapport levert digitalt</div>
-                        <div class="benefit-item">💬 Support fra bileksperter ved spørsmål</div>
+                        </div>
                     </div>
                     <?php echo $this->render_trust_indicators(); ?>
-                </section>
+                </div>
             </div>
         </div>
         <?php

@@ -63,17 +63,12 @@ class Vehicle_Lookup_Helpers {
                 <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
                 <input type="text" id="%s" name="%s" required
                        class="plate-input"
-                       placeholder="AB12345"
+                       placeholder="CO11204"
                        value="%s"
-                       inputmode="text"
-                       autocomplete="off"
-                       maxlength="7"
-                       aria-label="Registreringsnummer"
                        pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
-                <button type="submit" class="plate-search-button" aria-label="Søk etter kjøretøy">
-                    <div class="loading-spinner" aria-hidden="true"></div>
-                    <span class="search-icon" aria-hidden="true">🔍</span>
-                    <span class="button-text">Søk nå</span>
+                <button type="submit" class="plate-search-button" aria-label="Search">
+                    <div class="loading-spinner"></div>
+                    <span class="search-icon">🔍</span>
                 </button>
             </div>',
             esc_attr($input_id),
@@ -145,27 +140,8 @@ class Vehicle_Lookup_Helpers {
      */
     public static function render_trust_indicators() {
         return '<div class="trust-indicators">
-            <div class="trust-item">
-                <span class="trust-icon" aria-hidden="true">🛡️</span>
-                <div>
-                    <p class="trust-title">Data fra Statens vegvesen</p>
-                    <p class="trust-copy">Oppdateres fortløpende for mest mulig presise tall.</p>
-                </div>
-            </div>
-            <div class="trust-item">
-                <span class="trust-icon" aria-hidden="true">⚡</span>
-                <div>
-                    <p class="trust-title">Levering på sekunder</p>
-                    <p class="trust-copy">Vipps-betaling og rapport sendt til e-post og SMS umiddelbart.</p>
-                </div>
-            </div>
-            <div class="trust-item">
-                <span class="trust-icon" aria-hidden="true">⭐</span>
-                <div>
-                    <p class="trust-title">15 000+ fornøyde kunder</p>
-                    <p class="trust-copy">Populært verktøy brukt av både privatpersoner og bilforhandlere.</p>
-                </div>
-            </div>
+            <div>🔐 Data hentes fra Statens vegvesen</div>
+            <div>⏱️ Svar på noen få sekunder</div>
         </div>';
     }
 
