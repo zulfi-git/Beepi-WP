@@ -166,7 +166,7 @@ See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for complete roadmap.
 
 ## Contributing
 
-**Proprietary Software** - © 2024 Beepi.no  
+**Proprietary Software** - © 2025 Beepi.no  
 Internal development only.
 
 ### Internal Contributors
