@@ -232,6 +232,10 @@ jQuery(document).ready(function($) {
             }
         }
 
+        // CRO: Show owner info purchase section early (right after AI summary)
+        // This places the tier selection higher in the flow for better conversions
+        renderOwnerInfo(vehicleData);
+
         // Render market listings if available
         if (response.data.marketListings) {
             renderMarketListings(response.data.marketListings);
@@ -244,8 +248,7 @@ jQuery(document).ready(function($) {
         // Show preview of premium content
         renderPremiumPreview(vehicleData);
 
-        // Only show full owner info if user has access
-        renderOwnerInfo(vehicleData);
+        // Render technical details
         renderTechnicalInfo(vehicleData);
 
         // Populate owner history section
