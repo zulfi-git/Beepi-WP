@@ -33,8 +33,10 @@ class Vehicle_EU_Search_Shortcode {
 
         <script>
         jQuery(document).ready(function($) {
+            // normalizePlate is provided globally by normalize-plate.js
+
             $('#eu-search-form').on('submit', function(e) {
-                const regNumber = $('#euSearchRegNumber').val().trim().toUpperCase();
+                const regNumber = normalizePlate($('#euSearchRegNumber').val());
                 const errorDiv = $('#eu-search-error');
                 
                 // Reset error state

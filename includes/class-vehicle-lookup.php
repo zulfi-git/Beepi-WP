@@ -81,10 +81,19 @@ class Vehicle_Lookup {
             VEHICLE_LOOKUP_VERSION . '.' . time()
         );
 
+        // Enqueue normalize-plate module first
+        wp_enqueue_script(
+            'normalize-plate',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/normalize-plate.js',
+            array(),
+            VEHICLE_LOOKUP_VERSION . '.' . time(),
+            true
+        );
+
         wp_enqueue_script(
             'vehicle-lookup-script',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/vehicle-lookup.js',
-            array('jquery'),
+            array('jquery', 'normalize-plate'),
             VEHICLE_LOOKUP_VERSION . '.' . time(),
             true
         );
@@ -106,7 +115,7 @@ class Vehicle_Lookup {
     public function handle_lookup() {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
-        $regNumber = isset($_POST['regNumber']) ? strtoupper(trim(sanitize_text_field($_POST['regNumber']))) : '';
+        $regNumber = isset($_POST['regNumber']) ? Vehicle_Lookup_Helpers::normalize_plate(sanitize_text_field($_POST['regNumber'])) : '';
         $includeSummary = isset($_POST['includeSummary']) ? (bool)$_POST['includeSummary'] : false;
         $ip_address = $this->access->get_client_ip();
         $start_time = microtime(true);
@@ -240,7 +249,7 @@ class Vehicle_Lookup {
     public function handle_ai_summary_poll() {
         check_ajax_referer('vehicle_lookup_nonce', 'nonce');
 
-        $regNumber = isset($_POST['regNumber']) ? strtoupper(trim(sanitize_text_field($_POST['regNumber']))) : '';
+        $regNumber = isset($_POST['regNumber']) ? Vehicle_Lookup_Helpers::normalize_plate(sanitize_text_field($_POST['regNumber'])) : '';
         $ip_address = $this->access->get_client_ip();
 
         if (empty($regNumber)) {

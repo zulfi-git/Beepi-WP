@@ -171,6 +171,8 @@ class Vehicle_Lookup_Database {
         
         // Validate and sanitize all inputs
         $reg_number = function_exists('sanitize_text_field') ? sanitize_text_field($reg_number) : strip_tags($reg_number);
+        // Normalize the registration number (uppercase and remove spaces)
+        $reg_number = Vehicle_Lookup_Helpers::normalize_plate($reg_number);
         $ip_address = filter_var($ip_address, FILTER_VALIDATE_IP) ? $ip_address : '';
         $tier = in_array($tier, ['free', 'premium', 'business']) ? $tier : 'free';
         $failure_type = $failure_type ? (function_exists('sanitize_text_field') ? sanitize_text_field($failure_type) : strip_tags($failure_type)) : null;
@@ -188,7 +190,7 @@ class Vehicle_Lookup_Database {
         return $this->wpdb->insert(
             $this->table_name,
             array(
-                'reg_number' => strtoupper($reg_number),
+                'reg_number' => $reg_number,  // Already normalized above
                 'ip_address' => $ip_address,
                 'user_agent' => $user_agent,
                 'lookup_time' => function_exists('current_time') ? current_time('mysql') : date('Y-m-d H:i:s'),

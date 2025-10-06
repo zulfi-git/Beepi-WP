@@ -33,8 +33,10 @@ class Vehicle_Search_Shortcode {
 
         <script>
         jQuery(document).ready(function($) {
+            // normalizePlate is provided globally by normalize-plate.js
+
             $('#vehicle-search-form').on('submit', function(e) {
-                const regNumber = $('#searchRegNumber').val().trim().toUpperCase();
+                const regNumber = normalizePlate($('#searchRegNumber').val());
                 const errorDiv = $('#search-error');
                 
                 // Reset error state
