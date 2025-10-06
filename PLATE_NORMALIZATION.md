@@ -5,7 +5,7 @@ All Norwegian license plates are now normalized throughout the WordPress plugin 
 
 ## Normalization Rules
 1. **Uppercase**: All letters are converted to uppercase
-2. **No Spaces**: All spaces (leading, trailing, and internal) are removed
+2. **No Whitespace**: All whitespace characters (spaces, tabs, newlines, etc.) are removed
 
 ## Examples
 | Input | Normalized Output |
@@ -31,8 +31,8 @@ public static function normalize_plate($plate) {
     // Convert to string if needed
     $plate = (string) $plate;
     
-    // Remove all spaces and convert to uppercase
-    return strtoupper(str_replace(' ', '', $plate));
+    // Remove all whitespace characters and convert to uppercase
+    return strtoupper(preg_replace('/\s+/', '', $plate));
 }
 ```
 
