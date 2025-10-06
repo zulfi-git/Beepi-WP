@@ -296,8 +296,8 @@ class Vehicle_Lookup_Admin_Dashboard {
         $rate_limit = get_option('vehicle_lookup_rate_limit', VEHICLE_LOOKUP_RATE_LIMIT);
         
         // Count lookups in current hour
-        $hour_start = str_replace('-', '-', $current_hour) . ':00:00';
-        $hour_end = str_replace('-', '-', $current_hour) . ':59:59';
+        $hour_start = substr($current_hour, 0, 10) . ' ' . substr($current_hour, 11) . ':00:00';
+        $hour_end = substr($current_hour, 0, 10) . ' ' . substr($current_hour, 11) . ':59:59';
         
         $total = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table_name} 
