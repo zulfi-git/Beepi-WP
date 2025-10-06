@@ -5,7 +5,10 @@ All Norwegian license plates are now normalized throughout the WordPress plugin 
 
 ## Normalization Rules
 1. **Uppercase**: All letters are converted to uppercase
-2. **No Whitespace**: All whitespace characters (spaces, tabs, newlines, etc.) are removed
+2. **No Whitespace**: All whitespace characters are removed, including:
+   - ASCII whitespace (spaces, tabs, newlines, etc.)
+   - Unicode whitespace (non-breaking spaces, em spaces, thin spaces, etc.)
+   - Zero-width characters (zero-width space, zero-width no-break space)
 
 ## Examples
 | Input | Normalized Output |
@@ -16,6 +19,9 @@ All Norwegian license plates are now normalized throughout the WordPress plugin 
 | `AB  12345` | `AB12345` |
 | `ab 12 345` | `AB12345` |
 | `  AB12345  ` | `AB12345` |
+| `AB 12345` (non-breaking space U+00A0) | `AB12345` |
+| `AB 12345` (em space U+2003) | `AB12345` |
+| `AB​12345` (zero-width space U+200B) | `AB12345` |
 
 ## Implementation
 
@@ -31,8 +37,11 @@ public static function normalize_plate($plate) {
     // Convert to string if needed
     $plate = (string) $plate;
     
-    // Remove all whitespace characters and convert to uppercase
-    return strtoupper(preg_replace('/\s+/', '', $plate));
+    // Remove all whitespace characters (including Unicode whitespace) and convert to uppercase
+    // \p{Z} = all Unicode separator characters (spaces)
+    // \p{C} = all Unicode control characters (including zero-width spaces)
+    // \s = ASCII whitespace for backwards compatibility
+    return strtoupper(preg_replace('/[\p{Z}\p{C}\s]+/u', '', $plate));
 }
 ```
 
@@ -52,7 +61,12 @@ A helper function `normalizePlate()` is defined in a standalone module and used 
 ```javascript
 function normalizePlate(plate) {
     if (!plate) return '';
-    return plate.toString().replace(/\s+/g, '').toUpperCase();
+    // Remove all Unicode whitespace characters:
+    // \s = ASCII whitespace
+    // \u00A0 = non-breaking space
+    // \u2000-\u200B = various Unicode spaces (em space, en space, thin space, zero-width space, etc.)
+    // \uFEFF = zero-width no-break space (BOM)
+    return plate.toString().replace(/[\s\u00A0\u2000-\u200B\uFEFF]+/g, '').toUpperCase();
 }
 ```
 
@@ -80,6 +94,9 @@ Users can enter plates with or without spaces (e.g., "AB 12345" or "AB12345") an
 
 ### 5. API Call Efficiency
 Prevents duplicate API calls for the same plate entered in different formats.
+
+### 6. Unicode Whitespace Handling
+Registration plates copy-pasted from HTML or rich text (containing Unicode whitespace like non-breaking spaces) are correctly normalized, preventing cache mismatches and lookup failures.
 
 ## Testing
 
@@ -115,7 +132,12 @@ The Cloudflare Worker backend should implement identical normalization:
 ```javascript
 function normalizePlate(plate) {
     if (!plate) return '';
-    return plate.toString().replace(/\s+/g, '').toUpperCase();
+    // Remove all Unicode whitespace characters:
+    // \s = ASCII whitespace
+    // \u00A0 = non-breaking space
+    // \u2000-\u200B = various Unicode spaces
+    // \uFEFF = zero-width no-break space (BOM)
+    return plate.toString().replace(/[\s\u00A0\u2000-\u200B\uFEFF]+/g, '').toUpperCase();
 }
 ```
 
@@ -123,6 +145,7 @@ This ensures:
 - KV cache keys match between frontend and worker
 - Consistent behavior across the entire system
 - No lookup failures due to format mismatches
+- Unicode whitespace from copy-pasted HTML is handled correctly
 
 ## Future Considerations
 
