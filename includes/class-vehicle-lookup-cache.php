@@ -51,7 +51,9 @@ class VehicleLookupCache {
      * Generate cache key for registration number
      */
     private function get_cache_key($regNumber) {
-        return 'vehicle_cache_' . md5(strtoupper($regNumber));
+        // Normalize the plate before generating cache key
+        $normalized = Vehicle_Lookup_Helpers::normalize_plate($regNumber);
+        return 'vehicle_cache_' . md5($normalized);
     }
 
     /**

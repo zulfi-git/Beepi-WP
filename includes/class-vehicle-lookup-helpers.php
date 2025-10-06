@@ -2,6 +2,26 @@
 class Vehicle_Lookup_Helpers {
     
     /**
+     * Normalize Norwegian registration plate
+     * - Convert to uppercase
+     * - Remove all spaces
+     * 
+     * @param string $plate Registration plate number
+     * @return string Normalized plate number
+     */
+    public static function normalize_plate($plate) {
+        if (empty($plate)) {
+            return '';
+        }
+        
+        // Convert to string if needed
+        $plate = (string) $plate;
+        
+        // Remove all spaces and convert to uppercase
+        return strtoupper(str_replace(' ', '', $plate));
+    }
+    
+    /**
      * Validate Norwegian registration number format
      */
     public static function validate_registration_number($regNumber) {
@@ -29,12 +49,12 @@ class Vehicle_Lookup_Helpers {
         // Check WordPress query var first (from rewrite rule)
         $wp_reg_number = get_query_var('reg_number');
         if (!empty($wp_reg_number)) {
-            return strtoupper(sanitize_text_field($wp_reg_number));
+            return self::normalize_plate(sanitize_text_field($wp_reg_number));
         }
         
         // Check standard query parameter
         if (isset($_GET['reg']) && !empty($_GET['reg'])) {
-            return strtoupper(sanitize_text_field($_GET['reg']));
+            return self::normalize_plate(sanitize_text_field($_GET['reg']));
         }
         
         return '';

@@ -9,6 +9,11 @@ class Order_Confirmation_Shortcode {
     public function handle_payment_complete($order_id) {
         $order = wc_get_order($order_id);
         $reg_number = $order->get_meta('reg_number');
+        
+        // Normalize the registration number
+        if (!empty($reg_number)) {
+            $reg_number = Vehicle_Lookup_Helpers::normalize_plate($reg_number);
+        }
 
         if (empty($reg_number)) {
             error_log('Payment complete but no registration number found for order: ' . $order_id);
@@ -112,6 +117,11 @@ class Order_Confirmation_Shortcode {
 
         // Get registration number from WooCommerce order meta
         $reg_number = $order->get_meta('reg_number');
+        
+        // Normalize the registration number
+        if (!empty($reg_number)) {
+            $reg_number = Vehicle_Lookup_Helpers::normalize_plate($reg_number);
+        }
 
         // Enhanced debug logging with all possible data sources
         error_log("\n\n=== DEBUG: COMPLETE ORDER DATA ===");

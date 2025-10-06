@@ -10,6 +10,16 @@ jQuery(document).ready(function($) {
     const $vehicleInfo = $('.vehicle-info');
     const $submitButton = $form.find('button');
 
+    /**
+     * Normalize Norwegian registration plate
+     * - Convert to uppercase
+     * - Remove all spaces
+     */
+    function normalizePlate(plate) {
+        if (!plate) return '';
+        return plate.toString().replace(/\s+/g, '').toUpperCase();
+    }
+
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -279,7 +289,7 @@ jQuery(document).ready(function($) {
     $form.on('submit', function(e) {
         e.preventDefault();
 
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        const regNumber = normalizePlate($('#regNumber').val());
 
         resetFormState();
 
@@ -355,7 +365,7 @@ jQuery(document).ready(function($) {
                     }
 
                     // Track error analytics for failed responses
-                    trackVehicleLookupError(errorCode, correlationId, $('#regNumber').val().trim().toUpperCase(), 'success_false');
+                    trackVehicleLookupError(errorCode, correlationId, normalizePlate($('#regNumber').val()), 'success_false');
 
                     // Attempt smart retry if applicable
                     if (errorCode && !attemptSmartRetry(errorCode, correlationId, regNumber)) {
@@ -430,7 +440,7 @@ jQuery(document).ready(function($) {
                 $errorDiv.html(displayMessage).show();
 
                 // Track error analytics
-                trackVehicleLookupError(errorCode, correlationId, $('#regNumber').val().trim().toUpperCase(), 'ajax_error');
+                trackVehicleLookupError(errorCode, correlationId, normalizePlate($('#regNumber').val()), 'ajax_error');
             },
             complete: function() {
                 setLoadingState(false);
@@ -697,7 +707,7 @@ jQuery(document).ready(function($) {
 
     // Function to populate the owner history table
     function populateOwnerHistoryTable() {
-        const regNumber = $('#regNumber').val().trim().toUpperCase();
+        const regNumber = normalizePlate($('#regNumber').val());
         const $ownerHistoryDiv = $('#eierhistorikk-content');
 
         if (!regNumber || !$ownerHistoryDiv.length) {
@@ -760,8 +770,8 @@ jQuery(document).ready(function($) {
     // Add purchase button handler
     $(document).on('click', '.purchase-button', function() {
         const productId = $(this).data('product');
-        const displayedReg = $('.vehicle-title').text().trim();
-        const inputReg = $('#regNumber').val().trim().toUpperCase();
+        const displayedReg = normalizePlate($('.vehicle-title').text());
+        const inputReg = normalizePlate($('#regNumber').val());
         const regNumber = displayedReg || inputReg;
 
         if (!regNumber) {
@@ -1247,7 +1257,7 @@ jQuery(document).ready(function($) {
                 data: {
                     action: 'vehicle_lookup_ai_poll',
                     nonce: vehicleLookupAjax.nonce,
-                    regNumber: regNumber.toUpperCase().trim()
+                    regNumber: normalizePlate(regNumber)
                 },
                 dataType: 'json',
                 contentType: 'application/x-www-form-urlencoded',

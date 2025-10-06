@@ -12,7 +12,7 @@ class VehicleLookupWooCommerce {
      */
     private function get_registration_number() {
         if (isset($_COOKIE['vehicle_reg_number'])) {
-            return sanitize_text_field($_COOKIE['vehicle_reg_number']);
+            return Vehicle_Lookup_Helpers::normalize_plate(sanitize_text_field($_COOKIE['vehicle_reg_number']));
         }
         return false;
     }

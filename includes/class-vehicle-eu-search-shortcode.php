@@ -33,8 +33,14 @@ class Vehicle_EU_Search_Shortcode {
 
         <script>
         jQuery(document).ready(function($) {
+            // Normalize plate: uppercase and remove all spaces
+            function normalizePlate(plate) {
+                if (!plate) return '';
+                return plate.toString().replace(/\s+/g, '').toUpperCase();
+            }
+
             $('#eu-search-form').on('submit', function(e) {
-                const regNumber = $('#euSearchRegNumber').val().trim().toUpperCase();
+                const regNumber = normalizePlate($('#euSearchRegNumber').val());
                 const errorDiv = $('#eu-search-error');
                 
                 // Reset error state
