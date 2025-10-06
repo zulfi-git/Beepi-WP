@@ -135,6 +135,7 @@ class Vehicle_Lookup_Shortcode {
                                 <p class="tier-tagline">Komplett trygghet med hele historikken</p>
                                 <?php
                                 if ($premium_sale && $premium_sale < $premium_price):
+                                    // Calculate percentage discount if there's a sale price
                                     $discount_percentage = round((($premium_price - $premium_sale) / $premium_price) * 100);
                                     ?>
                                     <div class="savings-display">
