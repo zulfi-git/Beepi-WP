@@ -1004,19 +1004,48 @@ jQuery(document).ready(function($) {
         $('.ai-summary-error').remove();
 
         try {
-            // Create DOM elements safely to prevent XSS (no accordion, always visible)
-            const $aiSection = $('<div class="ai-summary-section section">');
-            const $sectionHeader = $('<div class="section-header">').append(
-                $('<span class="section-title">').text('AI Kjøretøyanalyse'),
-                $('<img>').attr({
-                    'src': vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png',
-                    'alt': 'OpenAI',
-                    'class': 'section-icon-logo'
-                }).css({
-                    'height': '20px',
-                    'width': 'auto',
-                    'opacity': '0.85'
-                })
+            // Create preview text from summary (first 120 chars)
+            let previewText = 'Klikk for å se AI-analyse av kjøretøyet';
+            if (aiSummary.summary) {
+                const fullSummary = aiSummary.summary;
+                previewText = fullSummary.length > 120 
+                    ? fullSummary.substring(0, 120) + '...' 
+                    : fullSummary;
+            }
+
+            // Create collapsible details element
+            const $aiSection = $('<details class="ai-summary-section section">');
+            const $summary = $('<summary class="section-header">').append(
+                $('<div>').css({
+                    'display': 'flex',
+                    'flex-direction': 'column',
+                    'gap': '0.5rem',
+                    'width': '100%'
+                }).append(
+                    $('<div>').css({
+                        'display': 'flex',
+                        'align-items': 'center',
+                        'gap': '0.5rem',
+                        'justify-content': 'space-between'
+                    }).append(
+                        $('<span class="section-title">').text('🤖 AI Kjøretøyanalyse'),
+                        $('<img>').attr({
+                            'src': vehicleLookupAjax.plugin_url + '/assets/images/open-ai-logo.png',
+                            'alt': 'OpenAI',
+                            'class': 'section-icon-logo'
+                        }).css({
+                            'height': '20px',
+                            'width': 'auto',
+                            'opacity': '0.85'
+                        })
+                    ),
+                    $('<div>').css({
+                        'font-size': '0.875rem',
+                        'font-weight': '400',
+                        'color': '#64748b',
+                        'line-height': '1.4'
+                    }).text(previewText)
+                )
             );
             const $sectionContent = $('<div class="section-content">');
             const $aiContent = $('<div class="ai-summary-content">');
@@ -1109,7 +1138,7 @@ jQuery(document).ready(function($) {
 
             // Assemble the complete structure
             $sectionContent.append($aiContent);
-            $aiSection.append($sectionHeader, $sectionContent);
+            $aiSection.append($summary, $sectionContent);
 
             // Insert AI summary at the beginning of the accordion
             $('.accordion').prepend($aiSection);

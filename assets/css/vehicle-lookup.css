@@ -1196,18 +1196,44 @@ details summary {
 }
 
 .ai-summary-section summary {
-    background: #f8fafc !important;
+    background: #ffffff !important;
     color: var(--text-primary) !important;
     font-weight: 700 !important;
     position: relative;
+    cursor: pointer;
+    list-style: none;
+    padding: 1rem !important;
+}
+
+.ai-summary-section summary::-webkit-details-marker {
+    display: none;
+}
+
+.ai-summary-section summary::after {
+    content: '▼';
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.ai-summary-section[open] summary::after {
+    transform: rotate(-180deg);
 }
 
 .ai-summary-section summary:hover {
-    background: #f1f5f9 !important;
+    background: #f8fafc !important;
 }
 
 .ai-summary-section[open] {
     box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04) !important;
+}
+
+.ai-summary-section[open] summary {
+    border-bottom: 1px solid #e2e8f0 !important;
+    background: #f8fafc !important;
 }
 
 .ai-summary-content {
