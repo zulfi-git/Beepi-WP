@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * Vehicle Lookup Admin Class
+ * 
+ * PHASE 2 REFACTORING NOTES:
+ * This class will be split into specialized classes:
+ * 
+ * 1. Vehicle_Lookup_Admin (Core) - Will remain here
+ *    - init(), add_admin_menu(), enqueue_admin_scripts(), ensure_database_table()
+ * 
+ * 2. Vehicle_Lookup_Admin_Settings - Settings management
+ *    - init_settings(), settings_page(), all field callbacks
+ * 
+ * 3. Vehicle_Lookup_Admin_Dashboard - Dashboard rendering and metrics
+ *    - admin_page(), get_lookup_stats(), get_hourly_rate_limit_usage()
+ *    - get_cache_stats(), calculate_avg_response_time(), get_usage_trend()
+ * 
+ * 4. Vehicle_Lookup_Admin_Analytics - Analytics page
+ *    - analytics_page(), get_detailed_stats(), get_most_searched_numbers()
+ * 
+ * 5. Vehicle_Lookup_Admin_Ajax - AJAX handlers
+ *    - test_api_connectivity(), check_upstream_health(), reset_analytics_data()
+ *    - handle_clear_worker_cache(), handle_clear_local_cache(), handle_clear_cache()
+ */
 class Vehicle_Lookup_Admin {
 
     public function init() {
@@ -17,21 +40,14 @@ class Vehicle_Lookup_Admin {
     }
 
     private function ensure_database_table() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
-
-        // Check if table exists
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
-
+        // create_table() is idempotent and handles both new installations and schema upgrades
         $db_handler = new Vehicle_Lookup_Database();
-
-        if (!$table_exists) {
-            $db_handler->create_table();
-        } else {
-            // Ensure table has all required columns for existing installations
-            $db_handler->create_table();
-        }
+        $db_handler->create_table();
     }
+
+    // ========================================================================
+    // CORE ADMIN METHODS (Will remain in Vehicle_Lookup_Admin after Phase 2)
+    // ========================================================================
 
     public function add_admin_menu() {
         add_menu_page(
@@ -72,12 +88,15 @@ class Vehicle_Lookup_Admin {
         );
     }
 
+    // ========================================================================
+    // SETTINGS METHODS (Will move to Vehicle_Lookup_Admin_Settings in Phase 2)
+    // ========================================================================
+
     public function init_settings() {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_worker_url');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_timeout');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_duration');
-        register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
 
@@ -177,6 +196,10 @@ class Vehicle_Lookup_Admin {
             'ajaxurl' => admin_url('admin-ajax.php')
         ));
     }
+
+    // ========================================================================
+    // DASHBOARD METHODS (Will move to Vehicle_Lookup_Admin_Dashboard in Phase 2)
+    // ========================================================================
 
     public function admin_page() {
         $db_handler = new Vehicle_Lookup_Database();
@@ -514,6 +537,10 @@ class Vehicle_Lookup_Admin {
         <?php
     }
 
+    // ========================================================================
+    // ANALYTICS METHODS (Will move to Vehicle_Lookup_Admin_Analytics in Phase 2)
+    // ========================================================================
+
     public function analytics_page() {
         $stats = $this->get_detailed_stats();
         ?>
@@ -839,6 +866,10 @@ class Vehicle_Lookup_Admin {
             LIMIT %d
         ", $limit));
     }
+
+    // ========================================================================
+    // AJAX HANDLERS (Will move to Vehicle_Lookup_Admin_Ajax in Phase 2)
+    // ========================================================================
 
     public function test_api_connectivity() {
         check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
