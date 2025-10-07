@@ -47,7 +47,7 @@
 2. **Monolithic Admin Class:** `Vehicle_Lookup_Admin` (1,197 lines) handles too many responsibilities (dashboard, settings, analytics, AJAX handlers). Should be split into focused classes.
 
 ### Medium Priority
-3. **Duplicate Registration:** `Vehicle_Lookup_Admin::init_settings()` registers the `vehicle_lookup_rate_limit` option twice (lines 78 and 80); consolidating to one call avoids redundant work and potential validation conflicts.
+3. ~~**Duplicate Registration:** `Vehicle_Lookup_Admin::init_settings()` registers the `vehicle_lookup_rate_limit` option twice (lines 78 and 80); consolidating to one call avoids redundant work and potential validation conflicts.~~ **FIXED** ✅
 4. **Mixed Concerns:** `Vehicle_Lookup` contains duplicate WooCommerce methods and should delegate AJAX handling to a separate class.
 5. **Code Duplication:** Phone number formatting logic exists in multiple places.
 
@@ -65,9 +65,10 @@
 
 ### Immediate (Quick Wins - 1-2 days)
 1. ~~✅ Fix rewrite rules flushing issue (move to activation/deactivation hooks)~~ **COMPLETED** ✅
-2. ✅ Remove duplicate rate_limit registration
-3. ✅ Extract `format_phone_number()` to Helpers class (eliminate duplication)
-4. ✅ Add local logo fallbacks for manufacturer icons
+2. ~~✅ Remove duplicate rate_limit registration~~ **COMPLETED** ✅
+3. ~~✅ Simplify database table initialization (remove redundant existence checks)~~ **COMPLETED** ✅
+4. ✅ Extract `format_phone_number()` to Helpers class (eliminate duplication)
+5. ✅ Add local logo fallbacks for manufacturer icons
 
 ### Short Term (1 week)
 5. Split `Vehicle_Lookup_Admin` into 4 focused classes (Settings, Dashboard, Analytics, Ajax)
