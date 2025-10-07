@@ -1182,7 +1182,7 @@ class Vehicle_Lookup_Admin {
         $avg_time = $wpdb->get_var("
             SELECT AVG(response_time) 
             FROM {$table_name} 
-            WHERE lookup_date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+            WHERE lookup_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
             AND response_time IS NOT NULL
             AND response_time > 0
         ");
@@ -1201,14 +1201,14 @@ class Vehicle_Lookup_Admin {
         $today_count = $wpdb->get_var("
             SELECT COUNT(*) 
             FROM {$table_name} 
-            WHERE DATE(lookup_date) = CURDATE()
+            WHERE DATE(lookup_time) = CURDATE()
         ");
         
         // Get yesterday's count
         $yesterday_count = $wpdb->get_var("
             SELECT COUNT(*) 
             FROM {$table_name} 
-            WHERE DATE(lookup_date) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+            WHERE DATE(lookup_time) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
         ");
         
         if ($yesterday_count == 0) {
