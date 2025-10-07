@@ -73,13 +73,16 @@ class Vehicle_Lookup {
      * Enqueue required scripts and styles
      */
     public function enqueue_scripts() {
-        // Add Tailwind CSS via CDN
+        // Add Tailwind CSS via CDN with crossorigin attribute to prevent CORB errors
         wp_enqueue_style(
             'tailwindcss',
             'https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css',
             array(),
             '3.4.1'
         );
+        
+        // Add crossorigin attribute to CDN stylesheet to prevent CORB blocking
+        add_filter('style_loader_tag', array($this, 'add_crossorigin_to_tailwind'), 10, 2);
         
         // Enqueue modular CSS files in proper dependency order
         // 1. Variables first (defines CSS custom properties)
@@ -154,6 +157,20 @@ class Vehicle_Lookup {
                 'plugin_url' => plugins_url('', dirname(__FILE__))
             )
         );
+    }
+
+    /**
+     * Add crossorigin attribute to Tailwind CSS to prevent CORB errors
+     * 
+     * @param string $tag The link tag for the stylesheet
+     * @param string $handle The stylesheet handle
+     * @return string Modified link tag with crossorigin attribute
+     */
+    public function add_crossorigin_to_tailwind($tag, $handle) {
+        if ('tailwindcss' === $handle) {
+            $tag = str_replace(' />', ' crossorigin="anonymous" />', $tag);
+        }
+        return $tag;
     }
 
     /**
