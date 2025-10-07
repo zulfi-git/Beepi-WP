@@ -73,12 +73,20 @@ class Vehicle_Lookup {
      * Enqueue required scripts and styles
      */
     public function enqueue_scripts() {
+        // Add Tailwind CSS via CDN
+        wp_enqueue_style(
+            'tailwindcss',
+            'https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css',
+            array(),
+            '3.4.1'
+        );
+        
         // Enqueue modular CSS files in proper dependency order
         // 1. Variables first (defines CSS custom properties)
         wp_enqueue_style(
             'vehicle-lookup-variables',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/variables.css',
-            array(),
+            array('tailwindcss'),
             VEHICLE_LOOKUP_VERSION . '.' . time()
         );
         
