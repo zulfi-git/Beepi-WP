@@ -93,7 +93,7 @@ class Vehicle_Lookup_Helpers {
                        value="%s"
                        pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
                 <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 border-0 text-white px-6 py-3 text-base font-semibold cursor-pointer flex items-center justify-center transition-all duration-200 ease-in-out h-full rounded-r-lg hover:-translate-y-px relative" aria-label="Search">
-                    <div class="hidden absolute w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                    <div class="opacity-0 absolute w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
                     <span class="transition-opacity duration-200">🔍</span>
                 </button>
             </div>',
