@@ -1,0 +1,11 @@
+{
+  "name": "beepi-vehicle-lookup",
+  "version": "7.0.3",
+  "description": "WordPress plugin for vehicle lookup with Tailwind CSS",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/tailwind-input.css -o ./assets/css/tailwind.min.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
