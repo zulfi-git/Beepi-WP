@@ -1,1 +1,0 @@
-I believe the Tailwind CSS CDN might be missing. This could be affecting the search page styling, which appears to be broken. Adding the appropriate Tailwind CSS CDN should resolve this issue.

@@ -3,9 +3,3 @@ attached_assets/
 
 # CSS backup files
 *.css.bak
-
-# Node modules
-node_modules/
-
-# Package lock file
-package-lock.json

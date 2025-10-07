@@ -28,8 +28,8 @@ class Vehicle_Lookup_Shortcode {
     private function render_form_section($reg_number) {
         ob_start();
         ?>
-        <div class="max-w-full mx-auto px-4">
-            <form id="vehicle-lookup-form" class="flex justify-center mx-auto my-4">
+        <div class="vehicle-lookup-container">
+            <form id="vehicle-lookup-form" class="plate-form">
                 <?php echo $this->render_plate_input($reg_number); ?>
             </form>
         <?php
@@ -69,76 +69,73 @@ class Vehicle_Lookup_Shortcode {
 
         ob_start();
         ?>
-        <div class="my-0">
+        <div class="owner-section">
             <div id="owner-info-container">
-                <div id="free-info-guide" class="bg-gradient-to-br from-sky-50 to-sky-100 rounded-2xl shadow-lg p-6 my-6 border border-sky-200">
-                    <div class="text-center">
-                        <h4 class="text-xl font-bold text-slate-900 mb-3 flex items-center justify-center gap-2">
-                            <span>💡</span>
-                            <span>Se gratis informasjon</span>
-                        </h4>
-                        <p class="text-base text-slate-700 mb-4 leading-relaxed">Utforsk tekniske detaljer, EU-kontroll status og mer i boksene nedenfor - helt gratis!</p>
-                        <button type="button" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 ease-in-out shadow-md hover:shadow-lg hover:-translate-y-0.5" onclick="expandAllAccordions()">Utforsk gratis info</button>
+                <div id="free-info-guide" class="free-info-guide">
+                    <div class="guide-content">
+                        <h4>💡 Se gratis informasjon</h4>
+                        <p>Utforsk tekniske detaljer, EU-kontroll status og mer i boksene nedenfor - helt gratis!</p>
+                        <button type="button" class="explore-free-btn" onclick="expandAllAccordions()">Utforsk gratis info</button>
                     </div>
                 </div>
 
-                <div id="tier-selection" class="my-6">
-                    <h3 class="text-2xl font-bold text-center text-slate-900 mb-6">Velg rapporttype</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div id="tier-selection">
+                    <h3>Velg rapporttype</h3>
+                    <div class="tier-comparison">
                         <!-- Basic Tier -->
-                        <div class="bg-white rounded-2xl shadow-lg border-2 border-slate-200 p-6 transition-all duration-200 hover:shadow-xl hover:border-sky-400">
-                            <div class="mb-6">
-                                <h4 class="text-xl font-bold text-slate-900 mb-4"><?php echo $basic_product ? esc_html($basic_product->get_name()) : 'Basic rapport'; ?></h4>
-                                <div class="text-center">
+                        <div class="tier-card basic-tier">
+                            <div class="tier-header">
+                                <h4><?php echo $basic_product ? esc_html($basic_product->get_name()) : 'Basic rapport'; ?></h4>
+                                <div class="tier-price">
                                     <?php if ($basic_sale): ?>
-                                        <span class="text-slate-400 line-through text-xl font-medium"><?php echo esc_html($basic_price); ?> kr</span>
-                                        <span class="block text-3xl font-bold text-sky-600 mt-1"><?php echo esc_html($basic_sale); ?> kr</span>
+                                        <span class="regular-price"><?php echo esc_html($basic_price); ?> kr</span>
+                                        <span class="sale-price"><?php echo esc_html($basic_sale); ?> kr</span>
                                     <?php else: ?>
-                                        <span class="block text-3xl font-bold text-sky-600"><?php echo esc_html($basic_price); ?> kr</span>
+                                        <span class="price"><?php echo esc_html($basic_price); ?> kr</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="mb-6 space-y-3">
-                                <div class="text-sm text-emerald-700 font-medium">✓ Nåværende eier</div>
-                                <div class="text-sm text-emerald-700 font-medium">✓ Alle tekniske detaljer</div>
-                                <div class="text-sm text-emerald-700 font-medium">✓ EU-kontroll status</div>
+                            <div class="tier-features">
+                                <div class="feature-item">✓ Nåværende eier</div>
+                                <div class="feature-item">✓ Alle tekniske detaljer</div>
+                                <div class="feature-item">✓ EU-kontroll status</div>
                             </div>
-                            <div>
+                            <div class="tier-purchase">
                                 <?php echo do_shortcode("[woo_vipps_buy_now id=62 /]"); ?>
                             </div>
                         </div>
 
                         <!-- Premium Tier -->
-                        <div class="bg-white rounded-2xl shadow-xl border-2 border-sky-500 p-6 relative md:scale-105 transition-all duration-200 hover:shadow-2xl">
-                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-5 py-2 rounded-full text-xs font-semibold uppercase shadow-md">Mest populær</div>
-                            <div class="mb-6">
-                                <h4 class="text-xl font-bold text-slate-900 mb-2"><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
+                        <div class="tier-card premium-tier recommended">
+                            <div class="tier-badge">Mest populær</div>
+                            <div class="tier-header">
+                                <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
                                 <?php
                                 // Calculate percentage discount if there's a sale price
                                 if ($premium_sale && $premium_sale < $premium_price): 
                                     $discount_percentage = round((($premium_price - $premium_sale) / $premium_price) * 100);
                                     ?>
-                                    <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold text-center my-3 shadow-md">
+                                    <div class="savings-display">
                                         Spar <?php echo esc_html($discount_percentage); ?>% ved å kjøpe denne!
                                     </div>
                                 <?php endif; ?>
-                                <div class="text-center">
+                                <div class="tier-price">
                                     <?php if ($premium_sale): ?>
-                                        <span class="text-slate-400 line-through text-xl font-medium"><?php echo esc_html($premium_price); ?> kr</span>
-                                        <span class="block text-3xl font-bold text-sky-600 mt-1"><?php echo esc_html($premium_sale); ?> kr</span>
+                                        <span class="regular-price"><?php echo esc_html($premium_price); ?> kr</span>
+                                        <span class="sale-price"><?php echo esc_html($premium_sale); ?> kr</span>
                                     <?php else: ?>
-                                        <span class="block text-3xl font-bold text-sky-600"><?php echo esc_html($premium_price); ?> kr</span>
+                                        <span class="price"><?php echo esc_html($premium_price); ?> kr</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="mb-6 space-y-3">
-                                <div class="text-sm text-emerald-700 font-medium">✓ Alt fra Basic rapport</div>
-                                <div class="text-sm text-emerald-700 font-medium">✓ Komplett eierhistorikk</div>
-                                <div class="text-sm text-emerald-700 font-medium">✓ Skadehistorikk</div>
-                                <div class="text-sm text-emerald-700 font-medium">✓ Detaljert kjøretøyrapport</div>
-                                <div class="text-sm text-emerald-700 font-medium">✓ Import</div>
+                            <div class="tier-features">
+                                <div class="feature-item">✓ Alt fra Basic rapport</div>
+                                <div class="feature-item">✓ Komplett eierhistorikk</div>
+                                <div class="feature-item">✓ Skadehistorikk</div>
+                                <div class="feature-item">✓ Detaljert kjøretøyrapport</div>
+                                <div class="feature-item">✓ Import</div>
                             </div>
-                            <div>
+                            <div class="tier-purchase">
                                 <?php 
                                 $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
                                 echo $vipps_button;
@@ -173,22 +170,20 @@ class Vehicle_Lookup_Shortcode {
         $today_searches = $stats ? $stats->total_lookups : 0;
 
         return sprintf(
-            '<div id="vehicle-lookup-error" class="bg-red-50 text-red-600 p-4 rounded border border-red-200 mt-5 hidden"></div>
-            <div id="quota-display" class="mt-2.5 p-2 bg-slate-100 rounded text-sm text-slate-600 text-right hidden"></div>
-            <div class="flex justify-center gap-8 my-6 p-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                <div class="text-center">
-                    <span class="block text-3xl font-bold text-sky-600 leading-none">%d</span>
-                    <span class="text-sm text-slate-600 font-medium">oppslag i dag</span>
+            '<div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
+            <div id="quota-display" class="quota-display" style="display: none;"></div>
+            <div class="usage-stats">
+                <div class="stat-item">
+                    <span class="stat-number">%d</span>
+                    <span class="stat-label">oppslag i dag</span>
                 </div>
-                <div class="text-center">
-                    <span class="block text-3xl font-bold text-sky-600 leading-none">15.000+</span>
-                    <span class="text-sm text-slate-600 font-medium">fornøyde kunder</span>
+                <div class="stat-item">
+                    <span class="stat-number">15.000+</span>
+                    <span class="stat-label">fornøyde kunder</span>
                 </div>
             </div>
-            <div id="version-display" class="mt-1 text-xs text-slate-400 text-right">v%s</div>
-            <div class="text-center text-sm text-slate-600 mt-8 p-4 font-medium">
-                Levert av <a href="https://beepi.no" target="_blank" class="text-sky-600 no-underline font-semibold hover:text-sky-700 hover:underline">Beepi.no</a>
-            </div>
+            <div id="version-display" class="version-display">v%s</div>
+            <div class="powered-by">Levert av <a href="https://beepi.no" target="_blank">Beepi.no</a></div>
             </div>',
             $today_searches,
             VEHICLE_LOOKUP_VERSION
