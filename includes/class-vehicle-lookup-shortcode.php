@@ -109,7 +109,7 @@ class Vehicle_Lookup_Shortcode {
                         </div>
 
                         <!-- Premium Tier -->
-                        <div class="bg-white rounded-2xl shadow-xl border-2 border-sky-500 p-6 relative transform scale-105 transition-all duration-200 hover:shadow-2xl">
+                        <div class="bg-white rounded-2xl shadow-xl border-2 border-sky-500 p-6 relative md:scale-105 transition-all duration-200 hover:shadow-2xl">
                             <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-5 py-2 rounded-full text-xs font-semibold uppercase shadow-md">Mest populær</div>
                             <div class="mb-6">
                                 <h4 class="text-xl font-bold text-slate-900 mb-2"><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
