@@ -79,6 +79,8 @@ jQuery(document).ready(function($) {
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
         $('.info-table').empty();
+        // Clear owner history content to prevent stacking
+        $('#eierhistorikk-content').empty();
     }
 
     function displayCacheNotice(responseData) {
@@ -261,9 +263,6 @@ jQuery(document).ready(function($) {
         // Always show basic info for free
         renderBasicInfo(vehicleData);
         renderRegistrationInfo(vehicleData);
-
-        // Show preview of premium content
-        renderPremiumPreview(vehicleData);
 
         // Only show full owner info if user has access
         renderOwnerInfo(vehicleData);
@@ -916,15 +915,6 @@ jQuery(document).ready(function($) {
         );
     }
 
-
-
-    function renderPremiumPreview(vehicleData) {
-        // Placeholder function to show preview of premium content
-        console.log('Premium preview for vehicle:', vehicleData.kjoretoyId?.kjennemerke);
-
-        // This function can be expanded to show preview cards or hints
-        // about additional premium data available after purchase
-    }
 
     function renderRegistrationInfo(vehicleData) {
         const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
