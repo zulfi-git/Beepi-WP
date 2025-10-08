@@ -1561,7 +1561,7 @@ jQuery(document).ready(function($) {
     // Function to show market listings generation status
     function showMarketListingsGenerationStatus(message) {
         // Only update if market listings section doesn't already have content
-        if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+        if (!$('.market-listings-section .market-listings-content .market-listing-item').length) {
             const $loadingContainer = $('<div style="padding: 1.5rem; text-align: center;">');
             const $spinner = $('<div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid #0ea5e9; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem auto;">');
             const $statusText = $('<div style="color: #64748b; font-size: 0.875rem; font-weight: 500;">').text('Henter markedsdata...');
