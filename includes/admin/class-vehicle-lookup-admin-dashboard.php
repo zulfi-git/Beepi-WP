@@ -124,7 +124,7 @@ class Vehicle_Lookup_Admin_Dashboard {
                     <div class="service-status-grid">
                         <div class="service-item">
                             <div class="service-logo cloudflare-logo">
-                                <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/cloudflare-logo.png'; ?>" alt="Cloudflare" width="24" height="24">
+                                <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/cloudflare-logo.png'; ?>" alt="Cloudflare" width="24" height="24">
                             </div>
                             <div class="service-info">
                                 <div class="service-name">Cloudflare Worker</div>
@@ -137,7 +137,7 @@ class Vehicle_Lookup_Admin_Dashboard {
                         
                         <div class="service-item">
                             <div class="service-logo vegvesen-logo">
-                                <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/vegvesen-logo.webp'; ?>" alt="Statens Vegvesen" width="24" height="24">
+                                <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/vegvesen-logo.webp'; ?>" alt="Statens Vegvesen" width="24" height="24">
                             </div>
                             <div class="service-info">
                                 <div class="service-name">Vegvesen API</div>
@@ -150,7 +150,7 @@ class Vehicle_Lookup_Admin_Dashboard {
                         
                         <div class="service-item">
                             <div class="service-logo openai-logo">
-                                <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/images/open-ai-logo.png'; ?>" alt="OpenAI" width="24" height="24">
+                                <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/open-ai-logo.png'; ?>" alt="OpenAI" width="24" height="24">
                             </div>
                             <div class="service-info">
                                 <div class="service-name">AI Summary Service</div>
