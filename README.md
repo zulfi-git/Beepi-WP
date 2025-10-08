@@ -100,11 +100,57 @@ beepi-vehicle-lookup/
 
 ### Testing
 
-Currently **no automated tests** exist. See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for testing recommendations.
+#### Automated UI Testing with Playwright
 
-Manual testing files:
+The project uses [Playwright](https://playwright.dev/) for automated end-to-end UI testing.
+
+**Setup:**
+```bash
+# Install dependencies
+npm install
+
+# Install Playwright browsers (only needed first time)
+npx playwright install --with-deps
+```
+
+**Running Tests:**
+```bash
+# Run all tests (headless)
+npm test
+
+# Run tests with browser visible
+npm run test:headed
+
+# Run tests in interactive UI mode
+npm run test:ui
+
+# Debug tests
+npm run test:debug
+
+# Run specific test file
+npx playwright test tests/playwright/vehicle-lookup.spec.js
+```
+
+**Writing Tests:**
+- Test files are located in `tests/playwright/`
+- Tests target key front-end features like the vehicle lookup form and market listings
+- Set `BASE_URL` environment variable to test against a specific WordPress instance
+- Example: `BASE_URL=https://staging.beepi.no npm test`
+
+**CI/CD Integration:**
+- Playwright tests run automatically on every pull request
+- Test results and reports are uploaded as GitHub Actions artifacts
+- Configure `PLAYWRIGHT_BASE_URL` secret in repository settings for CI testing
+
+#### Manual Testing
+
+Manual testing files (legacy):
 - `test-structured-errors.html` - Error handling scenarios
 - `ai-summary-test.html` - AI summary generation
+
+#### PHPUnit (Planned)
+
+Backend PHP testing is planned but not yet implemented. See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for details.
 
 ---
 

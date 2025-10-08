@@ -3,3 +3,11 @@ attached_assets/
 
 # CSS backup files
 *.css.bak
+
+# Node modules
+node_modules/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

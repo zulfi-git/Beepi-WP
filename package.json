@@ -1,0 +1,23 @@
+{
+  "name": "beepi-wp",
+  "version": "1.0.0",
+  "description": "Norwegian vehicle registration lookup service with WooCommerce integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug"
+  },
+  "keywords": [
+    "wordpress",
+    "vehicle-lookup",
+    "norway",
+    "woocommerce"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}
