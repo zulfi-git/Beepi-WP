@@ -31,19 +31,20 @@
 │  └───┬──────────────────────────────────────────────┬──────────┘   │
 │      │                                               │               │
 │      ▼                                               ▼               │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐   │
-│  │   API Layer  │  │ Cache Layer  │  │    Access Control      │   │
-│  ├──────────────┤  ├──────────────┤  ├────────────────────────┤   │
-│  │ VehicleAPI   │  │ Cache        │  │ VehicleLookupAccess    │   │
-│  │ • lookup()   │  │ • get()      │  │ • check_rate_limit()   │   │
-│  │ • poll_ai()  │  │ • set()      │  │ • determine_tier()     │   │
-│  │ • validate() │  │ • clear()    │  │ • get_quota_status()   │   │
-│  └──────┬───────┘  └──────────────┘  └────────────────────────┘   │
+│  ┌──────────────┐                    ┌────────────────────────┐   │
+│  │   API Layer  │                    │    Access Control      │   │
+│  ├──────────────┤                    ├────────────────────────┤   │
+│  │ VehicleAPI   │                    │ VehicleLookupAccess    │   │
+│  │ • lookup()   │                    │ • check_rate_limit()   │   │
+│  │ • poll_ai()  │                    │ • determine_tier()     │   │
+│  │ • validate() │                    │ • get_quota_status()   │   │
+│  └──────┬───────┘                    └────────────────────────┘   │
 │         │                                                            │
 │         ▼                                                            │
 │  ┌──────────────────────────────────────────────────────────────┐  │
 │  │                    External Services                          │  │
 │  │  • Cloudflare Worker (https://lookup.beepi.no)               │  │
+│  │    - Cloudflare KV for edge caching                          │  │
 │  │  • Statens Vegvesen API (via worker)                         │  │
 │  │  • OpenAI API (AI summaries, via worker)                     │  │
 │  │  • Finn.no API (market listings, via worker)                 │  │
@@ -51,12 +52,12 @@
 │                                                                      │
 │  ┌──────────────────────────────────────────────────────────────┐  │
 │  │                    Data Persistence                           │  │
-│  │  ┌────────────────────────┐  ┌──────────────────────────┐   │  │
-│  │  │ Vehicle_Lookup_Database│  │  WordPress Transients    │   │  │
-│  │  │ • log_lookup()         │  │  • Cache storage         │   │  │
-│  │  │ • get_stats()          │  │  • TTL: 12 hours         │   │  │
-│  │  │ • get_daily_quota()    │  │                          │   │  │
-│  │  └────────────────────────┘  └──────────────────────────┘   │  │
+│  │  ┌────────────────────────┐                                  │  │
+│  │  │ Vehicle_Lookup_Database│                                  │  │
+│  │  │ • log_lookup()         │                                  │  │
+│  │  │ • get_stats()          │                                  │  │
+│  │  │ • get_daily_quota()    │                                  │  │
+│  │  └────────────────────────┘                                  │  │
 │  └──────────────────────────────────────────────────────────────┘  │
 │                                                                      │
 │  ┌──────────────────────────────────────────────────────────────┐  │
@@ -86,36 +87,12 @@
 
 ## Request Flow Diagrams
 
-### 1. Vehicle Lookup Request (Cache Hit)
+### 1. Vehicle Lookup Request
 
 ```
 User → Search Form → vehicle-lookup.js → AJAX Request
                                               ↓
                                      Vehicle_Lookup::handle_lookup()
-                                              ↓
-                                     Check VehicleLookupCache
-                                              ↓
-                                     Cache HIT → Return cached data
-                                              ↓
-                                     Log to Database (cached=1)
-                                              ↓
-                                     Trigger async AI generation
-                                              ↓
-                                     ← JSON Response ←
-                                              ↓
-                                     vehicle-lookup.js renders results
-```
-
-### 2. Vehicle Lookup Request (Cache Miss)
-
-```
-User → Search Form → vehicle-lookup.js → AJAX Request
-                                              ↓
-                                     Vehicle_Lookup::handle_lookup()
-                                              ↓
-                                     Check VehicleLookupCache
-                                              ↓
-                                     Cache MISS
                                               ↓
                                      Check VehicleLookupAccess
                                      • Rate limit
@@ -127,21 +104,20 @@ User → Search Form → vehicle-lookup.js → AJAX Request
                                      POST https://lookup.beepi.no/lookup
                                               ↓
                                      Cloudflare Worker
+                                     (Cloudflare KV caching handled here)
                                               ↓
                                      Statens Vegvesen API
                                               ↓
                                      ← Vehicle Data ←
                                               ↓
-                                     Store in Cache (12h TTL)
-                                              ↓
-                                     Log to Database (cached=0)
+                                     Log to Database
                                               ↓
                                      ← JSON Response ←
                                               ↓
                                      vehicle-lookup.js renders results
 ```
 
-### 3. Purchase Flow (WooCommerce Integration)
+### 2. Purchase Flow (WooCommerce Integration)
 
 ```
 User Views Owner Section → Click "Se eier" button
@@ -341,9 +317,8 @@ TTL: 43200 seconds (12 hours)
 ## Performance Considerations
 
 ### Caching Strategy
-- **Local Cache**: WordPress transients (12-hour TTL)
-- **Worker Cache**: Cloudflare Worker cache (configurable)
-- **Cache Hit Rate**: Logged in database for monitoring
+- **Worker Cache**: Cloudflare KV for edge caching (managed by Cloudflare Worker)
+- **Cache Monitoring**: Cache statistics available from worker health endpoints
 
 ### Known Performance Issues
 1. ~~⚠️ Rewrite rules added on every `init` hook (should be activation-only)~~ **FIXED** ✅
@@ -353,8 +328,7 @@ TTL: 43200 seconds (12 hours)
 ### Optimization Opportunities
 1. Implement lazy loading for market listings
 2. Add database indexes for common queries (partially done)
-3. Consider Redis for high-traffic installations
-4. Bundle and minify frontend assets
+3. Bundle and minify frontend assets
 
 ---
 
@@ -376,7 +350,6 @@ TTL: 43200 seconds (12 hours)
 - Frontend console logging for development
 
 ### Error Recovery
-- Graceful degradation for cache failures
 - Retry logic for transient API errors (circuit breaker aware)
 - User-friendly error messages in UI
 - Admin notifications for critical failures
@@ -388,7 +361,6 @@ TTL: 43200 seconds (12 hours)
 ### Metrics Tracked
 - Total lookups (daily, hourly, all-time)
 - Success/failure rates
-- Cache hit rate
 - Average response time
 - Quota usage
 - Popular registration numbers
