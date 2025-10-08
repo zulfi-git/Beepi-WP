@@ -1418,12 +1418,12 @@ jQuery(document).ready(function($) {
                             if (listing.url) {
                                 listingHtml += `<a href="${listing.url}" target="_blank" class="listing-image-link" rel="noopener">
                                     <div class="listing-image">
-                                        <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.parentElement.style.display='none'">
+                                        <img src="${image}" alt="${title}" loading="lazy" onerror="this.closest('.listing-card').style.display='none'">
                                     </div>
                                 </a>`;
                             } else {
                                 listingHtml += `<div class="listing-image">
-                                    <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                    <img src="${image}" alt="${title}" loading="lazy" onerror="this.closest('.listing-card').style.display='none'">
                                 </div>`;
                             }
                         }
