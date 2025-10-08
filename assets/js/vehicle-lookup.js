@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
         $('.info-table').empty();
-        // Clear owner history content to prevent stacking
+        // Clear owner history content to prevent stacking - unlike other sections that use .info-table class, this div has a different structure and needs explicit clearing
         $('#eierhistorikk-content').empty();
     }
 
