@@ -315,6 +315,19 @@ class VehicleLookupAPI {
 
         // Handle HTTP error status codes
         if ($status_code !== 200) {
+            // 404 means AI summary not yet available in KV (still generating)
+            if ($status_code === 404) {
+                return array(
+                    'success' => true,
+                    'data' => array(
+                        'status' => 'generating',
+                        'registrationNumber' => $regNumber,
+                        'progress' => null,
+                        'message' => 'AI sammendrag genereres...'
+                    )
+                );
+            }
+            
             return array(
                 'error' => 'AI sammendrag tjeneste ikke tilgjengelig. Prøv igjen senere.',
                 'failure_type' => 'http_error',
@@ -368,6 +381,18 @@ class VehicleLookupAPI {
 
         // Handle HTTP error status codes
         if ($status_code !== 200) {
+            // 404 means market listings not yet available in KV (still generating)
+            if ($status_code === 404) {
+                return array(
+                    'success' => true,
+                    'data' => array(
+                        'status' => 'generating',
+                        'registrationNumber' => $regNumber,
+                        'message' => 'Markedsdata hentes...'
+                    )
+                );
+            }
+            
             return array(
                 'error' => 'Markedsdata tjeneste ikke tilgjengelig. Prøv igjen senere.',
                 'failure_type' => 'http_error',
