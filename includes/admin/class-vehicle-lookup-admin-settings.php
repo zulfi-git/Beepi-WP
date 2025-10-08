@@ -20,6 +20,7 @@ class Vehicle_Lookup_Admin_Settings {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_timeout');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_duration');
+        register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_enabled');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
 
@@ -65,6 +66,14 @@ class Vehicle_Lookup_Admin_Settings {
             'cache_duration',
             'Cache Duration (seconds)',
             array($this, 'cache_duration_field'),
+            'vehicle_lookup_settings',
+            'vehicle_lookup_limits_section'
+        );
+
+        add_settings_field(
+            'cache_enabled',
+            'Enable Cache',
+            array($this, 'cache_enabled_field'),
             'vehicle_lookup_settings',
             'vehicle_lookup_limits_section'
         );
@@ -145,6 +154,17 @@ class Vehicle_Lookup_Admin_Settings {
         $hours = $value / 3600;
         echo '<input type="number" name="vehicle_lookup_cache_duration" value="' . esc_attr($value) . '" min="3600" max="86400" />';
         echo '<p class="description">Cache duration in seconds (currently ' . $hours . ' hours)</p>';
+    }
+
+    /**
+     * Cache enabled field callback
+     */
+    public function cache_enabled_field() {
+        $value = get_option('vehicle_lookup_cache_enabled', '1');
+        $checked = ($value === '1') ? 'checked' : '';
+        echo '<label><input type="checkbox" name="vehicle_lookup_cache_enabled" value="1" ' . $checked . ' />';
+        echo ' Enable caching</label>';
+        echo '<p class="description">Disable cache for debugging purposes. <strong>Warning:</strong> Disabling cache will increase API usage and may impact performance.</p>';
     }
 
     /**
