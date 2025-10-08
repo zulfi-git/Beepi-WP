@@ -72,6 +72,9 @@ jQuery(document).ready(function($) {
         // Clear AI summary sections to prevent stacking
         $('.ai-summary-section').remove();
         $('.ai-summary-error').remove();
+        // Clear market listings sections to prevent stacking
+        $('.market-listings-section').remove();
+        $('.market-listings-error').remove();
         $vehicleTitle.empty();
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
@@ -1532,6 +1535,13 @@ jQuery(document).ready(function($) {
             return; // No market listings data
         }
 
+        // If market listings are already complete, render them immediately
+        if (data.marketListings.status === 'complete' && data.marketListings.listings) {
+            renderMarketListings(data.marketListings);
+            return;
+        }
+
+        // If market listings are generating, start polling
         if (data.marketListings.status === 'generating') {
             console.log('Market listings generating, starting polling for:', regNumber);
             startMarketListingsPolling(regNumber);
