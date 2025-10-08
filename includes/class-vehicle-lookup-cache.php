@@ -5,6 +5,12 @@ class VehicleLookupCache {
      * Get cached response for registration number
      */
     public function get($regNumber) {
+        // Check if cache is enabled
+        $cache_enabled = get_option('vehicle_lookup_cache_enabled', '1');
+        if ($cache_enabled !== '1') {
+            return false; // Cache disabled, return false to trigger fresh lookup
+        }
+        
         $cache_key = $this->get_cache_key($regNumber);
         $cached_data = get_transient($cache_key);
         
@@ -33,6 +39,12 @@ class VehicleLookupCache {
      * Cache API response
      */
     public function set($regNumber, $data) {
+        // Check if cache is enabled
+        $cache_enabled = get_option('vehicle_lookup_cache_enabled', '1');
+        if ($cache_enabled !== '1') {
+            return; // Cache disabled, don't store anything
+        }
+        
         $cache_key = $this->get_cache_key($regNumber);
         
         // Store cache time with the data
