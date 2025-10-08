@@ -1415,9 +1415,17 @@ jQuery(document).ready(function($) {
 
                         // Image section (left/top on mobile)
                         if (image) {
-                            listingHtml += `<div class="listing-image">
-                                <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'">
-                            </div>`;
+                            if (listing.url) {
+                                listingHtml += `<a href="${listing.url}" target="_blank" class="listing-image-link" rel="noopener">
+                                    <div class="listing-image">
+                                        <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.parentElement.style.display='none'">
+                                    </div>
+                                </a>`;
+                            } else {
+                                listingHtml += `<div class="listing-image">
+                                    <img src="${image}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                </div>`;
+                            }
                         }
 
                         // Content section
