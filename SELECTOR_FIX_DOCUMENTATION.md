@@ -14,7 +14,7 @@ The polling detection logic in `assets/js/vehicle-lookup.js` used incorrect CSS 
 - **Impact:** Polling system couldn't detect already-rendered AI summaries, causing them to be re-rendered on every poll
 
 ### Issue 2: Market Listings Detection
-- **Incorrect selector (lines 1307, 1314):** `.market-listing`
+- **Incorrect selector (lines 1307, 1314, 1564):** `.market-listing`
 - **Actual class created:** `.market-listing-item` (created by `renderMarketListings()` function at line 1407)
 - **Impact:** Polling system couldn't detect already-rendered market listings, causing them to be re-rendered on every poll
 
@@ -50,6 +50,15 @@ if (!$('.market-listings-section .market-listings-content .market-listing-item')
 ```
 
 #### Line 1314 (Market Listings - Generating Status)
+```javascript
+// BEFORE
+if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+
+// AFTER
+if (!$('.market-listings-section .market-listings-content .market-listing-item').length) {
+```
+
+#### Line 1564 (Market Listings - Generation Status Display)
 ```javascript
 // BEFORE
 if (!$('.market-listings-section .market-listings-content .market-listing').length) {
@@ -144,7 +153,7 @@ This fix addresses the root cause of issues reported in:
 ## Code Changes Summary
 
 - **Files changed:** 1 (`assets/js/vehicle-lookup.js`)
-- **Lines changed:** 4 (2 for AI summary, 2 for market listings)
+- **Lines changed:** 5 (2 for AI summary, 3 for market listings)
 - **Type:** Bug fix
 - **Breaking changes:** None
 - **Backward compatible:** Yes
@@ -152,3 +161,7 @@ This fix addresses the root cause of issues reported in:
 ## Conclusion
 
 This minimal, surgical fix resolves the selector mismatch issue that was causing content to disappear or flicker on subsequent views. The fix ensures the polling system can correctly detect already-rendered content and prevents unnecessary re-rendering, resulting in a stable, performant user experience.
+
+All 5 instances of selector mismatches have been identified and corrected:
+- 2 instances for AI summary (`.vehicle-overview` → `.ai-section`)
+- 3 instances for market listings (`.market-listing` → `.market-listing-item`)
