@@ -2,7 +2,7 @@
 
 > **Norwegian vehicle registration lookup service with WooCommerce integration**
 
-[![Version](https://img.shields.io/badge/version-7.0.4-blue.svg)](./vehicle-lookup.php)
+[![Version](https://img.shields.io/badge/version-7.0.5-blue.svg)](./vehicle-lookup.php)
 [![WordPress](https://img.shields.io/badge/WordPress-6.x-blue.svg)](https://wordpress.org)
 [![WooCommerce](https://img.shields.io/badge/WooCommerce-8.x-purple.svg)](https://woocommerce.com)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](https://www.php.net)
@@ -150,7 +150,7 @@ See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for complete roadmap.
 
 ## Performance Metrics
 
-### Current Performance (as of v7.0.4)
+### Current Performance (as of v7.0.5)
 - **Cache Hit Rate**: ~70% (logged in database)
 - **Average Response Time**: ~200ms (cache hit), ~1.5s (cache miss)
 - **Daily Lookups**: 500-2000 (varies)
@@ -177,7 +177,10 @@ Internal development only.
 
 ## Version History
 
-### v7.0.4 (Current)
+### v7.0.5 (Current)
+- Version bump
+
+### v7.0.4
 - Version bump
 
 ### v7.0.3
