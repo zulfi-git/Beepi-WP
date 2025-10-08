@@ -383,7 +383,9 @@ class VehicleLookupAPI {
 
         // Handle HTTP error status codes
         if ($status_code !== 200) {
-            // 404 means market listings not yet available in KV (still generating)
+            // This handling is specific to the polling endpoint for market listings.
+            // A 404 status code here indicates that the requested market listings are not yet available in the key-value store (KV),
+            // which means the data is still being generated asynchronously. The polling endpoint uses 404 to signal "generation in progress".
             if ($status_code === 404) {
                 return array(
                     'success' => true,
