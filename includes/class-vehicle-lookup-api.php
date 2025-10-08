@@ -315,7 +315,9 @@ class VehicleLookupAPI {
 
         // Handle HTTP error status codes
         if ($status_code !== 200) {
-            // 404 means AI summary not yet available in KV (still generating)
+            // This handling is specific to the AI summary polling endpoint:
+            // A 404 response indicates that the AI summary for the given registration number
+            // is not yet available in the key-value store, meaning generation is still in progress.
             if ($status_code === 404) {
                 return array(
                     'success' => true,
