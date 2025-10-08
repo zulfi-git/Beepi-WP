@@ -135,7 +135,6 @@ class Vehicle_Lookup_Admin_Analytics {
      * Get detailed statistics
      */
     private function get_detailed_stats() {
-        
 
         // Today's stats
         $today = date('Y-m-d');
