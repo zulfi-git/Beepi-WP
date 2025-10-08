@@ -19,10 +19,6 @@ class Vehicle_Lookup_Admin_Settings {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_worker_url');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_timeout');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
-        register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_duration');
-        register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_enabled', array(
-            'sanitize_callback' => array($this, 'sanitize_cache_enabled')
-        ));
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
 
@@ -35,7 +31,7 @@ class Vehicle_Lookup_Admin_Settings {
 
         add_settings_section(
             'vehicle_lookup_limits_section',
-            'Rate Limiting & Cache',
+            'Rate Limiting & Quotas',
             null,
             'vehicle_lookup_settings'
         );
@@ -60,22 +56,6 @@ class Vehicle_Lookup_Admin_Settings {
             'rate_limit',
             'Rate Limit (requests per hour per IP)',
             array($this, 'rate_limit_field'),
-            'vehicle_lookup_settings',
-            'vehicle_lookup_limits_section'
-        );
-
-        add_settings_field(
-            'cache_duration',
-            'Cache Duration (seconds)',
-            array($this, 'cache_duration_field'),
-            'vehicle_lookup_settings',
-            'vehicle_lookup_limits_section'
-        );
-
-        add_settings_field(
-            'cache_enabled',
-            'Enable Cache',
-            array($this, 'cache_enabled_field'),
             'vehicle_lookup_settings',
             'vehicle_lookup_limits_section'
         );
@@ -146,39 +126,6 @@ class Vehicle_Lookup_Admin_Settings {
         $value = get_option('vehicle_lookup_rate_limit', VEHICLE_LOOKUP_RATE_LIMIT);
         echo '<input type="number" name="vehicle_lookup_rate_limit" value="' . esc_attr($value) . '" min="1" max="100" />';
         echo '<p class="description">Maximum requests allowed per hour per IP address</p>';
-    }
-
-    /**
-     * Cache duration field callback
-     */
-    public function cache_duration_field() {
-        $value = get_option('vehicle_lookup_cache_duration', VEHICLE_LOOKUP_CACHE_DURATION);
-        $hours = $value / 3600;
-        echo '<input type="number" name="vehicle_lookup_cache_duration" value="' . esc_attr($value) . '" min="3600" max="86400" />';
-        echo '<p class="description">Cache duration in seconds (currently ' . $hours . ' hours)</p>';
-    }
-
-    /**
-     * Cache enabled field callback
-     */
-    public function cache_enabled_field() {
-        $value = get_option('vehicle_lookup_cache_enabled', '1');
-        $checked = ($value === '1') ? 'checked' : '';
-        echo '<input type="hidden" name="vehicle_lookup_cache_enabled" value="0" />';
-        echo '<label><input type="checkbox" name="vehicle_lookup_cache_enabled" value="1" ' . esc_attr($checked) . ' />';
-        echo ' Enable caching</label>';
-        echo '<p class="description">Disable cache for debugging purposes. <strong>Warning:</strong> Disabling cache will increase API usage and may impact performance.</p>';
-    }
-
-    /**
-     * Sanitize cache enabled checkbox
-     * WordPress checkboxes only send data when checked, so we need this callback
-     * to handle the unchecked state
-     */
-    public function sanitize_cache_enabled($value) {
-        // If checkbox is checked, $value will be '1'
-        // If checkbox is unchecked, $value will be '0' (from hidden field)
-        return ($value === '1') ? '1' : '0';
     }
 
     /**

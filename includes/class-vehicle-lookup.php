@@ -5,7 +5,6 @@
 class Vehicle_Lookup {
     private $db_handler;
     private $api;
-    private $cache;
     private $access;
     private $woocommerce;
 
@@ -18,7 +17,6 @@ class Vehicle_Lookup {
 
         // Initialize specialized classes
         $this->api = new VehicleLookupAPI();
-        $this->cache = new VehicleLookupCache();
         $this->access = new VehicleLookupAccess();
         $this->woocommerce = new VehicleLookupWooCommerce();
 
@@ -181,43 +179,6 @@ class Vehicle_Lookup {
             wp_send_json_error('Daglig grense nådd. Prøv igjen i morgen.');
         }
 
-        // Check vehicle data cache (always separate from AI summaries in new system)
-        $vehicle_cache_key = $regNumber;
-        $cached_vehicle_data = $this->cache->get($vehicle_cache_key);
-        if ($cached_vehicle_data !== false) {
-            $response_time = round((microtime(true) - $start_time) * 1000);
-            $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, true);
-            
-            // Add cache metadata to response
-            $cached_vehicle_data['is_cached'] = true;
-            $cached_vehicle_data['cache_time'] = $this->cache->get_cache_time($vehicle_cache_key);
-            
-            // For the new system, always include AI status if summary was requested
-            if ($includeSummary) {
-                // Check if we have AI summary ready in separate cache
-                $ai_cache_key = $regNumber . '_ai_summary';
-                $cached_ai_summary = $this->cache->get($ai_cache_key);
-                
-                if ($cached_ai_summary !== false && isset($cached_ai_summary['status']) && $cached_ai_summary['status'] === 'complete') {
-                    // AI summary is ready and cached
-                    $cached_vehicle_data['aiSummary'] = $cached_ai_summary;
-                } else {
-                    // AI summary needs to be generated - trigger background generation
-                    $this->trigger_ai_generation_async($regNumber);
-                    
-                    // Return generating status while it processes in background
-                    $cached_vehicle_data['aiSummary'] = array(
-                        'status' => 'generating',
-                        'startedAt' => current_time('c'),
-                        'progress' => null,
-                        'pollUrl' => '/ai-summary/' . urlencode($regNumber)
-                    );
-                }
-            }
-            
-            wp_send_json_success($cached_vehicle_data);
-        }
-
         // Determine tier based on user's purchase status
         $tier = $this->access->determine_tier($regNumber);
 
@@ -257,29 +218,14 @@ class Vehicle_Lookup {
 
         $data = $result['data'];
 
-        // Cache vehicle data separately from AI summaries (new two-endpoint system)
-        $vehicle_cache_key = $regNumber;
-        
-        // Extract and cache only vehicle data (without AI summary)
-        $vehicle_data = $data;
-        if (isset($vehicle_data['aiSummary'])) {
-            unset($vehicle_data['aiSummary']); // Don't cache AI summary with vehicle data
-        }
-        $this->cache->set($vehicle_cache_key, $vehicle_data);
-        
-        // If response includes AI summary status, add it back for this response
-        if ($includeSummary && isset($data['aiSummary'])) {
-            $vehicle_data['aiSummary'] = $data['aiSummary'];
-        }
-
         // Add cache metadata to response  
-        $vehicle_data['is_cached'] = false;
-        $vehicle_data['cache_time'] = current_time('c'); // ISO 8601 format
+        $data['is_cached'] = false;
+        $data['cache_time'] = current_time('c'); // ISO 8601 format
 
         // Log successful lookup (HTTP 200 with valid vehicle data)
         $this->db_handler->log_lookup($regNumber, $ip_address, true, null, $response_time, false, null, $tier);
 
-        wp_send_json_success($vehicle_data);
+        wp_send_json_success($data);
     }
 
     /**
@@ -304,62 +250,35 @@ class Vehicle_Lookup {
             wp_send_json_error('For mange forespørsler. Vennligst vent litt før du prøver igjen.');
         }
 
-        // Check cache for both AI summary and market listings
-        $ai_cache_key = $regNumber . '_ai_summary';
-        $market_cache_key = $regNumber . '_market_listings';
-        
-        $cached_ai_summary = $this->cache->get($ai_cache_key);
-        $cached_market_listings = $this->cache->get($market_cache_key);
-        
-        // Prepare response data from cache only - don't trigger new API calls
+        // Prepare response data from polling endpoints
         $response_data = array();
         
-        // Return cached AI summary if available
-        if ($cached_ai_summary !== false) {
-            $response_data['aiSummary'] = $cached_ai_summary;
+        // Poll AI summary endpoint
+        $api_result = $this->api->poll_ai_summary($regNumber);
+        $ai_result = $this->api->process_ai_summary_response($api_result['response'], $regNumber);
+        
+        if (isset($ai_result['error'])) {
+            // Return AI polling error but continue with market data
+            $response_data['aiSummary'] = array(
+                'status' => 'error',
+                'message' => $ai_result['error']
+            );
         } else {
-            // If no cached AI summary, use the dedicated AI polling endpoint
-            $api_result = $this->api->poll_ai_summary($regNumber);
-            $ai_result = $this->api->process_ai_summary_response($api_result['response'], $regNumber);
-            
-            if (isset($ai_result['error'])) {
-                // Return AI polling error but continue with market data
-                $response_data['aiSummary'] = array(
-                    'status' => 'error',
-                    'message' => $ai_result['error']
-                );
-            } else {
-                $response_data['aiSummary'] = $ai_result['data'];
-                
-                // Cache completed AI summary
-                if (isset($ai_result['data']['status']) && $ai_result['data']['status'] === 'complete' && isset($ai_result['data']['summary'])) {
-                    $this->cache->set($ai_cache_key, $ai_result['data'], 86400);
-                }
-            }
+            $response_data['aiSummary'] = $ai_result['data'];
         }
         
-        // Return cached market listings if available
-        if ($cached_market_listings !== false) {
-            $response_data['marketListings'] = $cached_market_listings;
+        // Poll market listings endpoint
+        $market_api_result = $this->api->poll_market_listings($regNumber);
+        $market_result = $this->api->process_market_listings_response($market_api_result['response'], $regNumber);
+        
+        if (isset($market_result['error'])) {
+            // Return market polling error
+            $response_data['marketListings'] = array(
+                'status' => 'error',
+                'message' => $market_result['error']
+            );
         } else {
-            // If no cached market data, check actual market listings status from API
-            $market_api_result = $this->api->poll_market_listings($regNumber);
-            $market_result = $this->api->process_market_listings_response($market_api_result['response'], $regNumber);
-            
-            if (isset($market_result['error'])) {
-                // Return market polling error
-                $response_data['marketListings'] = array(
-                    'status' => 'error',
-                    'message' => $market_result['error']
-                );
-            } else {
-                $response_data['marketListings'] = $market_result['data'];
-                
-                // Cache completed market listings
-                if (isset($market_result['data']['status']) && $market_result['data']['status'] === 'complete' && isset($market_result['data']['listings'])) {
-                    $this->cache->set($market_cache_key, $market_result['data'], 86400);
-                }
-            }
+            $response_data['marketListings'] = $market_result['data'];
         }
 
         wp_send_json_success($response_data);
@@ -378,48 +297,6 @@ class Vehicle_Lookup {
      */
     public function get_quota_status() {
         return $this->access->get_quota_status();
-    }
-
-    /**
-     * Trigger AI generation asynchronously for cached vehicle data
-     */
-    private function trigger_ai_generation_async($regNumber) {
-        // Check if AI generation is already in progress (avoid duplicate requests)
-        $generation_key = $regNumber . '_ai_generating';
-        $generation_lock = $this->cache->get($generation_key);
-        
-        if ($generation_lock !== false) {
-            // AI generation already triggered within the last 5 minutes
-            return;
-        }
-        
-        // Set a short-term lock to prevent duplicate generation requests
-        $this->cache->set($generation_key, current_time('c'), 300); // 5 minute lock
-        
-        // Make a non-blocking background request to trigger AI generation
-        $api_result = $this->api->lookup($regNumber, true);
-        
-        // Process response to ensure AI generation is started
-        if (!isset($api_result['error'])) {
-            $result = $this->api->process_response($api_result['response'], $regNumber);
-            
-            // If successful and AI summary status returned, update our expectations
-            if (isset($result['data']['aiSummary'])) {
-                $ai_cache_key = $regNumber . '_ai_summary';
-                
-                // Store AI generation status in cache
-                $ai_status = array(
-                    'status' => $result['data']['aiSummary']['status'],
-                    'startedAt' => current_time('c'),
-                    'progress' => isset($result['data']['aiSummary']['progress']) ? $result['data']['aiSummary']['progress'] : null
-                );
-                
-                // Cache the status (but don't cache incomplete summaries)
-                if ($ai_status['status'] !== 'complete') {
-                    $this->cache->set($ai_cache_key, $ai_status, 1800); // 30 minute temporary cache
-                }
-            }
-        }
     }
 
     /**

@@ -7,7 +7,6 @@
  * This class manages:
  * - API connectivity testing
  * - Upstream health checks
- * - Cache management (worker and local)
  * - Analytics data reset
  * - Security validation for all requests
  */
@@ -20,8 +19,6 @@ class Vehicle_Lookup_Admin_Ajax {
     public function register_handlers() {
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
         add_action('wp_ajax_vehicle_lookup_check_upstream', array($this, 'check_upstream_health'));
-        add_action('wp_ajax_clear_worker_cache', array($this, 'handle_clear_worker_cache'));
-        add_action('wp_ajax_clear_local_cache', array($this, 'handle_clear_local_cache'));
         add_action('wp_ajax_reset_analytics_data', array($this, 'reset_analytics_data'));
     }
 
@@ -291,45 +288,5 @@ class Vehicle_Lookup_Admin_Ajax {
                 'message' => 'Failed to reset analytics data. Database error: ' . $wpdb->last_error
             ));
         }
-    }
-
-    /**
-     * Handle AJAX request to clear worker cache only
-     */
-    public function handle_clear_worker_cache() {
-        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => 'Insufficient permissions'));
-        }
-
-        $cache = new VehicleLookupCache();
-        $result = $cache->clear_worker_cache();
-
-        if ($result) {
-            wp_send_json_success(array('message' => 'Worker cache cleared successfully'));
-        } else {
-            wp_send_json_error(array('message' => 'Failed to clear worker cache'));
-        }
-    }
-
-    /**
-     * Handle AJAX request to clear local cache only
-     */
-    public function handle_clear_local_cache() {
-        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => 'Insufficient permissions'));
-        }
-
-        // Clear only local WordPress transients
-        global $wpdb;
-        $deleted = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_cache_%'");
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_vehicle_cache_%'");
-
-        wp_send_json_success(array(
-            'message' => "Local cache cleared successfully ({$deleted} entries removed)"
-        ));
     }
 }

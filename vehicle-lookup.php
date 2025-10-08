@@ -12,7 +12,6 @@ define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VEHICLE_LOOKUP_WORKER_URL', 'https://lookup.beepi.no');
 define('VEHICLE_LOOKUP_VERSION', '7.0.6');
 define('VEHICLE_LOOKUP_RATE_LIMIT', 100); // per hour per IP
-define('VEHICLE_LOOKUP_CACHE_DURATION', 43200); // 12 hours
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
@@ -24,7 +23,6 @@ $required_files = [
     'includes/class-vehicle-lookup-helpers.php',
     'includes/class-vehicle-lookup-database.php',
     'includes/class-vehicle-lookup-api.php',
-    'includes/class-vehicle-lookup-cache.php',
     'includes/class-vehicle-lookup-access.php',
     'includes/class-vehicle-lookup-woocommerce.php',
     'includes/class-vehicle-lookup.php',

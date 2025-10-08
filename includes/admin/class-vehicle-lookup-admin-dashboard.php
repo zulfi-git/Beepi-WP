@@ -28,9 +28,6 @@ class Vehicle_Lookup_Admin_Dashboard {
         $current_hour = date('Y-m-d-H');
         $rate_limit_total = $this->get_hourly_rate_limit_usage($current_hour);
 
-        // Get cache stats
-        $cache_stats = $this->get_cache_stats();
-
         // Get real lookup stats
         $stats = $this->get_lookup_stats();
 
@@ -228,32 +225,6 @@ class Vehicle_Lookup_Admin_Dashboard {
                                     <strong>-</strong>
                                     <span>AI API latency</span>
                                 </div>
-                                <div class="tech-stat" id="cache-performance-improvement">
-                                    <strong>-</strong>
-                                    <span>Cache improvement</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tech-card">
-                            <h4><span class="dashicons dashicons-performance"></span> Cache Performance</h4>
-                            <div class="tech-stats">
-                                <div class="tech-stat">
-                                    <strong><?php echo $cache_stats['entries']; ?></strong>
-                                    <span>Total cached entries</span>
-                                </div>
-                                <div class="tech-stat">
-                                    <strong><?php echo $cache_stats['hit_rate']; ?>%</strong>
-                                    <span>Overall hit rate</span>
-                                </div>
-                                <div class="tech-stat" id="vehicle-cache-entries">
-                                    <strong>-</strong>
-                                    <span>Vehicle cache entries</span>
-                                </div>
-                                <div class="tech-stat" id="ai-cache-hit-rate">
-                                    <strong>-</strong>
-                                    <span>AI cache hit rate</span>
-                                </div>
                             </div>
                         </div>
 
@@ -338,20 +309,6 @@ class Vehicle_Lookup_Admin_Dashboard {
         );
 
         return (int) ($result ?: 0);
-    }
-
-    /**
-     * Get cache statistics
-     */
-    private function get_cache_stats() {
-        global $wpdb;
-
-        $entries = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_vehicle_cache_%'");
-
-        return array(
-            'entries' => intval($entries),
-            'hit_rate' => 85 // This would need actual tracking
-        );
     }
 
     /**

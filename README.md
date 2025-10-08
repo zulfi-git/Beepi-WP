@@ -129,16 +129,10 @@ See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for complete roadmap.
 ## Architecture Decisions
 
 ### Why Cloudflare Worker?
-- Edge caching for faster responses
+- Edge caching for faster responses (Cloudflare KV)
 - Isolates heavy API calls from WordPress
 - Circuit breaker for upstream failures
 - Scales independently
-
-### Why WordPress Transients?
-- Native WordPress caching
-- No additional dependencies
-- TTL support built-in
-- Works with object cache drop-ins
 
 ### Why Separate Shortcode Classes?
 - Single Responsibility Principle
@@ -151,14 +145,13 @@ See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for complete roadmap.
 ## Performance Metrics
 
 ### Current Performance (as of v7.0.6)
-- **Cache Hit Rate**: ~70% (logged in database)
-- **Average Response Time**: ~200ms (cache hit), ~1.5s (cache miss)
+- **Caching**: Cloudflare KV (edge caching only)
+- **Average Response Time**: ~1.5s (Cloudflare KV handles caching)
 - **Daily Lookups**: 500-2000 (varies)
 - **Error Rate**: <2%
 
 ### Optimization Opportunities
 - Implement Phase 1 quick wins (~20% performance improvement)
-- Add Redis for high-traffic sites
 - Bundle and minify assets
 - Lazy load market listings
 
