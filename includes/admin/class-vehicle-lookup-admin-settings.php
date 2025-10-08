@@ -20,7 +20,9 @@ class Vehicle_Lookup_Admin_Settings {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_timeout');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_duration');
-        register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_enabled');
+        register_setting('vehicle_lookup_settings', 'vehicle_lookup_cache_enabled', array(
+            'sanitize_callback' => array($this, 'sanitize_cache_enabled')
+        ));
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
 
@@ -165,6 +167,17 @@ class Vehicle_Lookup_Admin_Settings {
         echo '<label><input type="checkbox" name="vehicle_lookup_cache_enabled" value="1" ' . esc_attr($checked) . ' />';
         echo ' Enable caching</label>';
         echo '<p class="description">Disable cache for debugging purposes. <strong>Warning:</strong> Disabling cache will increase API usage and may impact performance.</p>';
+    }
+
+    /**
+     * Sanitize cache enabled checkbox
+     * WordPress checkboxes only send data when checked, so we need this callback
+     * to handle the unchecked state
+     */
+    public function sanitize_cache_enabled($value) {
+        // If checkbox is checked, $value will be '1'
+        // If checkbox is unchecked, $value will be null (field not in POST)
+        return ($value === '1') ? '1' : '0';
     }
 
     /**
