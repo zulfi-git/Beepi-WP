@@ -162,7 +162,7 @@ class Vehicle_Lookup_Admin_Settings {
     public function cache_enabled_field() {
         $value = get_option('vehicle_lookup_cache_enabled', '1');
         $checked = ($value === '1') ? 'checked' : '';
-        echo '<label><input type="checkbox" name="vehicle_lookup_cache_enabled" value="1" ' . $checked . ' />';
+        echo '<label><input type="checkbox" name="vehicle_lookup_cache_enabled" value="1" ' . esc_attr($checked) . ' />';
         echo ' Enable caching</label>';
         echo '<p class="description">Disable cache for debugging purposes. <strong>Warning:</strong> Disabling cache will increase API usage and may impact performance.</p>';
     }
