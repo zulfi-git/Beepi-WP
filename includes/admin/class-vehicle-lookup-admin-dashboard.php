@@ -274,20 +274,6 @@ class Vehicle_Lookup_Admin_Dashboard {
                                 </div>
                             </div>
                         </div>
-
-                        <div class="tech-card">
-                            <h4><span class="dashicons dashicons-admin-tools"></span> System Info</h4>
-                            <div class="tech-stats">
-                                <div class="tech-stat">
-                                    <strong>WP <?php echo get_bloginfo('version'); ?></strong>
-                                    <span>WordPress</span>
-                                </div>
-                                <div class="tech-stat">
-                                    <strong>PHP <?php echo PHP_VERSION; ?></strong>
-                                    <span>PHP Version</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Detailed Activity Stats -->
