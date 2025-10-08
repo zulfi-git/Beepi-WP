@@ -1541,9 +1541,10 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        // If market listings are generating, start polling
+        // If market listings are generating, render the section with loading state and start polling
         if (data.marketListings.status === 'generating') {
             console.log('Market listings generating, starting polling for:', regNumber);
+            renderMarketListings(data.marketListings); // Create section with loading state
             startMarketListingsPolling(regNumber);
         }
     }
