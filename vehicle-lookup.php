@@ -34,6 +34,11 @@ $required_files = [
     'includes/class-popular-vehicles-shortcode.php',
     'includes/class-order-confirmation-shortcode.php',
     'includes/class-sms-handler.php',
+    // Admin classes (Phase 2 refactoring)
+    'includes/admin/class-vehicle-lookup-admin-settings.php',
+    'includes/admin/class-vehicle-lookup-admin-dashboard.php',
+    'includes/admin/class-vehicle-lookup-admin-analytics.php',
+    'includes/admin/class-vehicle-lookup-admin-ajax.php',
     'includes/class-vehicle-lookup-admin.php'
 ];
 
