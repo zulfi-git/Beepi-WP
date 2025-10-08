@@ -1276,7 +1276,7 @@ jQuery(document).ready(function($) {
 
                             if (aiData.status === 'complete' && aiData.summary) {
                                 // AI summary is ready! Only render if not already rendered
-                                if (!$('.ai-summary-section .ai-summary-content .vehicle-overview').length) {
+                                if (!$('.ai-summary-section .ai-summary-content .ai-section').length) {
                                     $('.ai-summary-section').remove();
                                     renderAiSummary(aiData.summary);
                                     console.log('✅ AI summary generated successfully');
@@ -1284,7 +1284,7 @@ jQuery(document).ready(function($) {
                                 aiComplete = true;
                             } else if (aiData.status === 'generating') {
                                 // Still generating, update progress only if not already complete
-                                if (!$('.ai-summary-section .ai-summary-content .vehicle-overview').length) {
+                                if (!$('.ai-summary-section .ai-summary-content .ai-section').length) {
                                     showAiGenerationStatus('AI sammendrag genereres...', aiData.progress);
                                 }
                             } else if (aiData.status === 'error') {
@@ -1304,14 +1304,14 @@ jQuery(document).ready(function($) {
 
                             if (marketData.status === 'complete' && marketData.listings) {
                                 // Market listings are ready! Only render if not already rendered
-                                if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+                                if (!$('.market-listings-section .market-listings-content .market-listing-item').length) {
                                     renderMarketListings(marketData);
                                     console.log('✅ Market listings generated successfully');
                                 }
                                 marketComplete = true;
                             } else if (marketData.status === 'generating') {
                                 // Still generating, show loading state if not already showing content
-                                if (!$('.market-listings-section .market-listings-content .market-listing').length) {
+                                if (!$('.market-listings-section .market-listings-content .market-listing-item').length) {
                                     showMarketListingsGenerationStatus('Markedsdata hentes...');
                                 }
                             } else if (marketData.status === 'error') {
