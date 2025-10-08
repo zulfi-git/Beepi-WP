@@ -1415,7 +1415,7 @@ jQuery(document).ready(function($) {
 
                         // Image section (left/top on mobile)
                         if (image) {
-                            const imageErrorHandler = "this.closest('.listing-card').style.display='none'";
+                            const imageErrorHandler = "this.parentElement.parentElement.style.display='none'";
                             if (listing.url) {
                                 listingHtml += `<a href="${listing.url}" target="_blank" class="listing-image-link" rel="noopener">
                                     <div class="listing-image">
