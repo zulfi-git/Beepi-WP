@@ -268,19 +268,9 @@ jQuery(document).ready(function($) {
         displayCacheNotice(response.data);
         console.log('✅ Cache notice displayed');
 
-        // Render AI summary if available (always requested for all users)
-        if (response.data.aiSummary) {
-            if (typeof renderAiSummary === 'function') {
-                renderAiSummary(response.data.aiSummary);
-            } else {
-                console.warn('AI Summary: renderAiSummary function not available');
-            }
-        }
-
-        // Render market listings if available
-        if (response.data.marketListings) {
-            renderMarketListings(response.data.marketListings);
-        }
+        // Note: AI summary and market listings are rendered by their respective
+        // polling check functions (checkAndStartAiSummaryPolling and checkAndStartMarketListingsPolling)
+        // to avoid duplicate rendering and ensure consistent handling of both 'complete' and 'generating' states
 
         // Always show basic info for free
         console.log('📝 Rendering basic info...');
