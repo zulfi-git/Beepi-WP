@@ -211,9 +211,14 @@ class SMS_Handler {
     }
 
     private function validate_order_has_lookup($order) {
-        $lookup_product_id = 62;
+        $lookup_product_ids = Vehicle_Lookup_Helpers::get_lookup_product_ids();
+
+        if (empty($lookup_product_ids)) {
+            return false;
+        }
+
         foreach ($order->get_items() as $item) {
-            if ($item->get_product_id() == $lookup_product_id) {
+            if (in_array($item->get_product_id(), $lookup_product_ids, true)) {
                 return true;
             }
         }

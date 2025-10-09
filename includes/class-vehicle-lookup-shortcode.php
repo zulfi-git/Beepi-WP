@@ -5,21 +5,34 @@ class Vehicle_Lookup_Shortcode {
     }
 
     public function render_shortcode($atts) {
-        // Extract and sanitize product_id from shortcode attributes
+        // Extract and sanitize product IDs from shortcode attributes
         $atts = shortcode_atts(array(
-            'product_id' => '62' // Default product ID
+            'product_id' => '', // Legacy attribute (basic product)
+            'basic_product_id' => '',
+            'premium_product_id' => '',
         ), $atts);
 
-        $product_id = absint($atts['product_id']);
+        $basic_attr = $atts['basic_product_id'] !== '' ? $atts['basic_product_id'] : $atts['product_id'];
+        $premium_attr = $atts['premium_product_id'];
+
+        $basic_product_id = absint($basic_attr);
+        if ($basic_product_id <= 0) {
+            $basic_product_id = Vehicle_Lookup_Helpers::get_basic_product_id();
+        }
+
+        $premium_product_id = absint($premium_attr);
+        if ($premium_product_id <= 0) {
+            $premium_product_id = Vehicle_Lookup_Helpers::get_premium_product_id();
+        }
 
         // Check for registration number in URL path or query parameter
         $reg_number = $this->get_reg_from_url();
 
         ob_start();
         echo $this->render_form_section($reg_number);
-        echo $this->render_results_section($product_id);
+        echo $this->render_results_section($basic_product_id, $premium_product_id);
         echo $this->render_footer_section();
-        echo $this->render_premium_data_script();
+        echo $this->render_premium_data_script($basic_product_id, $premium_product_id);
         echo $this->render_auto_submit_script($reg_number);
 
         return ob_get_clean();
@@ -40,12 +53,12 @@ class Vehicle_Lookup_Shortcode {
         return Vehicle_Lookup_Helpers::render_plate_input($reg_number);
     }
 
-    private function render_results_section($product_id) {
+    private function render_results_section($basic_product_id, $premium_product_id) {
         ob_start();
         ?>
         <div id="vehicle-lookup-results" style="display: none;">
             <?php echo $this->render_vehicle_header(); ?>
-            <?php echo $this->render_owner_section($product_id); ?>
+            <?php echo $this->render_owner_section($basic_product_id, $premium_product_id); ?>
             <?php echo $this->render_accordion_section(); ?>
         </div>
         <?php
@@ -56,16 +69,29 @@ class Vehicle_Lookup_Shortcode {
         return Vehicle_Lookup_Helpers::render_vehicle_header();
     }
 
-    private function render_owner_section($product_id) {
-        // Get products for both tiers
-        $basic_product = wc_get_product(62);
-        $premium_product = wc_get_product(739);
+    private function render_owner_section($basic_product_id, $premium_product_id) {
+        $basic_product = function_exists('wc_get_product') ? wc_get_product($basic_product_id) : false;
+        $premium_product = function_exists('wc_get_product') ? wc_get_product($premium_product_id) : false;
 
-        $basic_price = $basic_product ? $basic_product->get_regular_price() : '39';
-        $basic_sale = $basic_product ? $basic_product->get_sale_price() : null;
+        $basic_name = 'Basic rapport';
+        $basic_price = '39';
+        $basic_sale = null;
 
-        $premium_price = $premium_product ? $premium_product->get_regular_price() : '89';
-        $premium_sale = $premium_product ? $premium_product->get_sale_price() : null;
+        if ($basic_product) {
+            $basic_name = $basic_product->get_name() ?: $basic_name;
+            $basic_price = $basic_product->get_regular_price() ?: $basic_price;
+            $basic_sale = $basic_product->get_sale_price() ?: null;
+        }
+
+        $premium_name = 'Premium rapport';
+        $premium_price = '89';
+        $premium_sale = null;
+
+        if ($premium_product) {
+            $premium_name = $premium_product->get_name() ?: $premium_name;
+            $premium_price = $premium_product->get_regular_price() ?: $premium_price;
+            $premium_sale = $premium_product->get_sale_price() ?: null;
+        }
 
         ob_start();
         ?>
@@ -85,9 +111,9 @@ class Vehicle_Lookup_Shortcode {
                         <!-- Basic Tier -->
                         <div class="tier-card basic-tier">
                             <div class="tier-header">
-                                <h4><?php echo $basic_product ? esc_html($basic_product->get_name()) : 'Basic rapport'; ?></h4>
+                                <h4><?php echo esc_html($basic_name); ?></h4>
                                 <div class="tier-price">
-                                    <?php if ($basic_sale): ?>
+                                    <?php if (!empty($basic_sale)): ?>
                                         <span class="regular-price"><?php echo esc_html($basic_price); ?> kr</span>
                                         <span class="sale-price"><?php echo esc_html($basic_sale); ?> kr</span>
                                     <?php else: ?>
@@ -101,7 +127,11 @@ class Vehicle_Lookup_Shortcode {
                                 <div class="feature-item">✓ EU-kontroll status</div>
                             </div>
                             <div class="tier-purchase">
-                                <?php echo do_shortcode("[woo_vipps_buy_now id=62 /]"); ?>
+                                <?php if ($basic_product_id > 0): ?>
+                                    <?php echo do_shortcode('[woo_vipps_buy_now id=' . absint($basic_product_id) . ' /]'); ?>
+                                <?php else: ?>
+                                    <p class="vipps-button-missing">Produkt-ID for basic rapport er ikke konfigurert.</p>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -109,10 +139,10 @@ class Vehicle_Lookup_Shortcode {
                         <div class="tier-card premium-tier recommended">
                             <div class="tier-badge">Mest populær</div>
                             <div class="tier-header">
-                                <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
+                                <h4><?php echo esc_html($premium_name); ?></h4>
                                 <?php
                                 // Calculate percentage discount if there's a sale price
-                                if ($premium_sale && $premium_sale < $premium_price): 
+                                if (!empty($premium_sale) && $premium_sale < $premium_price):
                                     $discount_percentage = round((($premium_price - $premium_sale) / $premium_price) * 100);
                                     ?>
                                     <div class="savings-display">
@@ -136,13 +166,11 @@ class Vehicle_Lookup_Shortcode {
                                 <div class="feature-item">✓ Import</div>
                             </div>
                             <div class="tier-purchase">
-                                <?php 
-                                $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
-                                echo $vipps_button;
-                                ?>
-                                <script>
-                                window.premiumVippsBuyButton = <?php echo json_encode($vipps_button); ?>;
-                                </script>
+                                <?php if ($premium_product_id > 0): ?>
+                                    <?php echo do_shortcode('[woo_vipps_buy_now id=' . absint($premium_product_id) . ' /]'); ?>
+                                <?php else: ?>
+                                    <p class="vipps-button-missing">Produkt-ID for premium rapport er ikke konfigurert.</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -190,20 +218,31 @@ class Vehicle_Lookup_Shortcode {
         );
     }
 
-    private function render_premium_data_script() {
-        $premium_product = wc_get_product(739);
+    private function render_premium_data_script($basic_product_id, $premium_product_id) {
+        $premium_product = function_exists('wc_get_product') ? wc_get_product($premium_product_id) : false;
+        $basic_product = function_exists('wc_get_product') ? wc_get_product($basic_product_id) : false;
+
         $premium_data = array(
-            'name' => $premium_product ? $premium_product->get_name() : 'Premium Kjøretøyrapport',
-            'regular_price' => $premium_product ? $premium_product->get_regular_price() : '89',
-            'sale_price' => $premium_product ? $premium_product->get_sale_price() : null
+            'id' => $premium_product_id,
+            'name' => $premium_product && $premium_product->get_name() ? $premium_product->get_name() : 'Premium rapport',
+            'regular_price' => $premium_product && $premium_product->get_regular_price() ? $premium_product->get_regular_price() : '89',
+            'sale_price' => $premium_product && $premium_product->get_sale_price() ? $premium_product->get_sale_price() : null,
         );
 
-        $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
+        $basic_data = array(
+            'id' => $basic_product_id,
+            'name' => $basic_product && $basic_product->get_name() ? $basic_product->get_name() : 'Basic rapport',
+            'regular_price' => $basic_product && $basic_product->get_regular_price() ? $basic_product->get_regular_price() : '39',
+            'sale_price' => $basic_product && $basic_product->get_sale_price() ? $basic_product->get_sale_price() : null,
+        );
+
+        $vipps_button = $premium_product_id > 0 ? do_shortcode('[woo_vipps_buy_now id=' . absint($premium_product_id) . ' /]') : '';
 
         return '<script>
         window.vehicleLookupData = window.vehicleLookupData || {};
-        window.vehicleLookupData.premiumProduct = ' . json_encode($premium_data) . ';
-        window.premiumVippsBuyButton = ' . json_encode($vipps_button) . ';
+        window.vehicleLookupData.basicProduct = ' . wp_json_encode($basic_data) . ';
+        window.vehicleLookupData.premiumProduct = ' . wp_json_encode($premium_data) . ';
+        window.premiumVippsBuyButton = ' . wp_json_encode($vipps_button) . ';
         </script>';
     }
 

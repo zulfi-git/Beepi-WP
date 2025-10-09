@@ -169,6 +169,36 @@ class Vehicle_Lookup_Helpers {
     }
 
     /**
+     * Get configured WooCommerce product ID for the basic report tier
+     */
+    public static function get_basic_product_id() {
+        $product_id = absint(get_option('vehicle_lookup_basic_product_id', 62));
+
+        return $product_id > 0 ? $product_id : 62;
+    }
+
+    /**
+     * Get configured WooCommerce product ID for the premium report tier
+     */
+    public static function get_premium_product_id() {
+        $product_id = absint(get_option('vehicle_lookup_premium_product_id', 739));
+
+        return $product_id > 0 ? $product_id : 739;
+    }
+
+    /**
+     * Get all configured lookup product IDs
+     */
+    public static function get_lookup_product_ids() {
+        $ids = array_filter(array(
+            self::get_basic_product_id(),
+            self::get_premium_product_id(),
+        ));
+
+        return array_values(array_unique($ids));
+    }
+
+    /**
      * Validate correlation ID format from Cloudflare Worker
      * Expected format: req-{timestamp}-{random}
      */

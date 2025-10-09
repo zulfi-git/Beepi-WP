@@ -21,6 +21,24 @@ class Vehicle_Lookup_Admin_Settings {
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_rate_limit');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_daily_quota');
         register_setting('vehicle_lookup_settings', 'vehicle_lookup_log_retention');
+        register_setting(
+            'vehicle_lookup_settings',
+            'vehicle_lookup_basic_product_id',
+            array(
+                'type' => 'integer',
+                'sanitize_callback' => array($this, 'sanitize_product_id'),
+                'default' => 62,
+            )
+        );
+        register_setting(
+            'vehicle_lookup_settings',
+            'vehicle_lookup_premium_product_id',
+            array(
+                'type' => 'integer',
+                'sanitize_callback' => array($this, 'sanitize_product_id'),
+                'default' => 739,
+            )
+        );
 
         add_settings_section(
             'vehicle_lookup_api_section',
@@ -33,6 +51,13 @@ class Vehicle_Lookup_Admin_Settings {
             'vehicle_lookup_limits_section',
             'Rate Limiting & Quotas',
             null,
+            'vehicle_lookup_settings'
+        );
+
+        add_settings_section(
+            'vehicle_lookup_products_section',
+            'WooCommerce Products',
+            array($this, 'products_section_description'),
             'vehicle_lookup_settings'
         );
 
@@ -74,6 +99,22 @@ class Vehicle_Lookup_Admin_Settings {
             array($this, 'log_retention_field'),
             'vehicle_lookup_settings',
             'vehicle_lookup_limits_section'
+        );
+
+        add_settings_field(
+            'basic_product_id',
+            'Basic Report Product ID',
+            array($this, 'basic_product_field'),
+            'vehicle_lookup_settings',
+            'vehicle_lookup_products_section'
+        );
+
+        add_settings_field(
+            'premium_product_id',
+            'Premium Report Product ID',
+            array($this, 'premium_product_field'),
+            'vehicle_lookup_settings',
+            'vehicle_lookup_products_section'
         );
     }
 
@@ -144,5 +185,39 @@ class Vehicle_Lookup_Admin_Settings {
         $value = get_option('vehicle_lookup_log_retention', 90);
         echo '<input type="number" name="vehicle_lookup_log_retention" value="' . esc_attr($value) . '" min="30" max="365" />';
         echo '<p class="description">Number of days to keep lookup logs (30-365)</p>';
+    }
+
+    /**
+     * WooCommerce products section description
+     */
+    public function products_section_description() {
+        echo '<p>Configure which WooCommerce products unlock basic and premium owner information.</p>';
+    }
+
+    /**
+     * Basic product field callback
+     */
+    public function basic_product_field() {
+        $value = get_option('vehicle_lookup_basic_product_id', 62);
+        echo '<input type="number" name="vehicle_lookup_basic_product_id" value="' . esc_attr($value) . '" min="1" />';
+        echo '<p class="description">WooCommerce product ID that grants basic rapport access.</p>';
+    }
+
+    /**
+     * Premium product field callback
+     */
+    public function premium_product_field() {
+        $value = get_option('vehicle_lookup_premium_product_id', 739);
+        echo '<input type="number" name="vehicle_lookup_premium_product_id" value="' . esc_attr($value) . '" min="1" />';
+        echo '<p class="description">WooCommerce product ID that grants premium rapport access.</p>';
+    }
+
+    /**
+     * Sanitize WooCommerce product IDs
+     */
+    public function sanitize_product_id($value) {
+        $value = absint($value);
+
+        return $value > 0 ? $value : '';
     }
 }

@@ -98,6 +98,11 @@ beepi-vehicle-lookup/
 - Sanitize all inputs, escape all outputs
 - Use nonces for AJAX security
 
+### WooCommerce Configuration
+
+- Configure the WooCommerce product IDs used for the basic and premium owner reports under **Settings → Vehicle Lookup → WooCommerce Products**.
+- Defaults fall back to product IDs `62` (basic) and `739` (premium) if no values are provided.
+
 ### Testing
 
 Currently **no automated tests** exist. See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for testing recommendations.

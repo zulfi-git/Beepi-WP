@@ -38,10 +38,14 @@ class Order_Confirmation_Shortcode {
     }
 
     private function validate_order_has_lookup($order) {
-        $lookup_product_ids = [62, 739]; // Basic and Premium product IDs
+        $lookup_product_ids = Vehicle_Lookup_Helpers::get_lookup_product_ids();
+
+        if (empty($lookup_product_ids)) {
+            return false;
+        }
 
         foreach ($order->get_items() as $item) {
-            if (in_array($item->get_product_id(), $lookup_product_ids)) {
+            if (in_array($item->get_product_id(), $lookup_product_ids, true)) {
                 return true;
             }
         }
@@ -52,11 +56,14 @@ class Order_Confirmation_Shortcode {
      * Get product tier from order
      */
     private function get_order_tier($order) {
+        $premium_product_id = Vehicle_Lookup_Helpers::get_premium_product_id();
+        $basic_product_id = Vehicle_Lookup_Helpers::get_basic_product_id();
+
         foreach ($order->get_items() as $item) {
             $product_id = $item->get_product_id();
-            if ($product_id == 739) {
+            if ($premium_product_id > 0 && $product_id == $premium_product_id) {
                 return 'premium';
-            } elseif ($product_id == 62) {
+            } elseif ($basic_product_id > 0 && $product_id == $basic_product_id) {
                 return 'basic';
             }
         }
