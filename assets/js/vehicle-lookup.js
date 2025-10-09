@@ -10,6 +10,10 @@ jQuery(document).ready(function($) {
     const $vehicleInfo = $('.vehicle-info');
     const $submitButton = $form.find('button');
 
+    // Track active polling state to prevent conflicts on subsequent lookups
+    let activePollingTimeoutId = null;
+    let currentLookupRegNumber = null;
+
     // normalizePlate is now provided by normalize-plate.js
     // It's available globally as window.normalizePlate
 
@@ -66,6 +70,14 @@ jQuery(document).ready(function($) {
 
     function resetFormState() {
         console.log('🧹 Clearing previous vehicle data...');
+        
+        // Cancel any active polling to prevent conflicts with new lookup
+        if (activePollingTimeoutId) {
+            clearTimeout(activePollingTimeoutId);
+            activePollingTimeoutId = null;
+            console.log('🛑 Cancelled active polling from previous lookup');
+        }
+        
         $resultsDiv.hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
@@ -303,6 +315,9 @@ jQuery(document).ready(function($) {
 
         const regNumber = normalizePlate($('#regNumber').val());
         console.log('🔍 Vehicle lookup initiated for:', regNumber);
+
+        // Track the current lookup to prevent interference from old polling
+        currentLookupRegNumber = regNumber;
 
         resetFormState();
 
@@ -1268,6 +1283,12 @@ jQuery(document).ready(function($) {
      * Start polling for AI summary completion
      */
     function startAiSummaryPolling(regNumber, attempt = 1, maxAttempts = 15) {
+        // Check if this polling is for the current active lookup
+        if (normalizePlate(regNumber) !== currentLookupRegNumber) {
+            console.log('🛑 Stopping polling for', regNumber, '- new lookup in progress for', currentLookupRegNumber);
+            return;
+        }
+        
         // Don't poll more than maxAttempts times (15 attempts = ~30 seconds with 2s intervals)
         if (attempt > maxAttempts) {
             $('.ai-summary-section .ai-summary-content').html(
@@ -1279,7 +1300,13 @@ jQuery(document).ready(function($) {
 
         const pollDelay = attempt === 1 ? 1000 : 2000; // First poll after 1s, then every 2s
 
-        setTimeout(() => {
+        activePollingTimeoutId = setTimeout(() => {
+            // Double-check if this polling is still relevant
+            if (normalizePlate(regNumber) !== currentLookupRegNumber) {
+                console.log('🛑 Polling cancelled for', regNumber, '- lookup changed to', currentLookupRegNumber);
+                return;
+            }
+            
             $.ajax({
                 url: vehicleLookupAjax.ajaxurl,
                 type: 'POST',
@@ -1293,6 +1320,12 @@ jQuery(document).ready(function($) {
                 timeout: 10000,
                 success: function(response) {
                     console.log('Polling response received:', response);
+
+                    // Check if this response is still relevant
+                    if (normalizePlate(regNumber) !== currentLookupRegNumber) {
+                        console.log('🛑 Ignoring polling response for', regNumber, '- current lookup is', currentLookupRegNumber);
+                        return;
+                    }
 
                     if (response.success && response.data) {
                         const pollingData = response.data;
@@ -1368,18 +1401,31 @@ jQuery(document).ready(function($) {
                         }
                     } else {
                         console.log('Polling failed - no success or data:', response);
+                        
+                        // Check if this polling is still relevant before retrying
+                        if (normalizePlate(regNumber) !== currentLookupRegNumber) {
+                            console.log('🛑 Not retrying polling for', regNumber, '- lookup changed');
+                            return;
+                        }
+                        
                         // API error, retry with exponential backoff
                         const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt - 1), 10000);
-                        setTimeout(() => {
+                        activePollingTimeoutId = setTimeout(() => {
                             startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
                         }, retryDelay);
                     }
                 },
                 error: function(xhr, status, error) {
+                    // Check if this polling is still relevant before retrying
+                    if (normalizePlate(regNumber) !== currentLookupRegNumber) {
+                        console.log('🛑 Not retrying polling after error for', regNumber, '- lookup changed');
+                        return;
+                    }
+                    
                     // Handle polling errors gracefully
                     if (attempt < maxAttempts) {
                         const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt), 10000);
-                        setTimeout(() => {
+                        activePollingTimeoutId = setTimeout(() => {
                             startAiSummaryPolling(regNumber, attempt + 1, maxAttempts);
                         }, retryDelay);
                     } else {
