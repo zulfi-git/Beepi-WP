@@ -16,7 +16,7 @@ The investigation into treating every vehicle search as a "first search" (with f
 
 ### Recommendation
 
-✅ **No code changes required.** Continue with the current implementation.
+✅ **Continue with current implementation.** A duplicate rendering bug was discovered and fixed during the investigation. See [DUPLICATE_RENDERING_FIX.md](./docs/fixes/DUPLICATE_RENDERING_FIX.md) for details.
 
 ---
 
