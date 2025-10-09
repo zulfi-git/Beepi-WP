@@ -17,10 +17,12 @@
 
 ## Quick Links
 
-📋 **[Assessment](./ASSESSMENT.md)** - Current state, strengths, and known issues  
-🔧 **[Refactor Plan](./REFACTOR_PLAN.md)** - Detailed improvement roadmap with implementation phases  
-🏗️ **[Architecture](./ARCHITECTURE.md)** - System diagrams, data flows, and technical details  
-📝 **[Development Notes](./replit.md)** - Recent changes and implementation details
+📚 **[Documentation Index](./docs/README.md)** - Complete documentation navigation and index  
+📋 **[Assessment](./docs/architecture/ASSESSMENT.md)** - Current state, strengths, and known issues  
+🔧 **[Refactor Plan](./docs/refactoring/REFACTOR_PLAN.md)** - Detailed improvement roadmap with implementation phases  
+🏗️ **[Architecture](./docs/architecture/ARCHITECTURE.md)** - System diagrams, data flows, and technical details  
+📝 **[Development Notes](./docs/replit.md)** - Recent changes and implementation details  
+📜 **[Changelog](./CHANGELOG.md)** - Version history and all notable changes
 
 ---
 
@@ -78,14 +80,15 @@ beepi-vehicle-lookup/
 │   │   ├── vehicle-lookup.css      # Frontend styles (1,788 lines) ⚠️
 │   │   └── admin.css               # Admin styles (801 lines)
 │   └── images/                     # Logos and icons
-├── ASSESSMENT.md               # Current state overview
-├── REFACTOR_PLAN.md            # Improvement roadmap
-├── ARCHITECTURE.md             # Technical documentation
-├── replit.md                   # Development notes
-└── README.md                   # This file
+├── docs/                          # All documentation (organized)
+│   ├── README.md                  # Documentation index
+│   ├── architecture/              # Architecture & analysis
+│   ├── refactoring/               # Refactor plans & completions
+│   └── fixes/                     # Bug fixes & improvements
+└── README.md                      # This file
 ```
 
-⚠️ = Files identified for potential refactoring (see [REFACTOR_PLAN.md](./REFACTOR_PLAN.md))
+⚠️ = Files identified for potential refactoring (see [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md))
 
 ---
 
@@ -100,7 +103,7 @@ beepi-vehicle-lookup/
 
 ### Testing
 
-Currently **no automated tests** exist. See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for testing recommendations.
+Currently **no automated tests** exist. See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for testing recommendations.
 
 Manual testing files:
 - `test-structured-errors.html` - Error handling scenarios
@@ -122,7 +125,7 @@ Manual testing files:
 - Add local logo fallbacks (1 day)
 - Extract AJAX handlers (2 days)
 
-See [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) for complete roadmap.
+See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for complete roadmap.
 
 ---
 
@@ -170,27 +173,28 @@ Internal development only.
 
 ## Version History
 
-### v7.0.6 (Current)
+See **[CHANGELOG.md](./CHANGELOG.md)** for complete version history, bug fixes, and improvements.
+
+### Recent Versions
+
+#### v7.0.6 (Current)
 - Version bump
 
-### v7.0.5
+#### v7.0.5
 - Version bump
 
-### v7.0.4
+#### v7.0.4
 - Version bump
 
-### v7.0.3
+#### v7.0.3
 - Unified design system with CSS variables
 - Mobile-first UI improvements
 - Enhanced error handling with correlation IDs
 - AI summary integration
 - Market listings from Finn.no
 
-### Previous Versions
-See git history for detailed changelog.
-
 ---
 
-**Last Updated**: October 2024  
+**Last Updated**: January 2025  
 **Maintainer**: Internal Beepi.no team  
 **Status**: ✅ Production (with known improvement opportunities)

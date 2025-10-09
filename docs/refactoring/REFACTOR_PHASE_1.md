@@ -9,7 +9,7 @@
 
 ## Overview
 
-Phase 1 focuses on addressing immediate technical debt and performance issues that are already documented in ASSESSMENT.md. These changes are low-risk and provide immediate benefits without major restructuring.
+Phase 1 focuses on addressing immediate technical debt and performance issues that are already documented in [ASSESSMENT.md](../architecture/ASSESSMENT.md). These changes are low-risk and provide immediate benefits without major restructuring.
 
 ---
 
@@ -225,7 +225,7 @@ All dashboard metrics should show live data with clear cache indicators.
 
 ### Documentation Updates
 
-- [ ] Update ASSESSMENT.md to mark completed quick fixes
+- [ ] Update [ASSESSMENT.md](../architecture/ASSESSMENT.md) to mark completed quick fixes
 - [ ] Add inline comments categorizing methods for split
 - [ ] Document any discovered edge cases
 

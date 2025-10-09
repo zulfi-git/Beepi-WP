@@ -312,7 +312,7 @@ When implementing this refactoring:
 **Questions about the plan?**
 - Check the Q&A section in ADMIN_REFACTOR_PLAN.md
 - Review the specific phase document
-- Check existing documentation (ASSESSMENT.md, ARCHITECTURE.md)
+- Check existing documentation ([ASSESSMENT.md](../architecture/ASSESSMENT.md), [ARCHITECTURE.md](../architecture/ARCHITECTURE.md))
 
 **Issues during implementation?**
 - Refer to the Risk Assessment section
@@ -383,9 +383,10 @@ By implementing this refactoring, you'll learn:
 ## 📚 Related Documentation
 
 - [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) - Original comprehensive refactor plan
-- [ASSESSMENT.md](./ASSESSMENT.md) - Codebase assessment
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
-- [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) - Previous implementations
+- [ASSESSMENT.md](../architecture/ASSESSMENT.md) - Codebase assessment
+- [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) - System architecture
+- [PHASE_1_COMPLETION.md](./PHASE_1_COMPLETION.md) - Phase 1 completion report
+- [PHASE_2_COMPLETION.md](./PHASE_2_COMPLETION.md) - Phase 2 completion report
 
 ---
 
