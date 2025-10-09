@@ -57,6 +57,23 @@ This directory contains all documentation for the Beepi Vehicle Lookup WordPress
 
 #### Other Fixes
 - **[Cache Removal](./fixes/CACHE_REMOVAL_SUMMARY.md)** - Cache removal implementation
+- **[Duplicate Rendering Fix](./fixes/DUPLICATE_RENDERING_FIX.md)** - Market listings rendering issue resolution
+
+### Technical Investigations
+
+Comprehensive analyses of system behavior and design decisions:
+
+- **[Investigations Directory](./investigations/README.md)** - Index of all technical investigations
+- **[First Search Treatment Investigation](./investigations/FIRST_SEARCH_TREATMENT_INVESTIGATION.md)** - State management analysis (29KB)
+- **[Investigation Summary](./investigations/INVESTIGATION_SUMMARY.md)** - Executive summary
+- **[Action Summary](./investigations/ACTION_SUMMARY.md)** - Complete action summary
+
+### Test Files
+
+Manual test files and demonstrations:
+
+- **[Tests Directory](./tests/README.md)** - Index of all test files
+- HTML test files for manual testing and verification of fixes
 
 ---
 
@@ -65,6 +82,7 @@ This directory contains all documentation for the Beepi Vehicle Lookup WordPress
 ```
 docs/
 ├── README.md                          # This file - documentation index
+├── ORGANIZATION_SUMMARY.md            # Documentation organization summary
 ├── replit.md                          # Development notes
 ├── architecture/                      # System architecture & analysis
 │   ├── ARCHITECTURE.md
@@ -81,22 +99,36 @@ docs/
 │   ├── PHASE_1_COMPLETION.md
 │   ├── PHASE_2_COMPLETION.md
 │   └── CSS_MODULARIZATION_SUMMARY.md
-└── fixes/                             # Bug fixes & improvements
-    ├── ai-summary-404-fix.md
-    ├── ai-summary-404-fix-flow.md
-    ├── console-logging-fix.md
-    ├── CONSOLE_LOGGING_FIX.md
-    ├── CONSOLE_LOGGING_QUICKSTART.md
-    ├── polling-conflict-fix.md
-    ├── POLLING_CONFLICT_FIX.md
-    ├── POLLING_FIX_VISUAL_GUIDE.md
-    ├── QUICK_REFERENCE_POLLING_FIX.md
-    ├── second-viewing-fix.md
-    ├── SECOND_VIEWING_FIX.md
-    ├── BEFORE_AFTER_COMPARISON.md
-    ├── SELECTOR_FIX_DOCUMENTATION.md
-    ├── SELECTOR_FIX_SUMMARY.md
-    └── CACHE_REMOVAL_SUMMARY.md
+├── fixes/                             # Bug fixes & improvements
+│   ├── ai-summary-404-fix.md
+│   ├── ai-summary-404-fix-flow.md
+│   ├── console-logging-fix.md
+│   ├── CONSOLE_LOGGING_FIX.md
+│   ├── CONSOLE_LOGGING_QUICKSTART.md
+│   ├── polling-conflict-fix.md
+│   ├── POLLING_CONFLICT_FIX.md
+│   ├── POLLING_FIX_VISUAL_GUIDE.md
+│   ├── QUICK_REFERENCE_POLLING_FIX.md
+│   ├── second-viewing-fix.md
+│   ├── SECOND_VIEWING_FIX.md
+│   ├── BEFORE_AFTER_COMPARISON.md
+│   ├── SELECTOR_FIX_DOCUMENTATION.md
+│   ├── SELECTOR_FIX_SUMMARY.md
+│   ├── CACHE_REMOVAL_SUMMARY.md
+│   └── DUPLICATE_RENDERING_FIX.md
+├── investigations/                    # Technical investigations & analyses
+│   ├── README.md
+│   ├── FIRST_SEARCH_TREATMENT_INVESTIGATION.md
+│   ├── INVESTIGATION_SUMMARY.md
+│   ├── ACTION_SUMMARY.md
+│   └── QUICK_REFERENCE.md
+└── tests/                             # Test files & demonstrations
+    ├── README.md
+    ├── ai-summary-test.html
+    ├── test-ai-summary-404-fix.html
+    ├── test-second-viewing-console.html
+    ├── test-structured-errors.html
+    └── investigation-visual-summary.html
 ```
 
 ---
@@ -122,6 +154,12 @@ docs/
 ### For Testing
 - See **[Testing Guide](./architecture/TESTING_GUIDE.md)**
 - Check individual fix documentation for test cases
+- Use **[test files](./tests/)** for manual verification
+
+### For Technical Investigations
+- See **[Investigations Directory](./investigations/)** for comprehensive analyses
+- Review investigation summaries for quick understanding
+- Reference detailed investigations for implementation guidance
 
 ---
 

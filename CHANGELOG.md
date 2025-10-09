@@ -47,8 +47,13 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
   - `docs/architecture/` - System architecture and analysis
   - `docs/refactoring/` - Refactoring plans and completion reports
   - `docs/fixes/` - Bug fixes and improvements
+  - `docs/investigations/` - Technical investigations and analyses
+  - `docs/tests/` - Test files and demonstrations
 - Created comprehensive documentation index at `docs/README.md`
 - Updated all documentation links in README.md
+- Moved investigation summaries from root to `docs/investigations/`
+- Moved test HTML files from root to `docs/tests/`
+- Root directory now contains only essential files (README.md, CHANGELOG.md)
 
 ---
 
