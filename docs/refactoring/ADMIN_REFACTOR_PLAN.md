@@ -526,9 +526,10 @@ tests/
 
 ### Existing Documents
 - [REFACTOR_PLAN.md](./REFACTOR_PLAN.md) - Original refactor plan
-- [ASSESSMENT.md](./ASSESSMENT.md) - Codebase assessment
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
-- [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) - Previous implementations
+- [ASSESSMENT.md](../architecture/ASSESSMENT.md) - Codebase assessment
+- [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) - System architecture
+- [PHASE_1_COMPLETION.md](./PHASE_1_COMPLETION.md) - Phase 1 completion report
+- [PHASE_2_COMPLETION.md](./PHASE_2_COMPLETION.md) - Phase 2 completion report
 
 ### Code Documentation
 - Inline comments for complex logic
