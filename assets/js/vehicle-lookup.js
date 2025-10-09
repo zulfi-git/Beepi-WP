@@ -65,6 +65,7 @@ jQuery(document).ready(function($) {
     };
 
     function resetFormState() {
+        console.log('🧹 Clearing previous vehicle data...');
         $resultsDiv.hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
@@ -81,15 +82,19 @@ jQuery(document).ready(function($) {
         $('.info-table').empty();
         // Clear owner history content to prevent stacking - unlike other sections that use .info-table class, this div has a different structure and needs explicit clearing
         $('#eierhistorikk-content').empty();
+        console.log('✅ Previous vehicle data cleared');
     }
 
     function displayCacheNotice(responseData) {
+        console.log('💾 Checking cache status...');
         // Remove any existing cache notice
         $('.cache-notice').remove();
 
         // Check if data includes cache information
         const cacheTime = responseData.cache_time;
         const isCached = responseData.is_cached || false;
+        
+        console.log('Cache info - isCached:', isCached, 'cacheTime:', cacheTime);
 
         let noticeText = '';
         let noticeClass = 'fresh';
@@ -237,6 +242,10 @@ jQuery(document).ready(function($) {
     }
 
     function processVehicleData(response, regNumber) {
+        console.log('📊 Processing vehicle data for:', regNumber);
+        console.log('Data cached:', response.data.is_cached || false);
+        console.log('Cache time:', response.data.cache_time || 'N/A');
+        
         const vehicleData = response.data.responser[0].kjoretoydata;
 
         setRegNumberCookie(regNumber);
@@ -245,6 +254,7 @@ jQuery(document).ready(function($) {
 
         // Show cache status notice
         displayCacheNotice(response.data);
+        console.log('✅ Cache notice displayed');
 
         // Render AI summary if available (always requested for all users)
         if (response.data.aiSummary) {
@@ -261,30 +271,38 @@ jQuery(document).ready(function($) {
         }
 
         // Always show basic info for free
+        console.log('📝 Rendering basic info...');
         renderBasicInfo(vehicleData);
+        console.log('📝 Rendering registration info...');
         renderRegistrationInfo(vehicleData);
 
         // Only show full owner info if user has access
+        console.log('👤 Rendering owner info...');
         renderOwnerInfo(vehicleData);
+        console.log('🔧 Rendering technical info...');
         renderTechnicalInfo(vehicleData);
 
         // Populate owner history section
+        console.log('📜 Populating owner history table...');
         populateOwnerHistoryTable();
 
         // No need to manage accordion open/close - all sections are always visible
         $resultsDiv.show();
+        console.log('✅ Results displayed');
 
         $('html, body').animate({
             scrollTop: $('.vehicle-lookup-container').offset().top - 20
         }, 500);
 
         checkEUAnchor();
+        console.log('🎉 Vehicle lookup complete for:', regNumber);
     }
 
     $form.on('submit', function(e) {
         e.preventDefault();
 
         const regNumber = normalizePlate($('#regNumber').val());
+        console.log('🔍 Vehicle lookup initiated for:', regNumber);
 
         resetFormState();
 
@@ -312,7 +330,10 @@ jQuery(document).ready(function($) {
             contentType: 'application/x-www-form-urlencoded',
             timeout: 15000,
             success: function(response) {
+                console.log('📡 AJAX response received');
+                console.log('Success:', response.success);
                 if (response.success && response.data) {
+                    console.log('✅ Valid vehicle data received');
                     displayQuota(response.data.gjenstaendeKvote);
 
                     // Check if we have valid vehicle data structure
@@ -332,14 +353,18 @@ jQuery(document).ready(function($) {
 
                     // Clear retry counters on successful lookup
                     clearRetryCounters(regNumber);
+                    console.log('✅ Retry counters cleared');
 
                     // Phase 1: Process vehicle data immediately
+                    console.log('🚀 Phase 1: Processing vehicle data immediately');
                     processVehicleData(response, regNumber);
 
                     // Phase 2: Check for AI summary status and start polling if needed
+                    console.log('🤖 Phase 2: Checking AI summary status');
                     checkAndStartAiSummaryPolling(response.data, regNumber);
 
                     // Phase 3: Check for market listings status and start polling if needed
+                    console.log('🏪 Phase 3: Checking market listings status');
                     checkAndStartMarketListingsPolling(response.data, regNumber);
                 } else {
                     // This handles cases where success is false - check for structured error data
@@ -573,7 +598,11 @@ jQuery(document).ready(function($) {
     }
 
     function renderOwnerInfo(vehicleData) {
-        if (!vehicleData.eierskap?.eier) return;
+        console.log('  → renderOwnerInfo: Starting...');
+        if (!vehicleData.eierskap?.eier) {
+            console.log('  → renderOwnerInfo: No owner data available');
+            return;
+        }
 
         const hasAccess = checkOwnerAccessToken(vehicleData.kjoretoyId?.kjennemerke);
         const $ownerTable = $('.owner-info-table');
@@ -599,10 +628,13 @@ jQuery(document).ready(function($) {
                     .join('')
             );
             $purchaseDiv.hide();
+            console.log('  → renderOwnerInfo: Owner data displayed (access granted)');
         } else {
             $ownerTable.html('');
             $purchaseDiv.show();
+            console.log('  → renderOwnerInfo: Purchase prompt displayed (no access)');
         }
+        console.log('  → renderOwnerInfo: Complete');
     }
 
     function checkOwnerAccessToken(regNumber) {
@@ -702,6 +734,7 @@ jQuery(document).ready(function($) {
 
     // Function to populate the owner history table
     function populateOwnerHistoryTable() {
+        console.log('  → populateOwnerHistoryTable: Starting...');
         const regNumber = normalizePlate($('#regNumber').val());
         const $ownerHistoryDiv = $('#eierhistorikk-content');
 
@@ -750,6 +783,7 @@ jQuery(document).ready(function($) {
         html += '</div>';
 
         $ownerHistoryDiv.html(html);
+        console.log('  → populateOwnerHistoryTable: Complete');
     }
 
     // Check URL parameters for successful payment
@@ -779,9 +813,13 @@ jQuery(document).ready(function($) {
     });
 
     function renderBasicInfo(vehicleData) {
+        console.log('  → renderBasicInfo: Starting...');
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
         const generelt = tekniskeData?.generelt;
-        if (!generelt) return;
+        if (!generelt) {
+            console.log('  → renderBasicInfo: No data available');
+            return;
+        }
 
         const basicInfo = {
             'Merke': generelt.merke?.[0]?.merke || '---',
@@ -816,9 +854,11 @@ jQuery(document).ready(function($) {
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
+        console.log('  → renderBasicInfo: Complete');
     }
 
     function renderTechnicalInfo(vehicleData) {
+        console.log('  → renderTechnicalInfo: Starting...');
         const tekniskeData = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData;
         const engineData = tekniskeData?.motorOgDrivverk;
         const dekkOgFelg = tekniskeData?.dekkOgFelg?.akselDekkOgFelgKombinasjon?.[0]?.akselDekkOgFelg;
@@ -913,10 +953,12 @@ jQuery(document).ready(function($) {
                 .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
                 .join('')
         );
+        console.log('  → renderTechnicalInfo: Complete');
     }
 
 
     function renderRegistrationInfo(vehicleData) {
+        console.log('  → renderRegistrationInfo: Starting...');
         const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
         let euControlText = formatDate(euDeadline);
         let euControlClass = '';
@@ -963,6 +1005,7 @@ jQuery(document).ready(function($) {
             .join('');
 
         $('.registration-info-table').html(tableHtml);
+        console.log('  → renderRegistrationInfo: Complete');
     }
 
     function extractBasicInfo(vehicleData) {
