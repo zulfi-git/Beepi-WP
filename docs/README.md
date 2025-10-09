@@ -1,6 +1,6 @@
 # Documentation Index
 
-This directory contains all documentation for the Beepi Vehicle Lookup WordPress plugin.
+Documentation for Beepi Vehicle Lookup WordPress plugin.
 
 ## 📚 Quick Navigation
 
@@ -82,7 +82,6 @@ Manual test files and demonstrations:
 ```
 docs/
 ├── README.md                          # This file - documentation index
-├── ORGANIZATION_SUMMARY.md            # Documentation organization summary
 ├── replit.md                          # Development notes
 ├── architecture/                      # System architecture & analysis
 │   ├── ARCHITECTURE.md
@@ -121,62 +120,56 @@ docs/
 │   ├── FIRST_SEARCH_TREATMENT_INVESTIGATION.md
 │   ├── INVESTIGATION_SUMMARY.md
 │   ├── ACTION_SUMMARY.md
-│   └── QUICK_REFERENCE.md
+│   ├── QUICK_REFERENCE.md
+│   └── FIRST_SEARCH_VISUAL_SUMMARY.md
 └── tests/                             # Test files & demonstrations
     ├── README.md
     ├── ai-summary-test.html
     ├── test-ai-summary-404-fix.html
     ├── test-second-viewing-console.html
-    ├── test-structured-errors.html
-    └── investigation-visual-summary.html
+    └── test-structured-errors.html
 ```
 
 ---
 
 ## 🔍 Finding What You Need
 
-### For New Developers
-1. Start with **[Main README](../README.md)** for plugin overview
-2. Read **[Architecture](./architecture/ARCHITECTURE.md)** for system understanding
-3. Check **[Assessment](./architecture/ASSESSMENT.md)** for current state
-4. Review **[Development Notes](./replit.md)** for recent changes
+### Starting Out
+1. **[Main README](../README.md)** - Plugin overview
+2. **[Architecture](./architecture/ARCHITECTURE.md)** - System design
+3. **[Assessment](./architecture/ASSESSMENT.md)** - Current state
+4. **[Development Notes](./replit.md)** - Recent changes
 
-### For Bug Fixes
+### Working on Code
 - Check **[fixes/](./fixes/)** directory for similar issues
 - Each fix has a summary file for quick reference
 - Detailed fix files contain full implementation details
 
-### For Refactoring Work
-- Start with **[Refactor Plan](./refactoring/REFACTOR_PLAN.md)**
-- Check phase documents for specific areas
-- Review completion reports to see what's already done
+### Refactoring
+- **[Refactor Plan](./refactoring/REFACTOR_PLAN.md)** - Main roadmap
+- Phase documents for specific areas
+- Completion reports
 
-### For Testing
-- See **[Testing Guide](./architecture/TESTING_GUIDE.md)**
-- Check individual fix documentation for test cases
-- Use **[test files](./tests/)** for manual verification
+### Testing
+- **[Testing Guide](./architecture/TESTING_GUIDE.md)**
+- Individual fix docs for test cases
+- **[test files](./tests/)** for manual verification
 
-### For Technical Investigations
-- See **[Investigations Directory](./investigations/)** for comprehensive analyses
-- Review investigation summaries for quick understanding
-- Reference detailed investigations for implementation guidance
+### Investigations
+- **[Investigations Directory](./investigations/)** - Technical analyses
+- Investigation summaries
+- Detailed implementation findings
 
 ---
 
 ## 📝 Documentation Conventions
 
 ### File Naming
-- **Summaries**: Use `*-fix.md` or `*_SUMMARY.md` for quick overviews
-- **Detailed docs**: Full caps for detailed technical docs (e.g., `CONSOLE_LOGGING_FIX.md`)
-- **Visual aids**: Include "VISUAL" or "FLOW" in name for diagram-heavy docs
+- **Summaries**: `*-fix.md` or `*_SUMMARY.md` for quick overviews
+- **Detailed docs**: Full caps for technical docs (e.g., `CONSOLE_LOGGING_FIX.md`)
+- **Visual aids**: Include "VISUAL" or "FLOW" in name for diagram docs
 
 ### Structure
-- Each fix should have at least a summary file
-- Complex fixes may have multiple supporting documents
+- Each fix has at least a summary file
+- Complex fixes have multiple supporting docs
 - Keep summaries concise (< 300 lines)
-- Put detailed explanations in separate files
-
----
-
-**Last Updated**: January 2025  
-**Maintainer**: Beepi.no Development Team

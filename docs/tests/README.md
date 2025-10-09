@@ -1,6 +1,6 @@
 # Test Files
 
-This directory contains HTML test files for manual testing and demonstration of fixes and features.
+HTML test files for manual testing and verification of fixes.
 
 ## Available Test Files
 
@@ -12,27 +12,20 @@ This directory contains HTML test files for manual testing and demonstration of 
 - **[test-second-viewing-console.html](./test-second-viewing-console.html)** - Test second viewing console behavior
 - **[test-structured-errors.html](./test-structured-errors.html)** - Test structured error handling
 
-### Investigation Visualizations
-- **[investigation-visual-summary.html](./investigation-visual-summary.html)** - Visual presentation of first search treatment investigation
-
 ---
 
-## How to Use These Files
+## How to Use
 
-1. Open the HTML files in a web browser
-2. Test functionality in isolation from the WordPress environment
-3. Use browser developer tools to monitor console output and network requests
+1. Open HTML files in a web browser
+2. Test functionality in isolation from WordPress
+3. Use browser developer tools to monitor console and network
 4. Verify fixes and behavior changes
 
 ---
 
 ## Related Documentation
 
-- **[Fixes Documentation](../fixes/)** - Detailed documentation of fixes
-- **[Investigations](../investigations/)** - Technical investigations and analyses
-- **[Architecture](../architecture/)** - System architecture and design
+- **[Fixes](../fixes/)** - Fix documentation
+- **[Investigations](../investigations/)** - Technical investigations
+- **[Architecture](../architecture/)** - System architecture
 
----
-
-**Last Updated:** January 2025  
-**Maintainer:** Beepi.no Development Team
