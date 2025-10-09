@@ -167,39 +167,9 @@ See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for
 **Proprietary Software** - © 2025 Beepi.no  
 Internal development only.
 
-### Internal Contributors
-- Follow the refactor plan when making changes
-- Update documentation for API changes
-
 ---
 
 ## Version History
 
 See **[CHANGELOG.md](./CHANGELOG.md)** for complete version history, bug fixes, and improvements.
 
-### Recent Versions
-
-#### v7.0.7 (Current)
-- Version bump
-
-#### v7.0.6
-- Version bump
-
-#### v7.0.5
-- Version bump
-
-#### v7.0.4
-- Version bump
-
-#### v7.0.3
-- Unified design system with CSS variables
-- Mobile-first UI improvements
-- Enhanced error handling with correlation IDs
-- AI summary integration
-- Market listings from Finn.no
-
----
-
-**Last Updated**: January 2025  
-**Maintainer**: Internal Beepi.no team  
-**Status**: ✅ Production (with known improvement opportunities)
