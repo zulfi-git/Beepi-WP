@@ -380,6 +380,8 @@ jQuery(document).ready(function($) {
 
                     // Phase 3: Check for market listings status and start polling if needed
                     console.log('🏪 Phase 3: Checking market listings status');
+                    console.log('Response data keys:', Object.keys(response.data));
+                    console.log('Market listings in response:', response.data.marketListings);
                     checkAndStartMarketListingsPolling(response.data, regNumber);
                 } else {
                     // This handles cases where success is false - check for structured error data
@@ -1441,6 +1443,8 @@ jQuery(document).ready(function($) {
 
     // Function to render market listings
     function renderMarketListings(marketData) {
+        console.log('🎨 Rendering market listings with status:', marketData?.status, 'listings count:', marketData?.listings?.length);
+        
         // Remove any existing market listings sections and create new one
         $('.market-listings-section').remove();
         $('.market-listings-error').remove();
@@ -1478,6 +1482,8 @@ jQuery(document).ready(function($) {
                 $marketContent.append($statusHeader);
             } else if (marketData.status === 'complete') {
                 // Show completed market listings
+                console.log('Market listings complete - listings present:', !!marketData.listings, 'is array:', Array.isArray(marketData.listings), 'length:', marketData.listings?.length);
+                
                 if (marketData.listings && Array.isArray(marketData.listings) && marketData.listings.length > 0) {
                     // Display listings directly without wrapper sections
                     const $listingsList = $('<div class="market-listings">');
@@ -1610,12 +1616,18 @@ jQuery(document).ready(function($) {
 
     // Function to check and start market listings polling
     function checkAndStartMarketListingsPolling(data, regNumber) {
+        console.log('🏪 Checking market listings data:', data.marketListings ? 'Present' : 'Missing');
+        
         if (!data.marketListings) {
+            console.log('⚠️ No market listings data in response');
             return; // No market listings data
         }
 
+        console.log('Market listings status:', data.marketListings.status);
+        
         // If market listings are already complete, render them immediately
         if (data.marketListings.status === 'complete' && data.marketListings.listings) {
+            console.log('✅ Market listings complete, rendering immediately');
             renderMarketListings(data.marketListings);
             return;
         }
