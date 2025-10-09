@@ -1370,7 +1370,7 @@ jQuery(document).ready(function($) {
                             console.log('Market listings data:', pollingData.marketListings);
                             const marketData = pollingData.marketListings;
 
-                            if (marketData.status === 'complete' && marketData.listings) {
+                            if (marketData.status === 'complete') {
                                 // Market listings are ready! Only render if not already rendered
                                 if (!$('.market-listings-section .market-listings-content .market-listing-item').length) {
                                     renderMarketListings(marketData);
@@ -1593,6 +1593,11 @@ jQuery(document).ready(function($) {
                     const $noDataText = $('<p class="market-no-data">').text('Ingen lignende kjøretøy funnet i markedet for øyeblikket.');
                     $marketContent.append($noDataText);
                 }
+            } else {
+                // Handle error status or unknown status
+                console.log('Market listings unexpected status:', marketData.status);
+                const $errorText = $('<p class="market-no-data">').text('Kunne ikke hente markedsdata for øyeblikket.');
+                $marketContent.append($errorText);
             }
 
             $sectionContent.append($marketContent);
@@ -1625,8 +1630,8 @@ jQuery(document).ready(function($) {
 
         console.log('Market listings status:', data.marketListings.status);
         
-        // If market listings are already complete, render them immediately
-        if (data.marketListings.status === 'complete' && data.marketListings.listings) {
+        // If market listings are already complete, render them immediately (even if empty)
+        if (data.marketListings.status === 'complete') {
             console.log('✅ Market listings complete, rendering immediately');
             renderMarketListings(data.marketListings);
             return;
