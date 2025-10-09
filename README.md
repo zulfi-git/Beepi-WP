@@ -84,7 +84,9 @@ beepi-vehicle-lookup/
 │   ├── README.md                  # Documentation index
 │   ├── architecture/              # Architecture & analysis
 │   ├── refactoring/               # Refactor plans & completions
-│   └── fixes/                     # Bug fixes & improvements
+│   ├── fixes/                     # Bug fixes & improvements
+│   ├── investigations/            # Technical investigations
+│   └── tests/                     # Test files & demonstrations
 └── README.md                      # This file
 ```
 

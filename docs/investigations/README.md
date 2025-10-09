@@ -22,6 +22,11 @@ Comprehensive investigation into whether Beepi-WP should treat every vehicle sea
 
 **Recommendation:** Continue with current implementation. System working as intended.
 
+**Supporting Documents:**
+- **[Investigation Summary](./INVESTIGATION_SUMMARY.md)** - Executive summary for stakeholders
+- **[Action Summary](./ACTION_SUMMARY.md)** - Complete summary of investigation and actions taken
+- **[Quick Reference](./QUICK_REFERENCE.md)** - Quick lookup guide for code locations
+
 ---
 
 ## How to Use This Directory
@@ -77,4 +82,14 @@ To add a new investigation:
 
 ---
 
-**Last Updated:** 2024-10-09
+## Files in This Directory
+
+- **FIRST_SEARCH_TREATMENT_INVESTIGATION.md** - Full technical investigation (29KB)
+- **INVESTIGATION_SUMMARY.md** - Executive summary for stakeholders
+- **ACTION_SUMMARY.md** - Complete action summary and recommendations
+- **QUICK_REFERENCE.md** - Quick reference guide with code locations
+- **README.md** - This file
+
+---
+
+**Last Updated:** January 2025
