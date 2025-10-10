@@ -31,6 +31,11 @@ Documentation for Beepi Vehicle Lookup WordPress plugin.
 
 ### Bug Fixes & Improvements
 
+**See [fixes/README.md](./fixes/README.md) for complete organized index**
+
+#### Market Listings Issues
+- **[Market Listings Second View Fix](./fixes/MARKET_LISTINGS_SECOND_VIEW_FIX.md)** - Empty content on second lookup ✅ Fixed
+
 #### AI Summary 404 Fix
 - **[Summary](./fixes/ai-summary-404-fix.md)** - Quick overview of the fix
 - **[Flow Diagram](./fixes/ai-summary-404-fix-flow.md)** - Visual documentation with diagrams
@@ -99,6 +104,8 @@ docs/
 │   ├── PHASE_2_COMPLETION.md
 │   └── CSS_MODULARIZATION_SUMMARY.md
 ├── fixes/                             # Bug fixes & improvements
+│   ├── README.md                     # Organized index of all fixes
+│   ├── MARKET_LISTINGS_SECOND_VIEW_FIX.md  # Latest fix
 │   ├── ai-summary-404-fix.md
 │   ├── ai-summary-404-fix-flow.md
 │   ├── console-logging-fix.md
