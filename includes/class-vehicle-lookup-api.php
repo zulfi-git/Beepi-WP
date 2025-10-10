@@ -165,6 +165,28 @@ class VehicleLookupAPI {
             );
         }
 
+        // Handle legacy nested error response format for backward compatibility with older workers
+        // Legacy format: { "error": { "code": "...", "message": "...", "correlationId": "..." } }
+        if (isset($data['error']) && is_array($data['error'])) {
+            $error_obj = $data['error'];
+            $error_message = isset($error_obj['message']) ? $error_obj['message'] : 'An error occurred';
+            $error_code = isset($error_obj['code']) ? $error_obj['code'] : 'UNKNOWN_ERROR';
+            $correlation_id = isset($error_obj['correlationId']) ? $error_obj['correlationId'] : null;
+            
+            // Validate correlation ID format if present
+            if ($correlation_id && !Vehicle_Lookup_Helpers::is_valid_correlation_id($correlation_id)) {
+                error_log('Invalid correlation ID format: ' . $correlation_id);
+                $correlation_id = null;
+            }
+            
+            return array(
+                'error' => $error_message,
+                'failure_type' => $this->map_error_code_to_failure_type($error_code),
+                'code' => $error_code,
+                'correlation_id' => $correlation_id
+            );
+        }
+
         // Handle HTTP error status codes for non-structured responses
         if ($status_code !== 200) {
             // Special handling for rate limiting
@@ -301,6 +323,22 @@ class VehicleLookupAPI {
             );
         }
 
+        // Handle legacy nested error response format for backward compatibility with older workers
+        // Legacy format: { "error": { "code": "...", "message": "...", "correlationId": "..." } }
+        if (isset($data['error']) && is_array($data['error'])) {
+            $error_obj = $data['error'];
+            $error_message = isset($error_obj['message']) ? $error_obj['message'] : 'AI generation failed';
+            $error_code = isset($error_obj['code']) ? $error_obj['code'] : 'AI_GENERATION_FAILED';
+            $correlation_id = isset($error_obj['correlationId']) ? $error_obj['correlationId'] : null;
+            
+            return array(
+                'error' => $error_message,
+                'failure_type' => $this->map_error_code_to_failure_type($error_code),
+                'code' => $error_code,
+                'correlation_id' => $correlation_id
+            );
+        }
+
         // Handle HTTP error status codes
         if ($status_code !== 200) {
             // This handling is specific to the AI summary polling endpoint:
@@ -395,6 +433,22 @@ class VehicleLookupAPI {
                 'code' => $data['code'],
                 'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null,
                 'timestamp' => isset($data['timestamp']) ? $data['timestamp'] : null
+            );
+        }
+
+        // Handle legacy nested error response format for backward compatibility with older workers
+        // Legacy format: { "error": { "code": "...", "message": "...", "correlationId": "..." } }
+        if (isset($data['error']) && is_array($data['error'])) {
+            $error_obj = $data['error'];
+            $error_message = isset($error_obj['message']) ? $error_obj['message'] : 'Market listings generation failed';
+            $error_code = isset($error_obj['code']) ? $error_obj['code'] : 'MARKET_SEARCH_FAILED';
+            $correlation_id = isset($error_obj['correlationId']) ? $error_obj['correlationId'] : null;
+            
+            return array(
+                'error' => $error_message,
+                'failure_type' => $this->map_error_code_to_failure_type($error_code),
+                'code' => $error_code,
+                'correlation_id' => $correlation_id
             );
         }
 
