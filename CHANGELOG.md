@@ -4,19 +4,6 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
-## [7.0.9] - 2025-10-10
-
-### Changed
-- Version bump for documentation housekeeping
-
-### Documentation
-- Removed legacy duplicate fix documentation files
-- Converted HTML test files to Markdown for better GitHub browsing
-- Updated maintainer information for solo project
-- Cleaned up documentation structure
-
----
-
 ## [7.0.8] - 2025
 
 ### Changed
@@ -270,5 +257,5 @@ This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-**Maintainer**: Beepi.no  
-**Last Updated**: October 2025
+**Maintainer**: Beepi.no Development Team  
+**Last Updated**: January 2025

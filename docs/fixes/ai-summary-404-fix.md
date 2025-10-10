@@ -14,7 +14,7 @@
 - `includes/class-vehicle-lookup-api.php` (25 lines added)
 
 ### New Documentation Files
-- `test-ai-summary-404-fix.md` (converted to Markdown)
+- `test-ai-summary-404-fix.html` (317 lines)
 - `AI_SUMMARY_404_FIX_FLOW.md` (298 lines)
 
 **Total:** 640 insertions, 0 deletions
@@ -143,8 +143,8 @@ AI Summary data: {status: 'error', message: 'AI sammendrag tjeneste ikke tilgjen
 
 ## 📚 Documentation
 
-1. **test-ai-summary-404-fix.md**
-   - Test documentation (converted from HTML)
+1. **test-ai-summary-404-fix.html**
+   - Interactive HTML documentation
    - Before/after comparison
    - HTTP status code reference
    - Testing instructions
@@ -197,7 +197,7 @@ git revert d99aa6c
 - `includes/class-vehicle-lookup-api.php`
 
 ### Documentation Added
-- `test-ai-summary-404-fix.md`
+- `test-ai-summary-404-fix.html`
 - `AI_SUMMARY_404_FIX_FLOW.md`
 - `FIX_SUMMARY.md`
 
@@ -215,7 +215,7 @@ If you encounter issues after this fix:
 2. Verify the polling behavior (should show "generating" not "error")
 3. Check that Worker is returning proper HTTP status codes
 4. Review the flow diagrams in `AI_SUMMARY_404_FIX_FLOW.md`
-5. Test with the scenarios in `test-ai-summary-404-fix.md`
+5. Test with the scenarios in `test-ai-summary-404-fix.html`
 
 ---
 

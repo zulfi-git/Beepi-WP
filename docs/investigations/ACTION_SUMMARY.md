@@ -223,7 +223,7 @@ All investigation documents are in the repository:
 ### For Future Reference
 
 1. ✅ Use investigation template for complex issues
-2. ✅ Reference when working on search functionality changes
+2. ✅ Reference when onboarding new team members
 3. ✅ Update if significant changes are made to search functionality
 
 ---

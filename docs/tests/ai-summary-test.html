@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summary Test - Beepi.no</title>
+    <link rel="stylesheet" href="assets/css/vehicle-lookup.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-header { background: #2c5530; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .test-status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .test-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .test-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧠 AI Summary Test Harness</h1>
+            <p>Testing AI summary display functionality for Norwegian vehicle lookup</p>
+        </div>
+
+        <div id="test-status" class="test-status">Ready to test...</div>
+
+        <!-- Vehicle lookup form structure -->
+        <form id="vehicle-lookup-form" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="regNumber" placeholder="AA12345" value="NF12345" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <button type="submit" style="padding: 10px 20px; background: #2c5530; color: white; border: none; border-radius: 4px; cursor: pointer;">Søk</button>
+            </div>
+        </form>
+
+        <!-- Results container structure -->
+        <div id="vehicle-lookup-results" style="display: none;">
+            <div class="vehicle-header">
+                <div class="vehicle-title">Tesla Model 3</div>
+                <div class="vehicle-subtitle">NF12345 • 2023 • Elektrisk</div>
+            </div>
+
+            <div class="cache-notice" style="background: #e3f2fd; padding: 10px; margin: 10px 0; border-radius: 4px;">
+                ✓ Data hentet fra cache (lynrask søk)
+            </div>
+
+            <!-- Accordion container where AI summary will be inserted -->
+            <div class="accordion">
+                <details data-free="true">
+                    <summary><span>Generell informasjon</span><span>📋</span></summary>
+                    <div class="details-content">
+                        <table class="info-table basic-info-table">
+                            <tr><td>Merke</td><td>Tesla</td></tr>
+                            <tr><td>Modell</td><td>Model 3</td></tr>
+                            <tr><td>År</td><td>2023</td></tr>
+                        </table>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Setup mock environment for testing
+        window.vehicleLookupAjax = {
+            nonce: 'test-nonce-123',
+            ajaxurl: '/wp-admin/admin-ajax.php'
+        };
+
+        // Mock AI summary data
+        const mockAiSummary = {
+            summary: "En relativt ny Tesla Model 3 fra 2023 med god teknisk tilstand. Kjøretøyet har elektrisk drivlinje og er registrert som personbil.",
+            highlights: [
+                "Elektrisk kjøretøy med null lokale utslipp",
+                "2023-modell med moderne sikkerhetssystemer",
+                "Ingen registrerte skader eller merkander"
+            ],
+            recommendation: "Dette er et solid valg for miljøbevisste kjøpere som ønsker moderne teknologi og pålitelighet.",
+            marketInsights: "Tesla Model 3 2023 har typisk god markedsverdi og lave driftskostnader sammenlignet med fossile alternativer.",
+            redFlags: [],
+            aiGenerated: true,
+            model: "gpt-4o-mini",
+            generatedAt: new Date().toISOString(),
+            confidence: 0.92
+        };
+
+        // Mock AJAX response
+        const mockResponse = {
+            success: true,
+            data: {
+                gjenstaendeKvote: 4980,
+                responser: [{
+                    kjoretoydata: {
+                        kjoretoyId: { kjennemerke: "NF12345" },
+                        godkjenning: {
+                            tekniskGodkjenning: {
+                                tekniskeData: {
+                                    generelt: {
+                                        merke: [{ merke: "Tesla" }],
+                                        handelsbetegnelse: ["Model 3"],
+                                        farge: [{ kodeBeskrivelse: "Sort" }],
+                                        type: "Personbil"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }],
+                aiSummary: mockAiSummary,
+                is_cached: true
+            }
+        };
+
+        // Override jQuery AJAX for testing
+        const originalAjax = $.ajax;
+        $.ajax = function(options) {
+            const deferred = $.Deferred();
+            
+            // Log the request for debugging
+            console.log('Mock AJAX request:', options);
+            updateTestStatus('AJAX request intercepted - simulating vehicle lookup...', 'test-success');
+            
+            // Simulate network delay
+            setTimeout(() => {
+                if (options.data && options.data.action === 'vehicle_lookup') {
+                    updateTestStatus('Mock response returned with AI summary data', 'test-success');
+                    deferred.resolve(mockResponse);
+                } else {
+                    deferred.reject({ status: 404, statusText: 'Not Found' });
+                }
+            }, 1000);
+            
+            return deferred.promise();
+        };
+
+        function updateTestStatus(message, className = '') {
+            const statusEl = document.getElementById('test-status');
+            statusEl.textContent = message;
+            statusEl.className = 'test-status ' + className;
+        }
+
+        // Test logging
+        function logTest(message) {
+            console.log('🧪 TEST:', message);
+            updateTestStatus(message, 'test-success');
+        }
+
+        // Test refresh behavior
+        function testRefreshBehavior() {
+            logTest('Testing refresh behavior - simulating multiple searches...');
+            
+            // First search
+            renderAiSummary(mockAiSummary);
+            
+            setTimeout(() => {
+                const firstCount = $('.ai-summary-section').length;
+                logTest(`First search: ${firstCount} AI summary sections`);
+                
+                // Simulate second search (should clear previous)
+                $('.ai-summary-section').remove(); // Simulate resetFormState
+                renderAiSummary({
+                    ...mockAiSummary,
+                    summary: "Oppdatert sammendrag for ny søk - Tesla Model Y fra 2024",
+                    highlights: ["Nyere modell med forbedret rekkevidde", "Oppdaterte sikkerhetsfunksjoner"]
+                });
+                
+                setTimeout(() => {
+                    const secondCount = $('.ai-summary-section').length;
+                    if (secondCount === 1) {
+                        logTest('✅ Refresh behavior working - no stacking');
+                    } else {
+                        updateTestStatus(`❌ Stacking issue - found ${secondCount} sections`, 'test-error');
+                    }
+                }, 100);
+            }, 500);
+        }
+
+        // Start test when page loads
+        $(document).ready(function() {
+            logTest('Test harness loaded - jQuery and mock environment ready');
+        });
+    </script>
+
+    <!-- Include the actual vehicle lookup JavaScript -->
+    <script src="assets/js/vehicle-lookup.js"></script>
+
+    <script>
+        // Additional test verification after script loads
+        $(document).ready(function() {
+            // Verify renderAiSummary function exists
+            if (typeof renderAiSummary === 'function') {
+                logTest('✅ renderAiSummary function found');
+            } else {
+                updateTestStatus('❌ renderAiSummary function not found', 'test-error');
+            }
+
+            // Test direct function call
+            setTimeout(() => {
+                if (typeof renderAiSummary === 'function') {
+                    logTest('Testing direct renderAiSummary call...');
+                    renderAiSummary(mockAiSummary);
+                    
+                    // Check if AI summary was inserted
+                    setTimeout(() => {
+                        const aiSection = $('.ai-summary-section');
+                        if (aiSection.length > 0) {
+                            logTest('✅ AI summary section created successfully');
+                            logTest('Testing typography styling...');
+                            
+                            // Check for proper CSS classes
+                            const hasProperClasses = aiSection.find('.ai-section-title').length > 0 &&
+                                                   aiSection.find('.ai-summary-content').length > 0 &&
+                                                   aiSection.find('.ai-attribution').length > 0;
+                            
+                            if (hasProperClasses) {
+                                logTest('✅ Typography classes applied correctly');
+                            } else {
+                                updateTestStatus('❌ Missing typography classes', 'test-error');
+                            }
+                            
+                            // Test refresh behavior
+                            testRefreshBehavior();
+                            
+                            setTimeout(() => {
+                                logTest('✅ All tests completed - AI summary functionality working');
+                            }, 1500);
+                        } else {
+                            updateTestStatus('❌ AI summary section not found after render', 'test-error');
+                        }
+                    }, 100);
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
