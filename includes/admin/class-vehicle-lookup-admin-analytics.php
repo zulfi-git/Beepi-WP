@@ -30,20 +30,6 @@ class Vehicle_Lookup_Admin_Analytics {
                         </button>
                         <p class="description" style="margin-top: 5px; max-width: 200px;">Permanently delete all historical lookup data and statistics.</p>
                     </div>
-
-                    <div>
-                        <button type="button" class="button button-secondary" id="clear-worker-cache">
-                            <span class="dashicons dashicons-cloud" style="margin-top: 3px;"></span> Clear Worker Cache
-                        </button>
-                        <p class="description" style="margin-top: 5px; max-width: 200px;">Clear cached data on the remote worker server.</p>
-                    </div>
-
-                    <div>
-                        <button type="button" class="button button-secondary" id="clear-local-cache">
-                            <span class="dashicons dashicons-performance" style="margin-top: 3px;"></span> Clear Local Cache
-                        </button>
-                        <p class="description" style="margin-top: 5px; max-width: 200px;">Clear WordPress transient cache for vehicle lookups.</p>
-                    </div>
                 </div>
             </div>
 
