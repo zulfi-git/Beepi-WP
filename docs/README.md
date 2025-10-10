@@ -2,6 +2,8 @@
 
 Documentation for Beepi Vehicle Lookup WordPress plugin.
 
+**⚠️ PROPRIETARY SOFTWARE** - This is private, proprietary software. See [LICENSE](../LICENSE) for terms.
+
 ## 📚 Quick Navigation
 
 ### Main Documentation (Root)
