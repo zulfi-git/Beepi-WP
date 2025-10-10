@@ -107,7 +107,7 @@ Historical "second viewing" problems were bugs, not architectural issues. Those 
 
 - **[FIRST_SEARCH_TREATMENT_INVESTIGATION.md](./FIRST_SEARCH_TREATMENT_INVESTIGATION.md)** - Full 29KB technical analysis
 - **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - Quick reference guide with key findings
-- **[INVESTIGATION_SUMMARY.md](./INVESTIGATION_SUMMARY.md)** - Executive summary for stakeholders
+- **[INVESTIGATION_SUMMARY.md](./INVESTIGATION_SUMMARY.md)** - Executive summary
 - **[ACTION_SUMMARY.md](./ACTION_SUMMARY.md)** - Action items and recommendations
 
 ## Conclusion

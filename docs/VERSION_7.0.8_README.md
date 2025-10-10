@@ -89,7 +89,7 @@ Added comprehensive error code mapping for:
 
 4. **Documentation Files Created/Updated:**
    - `docs/api-update-summary.md` - Comprehensive change summary
-   - `docs/tests/test-structured-errors.html` - Updated test page
+   - `docs/tests/test-structured-errors.md` - Updated test page (converted to Markdown)
    - `docs/tests/TESTING_CHECKLIST_v7.0.8.md` - New testing checklist
 
 ## ✅ Backward Compatibility
@@ -167,7 +167,7 @@ After deployment, monitor for:
 - **API Documentation:** `docs/WordPress Integration Guide.md`
 - **Change Summary:** `docs/api-update-summary.md`
 - **Testing Checklist:** `docs/tests/TESTING_CHECKLIST_v7.0.8.md`
-- **Test Page:** `docs/tests/test-structured-errors.html`
+- **Test Page:** `docs/tests/test-structured-errors.md`
 
 ## 💬 Support
 
@@ -175,7 +175,7 @@ For issues or questions:
 1. Check correlation ID in browser console
 2. Review error code and message
 3. Consult WordPress Integration Guide
-4. Contact development team with correlation ID
+4. Contact support with correlation ID
 
 ## 📝 Notes
 
