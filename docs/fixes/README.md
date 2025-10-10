@@ -63,11 +63,11 @@ This directory contains documentation for all bug fixes applied to the Beepi-WP 
 
 ## Legacy Documentation (Superseded)
 
-These files contain earlier versions or alternative explanations of fixes. They're kept for historical reference but may be outdated:
+These files were earlier versions of fixes and have been removed. Current documentation uses uppercase filenames:
 
-- `console-logging-fix.md` - Earlier version of console logging fix (see `CONSOLE_LOGGING_FIX.md`)
-- `polling-conflict-fix.md` - Earlier version of polling conflict fix (see `POLLING_CONFLICT_FIX.md`)
-- `second-viewing-fix.md` - Earlier version of second viewing fix (see `SECOND_VIEWING_FIX.md`)
+- ~~`console-logging-fix.md`~~ - Removed (see `CONSOLE_LOGGING_FIX.md`)
+- ~~`polling-conflict-fix.md`~~ - Removed (see `POLLING_CONFLICT_FIX.md`)
+- ~~`second-viewing-fix.md`~~ - Removed (see `SECOND_VIEWING_FIX.md`)
 
 ## File Naming Convention
 
@@ -108,4 +108,4 @@ When adding new fixes:
 
 ---
 
-**Last Updated:** October 9, 2025
+**Last Updated:** October 10, 2025

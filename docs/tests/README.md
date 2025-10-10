@@ -1,25 +1,34 @@
 # Test Files
 
-HTML test files for manual testing and verification of fixes.
+Markdown test files for manual testing and verification of fixes. Previously these were HTML files, but have been converted to Markdown for better GitHub browsing.
 
 ## Available Test Files
 
 ### AI Summary Tests
-- **[ai-summary-test.html](./ai-summary-test.html)** - Test AI summary functionality
-- **[test-ai-summary-404-fix.html](./test-ai-summary-404-fix.html)** - Verify AI summary 404 fix
+- **[ai-summary-test.md](./ai-summary-test.md)** - Test AI summary functionality (converted from HTML)
+- **[test-ai-summary-404-fix.md](./test-ai-summary-404-fix.md)** - Verify AI summary 404 fix (converted from HTML)
 
 ### Console and Error Tests
-- **[test-second-viewing-console.html](./test-second-viewing-console.html)** - Test second viewing console behavior
-- **[test-structured-errors.html](./test-structured-errors.html)** - Test structured error handling
+- **[test-second-viewing-console.md](./test-second-viewing-console.md)** - Test second viewing console behavior (converted from HTML)
+- **[test-structured-errors.md](./test-structured-errors.md)** - Test structured error handling (converted from HTML)
+
+### Testing Checklists
+- **[TESTING_CHECKLIST_v7.0.8.md](./TESTING_CHECKLIST_v7.0.8.md)** - Version 7.0.8 testing checklist
+
+---
+
+## Conversion Notes
+
+**October 2025:** All HTML test files have been converted to Markdown format for easier browsing on GitHub. The Markdown versions preserve all the important information from the HTML files while being more maintainable and accessible.
 
 ---
 
 ## How to Use
 
-1. Open HTML files in a web browser
-2. Test functionality in isolation from WordPress
-3. Use browser developer tools to monitor console and network
-4. Verify fixes and behavior changes
+1. Read the Markdown test files in your browser or GitHub
+2. Reference the test scenarios and expected outputs
+3. Use the information to manually test fixes and features
+4. Verify behavior changes against documented expectations
 
 ---
 
