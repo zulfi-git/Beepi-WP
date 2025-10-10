@@ -35,7 +35,7 @@
 ## Strengths
 - ✅ Clear separation of concerns between transport (`VehicleLookupAPI`), caching, persistence, and presentation layers
 - ✅ Defensive error handling with structured worker responses, correlation IDs, and circuit breaker awareness enhances debuggability of upstream failures
-- ✅ Administrative tooling provides monitoring (quota usage, analytics) and operational controls (cache clearing, health checks) without manual database access
+- ✅ Administrative tooling provides monitoring (quota usage, analytics) and operational controls (health checks, analytics reset) without manual database access
 - ✅ Well-scoped classes: most classes are under 450 lines with single responsibilities
 - ✅ WordPress security best practices (nonces, sanitization, capability checks)
 - ✅ Unified design system with CSS variables for maintainable styling
