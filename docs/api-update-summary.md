@@ -97,10 +97,13 @@ All async endpoints (`/ai-summary`, `/market-listings`) now properly support the
 ### 4. Backward Compatibility
 
 The updated code maintains backward compatibility:
+- **Handles legacy nested error format**: `{"error": {"code": "...", "message": "...", "correlationId": "..."}}` from older workers
 - Still handles legacy Norwegian API error responses in `responser` array
 - Still validates correlation ID format
 - Still supports circuit breaker state awareness for `SERVICE_UNAVAILABLE`
 - Falls back gracefully for responses without `status` field
+
+**Note**: All three response processing methods (`process_response()`, `process_ai_summary_response()`, and `process_market_listings_response()`) now detect and properly handle both the new flat error format and the legacy nested error format, preventing older worker errors from being treated as successful responses.
 
 ### 5. Frontend JavaScript
 

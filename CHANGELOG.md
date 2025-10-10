@@ -6,6 +6,11 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ## [7.0.9] - 2025-10-10
 
+### Fixed
+- Restored backward compatibility for legacy nested error objects from older workers
+- `process_response()`, `process_ai_summary_response()`, and `process_market_listings_response()` now properly detect and handle both flat and nested error formats
+- Prevents older worker error responses from being incorrectly treated as successful lookups
+
 ### Changed
 - Version bump for documentation housekeeping
 
@@ -14,6 +19,7 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 - Converted HTML test files to Markdown for better GitHub browsing
 - Updated maintainer information for solo project
 - Cleaned up documentation structure
+- Updated API documentation to reflect nested error format support
 
 ---
 
