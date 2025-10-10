@@ -164,8 +164,16 @@ See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for
 
 ## Contributing
 
-**Proprietary Software** - © 2025 Beepi.no  
-Internal development only.
+**⚠️ PROPRIETARY SOFTWARE - NO EXTERNAL CONTRIBUTIONS**
+
+This is private, proprietary software owned by Beepi.no.  
+© 2025 Beepi.no - All Rights Reserved.
+
+- This project is NOT open source
+- External contributions are NOT accepted
+- See [LICENSE](./LICENSE) for full terms
+
+For business inquiries: https://beepi.no
 
 ---
 
