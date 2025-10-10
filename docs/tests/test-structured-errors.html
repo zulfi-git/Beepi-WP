@@ -17,42 +17,64 @@
 
     <div class="test-section">
         <h2>✅ Implementation Summary</h2>
-        <p><strong>Updated WordPress plugin to handle structured error responses from Cloudflare Worker API</strong></p>
+        <p><strong>Updated WordPress plugin to handle revamped Cloudflare Worker API standard</strong></p>
         
-        <h3>📋 Completed Tasks:</h3>
+        <h3>📋 Completed Tasks (v7.0.8):</h3>
         <ul>
-            <li>✅ <strong>API Response Processing:</strong> Updated <code>includes/class-vehicle-lookup-api.php</code> to parse structured errors</li>
-            <li>✅ <strong>Enhanced Error Logging:</strong> Added correlation ID and error code tracking to database</li>
-            <li>✅ <strong>Frontend Error Handling:</strong> Updated <code>assets/js/vehicle-lookup.js</code> with smart retry logic</li>
-            <li>✅ <strong>Error Analytics:</strong> Added comprehensive error tracking and session storage</li>
+            <li>✅ <strong>API Response Processing:</strong> Updated <code>includes/class-vehicle-lookup-api.php</code> for new flat error structure</li>
+            <li>✅ <strong>Response Envelope Support:</strong> Added handling for async polling responses with status field</li>
+            <li>✅ <strong>Enhanced Error Logging:</strong> Correlation ID and error code tracking to database</li>
+            <li>✅ <strong>Frontend Error Handling:</strong> <code>assets/js/vehicle-lookup.js</code> with smart retry logic</li>
+            <li>✅ <strong>Error Analytics:</strong> Comprehensive error tracking and session storage</li>
+            <li>✅ <strong>Expanded Error Codes:</strong> Added AI, market listing, and Vegvesen-specific error codes</li>
         </ul>
     </div>
 
     <div class="test-section success">
         <h2>🔧 Key Improvements</h2>
         
-        <h3>1. Structured Error Response Handling</h3>
+        <h3>1. New Flat Error Response Structure (v7.0.8)</h3>
         <div class="code">
-// Before: Simple string errors
-wp_send_json_error('Generic error message');
+// New flat error format from Cloudflare Worker:
+{
+  "error": "Human-readable error message",
+  "code": "ERROR_CODE",
+  "timestamp": "2025-10-10T03:14:28.663Z",
+  "correlationId": "req-1728848123-abc123"
+}
 
-// After: Structured error responses
+// WordPress response:
 wp_send_json_error(array(
     'message' => $result['error'],
     'code' => $error_code,
     'correlation_id' => $correlation_id,
-    'retry_after' => $retry_after
+    'timestamp' => $timestamp
 ));
         </div>
 
-        <h3>2. Enhanced Database Logging</h3>
+        <h3>2. Response Envelope Pattern (v7.0.8)</h3>
         <div class="code">
-// New database columns added:
+// Async endpoints (/ai-summary, /market-listings) use status field:
+{
+  "status": "generating" | "complete" | "error",
+  "registrationNumber": "EO10265",
+  "correlationId": "req-xxx",
+  // When status is "error":
+  "error": {
+    "message": "Error description",
+    "code": "ERROR_CODE"
+  }
+}
+        </div>
+
+        <h3>3. Enhanced Database Logging</h3>
+        <div class="code">
+// Database columns for tracking:
 - error_code varchar(50)      // Machine-readable error codes
 - correlation_id varchar(100) // For debugging and support
         </div>
 
-        <h3>3. Smart Retry Logic</h3>
+        <h3>4. Smart Retry Logic</h3>
         <div class="code">
 // Automatic retry strategies for:
 - TIMEOUT: 2 retries with 2s delay
@@ -61,7 +83,7 @@ wp_send_json_error(array(
 - RATE_LIMIT_EXCEEDED: Auto-retry after specified time
         </div>
 
-        <h3>4. Error Analytics Tracking</h3>
+        <h3>5. Error Analytics Tracking</h3>
         <div class="code">
 // Multiple tracking methods:
 - Console logging with correlation IDs
@@ -72,7 +94,8 @@ wp_send_json_error(array(
     </div>
 
     <div class="test-section">
-        <h2>🎯 Error Code Mapping</h2>
+        <h2>🎯 Error Code Mapping (Updated v7.0.8)</h2>
+        <p><strong>Expanded error code support including AI, market listings, and Vegvesen-specific errors</strong></p>
         <table style="width: 100%; border-collapse: collapse;">
             <tr style="background-color: #f8f9fa;">
                 <th style="border: 1px solid #dee2e6; padding: 8px;">Cloudflare Worker Code</th>
@@ -99,17 +122,40 @@ wp_send_json_error(array(
                 <td style="border: 1px solid #dee2e6; padding: 8px;">http_error</td>
                 <td style="border: 1px solid #dee2e6; padding: 8px;">Automatic retry</td>
             </tr>
+            <tr>
+                <td style="border: 1px solid #dee2e6; padding: 8px;"><code>AI_GENERATION_TIMEOUT</code></td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">http_error</td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">Show AI unavailable message</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #dee2e6; padding: 8px;"><code>AI_GENERATION_FAILED</code></td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">http_error</td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">Show AI unavailable message</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #dee2e6; padding: 8px;"><code>FINN_FETCH_FAILED</code></td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">http_error</td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">Show market data unavailable</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #dee2e6; padding: 8px;"><code>KJENNEMERKE_UKJENT</code></td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">invalid_plate</td>
+                <td style="border: 1px solid #dee2e6; padding: 8px;">Show registration not found</td>
+            </tr>
         </table>
     </div>
 
     <div class="test-section success">
-        <h2>🚀 Ready for Production</h2>
-        <p>The WordPress plugin now properly handles structured error responses from the Cloudflare Worker API with:</p>
+        <h2>🚀 Ready for Production (v7.0.8)</h2>
+        <p>The WordPress plugin now properly handles the revamped Cloudflare Worker API with:</p>
         <ul>
+            <li>✅ <strong>Flat error structure</strong> with error, code, timestamp, correlationId at root</li>
+            <li>✅ <strong>Response envelope pattern</strong> for async operations with status field</li>
             <li>✅ <strong>Backward compatibility</strong> with existing Norwegian API responses</li>
             <li>✅ <strong>Enhanced debugging</strong> through correlation ID logging</li>
             <li>✅ <strong>Better user experience</strong> with smart retry logic</li>
             <li>✅ <strong>Comprehensive analytics</strong> for system monitoring</li>
+            <li>✅ <strong>Expanded error codes</strong> for AI, market listings, and Vegvesen errors</li>
             <li>✅ <strong>Proper error handling</strong> for all Cloudflare Worker error codes</li>
         </ul>
     </div>

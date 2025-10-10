@@ -2,7 +2,7 @@
 /*
 Plugin Name: Beepi Vehicle Lookup
 Description: A plugin to lookup Norwegian vehicle information using registration numbers
-Version: 7.0.7
+Version: 7.0.8
 Author: Beepi
 Author URI: https://beepi.no
 */
@@ -10,7 +10,7 @@ Author URI: https://beepi.no
 define('VEHICLE_LOOKUP_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VEHICLE_LOOKUP_WORKER_URL', 'https://lookup.beepi.no');
-define('VEHICLE_LOOKUP_VERSION', '7.0.7');
+define('VEHICLE_LOOKUP_VERSION', '7.0.8');
 define('VEHICLE_LOOKUP_RATE_LIMIT', 100); // per hour per IP
 
 // Prevent direct access

@@ -127,32 +127,9 @@ class VehicleLookupAPI {
             );
         }
 
-        // Handle new error response format from worker
-        if (isset($data['error']) && is_array($data['error']) && isset($data['error']['code'])) {
-            // New error format: { "error": { "code": "...", "message": "...", "correlationId": "..." } }
-            $error_data = $data['error'];
-            $correlation_id = isset($error_data['correlationId']) ? $error_data['correlationId'] : null;
-            
-            // Validate correlation ID format if present
-            if ($correlation_id && !Vehicle_Lookup_Helpers::is_valid_correlation_id($correlation_id)) {
-                error_log('Invalid correlation ID format: ' . $correlation_id);
-                $correlation_id = null;
-            }
-            
-            $failure_type = $this->map_error_code_to_failure_type($error_data['code']);
-            
-            return array(
-                'error' => $error_data['message'],
-                'failure_type' => $failure_type,
-                'code' => $error_data['code'],
-                'correlation_id' => $correlation_id,
-                'timestamp' => isset($error_data['timestamp']) ? $error_data['timestamp'] : null
-            );
-        }
-        
-        // Handle legacy structured error responses (backward compatibility)
-        if (isset($data['error']) && isset($data['code'])) {
-            // Legacy error format: { "error": "...", "code": "...", "correlationId": "..." }
+        // Handle new standard error response format from revamped Cloudflare Worker API
+        // New format: { "error": "...", "code": "...", "timestamp": "...", "correlationId": "..." }
+        if (isset($data['error']) && isset($data['code']) && is_string($data['error'])) {
             $correlation_id = isset($data['correlationId']) ? $data['correlationId'] : null;
             
             // Validate correlation ID format if present
@@ -313,6 +290,17 @@ class VehicleLookupAPI {
             );
         }
 
+        // Handle new standard error response format from revamped API
+        if (isset($data['error']) && isset($data['code']) && is_string($data['error'])) {
+            return array(
+                'error' => $data['error'],
+                'failure_type' => $this->map_error_code_to_failure_type($data['code']),
+                'code' => $data['code'],
+                'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null,
+                'timestamp' => isset($data['timestamp']) ? $data['timestamp'] : null
+            );
+        }
+
         // Handle HTTP error status codes
         if ($status_code !== 200) {
             // This handling is specific to the AI summary polling endpoint:
@@ -338,8 +326,26 @@ class VehicleLookupAPI {
             );
         }
 
-        // Validate response has required fields
-        if (!isset($data['status'])) {
+        // Handle new response envelope with status field
+        if (isset($data['status'])) {
+            // Check for error status in response envelope
+            if ($data['status'] === 'error' && isset($data['error'])) {
+                $error_obj = $data['error'];
+                return array(
+                    'error' => isset($error_obj['message']) ? $error_obj['message'] : 'AI generation failed',
+                    'failure_type' => $this->map_error_code_to_failure_type(isset($error_obj['code']) ? $error_obj['code'] : 'AI_GENERATION_FAILED'),
+                    'code' => isset($error_obj['code']) ? $error_obj['code'] : 'AI_GENERATION_FAILED',
+                    'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null,
+                    'timestamp' => isset($data['completedAt']) ? $data['completedAt'] : null
+                );
+            }
+            
+            // Valid response with status - return directly
+            return array('success' => true, 'data' => $data);
+        }
+
+        // Legacy validation for backward compatibility
+        if (!isset($data['registrationNumber'])) {
             return array(
                 'error' => 'Ugyldig AI sammendrag respons.',
                 'failure_type' => 'http_error',
@@ -381,6 +387,17 @@ class VehicleLookupAPI {
             );
         }
 
+        // Handle new standard error response format from revamped API
+        if (isset($data['error']) && isset($data['code']) && is_string($data['error'])) {
+            return array(
+                'error' => $data['error'],
+                'failure_type' => $this->map_error_code_to_failure_type($data['code']),
+                'code' => $data['code'],
+                'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null,
+                'timestamp' => isset($data['timestamp']) ? $data['timestamp'] : null
+            );
+        }
+
         // Handle HTTP error status codes
         if ($status_code !== 200) {
             // This handling is specific to the polling endpoint for market listings.
@@ -405,18 +422,31 @@ class VehicleLookupAPI {
             );
         }
 
-        // Validate response has required fields
-        if (!isset($data['status'])) {
-            return array(
-                'error' => 'Ugyldig markedsdata respons.',
-                'failure_type' => 'http_error',
-                'code' => 'INVALID_RESPONSE',
-                'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null
-            );
+        // Handle new response envelope with status field
+        if (isset($data['status'])) {
+            // Check for error status in response envelope
+            if ($data['status'] === 'error' && isset($data['error'])) {
+                $error_obj = $data['error'];
+                return array(
+                    'error' => isset($error_obj['message']) ? $error_obj['message'] : 'Market listings generation failed',
+                    'failure_type' => $this->map_error_code_to_failure_type(isset($error_obj['code']) ? $error_obj['code'] : 'MARKET_SEARCH_FAILED'),
+                    'code' => isset($error_obj['code']) ? $error_obj['code'] : 'MARKET_SEARCH_FAILED',
+                    'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null,
+                    'timestamp' => isset($data['completedAt']) ? $data['completedAt'] : null
+                );
+            }
+            
+            // Valid response with status - return directly
+            return array('success' => true, 'data' => $data);
         }
 
-        // Return the market listings response data directly
-        return array('success' => true, 'data' => $data);
+        // Legacy validation for backward compatibility
+        return array(
+            'error' => 'Ugyldig markedsdata respons.',
+            'failure_type' => 'http_error',
+            'code' => 'INVALID_RESPONSE',
+            'correlation_id' => isset($data['correlationId']) ? $data['correlationId'] : null
+        );
     }
 
     /**
@@ -442,6 +472,26 @@ class VehicleLookupAPI {
             case 'SERVICE_UNAVAILABLE':
             case 'TIMEOUT':
             case 'NETWORK_ERROR':
+                return 'http_error';
+            
+            // AI Summary specific errors
+            case 'AI_GENERATION_TIMEOUT':
+            case 'AI_INVALID_JSON':
+            case 'AI_INVALID_STRUCTURE':
+            case 'AI_GENERATION_FAILED':
+            case 'EXTERNAL_API_ERROR':
+                return 'http_error';
+            
+            // Market Listing specific errors
+            case 'FINN_HTTP_ERROR':
+            case 'FINN_FETCH_FAILED':
+            case 'MARKET_SEARCH_FAILED':
+                return 'http_error';
+            
+            // Vegvesen Registry specific errors
+            case 'PKK_INFORMASJON_IKKE_TILGJENGELIG':
+            case 'OPPLYSNINGER_UTILGJENGELIG':
+            case 'INGEN_AKTIVE_GODKJENNINGER':
                 return 'http_error';
                 
             default:
