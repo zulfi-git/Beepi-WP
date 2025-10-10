@@ -10,6 +10,7 @@ This directory contains documentation for all bug fixes applied to the Beepi-WP 
    - **Fix Date:** October 9, 2025
    - **Files Changed:** `assets/js/vehicle-lookup.js`
    - **Root Cause:** Incomplete status check preventing rendering when listings array is missing
+   - **Quick Summary:** [One-page reference](MARKET_LISTINGS_SECOND_VIEW_FIX_SUMMARY.md)
 
 2. **[Polling Conflict Fix](POLLING_CONFLICT_FIX.md)** ✅ Fixed  
    - **Issue:** Orphaned polling callbacks from previous lookups interfere with new lookups
