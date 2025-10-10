@@ -221,25 +221,6 @@ All async API responses (AI summaries, market listings) use a consistent envelop
 | `pollUrl` | string | All | URL to check status |
 | `error` | object | error | Error details with `message` and `code` |
 
-### WordPress Implementation
-
-**Check response state:**
-```php
-$response = json_decode($api_response, true);
-
-switch ($response['status']) {
-    case 'generating':
-        // Show loading state, poll using $response['pollUrl']
-        break;
-    case 'complete':
-        // Display data: $response['summary'] or $response['listings']
-        break;
-    case 'error':
-        // Handle error: $response['error']['message']
-        break;
-}
-```
-
 ---
 
 ## Error Codes
