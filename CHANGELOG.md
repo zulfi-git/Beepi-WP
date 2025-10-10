@@ -4,6 +4,23 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
+## [7.0.8] - 2025
+
+### Changed
+- Updated to support revamped Cloudflare Worker API standard
+- Updated error response handling to new flat structure format
+- Enhanced AI summary polling to handle new response envelope with error object
+- Enhanced market listings polling to handle new response envelope with error object
+- Added comprehensive error code mapping for AI and market listing failures
+- Improved correlation ID tracking across all API responses
+
+### Documentation
+- Updated WordPress Integration Guide with new API structure
+- All endpoints now use consistent response envelope pattern
+- Error responses now include `error`, `code`, `timestamp`, and `correlationId` at root level
+
+---
+
 ## [7.0.7] - 2025
 
 ### Changed
