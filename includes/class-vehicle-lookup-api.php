@@ -339,7 +339,7 @@ class VehicleLookupAPI {
         }
 
         // Validate response has required fields
-        if (!isset($data['status']) || !isset($data['registrationNumber'])) {
+        if (!isset($data['status'])) {
             return array(
                 'error' => 'Ugyldig AI sammendrag respons.',
                 'failure_type' => 'http_error',
