@@ -124,8 +124,21 @@ class Vehicle_Lookup_Admin_Dashboard {
                                 <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/cloudflare-logo.png'; ?>" alt="Cloudflare" width="24" height="24">
                             </div>
                             <div class="service-info">
-                                <div class="service-name">Cloudflare Worker</div>
+                                <div class="service-name">Cloudflare Lookup Worker</div>
                                 <div class="service-status" id="cloudflare-status">
+                                    <span class="status-light checking"></span>
+                                    <span class="status-text">Checking...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-item">
+                            <div class="service-logo cloudflare-logo">
+                                <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/cloudflare-logo.png'; ?>" alt="Cloudflare" width="24" height="24">
+                            </div>
+                            <div class="service-info">
+                                <div class="service-name">Cloudflare Agent Session Worker</div>
+                                <div class="service-status" id="chatkit-status">
                                     <span class="status-light checking"></span>
                                     <span class="status-text">Checking...</span>
                                 </div>

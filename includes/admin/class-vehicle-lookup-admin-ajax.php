@@ -19,6 +19,7 @@ class Vehicle_Lookup_Admin_Ajax {
     public function register_handlers() {
         add_action('wp_ajax_vehicle_lookup_test_api', array($this, 'test_api_connectivity'));
         add_action('wp_ajax_vehicle_lookup_check_upstream', array($this, 'check_upstream_health'));
+        add_action('wp_ajax_vehicle_lookup_check_chatkit', array($this, 'check_chatkit_health'));
         add_action('wp_ajax_reset_analytics_data', array($this, 'reset_analytics_data'));
     }
 
@@ -200,6 +201,75 @@ class Vehicle_Lookup_Admin_Ajax {
             wp_send_json_error(array(
                 'message' => 'Health check failed with status code: ' . $status_code,
                 'health_data' => $body ?: array('status' => 'unknown'),
+                'status' => isset($body['status']) ? $body['status'] : 'unknown',
+                'cached' => false
+            ));
+        }
+    }
+
+    /**
+     * Check chatkit health with intelligent caching
+     */
+    public function check_chatkit_health() {
+        check_ajax_referer('vehicle_lookup_admin_nonce', 'nonce');
+
+        // Cache key for chatkit health check results
+        $cache_key = 'vehicle_lookup_chatkit_health_check';
+        $cache_ttl = 420; // 7 minutes (420 seconds) - same as main health check
+
+        // Check for cached results first
+        $cached_result = get_transient($cache_key);
+        if ($cached_result !== false) {
+            // Return cached results with indicator
+            $cached_result['message'] = 'Chatkit health check completed (cached).';
+            $cached_result['cached'] = true;
+            $cached_result['cache_expires_in'] = get_option('_transient_timeout_' . $cache_key) - time();
+            wp_send_json_success($cached_result);
+            return;
+        }
+
+        $chatkit_url = 'https://chatkit.beepi.no';
+        $timeout = get_option('vehicle_lookup_timeout', 15);
+
+        // Use GET method as per API specification
+        $response = wp_remote_get($chatkit_url . '/api/health', array(
+            'headers' => array(
+                'Origin' => get_site_url()
+            ),
+            'timeout' => $timeout
+        ));
+
+        if (is_wp_error($response)) {
+            // Don't cache error responses
+            wp_send_json_error(array(
+                'message' => 'Chatkit health check failed: ' . $response->get_error_message(),
+                'status' => 'unknown',
+                'cached' => false
+            ));
+            return;
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if ($status_code === 200 && isset($body['status'])) {
+            $result_data = array(
+                'message' => 'Chatkit health check completed.',
+                'status' => $body['status'],
+                'uptime' => $body['uptime'] ?? 0,
+                'version' => $body['version'] ?? 'unknown',
+                'cached' => false,
+                'cache_ttl' => $cache_ttl
+            );
+
+            // Cache the successful result
+            set_transient($cache_key, $result_data, $cache_ttl);
+
+            wp_send_json_success($result_data);
+        } else {
+            // Don't cache failed health checks
+            wp_send_json_error(array(
+                'message' => 'Chatkit health check failed with status code: ' . $status_code,
                 'status' => isset($body['status']) ? $body['status'] : 'unknown',
                 'cached' => false
             ));
