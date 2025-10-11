@@ -839,9 +839,13 @@ jQuery(document).ready(function($) {
                                 }
                             } else if (cloudflareOk && chatkitOk && vegvesenOk) {
                                 updateOverallStatus('warning', 'Core Services OK, AI Unknown');
-                            } else if (cloudflareOk || chatkitOk || vegvesenOk) {
+                            } else if (
+                                [cloudflareOk, chatkitOk, vegvesenOk].filter(Boolean).length >= 2
+                            ) {
                                 updateOverallStatus('warning', 'Some Services Degraded');
-                            } else {
+                            } else if (
+                                cloudflareOk || chatkitOk || vegvesenOk
+                            ) {
                                 updateOverallStatus('error', 'Service Issues Detected');
                             }
                             
