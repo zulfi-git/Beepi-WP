@@ -256,7 +256,6 @@ class Vehicle_Lookup_Admin_Ajax {
             $result_data = array(
                 'message' => 'Chatkit health check completed.',
                 'status' => $body['status'],
-                'uptime' => $body['uptime'] ?? null,
                 'version' => $body['version'] ?? 'unknown',
                 'cached' => false,
                 'cache_ttl' => $cache_ttl
