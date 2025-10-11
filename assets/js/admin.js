@@ -3,6 +3,7 @@ jQuery(document).ready(function($) {
     // Auto-check service status on page load
     function checkServiceStatus() {
         checkCloudflareStatus();
+        checkChatkitStatus();
     }
 
     function checkCloudflareStatus() {
@@ -66,6 +67,41 @@ jQuery(document).ready(function($) {
         });
     }
 
+    function checkChatkitStatus() {
+        const chatkitStatusDiv = $('#chatkit-status');
+
+        console.log('Starting chatkit health check request...');
+
+        // Set to checking state
+        chatkitStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
+        chatkitStatusDiv.find('.status-text').text('Checking...');
+
+        $.ajax({
+            url: vehicleLookupAdmin.ajaxurl,
+            type: 'POST',
+            timeout: 15000, // 15 second timeout
+            data: {
+                action: 'vehicle_lookup_check_chatkit',
+                nonce: vehicleLookupAdmin.nonce
+            },
+            beforeSend: function() {
+                console.log('Chatkit health check AJAX request sent...');
+            },
+            success: function(response) {
+                if (response.success) {
+                    const chatkitData = response.data;
+                    updateChatkitStatus(chatkitData);
+                } else {
+                    handleChatkitHealthCheckError(response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Chatkit health check failed:', status, error, xhr);
+                handleChatkitHealthCheckNetworkError(xhr, status, error);
+            }
+        });
+    }
+
     // Enhanced status handling functions
     function updateCloudflareStatus(healthData) {
         const cloudflareStatusDiv = $('#cloudflare-status');
@@ -82,6 +118,23 @@ jQuery(document).ready(function($) {
         }
         
         cloudflareStatusDiv.find('.status-text').text(statusText);
+    }
+
+    function updateChatkitStatus(chatkitData) {
+        const chatkitStatusDiv = $('#chatkit-status');
+        
+        // Worker is online if we got a successful response
+        chatkitStatusDiv.find('.status-light').removeClass('checking ok error warning').addClass('ok');
+        
+        let statusText = 'Online';
+        if (chatkitData.cached) {
+            statusText += ' (cached)';
+        }
+        if (chatkitData.version && chatkitData.version !== 'unknown') {
+            statusText += ' v' + chatkitData.version;
+        }
+        
+        chatkitStatusDiv.find('.status-text').text(statusText);
     }
 
     function updateVegvesenStatus(healthData) {
@@ -401,6 +454,46 @@ jQuery(document).ready(function($) {
                        '<strong>Connection Error:</strong> ' + errorMessage + '<br>' +
                        '<strong>Troubleshooting:</strong><br>' + helpText + 
                        '</div>').show();
+    }
+
+    function handleChatkitHealthCheckError(response) {
+        const chatkitStatusDiv = $('#chatkit-status');
+
+        chatkitStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+        chatkitStatusDiv.find('.status-text').text('API Error');
+
+        console.error('Chatkit health check error:', response.data ? response.data.message : 'Unknown error');
+    }
+
+    function handleChatkitHealthCheckNetworkError(xhr, status, error) {
+        const chatkitStatusDiv = $('#chatkit-status');
+
+        chatkitStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
+
+        let statusText = 'Connection Failed';
+
+        // Enhanced error messaging based on error type
+        switch(status) {
+            case 'timeout':
+                statusText = 'Timeout';
+                break;
+            case 'error':
+                if (xhr.status === 0) {
+                    statusText = 'No Connection';
+                } else if (xhr.status >= 500) {
+                    statusText = 'Server Error';
+                } else if (xhr.status >= 400) {
+                    statusText = 'Client Error';
+                } else {
+                    statusText = 'Error';
+                }
+                break;
+            default:
+                statusText = 'Error';
+        }
+
+        chatkitStatusDiv.find('.status-text').text(statusText);
+        console.error('Chatkit network error:', status, error, xhr);
     }
 
     function displayCachedHealthData(cachedData) {
@@ -724,7 +817,7 @@ jQuery(document).ready(function($) {
     function enhanceHealthCheckForBusinessView() {
         // Hook into existing health check success
         $(document).ajaxSuccess(function(event, xhr, settings) {
-            if (settings.data && settings.data.includes('vehicle_lookup_check_upstream')) {
+            if (settings.data && (settings.data.includes('vehicle_lookup_check_upstream') || settings.data.includes('vehicle_lookup_check_chatkit'))) {
                 try {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
@@ -733,21 +826,26 @@ jQuery(document).ready(function($) {
                         // Determine overall system status
                         setTimeout(function() {
                             const cloudflareOk = $('#cloudflare-status .status-light').hasClass('ok');
+                            const chatkitOk = $('#chatkit-status .status-light').hasClass('ok');
                             const vegvesenOk = $('#vegvesen-status .status-light').hasClass('ok');
                             const aiSummaryOk = $('#ai-summary-status .status-light').hasClass('ok');
                             const aiSummaryWarning = $('#ai-summary-status .status-light').hasClass('warning');
                             
-                            if (cloudflareOk && vegvesenOk && (aiSummaryOk || aiSummaryWarning)) {
+                            if (cloudflareOk && chatkitOk && vegvesenOk && (aiSummaryOk || aiSummaryWarning)) {
                                 if (aiSummaryWarning) {
                                     updateOverallStatus('warning', 'AI Features Limited');
                                 } else {
                                     updateOverallStatus('ok', 'All Systems Operational');
                                 }
-                            } else if (cloudflareOk && vegvesenOk) {
+                            } else if (cloudflareOk && chatkitOk && vegvesenOk) {
                                 updateOverallStatus('warning', 'Core Services OK, AI Unknown');
-                            } else if (cloudflareOk || vegvesenOk) {
+                            } else if (
+                                [cloudflareOk, chatkitOk, vegvesenOk].filter(Boolean).length >= 2
+                            ) {
                                 updateOverallStatus('warning', 'Some Services Degraded');
-                            } else {
+                            } else if (
+                                cloudflareOk || chatkitOk || vegvesenOk
+                            ) {
                                 updateOverallStatus('error', 'Service Issues Detected');
                             }
                             
