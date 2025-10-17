@@ -4,6 +4,13 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
+## [7.1.0] - 2025-10-17
+
+### Changed
+- Version bump
+
+---
+
 ## [7.0.9] - 2025-10-17
 
 ### Changed
