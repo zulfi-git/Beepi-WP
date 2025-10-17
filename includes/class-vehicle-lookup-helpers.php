@@ -162,10 +162,7 @@ class Vehicle_Lookup_Helpers {
      * Render trust indicators
      */
     public static function render_trust_indicators() {
-        return '<div class="trust-indicators">
-            <div>🔐 Data hentes fra Statens vegvesen</div>
-            <div>⏱️ Svar på noen få sekunder</div>
-        </div>';
+        return '';
     }
 
     /**
