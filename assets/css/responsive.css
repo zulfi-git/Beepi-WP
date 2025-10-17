@@ -293,8 +293,8 @@
     }
     
     .accordion {
-        margin-top: 2rem;
-        gap: 2rem;
+        margin-top: 2.5rem;
+        gap: 2.5rem;
     }
     
     .accordion summary {
