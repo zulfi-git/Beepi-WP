@@ -324,7 +324,6 @@
     text-align: left;
     padding: 1rem 1.25rem;
     font-size: var(--font-xs);
-    text-transform: lowercase;
     letter-spacing: 0.025em;
     border-bottom: none;
 }
