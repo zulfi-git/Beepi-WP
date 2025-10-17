@@ -303,21 +303,13 @@
         gap: 16px;
     }
     
-    .section-header {
-        padding: 1.25rem 1.5rem;
-    }
-    
-    .section-content {
-        padding: 1.25rem 1.5rem;
-    }
-    
     .info-table th {
-        padding: 1.25rem 1.5rem;
+        padding: 1rem 1.25rem;
         font-size: var(--font-sm);
     }
     
     .info-table td {
-        padding: 1.25rem 1.5rem;
+        padding: 1rem 1.25rem;
     }
 }
 
@@ -336,20 +328,12 @@
         font-size: var(--font-lg);
     }
     
-    .section-header {
-        padding: 1.5rem 2rem;
-    }
-    
-    .section-content {
-        padding: 1.5rem 2rem;
-    }
-    
     .info-table th {
-        padding: 1.5rem 2rem;
+        padding: 1.25rem 1.75rem;
     }
     
     .info-table td {
-        padding: 1.5rem 2rem;
+        padding: 1.25rem 1.75rem;
     }
 }
 
