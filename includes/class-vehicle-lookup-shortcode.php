@@ -57,16 +57,6 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_owner_section($product_id) {
-        // Get products for both tiers
-        $basic_product = wc_get_product(62);
-        $premium_product = wc_get_product(739);
-
-        $basic_price = $basic_product ? $basic_product->get_regular_price() : '39';
-        $basic_sale = $basic_product ? $basic_product->get_sale_price() : null;
-
-        $premium_price = $premium_product ? $premium_product->get_regular_price() : '89';
-        $premium_sale = $premium_product ? $premium_product->get_sale_price() : null;
-
         ob_start();
         ?>
         <div class="owner-section">
@@ -128,76 +118,6 @@ class Vehicle_Lookup_Shortcode {
                         <p>Utforsk tekniske detaljer, EU-kontroll status og mer i boksene nedenfor - helt gratis!</p>
                         <button type="button" class="explore-free-btn" onclick="expandAllAccordions()">Utforsk gratis info</button>
                     </div>
-                </div>
-
-                <div id="tier-selection">
-                    <h3>Velg rapporttype</h3>
-                    <div class="tier-comparison">
-                        <!-- Basic Tier -->
-                        <div class="tier-card basic-tier">
-                            <div class="tier-header">
-                                <h4><?php echo $basic_product ? esc_html($basic_product->get_name()) : 'Basic rapport'; ?></h4>
-                                <div class="tier-price">
-                                    <?php if ($basic_sale): ?>
-                                        <span class="regular-price"><?php echo esc_html($basic_price); ?> kr</span>
-                                        <span class="sale-price"><?php echo esc_html($basic_sale); ?> kr</span>
-                                    <?php else: ?>
-                                        <span class="price"><?php echo esc_html($basic_price); ?> kr</span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="tier-features">
-                                <div class="feature-item">✓ Nåværende eier</div>
-                                <div class="feature-item">✓ Alle tekniske detaljer</div>
-                                <div class="feature-item">✓ EU-kontroll status</div>
-                            </div>
-                            <div class="tier-purchase">
-                                <?php echo do_shortcode("[woo_vipps_buy_now id=62 /]"); ?>
-                            </div>
-                        </div>
-
-                        <!-- Premium Tier -->
-                        <div class="tier-card premium-tier recommended">
-                            <div class="tier-badge">Mest populær</div>
-                            <div class="tier-header">
-                                <h4><?php echo $premium_product ? esc_html($premium_product->get_name()) : 'Premium rapport'; ?></h4>
-                                <?php
-                                // Calculate percentage discount if there's a sale price
-                                if ($premium_sale && $premium_sale < $premium_price): 
-                                    $discount_percentage = round((($premium_price - $premium_sale) / $premium_price) * 100);
-                                    ?>
-                                    <div class="savings-display">
-                                        Spar <?php echo esc_html($discount_percentage); ?>% ved å kjøpe denne!
-                                    </div>
-                                <?php endif; ?>
-                                <div class="tier-price">
-                                    <?php if ($premium_sale): ?>
-                                        <span class="regular-price"><?php echo esc_html($premium_price); ?> kr</span>
-                                        <span class="sale-price"><?php echo esc_html($premium_sale); ?> kr</span>
-                                    <?php else: ?>
-                                        <span class="price"><?php echo esc_html($premium_price); ?> kr</span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="tier-features">
-                                <div class="feature-item">✓ Alt fra Basic rapport</div>
-                                <div class="feature-item">✓ Komplett eierhistorikk</div>
-                                <div class="feature-item">✓ Skadehistorikk</div>
-                                <div class="feature-item">✓ Detaljert kjøretøyrapport</div>
-                                <div class="feature-item">✓ Import</div>
-                            </div>
-                            <div class="tier-purchase">
-                                <?php 
-                                $vipps_button = do_shortcode("[woo_vipps_buy_now id=739 /]");
-                                echo $vipps_button;
-                                ?>
-                                <script>
-                                window.premiumVippsBuyButton = <?php echo json_encode($vipps_button); ?>;
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-                    <?php echo $this->render_trust_indicators(); ?>
                 </div>
             </div>
         </div>
