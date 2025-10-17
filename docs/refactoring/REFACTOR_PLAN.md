@@ -190,7 +190,7 @@ css/
 ### Current State
 - **Unit Tests**: None
 - **Integration Tests**: None
-- **Manual Testing**: test-structured-errors.html and ai-summary-test.html exist
+- **Manual Testing**: test-structured-errors.md and ai-summary-test.md exist
 
 ### Recommended Test Structure
 ```
@@ -205,8 +205,8 @@ tests/
   │   ├── test-database.php             (Database operations)
   │   └── test-woocommerce.php          (WooCommerce integration)
   └── manual/
-      ├── test-structured-errors.html   (existing)
-      └── ai-summary-test.html          (existing)
+      ├── test-structured-errors.md   (existing)
+      └── ai-summary-test.md          (existing)
 ```
 
 **Priority**: MEDIUM - Add tests gradually as classes are refactored
