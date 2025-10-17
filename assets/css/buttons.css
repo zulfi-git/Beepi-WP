@@ -20,10 +20,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     
     /* Spacing */
-    padding: 0.75rem 1.25rem;
+    padding: var(--spacing-md) var(--spacing-lg);
     min-height: 44px;
     
     /* Visual */
@@ -79,13 +79,13 @@
 /* Button Sizes */
 .btn-sm {
     font-size: var(--font-xs);
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-sm) var(--spacing-base);
     min-height: 36px;
 }
 
 .btn-lg {
     font-size: var(--font-base);
-    padding: 1rem 2rem;
+    padding: var(--spacing-base) var(--spacing-2xl);
     min-height: 48px;
 }
 
@@ -98,9 +98,9 @@
 /* Button Icons */
 .btn .toggle-icon {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: var(--font-xs);
     transition: transform 0.3s ease;
-    margin-left: 0.25rem;
+    margin-left: var(--spacing-xs);
 }
 
 /* Disabled State */
@@ -141,19 +141,19 @@
     .finn-view-more-btn,
     .ai-expand-toggle {
         font-size: var(--font-base);
-        padding: 1rem 2rem;
+        padding: var(--spacing-base) var(--spacing-2xl);
         min-height: 48px;
     }
     
     .btn-sm {
         font-size: var(--font-sm);
-        padding: 0.625rem 1.125rem;
+        padding: var(--spacing-sm) var(--spacing-lg);
         min-height: 38px;
     }
     
     .btn-lg {
         font-size: var(--font-lg);
-        padding: 1.25rem 2.5rem;
+        padding: var(--spacing-lg) var(--spacing-3xl);
         min-height: 52px;
     }
 }
