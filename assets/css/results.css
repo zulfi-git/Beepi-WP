@@ -7,6 +7,10 @@
     margin-bottom: 1rem;
 }
 
+.action-boxes.footer-actions {
+    margin-bottom: 60px;
+}
+
 .action-box {
     background: white;
     border: 1px solid #e2e8f0;

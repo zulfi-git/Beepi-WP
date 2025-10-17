@@ -137,7 +137,7 @@ class Vehicle_Lookup_Shortcode {
     private function render_footer_action_boxes() {
         ob_start();
         ?>
-        <div class="action-boxes" style="margin-top: 2rem;">
+        <div class="action-boxes footer-actions" style="margin-top: 2rem;">
             <div class="action-box" onclick="openActionPopup('eier')">
                 <div class="action-box-content">
                     <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-eier-600x600.png" alt="Se eier" class="action-box-icon">
