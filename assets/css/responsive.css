@@ -229,7 +229,7 @@
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--border-light);
     border-radius: var(--border-radius-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md); /* Originally 6px 10px, rounded to 8px 12px for consistency */
     box-shadow: var(--shadow-sm);
     z-index: 1000;
     font-size: var(--font-xs);
@@ -315,7 +315,7 @@
 
 @media (min-width: 1024px) {
     .ai-section {
-        padding: var(--spacing-xl);
+        padding: var(--spacing-1.75xl); /* 28px to match original 1.75rem */
     }
 
     .accordion {
@@ -329,12 +329,12 @@
     }
 
     .info-table th {
-        padding: var(--spacing-lg) var(--spacing-xl);
+        padding: var(--spacing-lg) var(--spacing-1.75xl); /* 20px 28px to match original */
         width: 40%;
     }
 
     .info-table td {
-        padding: var(--spacing-lg) var(--spacing-xl);
+        padding: var(--spacing-lg) var(--spacing-1.75xl); /* 20px 28px to match original */
     }
 }
 
