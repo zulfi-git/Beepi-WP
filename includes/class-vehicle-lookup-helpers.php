@@ -163,8 +163,22 @@ class Vehicle_Lookup_Helpers {
      */
     public static function render_trust_indicators() {
         return '<div class="trust-indicators">
-            <div>🔐 Data hentes fra Statens vegvesen</div>
-            <div>⏱️ Svar på noen få sekunder</div>
+            <div class="trust-item">
+                <img src="' . VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/vegvesen-logo.webp" alt="Statens vegvesen" class="trust-logo">
+                <span>Offisiell data fra Statens vegvesen</span>
+            </div>
+            <div class="trust-item">
+                <span>🔐</span>
+                <span>Sikker oppkobling</span>
+            </div>
+            <div class="trust-item">
+                <span>⏱️</span>
+                <span>Sanntidsdata</span>
+            </div>
+            <div class="trust-item">
+                <span>🇳🇴</span>
+                <span>Norsk kjøretøyregister</span>
+            </div>
         </div>';
     }
 
