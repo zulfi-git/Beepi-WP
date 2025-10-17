@@ -102,7 +102,6 @@ jQuery(document).ready(function($) {
         }
 
         $resultsDiv.hide();
-        $('#footer-action-boxes').hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
         $('.cache-notice').remove();
@@ -323,7 +322,6 @@ jQuery(document).ready(function($) {
 
         // No need to manage accordion open/close - all sections are always visible
         $resultsDiv.show();
-        $('#footer-action-boxes').show();
         console.log('✅ Results displayed');
 
         $('html, body').animate({
