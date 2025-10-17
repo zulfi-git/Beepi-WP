@@ -1,19 +1,8 @@
 /* AI Summary Styling */
 .ai-summary-section {
     background: var(--gradient-light);
-    border: 2px solid var(--border-light) !important;
+    border: none !important;
     position: relative;
-}
-
-.ai-summary-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-hover), var(--primary-blue-dark));
-    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
 }
 
 .ai-summary-section summary {
@@ -124,6 +113,17 @@
 .ai-meta::before {
     content: '';
     font-size: var(--font-xs);
+}
+
+/* AI Disclaimer */
+.ai-disclaimer {
+    font-size: var(--font-xs);
+    color: #64748b;
+    font-style: italic;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
 }
 
 /* Collapsible AI Summary Styles */

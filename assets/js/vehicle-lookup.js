@@ -1118,7 +1118,8 @@ jQuery(document).ready(function($) {
             if (aiSummary.summary) {
                 const $summarySection = $('<div class="ai-section ai-summary-visible">');
                 $summarySection.append(
-                    $('<p class="ai-summary-text">').text(aiSummary.summary)
+                    $('<p class="ai-summary-text">').text(aiSummary.summary),
+                    $('<p class="ai-disclaimer">').text('AI kan gjøre feil. Sjekk viktig informasjon.')
                 );
                 $aiContent.append($summarySection);
             }
