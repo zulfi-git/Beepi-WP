@@ -51,6 +51,17 @@
     --border-radius-lg: 16px;
     --border-radius-xl: 20px;
     
+    /* Spacing Scale (9 consistent sizes) */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 0.75rem;    /* 12px */
+    --spacing-base: 1rem;     /* 16px */
+    --spacing-lg: 1.25rem;    /* 20px */
+    --spacing-xl: 1.5rem;     /* 24px */
+    --spacing-1.75xl: 1.75rem; /* 28px */
+    --spacing-2xl: 2rem;      /* 32px */
+    --spacing-3xl: 2.5rem;    /* 40px */
+    
     /* Typography Scale (6 consistent sizes) */
     --font-xs: 0.75rem;
     --font-sm: 0.875rem;

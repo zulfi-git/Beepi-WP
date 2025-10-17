@@ -2,36 +2,36 @@
 .action-boxes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    gap: var(--spacing-base);
+    margin-top: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
 }
 
 .action-boxes.footer-actions {
-    margin-bottom: 60px;
+    margin-bottom: var(--spacing-3xl);
 }
 
 .action-box {
     background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-base);
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .action-box:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-md);
     border-color: var(--primary-blue);
 }
 
 .action-box-icon {
     width: 48px;
     height: 48px;
-    margin: 0 auto 0.5rem;
+    margin: 0 auto var(--spacing-sm);
     display: block;
 }
 
@@ -62,12 +62,12 @@
 
 .popup-content {
     background-color: white;
-    padding: 2rem;
-    border-radius: 16px;
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-lg);
     max-width: 500px;
     width: 90%;
     position: relative;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-lg);
     animation: popupSlideIn 0.3s ease;
 }
 
@@ -84,38 +84,38 @@
 
 .popup-close {
     position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 1.5rem;
+    right: var(--spacing-base);
+    top: var(--spacing-base);
+    font-size: var(--font-xl);
     font-weight: bold;
-    color: #666;
+    color: var(--text-secondary);
     cursor: pointer;
     line-height: 1;
     transition: color 0.2s ease;
 }
 
 .popup-close:hover {
-    color: #000;
+    color: var(--text-primary);
 }
 
 .popup-content h3 {
-    margin: 0 0 1rem 0;
+    margin: 0 0 var(--spacing-base) 0;
     color: var(--text-primary);
     font-size: var(--font-xl);
 }
 
 .popup-body {
-    margin-top: 1.5rem;
+    margin-top: var(--spacing-xl);
 }
 
 @media (max-width: 600px) {
     .action-boxes {
         grid-template-columns: repeat(3, 1fr);
-        gap: 0.5rem;
+        gap: var(--spacing-sm);
     }
 
     .action-box {
-        padding: 0.75rem;
+        padding: var(--spacing-md);
     }
 
     .action-box h4 {
@@ -125,11 +125,11 @@
     .action-box-icon {
         width: 36px;
         height: 36px;
-        margin-bottom: 0.25rem;
+        margin-bottom: var(--spacing-xs);
     }
 
     .popup-content {
-        padding: 1.5rem;
+        padding: var(--spacing-xl);
         width: 95%;
     }
 }
@@ -184,34 +184,34 @@
 }
 
 .info-sections {
-    padding: 20px;
+    padding: var(--spacing-lg);
 }
 
 .info-section {
-    margin-bottom: 30px;
+    margin-bottom: var(--spacing-2xl);
 }
 
 .info-section h3 {
     font-size: var(--font-lg);
     color: var(--text-primary);
-    margin-bottom: 15px;
+    margin-bottom: var(--spacing-base);
 }
 
 .info-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    gap: var(--spacing-base);
     padding: 0;
     background: transparent;
 }
 
 .info-item {
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 4px;
+    padding: var(--spacing-md);
+    background: var(--bg-light);
+    border-radius: var(--border-radius-sm);
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--spacing-sm);
 }
 
 .info-item strong {
@@ -226,16 +226,16 @@
 
 /* Tabs styles */
 .tabs {
-    margin-top: 20px;
+    margin-top: var(--spacing-lg);
 }
 
 .tabs ul {
     display: flex;
     justify-content: space-around;
-    background-color: #f1f5f9;
-    border-radius: 12px;
-    padding: 0.25rem;
-    margin-top: 1rem;
+    background-color: var(--bg-lighter);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-xs);
+    margin-top: var(--spacing-base);
     list-style: none;
     margin: 0;
 }
@@ -247,8 +247,8 @@
 
 .tabs a {
     display: block;
-    padding: 0.5rem;
-    border-radius: 10px;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
     color: var(--text-primary);
     font-weight: 500;
     text-decoration: none;
@@ -261,30 +261,30 @@
 
 /* Section Styling */
 .accordion {
-    margin-top: 2rem;
+    margin-top: var(--spacing-2xl);
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: var(--spacing-2xl);
 }
 
 .accordion details {
-    background: #fff;
+    background: var(--bg-white);
     border: none;
     border-radius: var(--border-radius-md);
     overflow: hidden;
     transition: all 0.2s ease;
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-2xl);
 }
 
 .section-header {
-    padding: 0.75rem;
+    padding: var(--spacing-md);
     font-weight: 700;
     background: var(--gradient-light);
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: var(--spacing-md);
     font-size: var(--font-sm);
     color: var(--text-primary);
     border-bottom: none;
@@ -296,22 +296,22 @@
 }
 
 .section-icon {
-    font-size: 1rem;
+    font-size: var(--font-base);
 }
 
 .section-content {
     padding: 0;
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-2xl);
 }
 
 .info-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: var(--font-sm);
 }
 
 .info-table tr {
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-lighter);
     transition: background-color 0.2s ease;
 }
 
@@ -320,7 +320,7 @@
 }
 
 .info-table tr:hover {
-    background-color: #f8fafc;
+    background-color: var(--bg-light);
 }
 
 .info-table th {
@@ -328,13 +328,13 @@
     color: var(--text-secondary);
     font-weight: 600;
     text-align: left;
-    padding: 1rem 1.25rem;
+    padding: var(--spacing-base) var(--spacing-lg);
     font-size: var(--font-xs);
     border-bottom: none;
 }
 
 .info-table td {
-    padding: 1rem 1.25rem;
+    padding: var(--spacing-base) var(--spacing-lg);
     border-bottom: none;
     color: var(--text-primary);
 }
@@ -367,26 +367,26 @@
 }
 
 .error-message {
-    background: #fff3f3;
+    background: var(--bg-blue-lighter);
     color: #dc3545;
-    padding: 15px;
-    border-radius: 4px;
-    margin-top: 20px;
+    padding: var(--spacing-base);
+    border-radius: var(--border-radius-sm);
+    margin-top: var(--spacing-lg);
     border: 1px solid #fccfcf;
 }
 
 .quota-display {
-    margin-top: 10px;
-    padding: 8px;
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
     background: var(--bg-light);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     font-size: var(--font-sm);
     color: var(--text-secondary);
     text-align: right;
 }
 
 .version-display {
-    margin-top: 5px;
+    margin-top: var(--spacing-sm);
     font-size: var(--font-xs);
     color: var(--text-muted);
     text-align: right;
@@ -396,8 +396,8 @@
     text-align: center;
     font-size: var(--font-sm);
     color: var(--text-secondary);
-    margin-top: 2rem;
-    padding: 1rem;
+    margin-top: var(--spacing-2xl);
+    padding: var(--spacing-base);
     font-weight: 500;
 }
 
@@ -415,12 +415,12 @@
 .usage-stats {
     display: flex;
     justify-content: center;
-    gap: 2rem;
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    gap: var(--spacing-2xl);
+    margin: var(--spacing-xl) 0;
+    padding: var(--spacing-base);
+    background: var(--gradient-light);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-light);
 }
 
 .stat-item {
@@ -444,8 +444,8 @@
 .value-features {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin: 1rem 0;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-base) 0;
     text-align: left;
 }
 
@@ -456,7 +456,7 @@
 }
 
 #owner-info-purchase h3 {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 var(--spacing-sm) 0;
     color: var(--text-primary);
     font-size: var(--font-xl);
     font-weight: 700;
@@ -464,9 +464,9 @@
 
 @media (max-width: 600px) {
     .usage-stats {
-        gap: 1rem;
-        margin: 1rem 0;
-        padding: 0.75rem;
+        gap: var(--spacing-base);
+        margin: var(--spacing-base) 0;
+        padding: var(--spacing-md);
     }
 
     .stat-number {
@@ -479,7 +479,7 @@
 
     .value-features {
         grid-template-columns: 1fr;
-        gap: 0.25rem;
+        gap: var(--spacing-xs);
     }
 }
 
@@ -488,7 +488,7 @@
 details summary {
     min-height: 44px;
     min-width: 44px;
-    padding: 12px;
+    padding: var(--spacing-md);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -500,25 +500,25 @@ details summary {
     }
 
     .vehicle-lookup-container {
-        padding: 0 0.5rem;
+        padding: 0 var(--spacing-sm);
         margin: 0;
     }
 
     .vehicle-header {
-        padding: 1rem;
-        border-radius: 12px;
+        padding: var(--spacing-base);
+        border-radius: var(--border-radius-md);
     }
 
     #owner-info-purchase {
-        margin: 0.5rem 0;
-        padding: 1rem;
-        border-radius: 12px;
+        margin: var(--spacing-sm) 0;
+        padding: var(--spacing-base);
+        border-radius: var(--border-radius-md);
     }
 
     .vehicle-logo {
         width: 60px;
         height: 60px;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-sm);
     }
 
     .vehicle-title {
@@ -530,21 +530,21 @@ details summary {
     }
 
     .accordion {
-        margin-top: 0.5rem;
+        margin-top: var(--spacing-sm);
     }
 
     .accordion details {
-        border-radius: 12px;
+        border-radius: var(--border-radius-md);
     }
 
     .accordion summary {
-        padding: 0.75rem;
+        padding: var(--spacing-md);
         font-size: var(--font-sm);
     }
 
     .info-table th,
     .info-table td {
-        padding: 0.5rem;
+        padding: var(--spacing-sm);
         font-size: var(--font-sm);
     }
 
@@ -553,45 +553,45 @@ details summary {
     }
 
     .section-content {
-        margin-bottom: 2rem;
+        margin-bottom: var(--spacing-2xl);
     }
 
     .vehicle-tags {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 0.25rem;
+        gap: var(--spacing-xs);
     }
 
     .tag {
         font-size: var(--font-xs);
-        padding: 0.25rem 0.5rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
     }
 
     .trust-indicators {
         font-size: var(--font-xs);
-        margin-top: 1rem;
+        margin-top: var(--spacing-base);
     }
 
     .plate-form {
-        margin: 0.5rem 0;
+        margin: var(--spacing-sm) 0;
     }
 
     .powered-by {
-        margin-top: 1rem;
-        padding: 0.5rem;
+        margin-top: var(--spacing-base);
+        padding: var(--spacing-sm);
     }
 
     /* Order confirmation mobile styles */
     .order-confirmation-container .sms-status-card {
-        margin: 0.5rem 0;
-        padding: 1rem;
-        border-radius: 12px;
+        margin: var(--spacing-sm) 0;
+        padding: var(--spacing-base);
+        border-radius: var(--border-radius-md);
     }
 
     .order-confirmation-container .sms-status-card h4 {
         font-size: var(--font-base);
-        margin-bottom: 0.75rem;
+        margin-bottom: var(--spacing-md);
     }
 
     .sms-status-card p {
@@ -601,8 +601,8 @@ details summary {
 
 .vehicle-status,
 .eu-status {
-    margin: 0.5rem 0;
-    padding: 0.5rem 0.75rem;
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--border-radius-sm);
     font-size: var(--font-xs);
     text-align: center;
@@ -610,7 +610,7 @@ details summary {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
+    gap: var(--spacing-xs);
     box-shadow: var(--shadow-sm);
     line-height: 1.2;
 }
@@ -696,32 +696,32 @@ details summary {
 .purchase-features {
     display: flex;
     justify-content: space-around;
-    margin: 16px 0;
+    margin: var(--spacing-base) 0;
     font-size: var(--font-sm);
     color: var(--text-primary);
 }
 
 .purchase-button {
-    margin-top: 16px;
+    margin-top: var(--spacing-base);
     width: 100%;
 }
 
 .vehicle-header {
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-2xl);
 }
 
 #owner-info-purchase {
     text-align: center;
-    padding: 2rem;
+    padding: var(--spacing-2xl);
     background: white;
-    margin: 2rem 0;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    margin: var(--spacing-2xl) 0;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
     border: none;
 }
 
 #owner-info-purchase p {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--spacing-xl);
     color: var(--text-primary);
     font-weight: 600;
     font-size: var(--font-xl);
@@ -729,19 +729,19 @@ details summary {
 }
 
 .price-display {
-    margin: 1.5rem 0;
+    margin: var(--spacing-xl) 0;
     text-align: center;
 }
 
 .discount-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #ff5b24 0%, #ff4400 100%);
+    background: var(--gradient-orange);
     color: white;
-    padding: 6px 16px;
-    border-radius: 16px;
-    margin-bottom: 12px;
+    padding: var(--spacing-sm) var(--spacing-base);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-md);
     font-weight: 700;
-    font-size: 0.9em;
+    font-size: var(--font-sm);
     box-shadow: 0 2px 8px rgba(255, 91, 36, 0.3);
 }
 
@@ -749,8 +749,8 @@ details summary {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    margin: 1rem 0;
+    gap: var(--spacing-base);
+    margin: var(--spacing-base) 0;
 }
 
 .regular-price {
