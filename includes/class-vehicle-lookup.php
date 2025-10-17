@@ -36,7 +36,7 @@ class Vehicle_Lookup {
         // Register AJAX handlers
         add_action('wp_ajax_vehicle_lookup', array($this, 'handle_lookup'));
         add_action('wp_ajax_nopriv_vehicle_lookup', array($this, 'handle_lookup'));
-        
+
         // AI summary polling endpoint
         add_action('wp_ajax_vehicle_lookup_ai_poll', array($this, 'handle_ai_summary_poll'));
         add_action('wp_ajax_nopriv_vehicle_lookup_ai_poll', array($this, 'handle_ai_summary_poll'));
@@ -68,82 +68,17 @@ class Vehicle_Lookup {
     }
 
     /**
-     * Enqueue required scripts and styles
+     * Localize script with AJAX data
      */
     public function enqueue_scripts() {
-        // Enqueue modular CSS files in proper dependency order
-        // 1. Variables first (defines CSS custom properties)
-        wp_enqueue_style(
-            'vehicle-lookup-variables',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/variables.css',
-            array(),
-            VEHICLE_LOOKUP_VERSION . '.' . time()
-        );
-        
-        // 2. Core component styles (depend on variables)
-        wp_enqueue_style(
-            'vehicle-lookup-forms',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/forms.css',
-            array('vehicle-lookup-variables'),
-            VEHICLE_LOOKUP_VERSION . '.' . time()
-        );
-        
-        wp_enqueue_style(
-            'vehicle-lookup-results',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/results.css',
-            array('vehicle-lookup-variables'),
-            VEHICLE_LOOKUP_VERSION . '.' . time()
-        );
-        
-        // 3. Feature-specific styles
-        wp_enqueue_style(
-            'vehicle-lookup-ai-summary',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/ai-summary.css',
-            array('vehicle-lookup-variables'),
-            VEHICLE_LOOKUP_VERSION . '.' . time()
-        );
-        
-        wp_enqueue_style(
-            'vehicle-lookup-market',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/market.css',
-            array('vehicle-lookup-variables'),
-            VEHICLE_LOOKUP_VERSION . '.' . time()
-        );
-        
-        // 4. Responsive and additional components (may override other styles)
-        wp_enqueue_style(
-            'vehicle-lookup-responsive',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/responsive.css',
-            array('vehicle-lookup-variables', 'vehicle-lookup-forms', 'vehicle-lookup-results'),
-            VEHICLE_LOOKUP_VERSION . '.' . time()
-        );
-
-        // Enqueue normalize-plate module first
-        wp_enqueue_script(
-            'normalize-plate',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/normalize-plate.js',
-            array(),
-            VEHICLE_LOOKUP_VERSION . '.' . time(),
-            true
-        );
-
-        wp_enqueue_script(
-            'vehicle-lookup-script',
-            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/vehicle-lookup.js',
-            array('jquery', 'normalize-plate'),
-            VEHICLE_LOOKUP_VERSION . '.' . time(),
-            true
-        );
-
-        wp_localize_script(
-            'vehicle-lookup-script',
-            'vehicleLookupAjax',
-            array(
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('vehicle_lookup_nonce'),
-                'plugin_url' => plugins_url('', dirname(__FILE__))
-            )
-        );
+        // CSS and JS are now enqueued in main plugin file with cache busting
+        // Just add localized data here
+        wp_localize_script('vehicle-lookup', 'vehicleLookupAjax', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('vehicle_lookup_nonce'),
+            'pluginUrl' => VEHICLE_LOOKUP_PLUGIN_URL,
+            'openaiLogo' => VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/open-ai-logo.png'
+        ));
     }
 
     /**
@@ -192,21 +127,21 @@ class Vehicle_Lookup {
             $failure_type = isset($result['failure_type']) ? $result['failure_type'] : 'unknown';
             $error_code = isset($result['code']) ? $result['code'] : null;
             $correlation_id = isset($result['correlation_id']) ? $result['correlation_id'] : null;
-            
+
             $this->db_handler->log_lookup(
-                $regNumber, 
-                $ip_address, 
-                false, 
-                $result['error'], 
-                $response_time, 
-                false, 
-                $failure_type, 
-                'free', 
-                null, 
-                $error_code, 
+                $regNumber,
+                $ip_address,
+                false,
+                $result['error'],
+                $response_time,
+                false,
+                $failure_type,
+                'free',
+                null,
+                $error_code,
                 $correlation_id
             );
-            
+
             // Return structured error data to frontend
             wp_send_json_error(array(
                 'message' => $result['error'],
@@ -218,7 +153,7 @@ class Vehicle_Lookup {
 
         $data = $result['data'];
 
-        // Add cache metadata to response  
+        // Add cache metadata to response
         $data['is_cached'] = false;
         $data['cache_time'] = current_time('c'); // ISO 8601 format
 
@@ -252,11 +187,11 @@ class Vehicle_Lookup {
 
         // Prepare response data from polling endpoints
         $response_data = array();
-        
+
         // Poll AI summary endpoint
         $api_result = $this->api->poll_ai_summary($regNumber);
         $ai_result = $this->api->process_ai_summary_response($api_result['response'], $regNumber);
-        
+
         if (isset($ai_result['error'])) {
             // Return AI polling error but continue with market data
             $response_data['aiSummary'] = array(
@@ -266,11 +201,11 @@ class Vehicle_Lookup {
         } else {
             $response_data['aiSummary'] = $ai_result['data'];
         }
-        
+
         // Poll market listings endpoint
         $market_api_result = $this->api->poll_market_listings($regNumber);
         $market_result = $this->api->process_market_listings_response($market_api_result['response'], $regNumber);
-        
+
         if (isset($market_result['error'])) {
             // Return market polling error
             $response_data['marketListings'] = array(
