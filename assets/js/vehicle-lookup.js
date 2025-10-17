@@ -1,3 +1,27 @@
+
+// Action Box Popup Functions
+function openActionPopup(type) {
+    const popup = document.getElementById('popup-' + type);
+    if (popup) {
+        popup.classList.add('active');
+    }
+}
+
+function closeActionPopup(type) {
+    const popup = document.getElementById('popup-' + type);
+    if (popup) {
+        popup.classList.remove('active');
+    }
+}
+
+// Close popup when clicking outside
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('action-popup')) {
+        event.target.classList.remove('active');
+    }
+});
+
+
 jQuery(document).ready(function($) {
     // Cache DOM elements
     const $form = $('#vehicle-lookup-form');

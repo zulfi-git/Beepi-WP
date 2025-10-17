@@ -71,6 +71,45 @@ class Vehicle_Lookup_Shortcode {
         ?>
         <div class="owner-section">
             <div id="owner-info-container">
+                <!-- Action Boxes -->
+                <div class="action-boxes">
+                    <div class="action-box" onclick="openActionPopup('eier')">
+                        <div class="action-box-content">
+                            <h4>Se eier</h4>
+                        </div>
+                    </div>
+                    <div class="action-box" onclick="openActionPopup('skader')">
+                        <div class="action-box-content">
+                            <h4>Se skader</h4>
+                        </div>
+                    </div>
+                    <div class="action-box" onclick="openActionPopup('pant')">
+                        <div class="action-box-content">
+                            <h4>Se pant</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popup Modals -->
+                <div id="popup-eier" class="action-popup">
+                    <div class="popup-content">
+                        <span class="popup-close" onclick="closeActionPopup('eier')">&times;</span>
+                        <h3>Se eier</h3>
+                    </div>
+                </div>
+                <div id="popup-skader" class="action-popup">
+                    <div class="popup-content">
+                        <span class="popup-close" onclick="closeActionPopup('skader')">&times;</span>
+                        <h3>Se skader</h3>
+                    </div>
+                </div>
+                <div id="popup-pant" class="action-popup">
+                    <div class="popup-content">
+                        <span class="popup-close" onclick="closeActionPopup('pant')">&times;</span>
+                        <h3>Se pant</h3>
+                    </div>
+                </div>
+
                 <div id="free-info-guide" class="free-info-guide">
                     <div class="guide-content">
                         <h4>💡 Se gratis informasjon</h4>
