@@ -82,6 +82,13 @@ class Vehicle_Lookup {
         
         // 2. Core component styles (depend on variables)
         wp_enqueue_style(
+            'vehicle-lookup-buttons',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/buttons.css',
+            array('vehicle-lookup-variables'),
+            VEHICLE_LOOKUP_VERSION . '.' . time()
+        );
+        
+        wp_enqueue_style(
             'vehicle-lookup-forms',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/css/forms.css',
             array('vehicle-lookup-variables'),
