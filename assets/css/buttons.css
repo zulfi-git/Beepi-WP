@@ -44,7 +44,7 @@
 
 /* Override for plate-search-button */
 .plate-search-button {
-    background: #00205B;
+    background: var(--primary-navy);
     border: none;
 }
 
@@ -62,7 +62,7 @@
 
 /* Override hover for plate-search-button */
 .plate-search-button:hover {
-    background: #003a8c;
+    background: var(--primary-navy-hover);
 }
 
 /* Active State */
