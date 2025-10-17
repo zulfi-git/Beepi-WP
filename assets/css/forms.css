@@ -94,7 +94,7 @@
     height: 70px;
     border-radius: 50%;
     object-fit: contain;
-    margin: 0 auto var(--spacing-md) auto;
+    margin: 0 auto var(--spacing-md);
     display: block;
     background: var(--gradient-white);
     padding: var(--spacing-md);
