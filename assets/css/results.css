@@ -296,6 +296,7 @@
 
 .section-content {
     padding: 0;
+    margin-bottom: 2.5rem;
 }
 
 .info-table {
@@ -324,8 +325,6 @@
     text-align: left;
     padding: 1rem 1.25rem;
     font-size: var(--font-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
     border-bottom: none;
 }
 
@@ -548,6 +547,10 @@ details summary {
 
     .info-table th {
         width: 40%;
+    }
+
+    .section-content {
+        margin-bottom: 2.5rem;
     }
 
     .vehicle-tags {
