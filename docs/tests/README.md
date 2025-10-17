@@ -2,6 +2,32 @@
 
 Manual test files for verification of fixes. All files are in Markdown format for GitHub browsing.
 
+## UI/UX Examples & Prototypes
+
+### Interactive HTML Prototypes
+**Location:** `ui-examples/`
+
+- **[Mobile-First Design](./ui-examples/mobile-first-design.html)** ⭐ **Reference Implementation**
+  - Fluid typography with `clamp()`
+  - Touch targets minimum 48x48px
+  - Bottom sheet action panel
+  - Swipeable info cards
+  - Dark mode support
+  
+- **[Accessibility-Focused](./ui-examples/accessibility-focused.html)** ⭐ **WCAG 2.1 AA**
+  - High contrast colors (4.5:1+ ratio)
+  - Comprehensive ARIA labels
+  - Keyboard navigation
+  - Screen reader optimized
+  
+- **[Enhanced Layout](./ui-examples/enhanced-layout.html)**
+  - Modern card-based design
+  - Visual hierarchy
+  - Micro-interactions
+  - Conversion optimized
+
+**[View UI Examples README](./ui-examples/README.md)** for detailed comparison and testing guide.
+
 ## Test Files
 
 ### AI Summary Tests
