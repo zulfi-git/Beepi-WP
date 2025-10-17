@@ -307,6 +307,10 @@
         padding: 1.25rem 1.5rem;
     }
     
+    .section-content {
+        padding: 1.25rem 1.5rem;
+    }
+    
     .info-table th {
         padding: 1.25rem 1.5rem;
         font-size: var(--font-sm);
@@ -333,6 +337,10 @@
     }
     
     .section-header {
+        padding: 1.5rem 2rem;
+    }
+    
+    .section-content {
         padding: 1.5rem 2rem;
     }
     
