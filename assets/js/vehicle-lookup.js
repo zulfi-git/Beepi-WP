@@ -1124,8 +1124,11 @@ jQuery(document).ready(function($) {
                 $aiContent.append($summarySection);
             }
 
-            // Create collapsible container for additional details
+            // Create collapsible container for additional details - collapsed by default
             const $collapsibleContent = $('<div class="ai-collapsible-content" style="display: none;">');
+            
+            // Create toggle button before adding content
+            const $toggleButton = $('<button class="ai-expand-toggle" type="button">').html('Les mer <span class="toggle-icon">▼</span>');
 
             // Safely add highlights
             if (aiSummary.highlights && Array.isArray(aiSummary.highlights) && aiSummary.highlights.length > 0) {
@@ -1189,8 +1192,6 @@ jQuery(document).ready(function($) {
 
             // Add collapsible content and toggle button if there's additional content
             if ($collapsibleContent.children().length > 0) {
-                const $toggleButton = $('<button class="ai-expand-toggle" type="button">').html('Vis mer <span class="toggle-icon">▼</span>');
-                
                 $toggleButton.on('click', function() {
                     const $button = $(this);
                     const $content = $button.prev('.ai-collapsible-content');
@@ -1198,10 +1199,10 @@ jQuery(document).ready(function($) {
                     
                     if (isExpanded) {
                         $content.slideUp(300);
-                        $button.html('Vis mer <span class="toggle-icon">▼</span>');
+                        $button.html('Les mer <span class="toggle-icon">▼</span>');
                     } else {
                         $content.slideDown(300);
-                        $button.html('Vis mindre <span class="toggle-icon">▲</span>');
+                        $button.html('Les mindre <span class="toggle-icon">▲</span>');
                     }
                 });
                 
