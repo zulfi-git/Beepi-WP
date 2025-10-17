@@ -257,7 +257,7 @@ Record any issues or observations:
 ## Test Environment
 
 - WordPress Version: _____
-- Plugin Version: 7.0.8
+- Plugin Version: 7.0.9
 - PHP Version: _____
 - Browser: _____
 - Date Tested: _____
