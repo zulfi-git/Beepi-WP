@@ -95,18 +95,27 @@ class Vehicle_Lookup_Shortcode {
                     <div class="popup-content">
                         <span class="popup-close" onclick="closeActionPopup('eier')">&times;</span>
                         <h3>Se eier</h3>
+                        <div class="popup-body">
+                            <!-- Pricing, features & CTA will be added here -->
+                        </div>
                     </div>
                 </div>
                 <div id="popup-skader" class="action-popup">
                     <div class="popup-content">
                         <span class="popup-close" onclick="closeActionPopup('skader')">&times;</span>
                         <h3>Se skader</h3>
+                        <div class="popup-body">
+                            <!-- Pricing, features & CTA will be added here -->
+                        </div>
                     </div>
                 </div>
                 <div id="popup-pant" class="action-popup">
                     <div class="popup-content">
                         <span class="popup-close" onclick="closeActionPopup('pant')">&times;</span>
                         <h3>Se pant</h3>
+                        <div class="popup-body">
+                            <!-- Pricing, features & CTA will be added here -->
+                        </div>
                     </div>
                 </div>
 
