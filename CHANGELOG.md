@@ -4,16 +4,18 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
-## [7.0.9] - 2025-10-10
+## [7.0.9] - 2025-10-17
 
 ### Changed
 - Version bump for documentation housekeeping
 
 ### Documentation
-- Removed legacy duplicate fix documentation files
-- Converted HTML test files to Markdown for better GitHub browsing
-- Updated maintainer information for solo project
-- Cleaned up documentation structure
+- Removed outdated version-specific documentation (VERSION_7.0.8_README.md, api-update-summary.md)
+- Consolidated duplicate fix documentation (removed summary/quickstart duplicates)
+- Simplified docs/README.md for single-developer workflow
+- Streamlined docs/fixes/README.md - removed redundant guides
+- Updated all documentation to reflect current version 7.0.9
+- HTML test files already converted to Markdown (completed in previous version)
 
 ---
 
