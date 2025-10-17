@@ -75,6 +75,7 @@ class Vehicle_Lookup_Shortcode {
                 <div class="action-boxes">
                     <div class="action-box" onclick="openActionPopup('eier')">
                         <div class="action-box-content">
+                            <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-eier-600x600.png" alt="Se eier" class="action-box-icon">
                             <h4>Se eier</h4>
                         </div>
                     </div>
