@@ -115,8 +115,7 @@ jQuery(document).ready(function($) {
         $vehicleSubtitle.empty();
         $vehicleLogo.attr('src', '');
         $('.info-table').empty();
-        // Clear owner history content to prevent stacking - unlike other sections that use .info-table class, this div has a different structure and needs explicit clearing
-        $('#eierhistorikk-content').empty();
+        // Eierhistorikk section reset is now removed as per user request.
         console.log('✅ Previous vehicle data cleared');
     }
 
@@ -1126,7 +1125,7 @@ jQuery(document).ready(function($) {
 
             // Create collapsible container for additional details - collapsed by default
             const $collapsibleContent = $('<div class="ai-collapsible-content" style="display: none;">');
-            
+
             // Create toggle button before adding content
             const $toggleButton = $('<button class="ai-expand-toggle" type="button">').html('Les mer <span class="toggle-icon">▼</span>');
 
@@ -1196,7 +1195,7 @@ jQuery(document).ready(function($) {
                     const $button = $(this);
                     const $content = $button.prev('.ai-collapsible-content');
                     const isExpanded = $content.is(':visible');
-                    
+
                     if (isExpanded) {
                         $content.slideUp(300);
                         $button.html('Les mer <span class="toggle-icon">▼</span>');
@@ -1205,7 +1204,7 @@ jQuery(document).ready(function($) {
                         $button.html('Les mindre <span class="toggle-icon">▲</span>');
                     }
                 });
-                
+
                 $aiContent.append($collapsibleContent, $toggleButton);
             }
 

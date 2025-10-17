@@ -6,7 +6,7 @@
     padding: 2rem;
     box-shadow: 0 4px 24px rgba(0,0,0,0.1);
     margin: 2rem 0;
-    border: 1px solid #e2e8f0;
+    border: none;
 }
 
 .order-confirmation-container .sms-status-card h4 {
@@ -450,7 +450,7 @@
 
 .market-listing-item {
     background: #ffffff;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 0;
     padding: 0;
     overflow: hidden;

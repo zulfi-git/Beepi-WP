@@ -118,13 +118,12 @@ class Vehicle_Lookup_Helpers {
      */
     public static function render_accordion_section() {
         $accordion_sections = [
-            ['Generell informasjon', '📋', 'basic-info-table'],
-            ['Reg. og EU-kontroll', '🔍', 'registration-info-table'],
-            ['Eierhistorikk', '👥', 'eierhistorikk-content'],
-            ['Motor og drivverk', '🔧', 'engine-info-table'],
-            ['Størrelse og vekt', '⚖️', 'size-weight-table'],
-            ['Dekk og felg', '🛞', 'tire-info-table'],
-            ['Merknader', '📝', 'notes-info-table']
+            ['Generell informasjon', '', 'basic-info-table'],
+            ['Reg. og EU-kontroll', '', 'registration-info-table'],
+            ['Motor og drivverk', '', 'engine-info-table'],
+            ['Størrelse og vekt', '', 'size-weight-table'],
+            ['Dekk og felg', '', 'tire-info-table'],
+            ['Merknader', '', 'notes-info-table']
         ];
 
         $html = '<div class="accordion">';

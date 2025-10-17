@@ -265,7 +265,7 @@
 
 .accordion details {
     background: #fff;
-    border: 1px solid var(--border-light);
+    border: none;
     border-radius: var(--border-radius-md);
     overflow: hidden;
     transition: all 0.2s ease;
@@ -282,7 +282,7 @@
     gap: 12px;
     font-size: var(--font-sm);
     color: var(--text-primary);
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: none;
 }
 
 .section-title {
@@ -326,12 +326,12 @@
     font-size: var(--font-xs);
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: none;
 }
 
 .info-table td {
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--border-lighter);
+    border-bottom: none;
     color: var(--text-primary);
 }
 
@@ -707,7 +707,7 @@ details summary {
     margin: 2rem 0;
     border-radius: 20px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-    border: 1px solid #e2e8f0;
+    border: none;
 }
 
 #owner-info-purchase p {
