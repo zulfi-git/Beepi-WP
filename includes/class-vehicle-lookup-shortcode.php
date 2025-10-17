@@ -142,6 +142,28 @@ class Vehicle_Lookup_Shortcode {
 
         return sprintf(
             '<div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
+            
+            <div class="action-boxes" style="margin-top: 2rem;">
+                <div class="action-box" onclick="openActionPopup(\'eier\')">
+                    <div class="action-box-content">
+                        <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-eier-600x600.png" alt="Se eier" class="action-box-icon">
+                        <h4>Se eier</h4>
+                    </div>
+                </div>
+                <div class="action-box" onclick="openActionPopup(\'skader\')">
+                    <div class="action-box-content">
+                        <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-skade-600x600.png" alt="Se skader" class="action-box-icon">
+                        <h4>Se skader</h4>
+                    </div>
+                </div>
+                <div class="action-box" onclick="openActionPopup(\'pant\')">
+                    <div class="action-box-content">
+                        <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-pant-600x600.png" alt="Se pant" class="action-box-icon">
+                        <h4>Se pant</h4>
+                    </div>
+                </div>
+            </div>
+            
             <div id="quota-display" class="quota-display" style="display: none;"></div>
             <div class="usage-stats">
                 <div class="stat-item">
