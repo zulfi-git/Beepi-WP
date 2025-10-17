@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beepi - Mobile-First Design</title>
+    <style>
+        /* Mobile-First Design with Fluid Typography */
+        :root {
+            /* Fluid Typography using clamp() */
+            --font-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --font-sm: clamp(0.875rem, 0.8rem + 0.4vw, 1rem);
+            --font-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+            --font-lg: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+            --font-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+            --font-2xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+            
+            /* Fluid Spacing */
+            --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+            --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+            --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+            --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+            --space-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
+            
+            /* Colors - Dark mode friendly */
+            --color-primary: #0066cc;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-bg: #ffffff;
+            --color-surface: #f8fafc;
+            --color-text: #0f172a;
+            --color-text-muted: #64748b;
+            --color-border: #e2e8f0;
+            
+            /* Touch targets */
+            --touch-target: 48px;
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #0f172a;
+                --color-surface: #1e293b;
+                --color-text: #f1f5f9;
+                --color-text-muted: #94a3b8;
+                --color-border: #334155;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-size: var(--font-base);
+            line-height: 1.6;
+            padding: var(--space-sm);
+        }
+        
+        /* Container with safe areas for notches */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        /* Compact Vehicle Header for Mobile */
+        .vehicle-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--space-md);
+            border-radius: 1rem;
+            margin-bottom: var(--space-md);
+            text-align: center;
+        }
+        
+        .vehicle-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto var(--space-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .vehicle-registration {
+            font-size: var(--font-xl);
+            font-weight: 800;
+            letter-spacing: 0.3em;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .vehicle-model {
+            font-size: var(--font-lg);
+            opacity: 0.95;
+        }
+        
+        .vehicle-tags {
+            display: flex;
+            gap: var(--space-xs);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--space-sm);
+        }
+        
+        .tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: var(--font-sm);
+            white-space: nowrap;
+        }
+        
+        /* Quick Status Cards - Stacked on Mobile */
+        .status-cards {
+            display: grid;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .status-card {
+            background: var(--color-surface);
+            border-radius: 0.75rem;
+            padding: var(--space-md);
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            min-height: var(--touch-target);
+        }
+        
+        .status-card.success {
+            border-color: var(--color-success);
+        }
+        
+        .status-card.warning {
+            border-color: var(--color-warning);
+        }
+        
+        .status-card.danger {
+            border-color: var(--color-danger);
+        }
+        
+        .status-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+        
+        .status-content {
+            flex: 1;
+        }
+        
+        .status-label {
+            font-size: var(--font-sm);
+            color: var(--color-text-muted);
+            margin-bottom: 0.125rem;
+        }
+        
+        .status-value {
+            font-size: var(--font-lg);
+            font-weight: 700;
+        }
+        
+        /* Bottom Sheet Style Actions */
+        .action-sheet {
+            background: var(--color-surface);
+            border-radius: 1rem 1rem 0 0;
+            padding: var(--space-md);
+            margin: 0 calc(var(--space-sm) * -1) calc(var(--space-sm) * -1);
+            position: sticky;
+            bottom: 0;
+        }
+        
+        .action-sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--color-border);
+            border-radius: 999px;
+            margin: 0 auto var(--space-md);
+        }
+        
+        .action-sheet h2 {
+            font-size: var(--font-lg);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .action-buttons {
+            display: grid;
+            gap: var(--space-sm);
+        }
+        
+        .action-button {
+            min-height: var(--touch-target);
+            padding: var(--space-sm) var(--space-md);
+            border: 2px solid var(--color-border);
+            border-radius: 0.75rem;
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: var(--font-base);
+            color: var(--color-text);
+        }
+        
+        .action-button:active {
+            transform: scale(0.98);
+            background: var(--color-surface);
+        }
+        
+        .action-button-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .action-button-content {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .action-button-title {
+            font-weight: 600;
+            display: block;
+        }
+        
+        .action-button-desc {
+            font-size: var(--font-sm);
+            color: var(--color-text-muted);
+            display: block;
+        }
+        
+        .action-button-price {
+            font-weight: 700;
+            color: var(--color-primary);
+            flex-shrink: 0;
+        }
+        
+        /* Swipeable Info Cards */
+        .info-carousel {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            margin-bottom: var(--space-md);
+        }
+        
+        .info-carousel::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .info-cards {
+            display: flex;
+            gap: var(--space-sm);
+            padding: 0 var(--space-sm);
+        }
+        
+        .info-card {
+            min-width: 200px;
+            background: var(--color-surface);
+            border-radius: 0.75rem;
+            padding: var(--space-md);
+            scroll-snap-align: start;
+        }
+        
+        .info-card-label {
+            font-size: var(--font-sm);
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .info-card-value {
+            font-size: var(--font-xl);
+            font-weight: 700;
+        }
+        
+        /* Expandable Section */
+        .expandable-section {
+            background: var(--color-surface);
+            border-radius: 0.75rem;
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+        }
+        
+        .expandable-header {
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: var(--touch-target);
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .expandable-title {
+            font-weight: 600;
+            font-size: var(--font-base);
+        }
+        
+        .expandable-icon {
+            transition: transform 0.3s;
+        }
+        
+        details[open] .expandable-icon {
+            transform: rotate(180deg);
+        }
+        
+        .expandable-content {
+            padding: 0 var(--space-md) var(--space-md);
+        }
+        
+        .spec-list {
+            list-style: none;
+        }
+        
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+        
+        .spec-label {
+            color: var(--color-text-muted);
+            font-size: var(--font-sm);
+        }
+        
+        .spec-value {
+            font-weight: 600;
+        }
+        
+        /* Trust Indicators - Horizontal Scroll on Mobile */
+        .trust-bar {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--color-surface);
+            border-radius: 0.75rem;
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .trust-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+            scroll-snap-align: start;
+        }
+        
+        .trust-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .trust-label {
+            font-size: var(--font-xs);
+            text-align: center;
+            color: var(--color-text-muted);
+        }
+        
+        /* Tablet and Desktop Improvements */
+        @media (min-width: 640px) {
+            .status-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .info-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+            
+            .info-card {
+                min-width: auto;
+            }
+            
+            .trust-bar {
+                justify-content: space-around;
+            }
+            
+            .action-sheet {
+                position: static;
+                margin: 0 0 var(--space-md);
+                border-radius: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Compact Vehicle Header -->
+        <div class="vehicle-header">
+            <div class="vehicle-logo">🚗</div>
+            <div class="vehicle-registration">AB12345</div>
+            <div class="vehicle-model">Toyota Corolla 2020</div>
+            <div class="vehicle-tags">
+                <span class="tag">⚡ Hybrid</span>
+                <span class="tag">⚙️ Automatisk</span>
+            </div>
+        </div>
+
+        <!-- Quick Status Cards -->
+        <div class="status-cards">
+            <div class="status-card success">
+                <div class="status-icon">✓</div>
+                <div class="status-content">
+                    <div class="status-label">Status</div>
+                    <div class="status-value">Registrert</div>
+                </div>
+            </div>
+
+            <div class="status-card success">
+                <div class="status-icon">🔧</div>
+                <div class="status-content">
+                    <div class="status-label">EU-kontroll</div>
+                    <div class="status-value">6 mnd igjen</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust Bar -->
+        <div class="trust-bar">
+            <div class="trust-item">
+                <div class="trust-icon">🔒</div>
+                <div class="trust-label">Sikker betaling</div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">🛡️</div>
+                <div class="trust-label">GDPR-sikret</div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">⚡</div>
+                <div class="trust-label">Umiddelbar</div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">👥</div>
+                <div class="trust-label">15,000+ kunder</div>
+            </div>
+        </div>
+
+        <!-- Swipeable Info Cards -->
+        <div class="info-carousel">
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-label">Årsmodell</div>
+                    <div class="info-card-value">2020</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Drivstoff</div>
+                    <div class="info-card-value">Hybrid</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Girkasse</div>
+                    <div class="info-card-value">Automatisk</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Effekt</div>
+                    <div class="info-card-value">122 HK</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expandable Sections -->
+        <details class="expandable-section">
+            <summary class="expandable-header">
+                <span class="expandable-title">🚗 Grunnleggende info</span>
+                <span class="expandable-icon">▼</span>
+            </summary>
+            <div class="expandable-content">
+                <ul class="spec-list">
+                    <li class="spec-item">
+                        <span class="spec-label">Merke</span>
+                        <span class="spec-value">Toyota</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Modell</span>
+                        <span class="spec-value">Corolla</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Karosseri</span>
+                        <span class="spec-value">Sedan</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Farge</span>
+                        <span class="spec-value">Sølv</span>
+                    </li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="expandable-section">
+            <summary class="expandable-header">
+                <span class="expandable-title">⚙️ Teknisk info</span>
+                <span class="expandable-icon">▼</span>
+            </summary>
+            <div class="expandable-content">
+                <ul class="spec-list">
+                    <li class="spec-item">
+                        <span class="spec-label">Motor</span>
+                        <span class="spec-value">1.8L</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Effekt</span>
+                        <span class="spec-value">122 HK</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Vekt</span>
+                        <span class="spec-value">1,370 kg</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">CO₂-utslipp</span>
+                        <span class="spec-value">95 g/km</span>
+                    </li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="expandable-section">
+            <summary class="expandable-header">
+                <span class="expandable-title">📋 Registrering</span>
+                <span class="expandable-icon">▼</span>
+            </summary>
+            <div class="expandable-content">
+                <ul class="spec-list">
+                    <li class="spec-item">
+                        <span class="spec-label">Første reg.</span>
+                        <span class="spec-value">15.03.2020</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Status</span>
+                        <span class="spec-value">Registrert</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">EU-kontroll</span>
+                        <span class="spec-value">31.12.2025</span>
+                    </li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Bottom Sheet Actions -->
+        <div class="action-sheet">
+            <div class="action-sheet-handle"></div>
+            <h2>Få mer informasjon</h2>
+            
+            <div class="action-buttons">
+                <button class="action-button">
+                    <div class="action-button-icon">👤</div>
+                    <div class="action-button-content">
+                        <span class="action-button-title">Se eier</span>
+                        <span class="action-button-desc">Navn, adresse og kontakt</span>
+                    </div>
+                    <div class="action-button-price">69 NOK</div>
+                </button>
+
+                <button class="action-button">
+                    <div class="action-button-icon">🔨</div>
+                    <div class="action-button-content">
+                        <span class="action-button-title">Se skader</span>
+                        <span class="action-button-desc">Skadehistorikk og reparasjoner</span>
+                    </div>
+                    <div class="action-button-price">49 NOK</div>
+                </button>
+
+                <button class="action-button">
+                    <div class="action-button-icon">📋</div>
+                    <div class="action-button-content">
+                        <span class="action-button-title">Se pant</span>
+                        <span class="action-button-desc">Panteregistrering og lån</span>
+                    </div>
+                    <div class="action-button-price">39 NOK</div>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

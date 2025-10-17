@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beepi - Enhanced Search Result Layout</title>
+    <style>
+        /* Design System Variables */
+        :root {
+            /* Colors */
+            --color-primary: #0066cc;
+            --color-primary-hover: #0052a3;
+            --color-success: #0e7c3a;
+            --color-warning: #f59e0b;
+            --color-danger: #c41e3a;
+            --color-text-primary: #1a202c;
+            --color-text-secondary: #4a5568;
+            --color-text-muted: #718096;
+            --color-bg-primary: #ffffff;
+            --color-bg-secondary: #f7fafc;
+            --color-bg-muted: #edf2f7;
+            --color-border: #e2e8f0;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+        }
+        
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            padding: var(--space-lg);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Header with Vehicle Info */
+        .vehicle-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vehicle-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .vehicle-brand-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .vehicle-brand-logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+        
+        .vehicle-registration {
+            text-align: center;
+            font-size: var(--font-size-3xl);
+            font-weight: 800;
+            letter-spacing: 0.5rem;
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .vehicle-title {
+            text-align: center;
+            font-size: var(--font-size-xl);
+            opacity: 0.95;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .vehicle-tags {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: center;
+            margin-top: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tag {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+        
+        /* Status Cards Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .status-card {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .status-card.status-success {
+            border-color: var(--color-success);
+        }
+        
+        .status-card.status-warning {
+            border-color: var(--color-warning);
+        }
+        
+        .status-card.status-danger {
+            border-color: var(--color-danger);
+        }
+        
+        .status-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-2xl);
+        }
+        
+        .status-success .status-icon {
+            background: rgba(14, 124, 58, 0.1);
+            color: var(--color-success);
+        }
+        
+        .status-warning .status-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+        
+        .status-danger .status-icon {
+            background: rgba(196, 30, 58, 0.1);
+            color: var(--color-danger);
+        }
+        
+        .status-card h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .status-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .status-description {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Premium Actions */
+        .premium-actions {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .premium-actions h2 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .premium-actions-subtitle {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .action-card {
+            background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--color-primary);
+        }
+        
+        .action-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .action-card-badge {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            font-size: var(--font-size-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+        
+        .action-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--space-md);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-2xl);
+            color: white;
+        }
+        
+        .action-card h4 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .action-card-features {
+            list-style: none;
+            margin: var(--space-md) 0;
+            text-align: left;
+        }
+        
+        .action-card-features li {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            padding: var(--space-xs) 0;
+        }
+        
+        .action-card-features li::before {
+            content: "✓";
+            color: var(--color-success);
+            font-weight: 700;
+            margin-right: var(--space-sm);
+        }
+        
+        .action-price {
+            font-size: var(--font-size-2xl);
+            font-weight: 800;
+            color: var(--color-primary);
+            margin: var(--space-md) 0;
+        }
+        
+        .action-button {
+            width: 100%;
+            padding: var(--space-md);
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0052a3 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-button:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Information Sections */
+        .info-sections {
+            display: grid;
+            gap: var(--space-lg);
+        }
+        
+        .info-section {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        
+        .info-section-header {
+            padding: var(--space-lg);
+            background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+            border-bottom: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .info-section-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .info-section-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-section-body {
+            padding: var(--space-lg);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+        
+        .info-item {
+            padding: var(--space-md);
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-primary);
+        }
+        
+        .info-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-primary);
+            font-weight: 700;
+        }
+        
+        /* Trust Bar */
+        .trust-bar {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            padding: var(--space-xl);
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        .trust-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--color-success);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--space-sm);
+            }
+            
+            .vehicle-header {
+                padding: var(--space-lg);
+            }
+            
+            .vehicle-registration {
+                font-size: var(--font-size-2xl);
+                letter-spacing: 0.3rem;
+            }
+            
+            .vehicle-tags {
+                flex-wrap: wrap;
+            }
+            
+            .status-grid,
+            .action-cards,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .trust-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Vehicle Header -->
+        <div class="vehicle-header">
+            <div class="vehicle-brand-logo">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='12' font-weight='bold'%3EToyota%3C/text%3E%3C/svg%3E" alt="Toyota">
+            </div>
+            <div class="vehicle-registration">AB12345</div>
+            <div class="vehicle-title">Toyota Corolla 2020</div>
+            <div class="vehicle-tags">
+                <span class="tag">⚡ Hybrid</span>
+                <span class="tag">⚙️ Automatisk</span>
+                <span class="tag">🚗 Sedan</span>
+            </div>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="status-grid">
+            <div class="status-card status-success">
+                <div class="status-card-header">
+                    <div class="status-icon">✓</div>
+                    <div>
+                        <h3>Registrering</h3>
+                    </div>
+                </div>
+                <div class="status-value">Registrert</div>
+                <div class="status-description">Aktiv i Norge siden 2020</div>
+            </div>
+
+            <div class="status-card status-success">
+                <div class="status-card-header">
+                    <div class="status-icon">🔧</div>
+                    <div>
+                        <h3>EU-kontroll</h3>
+                    </div>
+                </div>
+                <div class="status-value">31.12.2025</div>
+                <div class="status-description">6 måneder igjen</div>
+            </div>
+        </div>
+
+        <!-- Trust Bar -->
+        <div class="trust-bar">
+            <div class="trust-item">
+                <svg class="trust-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z"/>
+                </svg>
+                <span>Sikker betaling</span>
+            </div>
+            <div class="trust-item">
+                <svg class="trust-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span>GDPR-sikret</span>
+            </div>
+            <div class="trust-item">
+                <svg class="trust-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                </svg>
+                <span>Umiddelbar levering</span>
+            </div>
+            <div class="trust-item">
+                <svg class="trust-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                </svg>
+                <span>15,000+ kunder</span>
+            </div>
+        </div>
+
+        <!-- Premium Actions -->
+        <div class="premium-actions">
+            <h2>Få mer informasjon</h2>
+            <p class="premium-actions-subtitle">Velg hvilken informasjon du ønsker å se</p>
+            
+            <div class="action-cards">
+                <div class="action-card">
+                    <div class="action-card-badge">Populært</div>
+                    <div class="action-icon">👤</div>
+                    <h4>Se eier</h4>
+                    <ul class="action-card-features">
+                        <li>Navn og adresse</li>
+                        <li>Kontaktinformasjon</li>
+                        <li>Eierhistorikk</li>
+                    </ul>
+                    <div class="action-price">69 NOK</div>
+                    <button class="action-button">Kjøp nå</button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">🔨</div>
+                    <h4>Se skader</h4>
+                    <ul class="action-card-features">
+                        <li>Skadehistorikk</li>
+                        <li>Reparasjoner</li>
+                        <li>Forsikringskrav</li>
+                    </ul>
+                    <div class="action-price">49 NOK</div>
+                    <button class="action-button">Kjøp nå</button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">📋</div>
+                    <h4>Se pant</h4>
+                    <ul class="action-card-features">
+                        <li>Panteregistrering</li>
+                        <li>Økonomiske heftelser</li>
+                        <li>Låneforhold</li>
+                    </ul>
+                    <div class="action-price">39 NOK</div>
+                    <button class="action-button">Kjøp nå</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Sections -->
+        <div class="info-sections">
+            <div class="info-section">
+                <div class="info-section-header">
+                    <div class="info-section-title">
+                        <div class="info-section-icon">🚗</div>
+                        <span>Grunnleggende informasjon</span>
+                    </div>
+                </div>
+                <div class="info-section-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Årsmodell</div>
+                            <div class="info-value">2020</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Drivstoff</div>
+                            <div class="info-value">Hybrid</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Girkasse</div>
+                            <div class="info-value">Automatisk</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Karosseri</div>
+                            <div class="info-value">Sedan</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Farge</div>
+                            <div class="info-value">Sølv</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Seter</div>
+                            <div class="info-value">5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-section-header">
+                    <div class="info-section-title">
+                        <div class="info-section-icon">⚙️</div>
+                        <span>Teknisk informasjon</span>
+                    </div>
+                </div>
+                <div class="info-section-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Motor</div>
+                            <div class="info-value">1.8L</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Effekt</div>
+                            <div class="info-value">122 HK</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Vekt</div>
+                            <div class="info-value">1,370 kg</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">CO₂-utslipp</div>
+                            <div class="info-value">95 g/km</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beepi - Accessibility-First Design</title>
+    <meta name="description" content="Vehicle search results for Norwegian registration numbers - WCAG 2.1 AA compliant">
+    <style>
+        /* WCAG 2.1 AA Compliant Design */
+        :root {
+            /* High contrast colors - minimum 4.5:1 ratio */
+            --color-text: #1a1a1a;          /* 16:1 on white */
+            --color-text-alt: #ffffff;      /* 21:1 on dark */
+            --color-primary: #0056b3;       /* 7.5:1 on white */
+            --color-primary-dark: #003d82;  /* 10:1 on white */
+            --color-success: #0d6832;       /* 5.5:1 on white */
+            --color-warning: #9a6700;       /* 4.8:1 on white */
+            --color-danger: #a01c1c;        /* 6:1 on white */
+            --color-bg: #ffffff;
+            --color-surface: #f5f5f5;
+            --color-border: #666666;
+            
+            /* Focus indicators */
+            --focus-outline: 3px solid #0056b3;
+            --focus-offset: 2px;
+            
+            /* Spacing for touch targets */
+            --touch-min: 44px;
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            
+            /* Typography */
+            --font-size-base: 16px;
+            --line-height-base: 1.5;
+        }
+        
+        /* High Contrast Mode Support */
+        @media (prefers-contrast: high) {
+            :root {
+                --color-text: #000000;
+                --color-primary: #0000ee;
+                --color-border: #000000;
+            }
+        }
+        
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Skip to main content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-primary);
+            color: var(--color-text-alt);
+            padding: var(--space-sm) var(--space-md);
+            text-decoration: none;
+            z-index: 9999;
+            font-weight: 600;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            padding: var(--space-md);
+        }
+        
+        /* Focus visible for keyboard navigation */
+        *:focus-visible {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-offset);
+        }
+        
+        /* Remove default focus for mouse users */
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* Live region for dynamic updates */
+        .live-region {
+            position: absolute;
+            left: -10000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .page-header {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+        
+        /* Vehicle Result Card */
+        .vehicle-card {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .vehicle-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        .vehicle-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-md);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .vehicle-registration {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 0.3em;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .vehicle-model {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        /* Status Section with clear semantics */
+        .status-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .status-heading {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+        
+        .status-list {
+            list-style: none;
+            display: grid;
+            gap: var(--space-md);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            min-height: var(--touch-min);
+        }
+        
+        .status-item[data-status="success"] {
+            border-color: var(--color-success);
+        }
+        
+        .status-item[data-status="warning"] {
+            border-color: var(--color-warning);
+        }
+        
+        .status-item[data-status="danger"] {
+            border-color: var(--color-danger);
+        }
+        
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border-radius: 50%;
+        }
+        
+        .status-item[data-status="success"] .status-icon {
+            background: var(--color-success);
+            color: var(--color-text-alt);
+        }
+        
+        .status-item[data-status="warning"] .status-icon {
+            background: var(--color-warning);
+            color: var(--color-text-alt);
+        }
+        
+        .status-item[data-status="danger"] .status-icon {
+            background: var(--color-danger);
+            color: var(--color-text-alt);
+        }
+        
+        .status-content {
+            flex: 1;
+        }
+        
+        .status-label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .status-value {
+            font-size: 1.125rem;
+        }
+        
+        /* Action Buttons with clear labels */
+        .actions-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .actions-heading {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+        
+        .actions-list {
+            list-style: none;
+            display: grid;
+            gap: var(--space-md);
+        }
+        
+        .action-button {
+            width: 100%;
+            min-height: var(--touch-min);
+            padding: var(--space-md);
+            background: var(--color-bg);
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+            text-align: left;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .action-button:hover {
+            background: var(--color-primary);
+            color: var(--color-text-alt);
+        }
+        
+        .action-button:focus-visible {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-offset);
+        }
+        
+        .action-button-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .action-button-content {
+            flex: 1;
+        }
+        
+        .action-button-title {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-button-description {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+        
+        .action-button-price {
+            font-size: 1.25rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        
+        /* Information Sections with Disclosure Pattern */
+        .info-sections {
+            display: grid;
+            gap: var(--space-md);
+        }
+        
+        .info-section {
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .info-section summary {
+            padding: var(--space-md);
+            background: var(--color-surface);
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: var(--touch-min);
+        }
+        
+        .info-section summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        .info-section summary::after {
+            content: "▼";
+            font-size: 0.875rem;
+            transition: transform 0.3s;
+        }
+        
+        .info-section[open] summary::after {
+            transform: rotate(180deg);
+        }
+        
+        .info-content {
+            padding: var(--space-md);
+            background: var(--color-bg);
+        }
+        
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .spec-table th,
+        .spec-table td {
+            padding: var(--space-sm) var(--space-md);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .spec-table th {
+            font-weight: 700;
+            background: var(--color-surface);
+        }
+        
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Trust Indicators */
+        .trust-section {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .trust-heading {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+        
+        .trust-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+        }
+        
+        .trust-item {
+            text-align: center;
+        }
+        
+        .trust-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+        
+        .trust-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        /* Responsive Grid */
+        @media (min-width: 640px) {
+            .status-list,
+            .actions-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .action-button,
+            .skip-link {
+                display: none;
+            }
+            
+            .info-section {
+                border: 1px solid #000;
+            }
+            
+            .info-section summary::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content for screen readers -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Live region for dynamic announcements -->
+    <div role="status" aria-live="polite" aria-atomic="true" class="live-region" id="live-region">
+        <!-- Dynamic status messages will be announced here -->
+    </div>
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Kjøretøyinformasjon</h1>
+            <p>Fullstendig informasjon om norske registreringsnummer</p>
+        </header>
+
+        <main id="main-content">
+            <!-- Vehicle Result Card -->
+            <article class="vehicle-card" aria-labelledby="vehicle-title">
+                <div class="vehicle-header">
+                    <div class="vehicle-logo" role="img" aria-label="Toyota logo">
+                        🚗
+                    </div>
+                    <h2 id="vehicle-title" class="vehicle-registration">AB12345</h2>
+                    <p class="vehicle-model">Toyota Corolla 2020</p>
+                </div>
+
+                <!-- Status Section -->
+                <section class="status-section" aria-labelledby="status-heading">
+                    <h3 id="status-heading" class="status-heading">Kjøretøystatus</h3>
+                    <ul class="status-list">
+                        <li class="status-item" data-status="success">
+                            <div class="status-icon" role="img" aria-label="Godkjent">
+                                ✓
+                            </div>
+                            <div class="status-content">
+                                <span class="status-label">Registreringsstatus</span>
+                                <span class="status-value">Registrert i Norge siden 2020</span>
+                            </div>
+                        </li>
+
+                        <li class="status-item" data-status="success">
+                            <div class="status-icon" role="img" aria-label="Gyldig">
+                                🔧
+                            </div>
+                            <div class="status-content">
+                                <span class="status-label">EU-kontroll</span>
+                                <span class="status-value">Gyldig til 31. desember 2025 (6 måneder igjen)</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Trust Indicators -->
+                <section class="trust-section" aria-labelledby="trust-heading">
+                    <h3 id="trust-heading" class="trust-heading">Sikkerhet og garanti</h3>
+                    <ul class="trust-list">
+                        <li class="trust-item">
+                            <span class="trust-icon" role="img" aria-label="Sikker">🔒</span>
+                            <span class="trust-label">Sikker betaling</span>
+                        </li>
+                        <li class="trust-item">
+                            <span class="trust-icon" role="img" aria-label="Beskyttet">🛡️</span>
+                            <span class="trust-label">GDPR-sikret</span>
+                        </li>
+                        <li class="trust-item">
+                            <span class="trust-icon" role="img" aria-label="Raskt">⚡</span>
+                            <span class="trust-label">Umiddelbar levering</span>
+                        </li>
+                        <li class="trust-item">
+                            <span class="trust-icon" role="img" aria-label="Populært">👥</span>
+                            <span class="trust-label">15,000+ kunder</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Premium Actions -->
+                <section class="actions-section" aria-labelledby="actions-heading">
+                    <h3 id="actions-heading" class="actions-heading">Tilleggsinformasjon</h3>
+                    <p id="actions-description">Velg hvilken informasjon du ønsker å kjøpe</p>
+                    <ul class="actions-list" aria-describedby="actions-description">
+                        <li>
+                            <button 
+                                type="button" 
+                                class="action-button"
+                                aria-label="Kjøp eierinformasjon for 69 kroner. Inkluderer navn, adresse og kontaktinformasjon.">
+                                <span class="action-button-icon" aria-hidden="true">👤</span>
+                                <span class="action-button-content">
+                                    <span class="action-button-title">Se eier</span>
+                                    <span class="action-button-description">Navn, adresse og kontaktinformasjon</span>
+                                </span>
+                                <span class="action-button-price" aria-label="Pris">69 NOK</span>
+                            </button>
+                        </li>
+
+                        <li>
+                            <button 
+                                type="button" 
+                                class="action-button"
+                                aria-label="Kjøp skadeinformasjon for 49 kroner. Inkluderer skadehistorikk, reparasjoner og forsikringskrav.">
+                                <span class="action-button-icon" aria-hidden="true">🔨</span>
+                                <span class="action-button-content">
+                                    <span class="action-button-title">Se skader</span>
+                                    <span class="action-button-description">Skadehistorikk, reparasjoner og forsikringskrav</span>
+                                </span>
+                                <span class="action-button-price" aria-label="Pris">49 NOK</span>
+                            </button>
+                        </li>
+
+                        <li>
+                            <button 
+                                type="button" 
+                                class="action-button"
+                                aria-label="Kjøp panteinformasjon for 39 kroner. Inkluderer panteregistrering og økonomiske heftelser.">
+                                <span class="action-button-icon" aria-hidden="true">📋</span>
+                                <span class="action-button-content">
+                                    <span class="action-button-title">Se pant</span>
+                                    <span class="action-button-description">Panteregistrering og økonomiske heftelser</span>
+                                </span>
+                                <span class="action-button-price" aria-label="Pris">39 NOK</span>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Information Sections -->
+                <div class="info-sections">
+                    <details class="info-section" open>
+                        <summary>Grunnleggende informasjon</summary>
+                        <div class="info-content">
+                            <table class="spec-table">
+                                <caption class="sr-only">Grunnleggende kjøretøyspesifikasjoner</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Spesifikasjon</th>
+                                        <th scope="col">Verdi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Merke</th>
+                                        <td>Toyota</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Modell</th>
+                                        <td>Corolla</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Årsmodell</th>
+                                        <td>2020</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Drivstoff</th>
+                                        <td>Hybrid</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Girkasse</th>
+                                        <td>Automatisk</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Karosseri</th>
+                                        <td>Sedan</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+
+                    <details class="info-section">
+                        <summary>Teknisk informasjon</summary>
+                        <div class="info-content">
+                            <table class="spec-table">
+                                <caption class="sr-only">Tekniske spesifikasjoner</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Spesifikasjon</th>
+                                        <th scope="col">Verdi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Motorstørrelse</th>
+                                        <td>1.8 liter</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Effekt</th>
+                                        <td>122 hestekrefter</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Vekt</th>
+                                        <td>1,370 kilogram</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CO₂-utslipp</th>
+                                        <td>95 gram per kilometer</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+
+                    <details class="info-section">
+                        <summary>Registreringsinformasjon</summary>
+                        <div class="info-content">
+                            <table class="spec-table">
+                                <caption class="sr-only">Registreringsdetaljer</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Informasjon</th>
+                                        <th scope="col">Detaljer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Første registrering</th>
+                                        <td>15. mars 2020</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Status</th>
+                                        <td>Registrert</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">EU-kontroll gyldig til</th>
+                                        <td>31. desember 2025</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <script>
+        // Announce page changes to screen readers
+        function announceToScreenReader(message) {
+            const liveRegion = document.getElementById('live-region');
+            liveRegion.textContent = message;
+            setTimeout(() => {
+                liveRegion.textContent = '';
+            }, 1000);
+        }
+
+        // Example: Announce when action buttons are clicked
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const title = button.querySelector('.action-button-title').textContent;
+                announceToScreenReader(`Åpner kjøpsside for ${title}`);
+            });
+        });
+
+        // Example: Announce when details are expanded
+        document.querySelectorAll('.info-section').forEach(details => {
+            details.addEventListener('toggle', () => {
+                const title = details.querySelector('summary').textContent;
+                const state = details.open ? 'åpnet' : 'lukket';
+                announceToScreenReader(`Seksjon ${title} ${state}`);
+            });
+        });
+    </script>
+</body>
+</html>
