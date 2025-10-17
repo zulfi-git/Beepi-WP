@@ -1,4 +1,3 @@
-
 // Action Box Popup Functions
 function openActionPopup(type) {
     const popup = document.getElementById('popup-' + type);
@@ -54,14 +53,14 @@ jQuery(document).ready(function($) {
         if (!dateString) return '';
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return '';
-        
+
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
         const seconds = date.getSeconds().toString().padStart(2, '0');
-        
+
         return `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
     }
 
@@ -94,14 +93,14 @@ jQuery(document).ready(function($) {
 
     function resetFormState() {
         console.log('🧹 Clearing previous vehicle data...');
-        
+
         // Cancel any active polling to prevent conflicts with new lookup
         if (activePollingTimeoutId) {
             clearTimeout(activePollingTimeoutId);
             activePollingTimeoutId = null;
             console.log('🛑 Cancelled active polling from previous lookup');
         }
-        
+
         $resultsDiv.hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
@@ -129,7 +128,7 @@ jQuery(document).ready(function($) {
         // Check if data includes cache information
         const cacheTime = responseData.cache_time;
         const isCached = responseData.is_cached || false;
-        
+
         console.log('Cache info - isCached:', isCached, 'cacheTime:', cacheTime);
 
         let noticeText = '';
@@ -281,7 +280,7 @@ jQuery(document).ready(function($) {
         console.log('📊 Processing vehicle data for:', regNumber);
         console.log('Data cached:', response.data.is_cached || false);
         console.log('Cache time:', response.data.cache_time || 'N/A');
-        
+
         const vehicleData = response.data.responser[0].kjoretoydata;
 
         setRegNumberCookie(regNumber);
@@ -1116,11 +1115,10 @@ jQuery(document).ready(function($) {
             const $sectionContent = $('<div class="section-content">');
             const $aiContent = $('<div class="ai-summary-content">');
 
-            // Safely add summary section
+            // Main summary section
             if (aiSummary.summary) {
                 const $summarySection = $('<div class="ai-section">');
                 $summarySection.append(
-                    $('<h4 class="ai-section-title">').text('Sammendrag'),
                     $('<p class="ai-summary-text">').text(aiSummary.summary)
                 );
                 $aiContent.append($summarySection);
@@ -1314,7 +1312,7 @@ jQuery(document).ready(function($) {
             console.log('🛑 Stopping polling for', regNumber, '- new lookup in progress for', currentLookupRegNumber);
             return;
         }
-        
+
         // Don't poll more than maxAttempts times (15 attempts = ~30 seconds with 2s intervals)
         if (attempt > maxAttempts) {
             $('.ai-summary-section .ai-summary-content').html(
@@ -1332,7 +1330,7 @@ jQuery(document).ready(function($) {
                 console.log('🛑 Polling cancelled for', regNumber, '- lookup changed to', currentLookupRegNumber);
                 return;
             }
-            
+
             $.ajax({
                 url: vehicleLookupAjax.ajaxurl,
                 type: 'POST',
@@ -1427,13 +1425,13 @@ jQuery(document).ready(function($) {
                         }
                     } else {
                         console.log('Polling failed - no success or data:', response);
-                        
+
                         // Check if this polling is still relevant before retrying
                         if (normalizePlate(regNumber) !== currentLookupRegNumber) {
                             console.log('🛑 Not retrying polling for', regNumber, '- lookup changed');
                             return;
                         }
-                        
+
                         // API error, retry with exponential backoff
                         const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt - 1), 10000);
                         activePollingTimeoutId = setTimeout(() => {
@@ -1447,7 +1445,7 @@ jQuery(document).ready(function($) {
                         console.log('🛑 Not retrying polling after error for', regNumber, '- lookup changed');
                         return;
                     }
-                    
+
                     // Handle polling errors gracefully
                     if (attempt < maxAttempts) {
                         const retryDelay = Math.min(pollDelay * Math.pow(1.5, attempt), 10000);
@@ -1468,7 +1466,7 @@ jQuery(document).ready(function($) {
     // Function to render market listings
     function renderMarketListings(marketData) {
         console.log('🎨 Rendering market listings with status:', marketData?.status, 'listings count:', marketData?.listings?.length);
-        
+
         // Remove any existing market listings sections and create new one
         $('.market-listings-section').remove();
         $('.market-listings-error').remove();
@@ -1507,7 +1505,7 @@ jQuery(document).ready(function($) {
             } else if (marketData.status === 'complete') {
                 // Show completed market listings
                 console.log('Market listings complete - listings present:', !!marketData.listings, 'is array:', Array.isArray(marketData.listings), 'length:', marketData.listings?.length);
-                
+
                 if (marketData.listings && Array.isArray(marketData.listings) && marketData.listings.length > 0) {
                     // Display listings directly without wrapper sections
                     const $listingsList = $('<div class="market-listings">');
@@ -1646,14 +1644,14 @@ jQuery(document).ready(function($) {
     // Function to check and start market listings polling
     function checkAndStartMarketListingsPolling(data, regNumber) {
         console.log('🏪 Checking market listings data:', data.marketListings ? 'Present' : 'Missing');
-        
+
         if (!data.marketListings) {
             console.log('⚠️ No market listings data in response');
             return; // No market listings data
         }
 
         console.log('Market listings status:', data.marketListings.status);
-        
+
         // If market listings are already complete, render them immediately (even if empty)
         if (data.marketListings.status === 'complete') {
             console.log('✅ Market listings complete, rendering immediately');
