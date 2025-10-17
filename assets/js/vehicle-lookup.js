@@ -1115,14 +1115,17 @@ jQuery(document).ready(function($) {
             const $sectionContent = $('<div class="section-content">');
             const $aiContent = $('<div class="ai-summary-content">');
 
-            // Main summary section
+            // Main summary section - always visible
             if (aiSummary.summary) {
-                const $summarySection = $('<div class="ai-section">');
+                const $summarySection = $('<div class="ai-section ai-summary-visible">');
                 $summarySection.append(
                     $('<p class="ai-summary-text">').text(aiSummary.summary)
                 );
                 $aiContent.append($summarySection);
             }
+
+            // Create collapsible container for additional details
+            const $collapsibleContent = $('<div class="ai-collapsible-content" style="display: none;">');
 
             // Safely add highlights
             if (aiSummary.highlights && Array.isArray(aiSummary.highlights) && aiSummary.highlights.length > 0) {
@@ -1141,7 +1144,7 @@ jQuery(document).ready(function($) {
                     $('<h4 class="ai-section-title">').text('Høydepunkter'),
                     $highlightsList
                 );
-                $aiContent.append($highlightsSection);
+                $collapsibleContent.append($highlightsSection);
             }
 
             // Safely add recommendation
@@ -1151,7 +1154,7 @@ jQuery(document).ready(function($) {
                     $('<h4 class="ai-section-title">').text('Anbefaling'),
                     $('<p class="ai-recommendation">').text(aiSummary.recommendation)
                 );
-                $aiContent.append($recommendationSection);
+                $collapsibleContent.append($recommendationSection);
             }
 
             // Safely add market insights
@@ -1161,7 +1164,7 @@ jQuery(document).ready(function($) {
                     $('<h4 class="ai-section-title">').text('Markedsanalyse'),
                     $('<p class="ai-market-insights">').text(aiSummary.marketInsights)
                 );
-                $aiContent.append($marketSection);
+                $collapsibleContent.append($marketSection);
             }
 
             // Safely add red flags
@@ -1181,7 +1184,28 @@ jQuery(document).ready(function($) {
                     $('<h4 class="ai-section-title">').text('Ting å vurdere'),
                     $redFlagsList
                 );
-                $aiContent.append($redFlagsSection);
+                $collapsibleContent.append($redFlagsSection);
+            }
+
+            // Add collapsible content and toggle button if there's additional content
+            if ($collapsibleContent.children().length > 0) {
+                const $toggleButton = $('<button class="ai-expand-toggle" type="button">').html('Vis mer <span class="toggle-icon">▼</span>');
+                
+                $toggleButton.on('click', function() {
+                    const $button = $(this);
+                    const $content = $button.prev('.ai-collapsible-content');
+                    const isExpanded = $content.is(':visible');
+                    
+                    if (isExpanded) {
+                        $content.slideUp(300);
+                        $button.html('Vis mer <span class="toggle-icon">▼</span>');
+                    } else {
+                        $content.slideDown(300);
+                        $button.html('Vis mindre <span class="toggle-icon">▲</span>');
+                    }
+                });
+                
+                $aiContent.append($collapsibleContent, $toggleButton);
             }
 
             // Safely add attribution

@@ -126,6 +126,51 @@
     font-size: var(--font-xs);
 }
 
+/* Collapsible AI Summary Styles */
+.ai-summary-visible {
+    margin-bottom: 0 !important;
+}
+
+.ai-collapsible-content {
+    overflow: hidden;
+}
+
+.ai-expand-toggle {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0;
+    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+    border: 1px solid #cbd5e1;
+    border-top: none;
+    border-radius: 0;
+    color: var(--primary-blue);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.ai-expand-toggle:hover {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    color: var(--primary-blue-hover);
+}
+
+.ai-expand-toggle .toggle-icon {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+/* Reduce OpenAI logo size */
+.section-icon-logo {
+    height: 16px !important;
+    width: auto !important;
+    opacity: 0.85;
+}
+
 /* AI Summary Error Styling */
 .ai-summary-error {
     background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
