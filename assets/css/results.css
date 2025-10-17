@@ -326,6 +326,7 @@
     font-size: var(--font-xs);
     letter-spacing: 0.025em;
     border-bottom: none;
+    width: 40%;
 }
 
 .info-table td {
@@ -543,10 +544,6 @@ details summary {
     .info-table td {
         padding: 0.5rem;
         font-size: var(--font-sm);
-    }
-
-    .info-table th {
-        width: 40%;
     }
 
     .vehicle-tags {
