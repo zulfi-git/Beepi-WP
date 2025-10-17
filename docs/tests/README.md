@@ -13,7 +13,7 @@ Manual test files for verification of fixes. All files are in Markdown format fo
 - [test-structured-errors.md](./test-structured-errors.md) - Structured error handling
 
 ### Testing Checklists
-- [TESTING_CHECKLIST_v7.0.8.md](./TESTING_CHECKLIST_v7.0.8.md) - Version 7.0.8 checklist
+- [TESTING_CHECKLIST_v7.0.9.md](./TESTING_CHECKLIST_v7.0.9.md) - Version 7.0.9 checklist
 
 ---
 

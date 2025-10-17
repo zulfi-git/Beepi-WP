@@ -88,7 +88,7 @@ docs/ (37 Markdown files)
 │   └── REFACTOR_PLAN.md
 └── tests/ (6 files)
     ├── README.md
-    ├── TESTING_CHECKLIST_v7.0.8.md
+    ├── TESTING_CHECKLIST_v7.0.9.md
     ├── ai-summary-test.md
     ├── test-ai-summary-404-fix.md
     ├── test-second-viewing-console.md
