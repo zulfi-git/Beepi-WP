@@ -73,7 +73,7 @@
 }
 
 .btn-lg {
-    font-size: var(--font-lg);
+    font-size: var(--font-base);
     padding: 1rem 2rem;
     min-height: 48px;
 }
