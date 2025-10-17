@@ -318,7 +318,7 @@
     
     .accordion {
         margin-top: 2rem;
-        gap: 1.25rem;
+        gap: 2rem;
     }
     
     .accordion summary {
@@ -344,7 +344,7 @@
     
     .accordion {
         margin-top: 2.5rem;
-        gap: 1.5rem;
+        gap: 2.5rem;
     }
     
     .accordion summary {
