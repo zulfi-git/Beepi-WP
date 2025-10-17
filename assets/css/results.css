@@ -296,6 +296,7 @@
 
 .section-content {
     padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
 }
 
 .info-table {
@@ -528,7 +529,7 @@ details summary {
 
     .accordion {
         margin-top: 0.5rem;
-        gap: 0.5rem;
+        gap: 2.5rem;
     }
 
     .accordion details {
