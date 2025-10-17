@@ -1,5 +1,5 @@
 
-/* Unified Button System - Mobile First */
+/* Unified Button System - Simple and Consistent */
 
 /* Base Button Styles */
 .btn,
@@ -8,13 +8,12 @@
 .explore-free-btn,
 .finn-view-more-btn,
 .ai-expand-toggle {
-    /* Typography - Mobile First */
+    /* Typography */
     font-family: var(--font-family);
     font-size: var(--font-sm);
     font-weight: 600;
     text-align: center;
     text-decoration: none;
-    letter-spacing: 0.025em;
     line-height: 1.4;
     
     /* Layout */
@@ -23,40 +22,28 @@
     justify-content: center;
     gap: 0.5rem;
     
-    /* Spacing - Mobile First */
+    /* Spacing */
     padding: 0.75rem 1.25rem;
-    min-height: 44px; /* Touch target */
+    min-height: 44px;
     
     /* Visual */
+    background: var(--primary-blue);
+    color: white;
     border: none;
     border-radius: var(--border-radius-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     
     /* Transitions */
     transition: all 0.2s ease;
     
-    /* Prevent text selection */
+    /* Touch optimization */
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Unified Button Style (All buttons look the same) */
-.btn-primary,
-.btn-secondary,
-.btn-tertiary,
-.purchase-button,
-.plate-search-button,
-.explore-free-btn,
-.finn-view-more-btn,
-.ai-expand-toggle {
-    background: var(--primary-blue);
-    color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-tertiary:hover,
+/* Hover State */
+.btn:hover,
 .purchase-button:hover,
 .plate-search-button:hover,
 .explore-free-btn:hover,
@@ -67,9 +54,8 @@
     transform: translateY(-1px);
 }
 
-.btn-primary:active,
-.btn-secondary:active,
-.btn-tertiary:active,
+/* Active State */
+.btn:active,
 .purchase-button:active,
 .plate-search-button:active,
 .explore-free-btn:active,
@@ -87,12 +73,12 @@
 }
 
 .btn-lg {
-    font-size: var(--font-base);
+    font-size: var(--font-lg);
     padding: 1rem 2rem;
     min-height: 48px;
 }
 
-/* Full Width Button (Mobile) */
+/* Full Width Button */
 .btn-block {
     width: 100%;
     display: flex;
@@ -135,33 +121,7 @@
     to { transform: rotate(360deg); }
 }
 
-/* Tablet Adjustments */
-@media (min-width: 640px) {
-    .btn,
-    .purchase-button,
-    .plate-search-button,
-    .explore-free-btn,
-    .finn-view-more-btn,
-    .ai-expand-toggle {
-        font-size: var(--font-base);
-        padding: 0.875rem 1.5rem;
-        min-height: 44px;
-    }
-    
-    .btn-sm {
-        font-size: var(--font-sm);
-        padding: 0.625rem 1.125rem;
-        min-height: 38px;
-    }
-    
-    .btn-lg {
-        font-size: var(--font-lg);
-        padding: 1rem 2.5rem;
-        min-height: 50px;
-    }
-}
-
-/* Desktop Adjustments */
+/* Responsive Adjustments */
 @media (min-width: 768px) {
     .btn,
     .purchase-button,
@@ -176,33 +136,13 @@
     
     .btn-sm {
         font-size: var(--font-sm);
-        padding: 0.75rem 1.25rem;
-        min-height: 40px;
-    }
-    
-    .btn-lg {
-        font-size: var(--font-lg);
-        padding: 1.125rem 2.75rem;
-        min-height: 52px;
-    }
-}
-
-/* Large Desktop */
-@media (min-width: 1024px) {
-    .btn,
-    .purchase-button,
-    .plate-search-button,
-    .explore-free-btn,
-    .finn-view-more-btn,
-    .ai-expand-toggle {
-        font-size: var(--font-base);
-        padding: 1rem 2rem;
-        min-height: 48px;
+        padding: 0.625rem 1.125rem;
+        min-height: 38px;
     }
     
     .btn-lg {
         font-size: var(--font-xl);
-        padding: 1.25rem 3rem;
-        min-height: 54px;
+        padding: 1.25rem 2.5rem;
+        min-height: 52px;
     }
 }
