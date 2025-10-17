@@ -703,20 +703,8 @@ details summary {
 }
 
 .purchase-button {
-    background-color: var(--primary-orange);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
     margin-top: 16px;
     width: 100%;
-    transition: background-color 0.2s ease;
-}
-
-.purchase-button:hover {
-    background-color: var(--primary-orange-hover);
 }
 
 #owner-info-purchase {

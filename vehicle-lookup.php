@@ -104,14 +104,14 @@ function vehicle_lookup_activate() {
         $db_handler = new Vehicle_Lookup_Database();
         $db_handler->create_table();
     }
-    
+
     // Register custom rewrite rules before flushing
     add_rewrite_rule(
         '^sok/([^/]+)/?$',
         'index.php?pagename=sok&reg_number=$matches[1]',
         'top'
     );
-    
+
     // Flush rewrite rules to register custom routes
     flush_rewrite_rules();
 }
