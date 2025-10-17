@@ -143,7 +143,7 @@ class Vehicle_Lookup_Shortcode {
         return sprintf(
             '<div id="vehicle-lookup-error" class="error-message" style="display: none;"></div>
             
-            <div class="action-boxes" style="margin-top: 2rem;">
+            <div id="footer-action-boxes" class="action-boxes" style="margin-top: 2rem; display: none;">
                 <div class="action-box" onclick="openActionPopup(\'eier\')">
                     <div class="action-box-content">
                         <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-eier-600x600.png" alt="Se eier" class="action-box-icon">
