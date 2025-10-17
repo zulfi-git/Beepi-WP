@@ -291,25 +291,26 @@
     .ai-section {
         padding: 1.5rem;
     }
-    
+
     .accordion {
         margin-top: 2.5rem;
         gap: 2.5rem;
     }
-    
+
     .accordion summary {
         padding: 1.25rem 1.5rem;
         font-size: var(--font-base);
         gap: 16px;
     }
-    
+
     .info-table th {
-        padding: 1rem 1.25rem;
+        padding: 1.25rem 1.5rem;
         font-size: var(--font-sm);
+        width: 40%;
     }
-    
+
     .info-table td {
-        padding: 1rem 1.25rem;
+        padding: 1.25rem 1.5rem;
     }
 }
 
@@ -317,21 +318,22 @@
     .ai-section {
         padding: 1.75rem;
     }
-    
+
     .accordion {
         margin-top: 2.5rem;
         gap: 2.5rem;
     }
-    
+
     .accordion summary {
         padding: 1.5rem 2rem;
         font-size: var(--font-lg);
     }
-    
+
     .info-table th {
         padding: 1.25rem 1.75rem;
+        width: 40%;
     }
-    
+
     .info-table td {
         padding: 1.25rem 1.75rem;
     }
@@ -425,11 +427,11 @@
     .owner-history-overlay {
         padding: 1rem;
     }
-    
+
     .owner-history-overlay h4 {
         font-size: var(--font-base);
     }
-    
+
     .owner-history-overlay .tier-price .sale-price,
     .owner-history-overlay .tier-price .price {
         font-size: var(--font-xl);
@@ -582,17 +584,17 @@
     .listing-card {
         flex-direction: row;
     }
-    
+
     .listing-image {
         width: 140px;
         height: 100px;
         flex-shrink: 0;
     }
-    
+
     .listing-content {
         padding: 1rem;
     }
-    
+
     .listing-details {
         flex-direction: row;
         gap: 1rem;
@@ -603,20 +605,20 @@
     .market-listings {
         gap: 1rem;
     }
-    
+
     .listing-image {
         width: 160px;
         height: 120px;
     }
-    
+
     .listing-title {
         font-size: var(--font-base);
     }
-    
+
     .listing-price {
         font-size: var(--font-xl);
     }
-    
+
     .listing-details {
         gap: 1.5rem;
         font-size: var(--font-sm);
@@ -628,19 +630,19 @@
         width: 180px;
         height: 140px;
     }
-    
+
     .listing-content {
         padding: 1.25rem;
     }
-    
+
     .listing-title {
         font-size: var(--font-lg);
     }
-    
+
     .listing-price {
         font-size: var(--font-xl);
     }
-    
+
     .listing-details {
         font-size: var(--font-sm);
     }
