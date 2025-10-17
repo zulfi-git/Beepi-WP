@@ -42,6 +42,12 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Override for plate-search-button */
+.plate-search-button {
+    background: var(--primary-navy);
+    border: none;
+}
+
 /* Hover State */
 .btn:hover,
 .purchase-button:hover,
@@ -52,6 +58,11 @@
     background: var(--primary-blue-hover);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
     transform: translateY(-1px);
+}
+
+/* Override hover for plate-search-button */
+.plate-search-button:hover {
+    background: var(--primary-navy-hover);
 }
 
 /* Active State */
