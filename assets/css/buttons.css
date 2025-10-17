@@ -45,17 +45,17 @@
 .purchase-button,
 .plate-search-button,
 .explore-free-btn {
-    background: var(--gradient-green);
+    background: var(--primary-green);
     color: white;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover,
 .purchase-button:hover,
 .plate-search-button:hover,
 .explore-free-btn:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    background: var(--primary-green-hover);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
     transform: translateY(-1px);
 }
 
@@ -64,50 +64,52 @@
 .plate-search-button:active,
 .explore-free-btn:active {
     transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Secondary Button (Blue - Links) */
 .btn-secondary,
 .finn-view-more-btn {
-    background: var(--gradient-blue);
+    background: var(--primary-blue);
     color: white;
-    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary:hover,
 .finn-view-more-btn:hover {
-    background: linear-gradient(135deg, var(--primary-blue-hover) 0%, var(--primary-blue-dark) 100%);
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+    background: var(--primary-blue-hover);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
     transform: translateY(-1px);
 }
 
 .btn-secondary:active,
 .finn-view-more-btn:active {
     transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(14, 165, 233, 0.25);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Tertiary Button (Expand/Toggle) */
 .btn-tertiary,
 .ai-expand-toggle {
-    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
-    color: var(--primary-blue);
-    border: 1px solid #cbd5e1;
-    box-shadow: none;
+    background: #f8fafc;
+    color: var(--text-primary);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-tertiary:hover,
 .ai-expand-toggle:hover {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    color: var(--primary-blue-hover);
-    border-color: var(--primary-blue);
+    background: #f1f5f9;
+    color: var(--text-primary);
+    border-color: #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-tertiary:active,
 .ai-expand-toggle:active {
     transform: translateY(0);
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    background: #e2e8f0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Button Sizes */
