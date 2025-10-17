@@ -45,7 +45,7 @@
     border: 2px solid #10b981;
     border-radius: 12px;
     padding: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 2.5rem;
     text-align: center;
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
 }
@@ -67,7 +67,6 @@
 @media (max-width: 600px) {
     .free-info-guide {
         padding: 12px;
-        margin-bottom: 16px;
     }
 
     .free-info-guide h4 {
