@@ -64,8 +64,6 @@
     line-height: 1.4;
 }
 
-/* Button styling moved to buttons.css */
-
 @media (max-width: 600px) {
     .free-info-guide {
         padding: 12px;
@@ -77,11 +75,6 @@
     }
 
     .free-info-guide p {
-        font-size: var(--font-sm);
-    }
-
-    .explore-free-btn {
-        padding: 6px 12px;
         font-size: var(--font-sm);
     }
 }

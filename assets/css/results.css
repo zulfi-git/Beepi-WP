@@ -354,13 +354,6 @@
     opacity: 0;
 }
 
-.plate-search-button {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .search-icon {
     transition: opacity 0.2s;
 }

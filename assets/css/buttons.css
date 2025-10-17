@@ -8,13 +8,14 @@
 .explore-free-btn,
 .finn-view-more-btn,
 .ai-expand-toggle {
-    /* Typography */
+    /* Typography - Mobile First */
     font-family: var(--font-family);
     font-size: var(--font-sm);
     font-weight: 600;
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.025em;
+    line-height: 1.4;
     
     /* Layout */
     display: inline-flex;
@@ -173,13 +174,21 @@
     .explore-free-btn,
     .finn-view-more-btn,
     .ai-expand-toggle {
+        font-size: var(--font-base);
+        padding: 0.875rem 1.5rem;
+        min-height: 44px;
+    }
+    
+    .btn-sm {
         font-size: var(--font-sm);
-        padding: 0.75rem 1.5rem;
+        padding: 0.625rem 1.125rem;
+        min-height: 38px;
     }
     
     .btn-lg {
         font-size: var(--font-lg);
         padding: 1rem 2.5rem;
+        min-height: 50px;
     }
 }
 
@@ -192,18 +201,39 @@
     .finn-view-more-btn,
     .ai-expand-toggle {
         font-size: var(--font-base);
-        padding: 0.875rem 1.75rem;
+        padding: 1rem 2rem;
+        min-height: 48px;
+    }
+    
+    .btn-sm {
+        font-size: var(--font-sm);
+        padding: 0.75rem 1.25rem;
+        min-height: 40px;
     }
     
     .btn-lg {
         font-size: var(--font-lg);
-        padding: 1.125rem 3rem;
+        padding: 1.125rem 2.75rem;
+        min-height: 52px;
     }
 }
 
 /* Large Desktop */
 @media (min-width: 1024px) {
+    .btn,
+    .purchase-button,
+    .plate-search-button,
+    .explore-free-btn,
+    .finn-view-more-btn,
+    .ai-expand-toggle {
+        font-size: var(--font-base);
+        padding: 1rem 2rem;
+        min-height: 48px;
+    }
+    
     .btn-lg {
         font-size: var(--font-xl);
+        padding: 1.25rem 3rem;
+        min-height: 54px;
     }
 }
