@@ -80,11 +80,13 @@ class Vehicle_Lookup_Shortcode {
                     </div>
                     <div class="action-box" onclick="openActionPopup('skader')">
                         <div class="action-box-content">
+                            <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-skade-600x600.png" alt="Se skader" class="action-box-icon">
                             <h4>Se skader</h4>
                         </div>
                     </div>
                     <div class="action-box" onclick="openActionPopup('pant')">
                         <div class="action-box-content">
+                            <img src="https://beepi.no/wp-content/uploads/2025/09/Beepi-pant-600x600.png" alt="Se pant" class="action-box-icon">
                             <h4>Se pant</h4>
                         </div>
                     </div>
