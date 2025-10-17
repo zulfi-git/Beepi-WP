@@ -4,7 +4,7 @@
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1rem;
     margin-top: 2rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .action-boxes.footer-actions {
@@ -261,10 +261,10 @@
 
 /* Section Styling */
 .accordion {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 2rem;
 }
 
 .accordion details {
@@ -273,7 +273,7 @@
     border-radius: var(--border-radius-md);
     overflow: hidden;
     transition: all 0.2s ease;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .section-header {
@@ -301,7 +301,7 @@
 
 .section-content {
     padding: 0;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .info-table {
@@ -553,7 +553,7 @@ details summary {
     }
 
     .section-content {
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 
     .vehicle-tags {
@@ -707,7 +707,7 @@ details summary {
 }
 
 .vehicle-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 #owner-info-purchase {

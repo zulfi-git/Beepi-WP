@@ -3,7 +3,7 @@
     background: var(--gradient-light);
     border: none !important;
     position: relative;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .market-listings-section::before {
