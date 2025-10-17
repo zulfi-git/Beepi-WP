@@ -272,7 +272,7 @@
 }
 
 .section-header {
-    padding: 0.75rem;
+    padding: 1rem 1.25rem;
     font-weight: 700;
     background: var(--gradient-light);
     position: relative;
@@ -324,7 +324,7 @@
     text-align: left;
     padding: 1rem 1.25rem;
     font-size: var(--font-xs);
-    text-transform: uppercase;
+    text-transform: lowercase;
     letter-spacing: 0.025em;
     border-bottom: none;
 }
