@@ -161,7 +161,7 @@ jQuery(document).ready(function($) {
         const kjennemerke = vehicleData.kjoretoyId?.kjennemerke;
         $vehicleTitle.text(kjennemerke || regNumber);
 
-        // Set manufacturer logo with fade-in animation
+        // Set manufacturer logo
         const defaultLogoUrl = vehicleLookupAjax.plugin_url + '/assets/images/car.png';
         const manufacturer = vehicleData.godkjenning?.tekniskGodkjenning?.tekniskeData?.generelt?.merke?.[0]?.merke;
 
@@ -170,12 +170,8 @@ jQuery(document).ready(function($) {
             $vehicleLogo
                 .attr('src', logoUrl)
                 .attr('alt', `${manufacturer} logo`)
-                .css('opacity', '0')
-                .on('load', function() {
-                    $(this).animate({opacity: 1}, 300);
-                })
                 .on('error', function() {
-                    $(this).attr('src', defaultLogoUrl).attr('alt', 'Generic car logo').css('opacity', '1');
+                    $(this).attr('src', defaultLogoUrl).attr('alt', 'Generic car logo');
                 });
         } else {
             $vehicleLogo.attr('src', defaultLogoUrl).attr('alt', 'Generic car logo');
@@ -194,42 +190,6 @@ jQuery(document).ready(function($) {
             $vehicleSubtitle.html(subtitle);
             addVehicleTags(vehicleData);
         }
-
-        // Add quick status summary at top (like CarOwl)
-        addQuickStatusSummary(vehicleData);
-    }
-
-    function addQuickStatusSummary(vehicleData) {
-        const status = vehicleData.registrering?.registreringsstatus?.kodeVerdi || '';
-        const euDeadline = vehicleData.periodiskKjoretoyKontroll?.kontrollfrist;
-        
-        let quickStats = '<div class="quick-status-summary">';
-        
-        // Registration status badge
-        if (status === 'REGISTRERT') {
-            quickStats += '<span class="status-badge status-ok">✓ Registrert</span>';
-        } else {
-            quickStats += '<span class="status-badge status-warning">⚠ ' + (vehicleData.registrering?.registreringsstatus?.kodeBeskrivelse || 'Ukjent') + '</span>';
-        }
-        
-        // EU control status badge
-        if (euDeadline) {
-            const today = new Date();
-            const deadline = new Date(euDeadline);
-            const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
-            
-            if (daysUntilDeadline < 0) {
-                quickStats += '<span class="status-badge status-danger">⛔ EU utgått</span>';
-            } else if (daysUntilDeadline <= 30) {
-                quickStats += '<span class="status-badge status-warning">⚠ EU snart</span>';
-            } else {
-                quickStats += '<span class="status-badge status-ok">✓ EU gyldig</span>';
-            }
-        }
-        
-        quickStats += '</div>';
-        
-        $('.vehicle-subtitle').after(quickStats);
     }
 
     function addVehicleTags(vehicleData) {
@@ -1592,35 +1552,6 @@ jQuery(document).ready(function($) {
                     });
 
                     $marketContent.append($listingsList);
-
-                    // Add market value insights
-                    if (marketData.listings && marketData.listings.length > 0) {
-                        const prices = marketData.listings
-                            .map(l => parseInt(l.price))
-                            .filter(p => !isNaN(p) && p > 0);
-                        
-                        if (prices.length > 0) {
-                            const avgPrice = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
-                            const minPrice = Math.min(...prices);
-                            const maxPrice = Math.max(...prices);
-                            
-                            const $valueInsights = $('<div class="market-value-insights">');
-                            $valueInsights.html(`
-                                <h4>📊 Markedsverdi</h4>
-                                <div class="value-stats">
-                                    <div class="value-stat">
-                                        <span class="value-label">Gjennomsnitt</span>
-                                        <span class="value-amount">${avgPrice.toLocaleString('no-NO')} kr</span>
-                                    </div>
-                                    <div class="value-stat">
-                                        <span class="value-label">Prisklasse</span>
-                                        <span class="value-amount">${minPrice.toLocaleString('no-NO')} - ${maxPrice.toLocaleString('no-NO')} kr</span>
-                                    </div>
-                                </div>
-                            `);
-                            $marketContent.prepend($valueInsights);
-                        }
-                    }
 
                     // Add "Vis flere annonser på Finn.no" button if searchUrl is available
                     if (marketData.searchUrl) {
