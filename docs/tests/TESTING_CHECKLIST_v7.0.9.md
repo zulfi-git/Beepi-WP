@@ -1,7 +1,7 @@
-# Testing Checklist for Cloudflare Worker API v7.0.8 Update
+# Testing Checklist for Cloudflare Worker API v7.0.9
 
 ## Overview
-This checklist helps verify that the WordPress plugin correctly handles the revamped Cloudflare Worker API standard.
+This checklist helps verify that the WordPress plugin correctly handles the Cloudflare Worker API.
 
 ## Prerequisites
 - WordPress site with the plugin installed and activated
@@ -257,7 +257,7 @@ Record any issues or observations:
 ## Test Environment
 
 - WordPress Version: _____
-- Plugin Version: 7.0.8
+- Plugin Version: 7.0.9
 - PHP Version: _____
 - Browser: _____
 - Date Tested: _____

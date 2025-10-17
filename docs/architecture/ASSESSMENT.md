@@ -58,7 +58,7 @@
 ## Testing Status
 - **Unit Tests:** ❌ None currently
 - **Integration Tests:** ❌ None currently
-- **Manual Tests:** ✅ test-structured-errors.html and ai-summary-test.html exist
+- **Manual Tests:** ✅ test-structured-errors.md and ai-summary-test.md exist
 - **Recommendation:** Add PHPUnit tests starting with helper functions and cache operations
 
 ## Suggested Action Items

@@ -97,87 +97,60 @@ beepi-vehicle-lookup/
 ## Development
 
 ### Code Style
-
 - Follow [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/)
-- Use WordPress functions (wp_remote_post, get_transient, etc.)
-- Sanitize all inputs, escape all outputs
-- Use nonces for AJAX security
+- Sanitize inputs, escape outputs, use nonces for AJAX
 
 ### Testing
-
-Currently **no automated tests** exist. See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for testing recommendations.
-
-Manual testing files:
-- `test-structured-errors.html` - Error handling scenarios
-- `ai-summary-test.html` - AI summary generation
+No automated tests currently. Manual test files in [docs/tests/](./docs/tests/).
 
 ---
 
 ## Known Issues & Roadmap
 
-### High Priority Fixes Needed
-1. ⚠️ **Performance**: Rewrite rules flushed on every request (should be activation-only)
-2. ⚠️ **Code Quality**: Admin class too large (1,197 lines - should split into 4 classes)
-3. ⚠️ **Bug**: Duplicate rate_limit setting registration
+See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for improvement plans.
 
-### Planned Improvements
-- Split monolithic admin class (5 days)
-- Add unit tests (ongoing)
-- Modularize JavaScript (3 days)
-- Add local logo fallbacks (1 day)
-- Extract AJAX handlers (2 days)
+### Completed
+- ✅ Admin class split (Phase 2)
+- ✅ CSS modularization
+- ✅ Performance fixes (Phase 1)
 
-See [docs/refactoring/REFACTOR_PLAN.md](./docs/refactoring/REFACTOR_PLAN.md) for complete roadmap.
+### Planned
+- Phase 3: Live metrics dashboard
+- Phase 4: Unit tests
 
 ---
 
-## Architecture Decisions
+## Architecture Notes
 
-### Why Cloudflare Worker?
-- Edge caching for faster responses (Cloudflare KV)
-- Isolates heavy API calls from WordPress
-- Circuit breaker for upstream failures
-- Scales independently
+### Cloudflare Worker
+- Edge caching (Cloudflare KV)
+- Isolates heavy API calls
+- Independent scaling
 
-### Why Separate Shortcode Classes?
+### Separate Shortcode Classes
 - Single Responsibility Principle
-- Easier to maintain and test
-- Can be enabled/disabled independently
-- Clear ownership of features
+- Independent feature management
 
 ---
 
-## Performance Metrics
+## Performance
 
-### Current Performance (as of v7.0.7)
-- **Caching**: Cloudflare KV (edge caching only)
-- **Average Response Time**: ~1.5s (Cloudflare KV handles caching)
-- **Daily Lookups**: 500-2000 (varies)
+- **Caching**: Cloudflare KV edge caching
+- **Response Time**: ~1.5s average
+- **Daily Lookups**: 500-2000
 - **Error Rate**: <2%
 
-### Optimization Opportunities
-- Implement Phase 1 quick wins (~20% performance improvement)
-- Bundle and minify assets
-- Lazy load market listings
+---
+
+## License
+
+**⚠️ PROPRIETARY SOFTWARE**
+
+© 2025 Beepi.no - All Rights Reserved
+
+Not open source. See [LICENSE](./LICENSE) for terms.
 
 ---
 
-## Contributing
-
-**⚠️ PROPRIETARY SOFTWARE - NO EXTERNAL CONTRIBUTIONS**
-
-This is private, proprietary software owned by Beepi.no.  
-© 2025 Beepi.no - All Rights Reserved.
-
-- This project is NOT open source
-- External contributions are NOT accepted
-- See [LICENSE](./LICENSE) for full terms
-
-For business inquiries: https://beepi.no
-
----
-
-## Version History
-
-See **[CHANGELOG.md](./CHANGELOG.md)** for complete version history, bug fixes, and improvements.
+**Version History:** [CHANGELOG.md](./CHANGELOG.md)
 

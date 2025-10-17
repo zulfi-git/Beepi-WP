@@ -289,9 +289,8 @@ Or use a conditional compilation tool to strip console.log statements during bui
 ## Related Documentation
 
 - `SECOND_VIEWING_FIX.md` - Previous fix for owner history stacking
-- `FIX_SUMMARY_SECOND_VIEWING.md` - Previous second viewing fix summary
-- `BEFORE_AFTER_COMPARISON.md` - Cache removal documentation
-- `test-second-viewing-console.html` - Interactive test page
+- `CACHE_REMOVAL_SUMMARY.md` - Cache removal documentation
+- `test-second-viewing-console.md` - Test scenarios
 
 ## Conclusion
 
