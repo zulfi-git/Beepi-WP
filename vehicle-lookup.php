@@ -41,6 +41,8 @@ $required_files = [
     'includes/class-vehicle-lookup-seo.php',
     'includes/class-vehicle-lookup-sitemap.php',
     'includes/class-vehicle-lookup-performance.php',
+    'includes/class-vehicle-lookup-content.php',
+    'includes/class-vehicle-lookup-analytics.php',
     // Admin classes (Phase 2 refactoring)
     'includes/admin/class-vehicle-lookup-admin-settings.php',
     'includes/admin/class-vehicle-lookup-admin-dashboard.php',
@@ -106,6 +108,18 @@ try {
     if (class_exists('Vehicle_Lookup_Performance')) {
         $performance_handler = new Vehicle_Lookup_Performance();
         $performance_handler->init();
+    }
+
+    // Initialize content enhancement
+    if (class_exists('Vehicle_Lookup_Content')) {
+        $content_handler = new Vehicle_Lookup_Content();
+        $content_handler->init();
+    }
+
+    // Initialize analytics integration
+    if (class_exists('Vehicle_Lookup_Analytics')) {
+        $analytics_handler = new Vehicle_Lookup_Analytics();
+        $analytics_handler->init();
     }
 
     // Initialize admin interface
