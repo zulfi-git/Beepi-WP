@@ -11,7 +11,7 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ### Documentation
 - Consolidated SEO documentation into organized /docs/seo/ directory
-- Converted HTML test files to Markdown for GitHub readability
+- Converted HTML test documentation files to Markdown for GitHub readability (UI prototype HTML files were preserved)
 - Removed outdated housekeeping log (HOUSEKEEPING_v7.0.9.md)
 - Streamlined documentation for single-developer workflow
 - Improved documentation navigation and organization
