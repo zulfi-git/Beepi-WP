@@ -314,7 +314,7 @@ class Vehicle_Lookup_Admin_Dashboard {
         $start_time = date('Y-m-d H:00:00');
         $end_time = date('Y-m-d H:59:59');
 
-        $sql = "SELECT COUNT(*) FROM " . esc_sql($table_name) . " 
+        $sql = "SELECT COUNT(*) FROM `{$table_name}` 
                 WHERE lookup_time >= %s AND lookup_time <= %s";
 
         $result = $wpdb->get_var(
@@ -368,14 +368,14 @@ class Vehicle_Lookup_Admin_Dashboard {
         // Get today's count
         $today_count = $wpdb->get_var("
             SELECT COUNT(*) 
-            FROM " . esc_sql($table_name) . " 
+            FROM `{$table_name}` 
             WHERE DATE(lookup_time) = CURDATE()
         ");
         
         // Get yesterday's count
         $yesterday_count = $wpdb->get_var("
             SELECT COUNT(*) 
-            FROM " . esc_sql($table_name) . " 
+            FROM `{$table_name}` 
             WHERE DATE(lookup_time) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
         ");
         

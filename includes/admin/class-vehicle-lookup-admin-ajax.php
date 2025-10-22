@@ -332,14 +332,14 @@ class Vehicle_Lookup_Admin_Ajax {
         }
 
         // Get count before deletion for verification
-        $count_before = $wpdb->get_var("SELECT COUNT(*) FROM " . esc_sql($table_name));
+        $count_before = $wpdb->get_var("SELECT COUNT(*) FROM `{$table_name}`");
 
         // Use DELETE instead of TRUNCATE for better compatibility
-        $result = $wpdb->query("DELETE FROM " . esc_sql($table_name));
+        $result = $wpdb->query("DELETE FROM `{$table_name}`");
 
         if ($result !== false) {
             // Verify deletion worked
-            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM " . esc_sql($table_name));
+            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM `{$table_name}`");
 
             // Clear any cached data
             wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');

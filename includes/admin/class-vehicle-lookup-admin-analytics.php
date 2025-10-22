@@ -192,13 +192,13 @@ class Vehicle_Lookup_Admin_Analytics {
                 COUNT(*) as search_count,
                 MAX(success) as has_valid_result,
                 MAX(lookup_time) as last_searched,
-                (SELECT failure_type FROM " . esc_sql($table_name) . " l2 
+                (SELECT failure_type FROM `{$table_name}` l2 
                  WHERE l2.reg_number = l1.reg_number 
                  AND l2.success = 0 
                  AND l2.failure_type IS NOT NULL 
                  ORDER BY l2.lookup_time DESC 
                  LIMIT 1) as last_failure_type
-            FROM " . esc_sql($table_name) . " l1
+            FROM `{$table_name}` l1
             WHERE reg_number IS NOT NULL 
             AND reg_number != ''
             AND lookup_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)
