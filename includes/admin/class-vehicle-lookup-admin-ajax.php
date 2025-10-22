@@ -339,7 +339,7 @@ class Vehicle_Lookup_Admin_Ajax {
 
         if ($result !== false) {
             // Verify deletion worked
-            $count_after = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM %s", $table_name));
+            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM " . esc_sql($table_name));
 
             // Clear any cached data
             wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
