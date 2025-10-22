@@ -321,7 +321,7 @@ class Vehicle_Lookup_Admin_Ajax {
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
 
         // Check if table exists first
-        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name)) === $table_name;
+        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name)) === esc_sql($table_name);
 
         if (!$table_exists) {
             error_log('Reset analytics failed: Analytics table does not exist');
