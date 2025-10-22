@@ -53,7 +53,7 @@ class Vehicle_Lookup_SEO {
         
         if (empty($reg_number)) {
             // Try from URL path
-            $request_uri = $_SERVER['REQUEST_URI'];
+            $request_uri = esc_url_raw($_SERVER['REQUEST_URI']);
             if (preg_match('/\/sok\/([^\/\?]+)/', $request_uri, $matches)) {
                 $reg_number = $matches[1];
             }
