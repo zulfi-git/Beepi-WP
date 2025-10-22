@@ -103,12 +103,10 @@ No code changes required. The system already successfully treats every search as
 
 Historical "second viewing" problems were bugs, not architectural issues. Those bugs are now fixed.
 
-## 📚 Documentation Created
+## 📚 Documentation
 
-- **[FIRST_SEARCH_TREATMENT_INVESTIGATION.md](./FIRST_SEARCH_TREATMENT_INVESTIGATION.md)** - Full 29KB technical analysis
-- **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - Quick reference guide with key findings
+- **[FIRST_SEARCH_TREATMENT_INVESTIGATION.md](./FIRST_SEARCH_TREATMENT_INVESTIGATION.md)** - Full technical analysis
 - **[INVESTIGATION_SUMMARY.md](./INVESTIGATION_SUMMARY.md)** - Executive summary
-- **[ACTION_SUMMARY.md](./ACTION_SUMMARY.md)** - Action items and recommendations
 
 ## Conclusion
 

@@ -212,8 +212,8 @@ To track vehicle-specific events in Google Analytics:
 ## Getting Help
 
 ### Documentation:
-- **Complete Guide**: `docs/SEO_OPTIMIZATION_GUIDE.md`
-- **Testing Checklist**: `docs/SEO_TESTING_CHECKLIST.md`
+- **Complete Guide**: `GUIDE.md`
+- **Testing Checklist**: `TESTING.md`
 
 ### External Resources:
 - [Rank Math SEO Documentation](https://rankmath.com/kb/)

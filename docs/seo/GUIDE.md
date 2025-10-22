@@ -461,8 +461,8 @@ Visit a vehicle page (e.g., `/sok/CO11204`) and view source (Ctrl+U):
 
 ### Documentation
 - **This Guide**: Complete feature documentation
-- **Quick Setup**: `docs/SEO_QUICK_SETUP.md`
-- **Testing Checklist**: `docs/SEO_TESTING_CHECKLIST.md`
+- **Quick Setup**: `SETUP.md`
+- **Testing Checklist**: `TESTING.md`
 
 ### External Resources
 - [Google Rich Results Test](https://search.google.com/test/rich-results)
