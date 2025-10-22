@@ -68,12 +68,8 @@ class Vehicle_Lookup_Content {
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
-        $result = $wpdb->get_row($wpdb->prepare(
-            "SELECT response_data FROM `{$table_name}` 
-            WHERE reg_number = %s AND success = 1 AND response_data IS NOT NULL 
-            ORDER BY lookup_time DESC LIMIT 1",
-            $reg_number
-        ));
+        $sql = 'SELECT response_data FROM ' . esc_sql($table_name) . ' WHERE reg_number = %s AND success = 1 AND response_data IS NOT NULL ORDER BY lookup_time DESC LIMIT 1';
+        $result = $wpdb->get_row($wpdb->prepare($sql, $reg_number));
         
         if ($result && !empty($result->response_data)) {
             $data = json_decode($result->response_data, true);
@@ -100,16 +96,9 @@ class Vehicle_Lookup_Content {
             
             if ($make) {
                 // Find other vehicles with the same make that were searched recently
+                $sql = 'SELECT DISTINCT reg_number, MAX(lookup_time) as last_lookup FROM ' . esc_sql($table_name) . ' WHERE success = 1 AND reg_number != %s AND response_data LIKE %s AND lookup_time > DATE_SUB(NOW(), INTERVAL 90 DAY) GROUP BY reg_number ORDER BY last_lookup DESC LIMIT %d';
                 $results = $wpdb->get_results($wpdb->prepare(
-                    "SELECT DISTINCT reg_number, MAX(lookup_time) as last_lookup
-                    FROM `{$table_name}`
-                    WHERE success = 1 
-                    AND reg_number != %s
-                    AND response_data LIKE %s
-                    AND lookup_time > DATE_SUB(NOW(), INTERVAL 90 DAY)
-                    GROUP BY reg_number
-                    ORDER BY last_lookup DESC
-                    LIMIT %d",
+                    $sql,
                     $current_reg_number,
                     '%' . $wpdb->esc_like($make) . '%',
                     $limit
@@ -131,15 +120,9 @@ class Vehicle_Lookup_Content {
         if (count($related) < $limit) {
             $remaining = $limit - count($related);
             
+            $sql = 'SELECT reg_number, COUNT(*) as lookup_count FROM ' . esc_sql($table_name) . ' WHERE success = 1 AND reg_number != %s AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY reg_number ORDER BY lookup_count DESC LIMIT %d';
             $results = $wpdb->get_results($wpdb->prepare(
-                "SELECT reg_number, COUNT(*) as lookup_count
-                FROM `{$table_name}`
-                WHERE success = 1 
-                AND reg_number != %s
-                AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY)
-                GROUP BY reg_number
-                ORDER BY lookup_count DESC
-                LIMIT %d",
+                $sql,
                 $current_reg_number,
                 $remaining
             ));
@@ -315,14 +298,9 @@ class Vehicle_Lookup_Content {
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
         // Get popular vehicles
+        $sql = 'SELECT reg_number, COUNT(*) as lookup_count FROM ' . esc_sql($table_name) . ' WHERE success = 1 AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY reg_number ORDER BY lookup_count DESC LIMIT %d';
         $results = $wpdb->get_results($wpdb->prepare(
-            "SELECT reg_number, COUNT(*) as lookup_count
-            FROM `{$table_name}`
-            WHERE success = 1 
-            AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY)
-            GROUP BY reg_number
-            ORDER BY lookup_count DESC
-            LIMIT %d",
+            $sql,
             $count
         ));
         
