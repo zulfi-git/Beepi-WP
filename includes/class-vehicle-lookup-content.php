@@ -69,7 +69,7 @@ class Vehicle_Lookup_Content {
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
         $result = $wpdb->get_row($wpdb->prepare(
-            "SELECT response_data FROM {$table_name} 
+            "SELECT response_data FROM " . esc_sql($table_name) . " 
             WHERE reg_number = %s AND success = 1 AND response_data IS NOT NULL 
             ORDER BY lookup_time DESC LIMIT 1",
             $reg_number
@@ -102,7 +102,7 @@ class Vehicle_Lookup_Content {
                 // Find other vehicles with the same make that were searched recently
                 $results = $wpdb->get_results($wpdb->prepare(
                     "SELECT DISTINCT reg_number, MAX(lookup_time) as last_lookup
-                    FROM {$table_name}
+                    FROM " . esc_sql($table_name) . "
                     WHERE success = 1 
                     AND reg_number != %s
                     AND response_data LIKE %s
@@ -133,7 +133,7 @@ class Vehicle_Lookup_Content {
             
             $results = $wpdb->get_results($wpdb->prepare(
                 "SELECT reg_number, COUNT(*) as lookup_count
-                FROM {$table_name}
+                FROM " . esc_sql($table_name) . "
                 WHERE success = 1 
                 AND reg_number != %s
                 AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY)
@@ -317,7 +317,7 @@ class Vehicle_Lookup_Content {
         // Get popular vehicles
         $results = $wpdb->get_results($wpdb->prepare(
             "SELECT reg_number, COUNT(*) as lookup_count
-            FROM {$table_name}
+            FROM " . esc_sql($table_name) . "
             WHERE success = 1 
             AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY reg_number
