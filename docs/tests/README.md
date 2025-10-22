@@ -1,6 +1,6 @@
 # Test Files
 
-Manual test files and UI prototypes for the Beepi Vehicle Lookup plugin.
+Manual verification test files and UI design prototypes for the Beepi Vehicle Lookup plugin.
 
 ## Test Files
 
