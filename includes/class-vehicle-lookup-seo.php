@@ -82,12 +82,8 @@ class Vehicle_Lookup_SEO {
         global $wpdb;
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
-        $result = $wpdb->get_row($wpdb->prepare(
-            "SELECT response_data FROM " . esc_sql($table_name) . " 
-            WHERE reg_number = %s AND success = 1 AND response_data IS NOT NULL 
-            ORDER BY lookup_time DESC LIMIT 1",
-            $reg_number
-        ));
+        $sql = 'SELECT response_data FROM ' . esc_sql($table_name) . ' WHERE reg_number = %s AND success = 1 AND response_data IS NOT NULL ORDER BY lookup_time DESC LIMIT 1';
+        $result = $wpdb->get_row($wpdb->prepare($sql, $reg_number));
         
         if ($result && !empty($result->response_data)) {
             $data = json_decode($result->response_data, true);
