@@ -2,59 +2,115 @@
 
 ## Overview
 
-The Beepi Vehicle Lookup plugin now includes comprehensive SEO optimization features to improve search engine rankings and accessibility to AI-driven platforms like ChatGPT, Claude, and other AI chatbots.
+The Beepi Vehicle Lookup plugin provides vehicle-specific SEO optimization that complements standard WordPress SEO plugins. This implementation focuses on what general SEO tools cannot provide: vehicle-specific structured data, dynamic meta tags for vehicle pages, and internal linking for vehicle discovery.
 
-## Features Implemented
+**Design Philosophy:** Work alongside popular WordPress plugins (Rank Math SEO, LiteSpeed Cache, Site Kit by Google) rather than replace them. We handle vehicle-specific optimizations; they handle general site optimization.
 
-### 1. SEO Meta Tags
+## What This Plugin Provides
 
-All dynamically generated vehicle pages now include:
+### 1. Vehicle-Specific SEO Meta Tags
 
-- **Title Tags**: Optimized with vehicle make, model, year, and registration number
-- **Meta Descriptions**: Unique descriptions for each vehicle with relevant keywords
-- **Keywords Meta Tags**: Targeted keywords including registration numbers and vehicle details
-- **Robots Meta Tags**: Proper indexing instructions with max-snippet and image preview settings
+Every dynamically generated vehicle page (`/sok/CO11204`) includes:
 
-#### Example Meta Tags for a Vehicle Page:
+#### Dynamic Title Tags
+Optimized with actual vehicle details from your database:
 ```html
 <title>Toyota Corolla 2020 (CO11204) - Eierinformasjon og Kjøretøydata | Beepi</title>
-<meta name="description" content="Se detaljert informasjon om Toyota Corolla 2020 (CO11204). Finn eieropplysninger, tekniske spesifikasjoner, markedspris og historikk." />
-<meta name="keywords" content="CO11204, Toyota Corolla, 2020, kjøretøyoppslag, eieropplysninger, bildata, registreringsnummer" />
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 ```
 
-### 2. Structured Data (JSON-LD)
+#### Unique Meta Descriptions
+Custom descriptions per vehicle (150-160 characters):
+```html
+<meta name="description" content="Se detaljert informasjon om Toyota Corolla 2020 (CO11204). Finn eieropplysninger, tekniske spesifikasjoner, markedspris og historikk." />
+```
 
-Each vehicle page includes rich structured data for better search engine understanding:
+#### Targeted Keywords
+Registration number plus vehicle details:
+```html
+<meta name="keywords" content="CO11204, Toyota Corolla, 2020, kjøretøyoppslag, eieropplysninger, bildata, registreringsnummer" />
+```
+
+#### Search Engine Directives
+```html
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<link rel="canonical" href="https://beepi.no/sok/CO11204" />
+```
+
+**Why This Matters:** General SEO plugins like Rank Math can't generate vehicle-specific titles and descriptions because they don't have access to your vehicle database. Our implementation bridges this gap.
+
+### 2. Vehicle-Specific Structured Data (JSON-LD)
+
+Each vehicle page includes industry-standard schema markup:
 
 #### Vehicle Schema
-- Vehicle information with VIN, make, model, year, color, fuel type
-- Engine specifications
-- Manufacturer information
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Vehicle",
+  "name": "Toyota Corolla",
+  "vehicleIdentificationNumber": "CO11204",
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Toyota"
+  },
+  "model": "Corolla",
+  "productionDate": "2020",
+  "color": "Blå",
+  "fuelType": "Bensin"
+}
+```
 
-#### Product Schema
-- Owner information service as a product
-- Pricing in NOK
-- Availability status
+#### Product Schema (Owner Information Service)
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Eieropplysninger for Toyota Corolla (CO11204)",
+  "offers": {
+    "@type": "Offer",
+    "price": "69",
+    "priceCurrency": "NOK",
+    "availability": "https://schema.org/InStock"
+  }
+}
+```
 
 #### BreadcrumbList Schema
-- Hierarchical navigation structure
-- Improves site structure understanding
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Hjem", "item": "https://beepi.no"},
+    {"@type": "ListItem", "position": 2, "name": "Kjøretøyoppslag", "item": "https://beepi.no/sok"},
+    {"@type": "ListItem", "position": 3, "name": "Toyota Corolla (CO11204)", "item": "https://beepi.no/sok/CO11204"}
+  ]
+}
+```
 
 #### WebSite Schema with SearchAction
-- Enables search box in Google results
-- Direct vehicle lookups from search
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Beepi",
+  "url": "https://beepi.no",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://beepi.no/sok/{search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+```
 
-### 3. OpenGraph and Twitter Cards
+**Why This Matters:** These schemas enable Google to understand and display vehicle information as rich snippets in search results. Rank Math provides general schemas, but doesn't understand vehicle-specific data structures.
 
-Social media sharing optimized with:
+### 3. Social Media Optimization
 
-- **OpenGraph Tags**: For Facebook, LinkedIn, and other platforms
-- **Twitter Card Tags**: Enhanced Twitter sharing
-- Dynamic titles and descriptions per vehicle
-- Site branding and locale settings
-
-#### Example OpenGraph Tags:
+#### OpenGraph Tags (Facebook, LinkedIn, Discord, etc.)
 ```html
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Toyota Corolla 2020 (CO11204)" />
@@ -62,396 +118,367 @@ Social media sharing optimized with:
 <meta property="og:url" content="https://beepi.no/sok/CO11204" />
 <meta property="og:site_name" content="Beepi" />
 <meta property="og:locale" content="nb_NO" />
+<meta property="og:image" content="..." />
 ```
 
-### 4. XML Sitemap Generation
-
-Two sitemap implementations:
-
-#### Standalone Sitemap
-- Accessible at: `https://yourdomain.com/vehicle-sitemap.xml`
-- Includes up to 1000 most popular vehicle pages from last 30 days
-- Automatically prioritizes based on lookup frequency
-- Weekly change frequency for vehicle pages
-- Daily change frequency for main search page
-
-#### WordPress Core Sitemap Integration (WP 5.5+)
-- Integrates with WordPress native sitemap system
-- Accessible through: `https://yourdomain.com/wp-sitemap-vehicles-1.xml`
-- Supports pagination (2000 vehicles per page)
-- Automatic updates based on lookup activity
-
-### 5. Performance Optimizations
-
-#### Caching Strategy
-- **Browser Cache**: 1 hour for vehicle-specific pages
-- **CDN Cache**: 12 hours for vehicle pages
-- **ETag Support**: Efficient revalidation with 304 responses
-- **Shorter Cache**: 10 minutes for search page
-
-#### Resource Optimization
-- **Preconnect**: To Cloudflare Worker API (lookup.beepi.no)
-- **DNS Prefetch**: For external resources
-- **Lazy Loading**: Automatic for all images
-- **Deferred JavaScript**: Non-critical scripts deferred
-
-#### Cache Headers Example:
-```
-Cache-Control: public, max-age=3600, s-maxage=43200
-ETag: "abc123-2025-01-15-10"
-Vary: Accept-Encoding
-```
-
-### 6. Canonical URLs
-
-Each vehicle page has a canonical URL to prevent duplicate content issues:
+#### Twitter Card Tags
 ```html
-<link rel="canonical" href="https://beepi.no/sok/CO11204" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Toyota Corolla 2020 (CO11204)" />
+<meta name="twitter:description" content="Se detaljert informasjon om Toyota Corolla 2020..." />
+<meta name="twitter:image" content="..." />
 ```
 
-## Setup and Configuration
+**Why This Matters:** When vehicle pages are shared on social media or in AI chatbots, these tags ensure rich, attractive previews with vehicle-specific information.
 
-### Activation
+### 4. Content Enhancement & Internal Linking
 
-The SEO features are automatically enabled when the plugin is activated. No additional configuration is required.
+#### "Andre søkte også på" Widget
+Automatically displayed at the bottom of each vehicle page:
+- Shows 5 related vehicles
+- Prioritizes vehicles with the same make
+- Falls back to popular recent searches
+- Responsive grid layout
+- Mobile-optimized
 
-### Rewrite Rules
-
-The plugin registers custom rewrite rules:
-- Vehicle pages: `/sok/{registration_number}`
-- Sitemap: `/vehicle-sitemap.xml`
-
-**Important**: After activating the plugin or updating, flush rewrite rules:
-1. Go to WordPress Admin > Settings > Permalinks
-2. Click "Save Changes" (no need to change anything)
-
-### Google Search Console Setup
-
-1. **Verify Your Site**
-   - Go to [Google Search Console](https://search.google.com/search-console)
-   - Add your property (website)
-   - Verify ownership
-
-2. **Submit Sitemap**
-   - In Search Console, go to Sitemaps
-   - Add new sitemap URL: `https://yourdomain.com/vehicle-sitemap.xml`
-   - Or use WordPress core sitemap: `https://yourdomain.com/wp-sitemap.xml`
-
-3. **Request Indexing**
-   - Use URL Inspection tool to request indexing for important pages
-   - Start with your main search page: `/sok`
-
-### Google Analytics 4 Integration
-
-Add Google Analytics tracking to your WordPress theme or use a plugin like:
-- Google Site Kit by Google
-- MonsterInsights
-- GA Google Analytics
-
-The vehicle pages will automatically be tracked with their unique URLs.
-
-## Technical Implementation
-
-### File Structure
-
-New files added:
+#### [related_vehicles] Shortcode
+Flexible placement anywhere:
 ```
-includes/
-├── class-vehicle-lookup-seo.php         # SEO meta tags and structured data
-├── class-vehicle-lookup-sitemap.php     # XML sitemap generation
-└── class-vehicle-lookup-performance.php  # Performance optimization
+[related_vehicles count="5" title="Populære søk"]
 ```
 
-### Hooks Used
+**Why This Matters:** 
+- Improves internal linking structure (important SEO signal)
+- Reduces bounce rate
+- Increases pages per session
+- Helps users discover more vehicles
 
-- `wp_head` (priority 1-2): Meta tags and structured data
-- `document_title_parts`: Page title modification
-- `template_redirect`: Cache headers and sitemap handling
-- `wp_sitemaps_add_provider`: WordPress core sitemap integration
+## Integration with Standard WordPress Plugins
 
-### Data Source
+This plugin is designed to complement, not replace, standard WordPress optimization plugins:
 
-Vehicle information for meta tags comes from:
-1. WordPress transient cache (12-hour TTL)
-2. Database lookup logs (most recent successful lookup)
-3. Fallback to registration number only if no data available
+### Rank Math SEO (or Yoast SEO)
+**Use Rank Math For:**
+- General site SEO settings
+- XML sitemap generation
+- Breadcrumb navigation
+- Schema for blog posts and pages
+- Focus keyword optimization
+- SEO analysis
 
-## SEO Best Practices Implemented
+**We Handle:**
+- Vehicle-specific structured data
+- Dynamic vehicle page titles and descriptions
+- Vehicle schema markup
+- Related vehicle suggestions
 
-### Content Strategy
+**Configuration:**
+1. Install Rank Math SEO
+2. Run the setup wizard
+3. Enable sitemap generation
+4. Submit sitemap to Google Search Console
+5. Our vehicle pages will automatically appear in Rank Math's sitemap
 
-1. **Unique Titles**: Each vehicle page has a unique, descriptive title
-2. **Descriptive Meta Descriptions**: Between 150-160 characters
-3. **Relevant Keywords**: Registration number + vehicle details
-4. **Canonical URLs**: Prevent duplicate content issues
+### LiteSpeed Cache (or WP Rocket, W3 Total Cache)
+**Use LiteSpeed Cache For:**
+- Page caching
+- Browser caching
+- Object caching
+- Image optimization and lazy loading
+- CSS/JS minification
+- CDN integration
 
-### Technical SEO
+**We Removed:**
+- Our performance optimization class (redundant with LiteSpeed)
 
-1. **Structured Data**: Machine-readable vehicle information
-2. **Sitemap**: Helps search engines discover pages
-3. **Cache Headers**: Improves performance and crawl efficiency
-4. **Mobile-Friendly**: Responsive design maintained
-5. **Fast Loading**: Deferred JS, lazy images, preconnect
+**Configuration:**
+1. Install LiteSpeed Cache
+2. Enable page caching for public pages
+3. Enable lazy loading for images
+4. Enable CSS/JS optimization
+5. Set cache TTL to 1 hour for dynamic pages
+6. Our vehicle pages will be automatically cached
 
-### AI Chatbot Optimization
+### Site Kit by Google
+**Use Site Kit For:**
+- Google Analytics 4 tracking
+- Search Console integration
+- PageSpeed Insights monitoring
+- AdSense integration
 
-1. **Clear Structure**: Semantic HTML with proper headings
-2. **Structured Data**: JSON-LD helps AI understand content
-3. **OpenGraph Tags**: AI chatbots can extract and display rich previews
-4. **Descriptive Content**: Meta descriptions provide context for AI
+**We Removed:**
+- Our analytics integration class (redundant with Site Kit)
 
-## Monitoring and Analytics
+**Configuration:**
+1. Install Site Kit by Google
+2. Connect your Google account
+3. Enable Google Analytics 4
+4. Enable Search Console
+5. Vehicle page views will be automatically tracked
 
-### Key Metrics to Track
+## Setup Guide
 
-1. **Search Console**
-   - Impressions and clicks for vehicle pages
-   - Average position in search results
-   - Click-through rate (CTR)
-   - Coverage (indexed pages)
+### Step 1: Install Required Plugins
 
-2. **Google Analytics**
-   - Organic search traffic
-   - Popular vehicle pages
-   - Bounce rate and time on page
-   - Conversion rate (purchases)
+**Essential:**
+1. Beepi Vehicle Lookup (this plugin)
+2. Rank Math SEO (or Yoast SEO)
 
-3. **Plugin Database**
-   - Lookup frequency per vehicle
-   - Most searched registration numbers
-   - Success/failure rates
+**Recommended:**
+3. LiteSpeed Cache (or WP Rocket/W3 Total Cache)
+4. Site Kit by Google
 
-### Regular Tasks
+### Step 2: Activate Beepi Vehicle Lookup
 
-**Weekly:**
-- Check Search Console for indexing errors
-- Review top-performing vehicle pages
-- Analyze search queries bringing traffic
+1. Activate the plugin in WordPress
+2. Go to Settings → Permalinks
+3. Click "Save Changes" (flushes rewrite rules)
+4. Vehicle pages now work at `/sok/[registration]`
 
-**Monthly:**
-- Review sitemap coverage in Search Console
-- Analyze organic traffic trends
-- Update popular vehicle cache if needed
+### Step 3: Configure Rank Math SEO
 
-**Quarterly:**
-- Review and update SEO strategy
-- Test structured data with Google Rich Results Test
-- Audit page load performance
+1. Install and activate Rank Math SEO
+2. Run the setup wizard:
+   - Connect Google Search Console
+   - Choose site type (Business)
+   - Enable sitemap
+3. Go to Rank Math → Sitemap Settings
+4. Ensure "Posts" sitemap is enabled
+5. Submit sitemap URL to Search Console:
+   - URL: `https://yourdomain.com/sitemap_index.xml`
 
-## Testing
+### Step 4: Configure LiteSpeed Cache
 
-### Validate Implementation
+1. Install and activate LiteSpeed Cache
+2. Go to LiteSpeed Cache → Cache settings:
+   - Enable cache for public pages
+   - Set TTL to 3600 seconds (1 hour)
+3. Go to Page Optimization:
+   - Enable CSS minification
+   - Enable JavaScript minification
+   - Enable lazy load for images
+4. Test a vehicle page to ensure caching works
 
-1. **Meta Tags**
-   ```bash
-   curl -s "https://yourdomain.com/sok/CO11204" | grep -E '<meta|<title'
-   ```
+### Step 5: Configure Site Kit by Google
 
-2. **Structured Data**
-   - Use [Google Rich Results Test](https://search.google.com/test/rich-results)
-   - Enter your vehicle page URL
-   - Verify Vehicle and Product schemas are detected
+1. Install and activate Site Kit
+2. Click "Start Setup"
+3. Sign in with Google
+4. Grant permissions
+5. Enable these services:
+   - Search Console
+   - Google Analytics (choose GA4)
+6. Complete setup
 
-3. **OpenGraph**
-   - Use [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-   - Test how your pages appear when shared
+Your vehicle pages will now:
+- Appear in Google Search Console
+- Be tracked in Google Analytics
+- Show up in PageSpeed Insights
 
-4. **Twitter Cards**
-   - Use [Twitter Card Validator](https://cards-dev.twitter.com/validator)
-   - Check card preview
+## Technical Implementation Details
 
-5. **Sitemap**
-   ```bash
-   curl -s "https://yourdomain.com/vehicle-sitemap.xml" | head -50
-   ```
+### Data Source for Meta Tags
 
-6. **Performance**
-   - Use [Google PageSpeed Insights](https://pagespeed.web.dev/)
-   - Test a vehicle page
-   - Aim for 90+ scores
+Vehicle information comes from:
+1. **WordPress transient cache** (12-hour TTL)
+2. **Database lookup logs** (most recent successful lookup)
+3. **Fallback**: Registration number only if no data available
+
+This approach ensures:
+- Fast page loads (cached data)
+- Always up-to-date information
+- Graceful degradation if data unavailable
+
+### Page Detection
+
+The plugin detects vehicle pages by checking:
+1. Is the page slug `sok`?
+2. Does the URL have a `reg_number` query parameter?
+3. Does the URL match pattern `/sok/[registration]`?
+
+### Hook Priority
+
+Our hooks are carefully ordered to avoid conflicts:
+- `wp_head` priority 1: Canonical URL, Search Console verification
+- `wp_head` priority 2: Structured data (JSON-LD)
+- `document_title_parts`: Title modification
+- `wp_footer` priority 20: Related vehicles widget
+
+## Testing Your Implementation
+
+### 1. Test Meta Tags
+
+Visit a vehicle page (e.g., `/sok/CO11204`) and view source (Ctrl+U):
+
+**Check for:**
+- `<title>` with vehicle details
+- `<meta name="description">` with vehicle info
+- `<meta name="keywords">` with registration number
+- `<link rel="canonical">`
+- OpenGraph tags (`og:title`, `og:description`, etc.)
+- Twitter Card tags
+
+### 2. Test Structured Data
+
+**Option A: Google Rich Results Test**
+1. Go to https://search.google.com/test/rich-results
+2. Enter your vehicle page URL
+3. Should detect: Vehicle, Product, BreadcrumbList schemas
+4. Check for errors or warnings
+
+**Option B: Schema.org Validator**
+1. Go to https://validator.schema.org/
+2. Paste your vehicle page URL
+3. Verify JSON-LD validates without errors
+
+### 3. Test Social Sharing
+
+**Facebook:**
+1. Go to https://developers.facebook.com/tools/debug/
+2. Enter vehicle page URL
+3. Click "Scrape Again"
+4. Verify preview shows vehicle title and description
+
+**Twitter:**
+1. Go to https://cards-dev.twitter.com/validator
+2. Enter vehicle page URL
+3. Verify card preview appears correctly
+
+### 4. Test Related Vehicles Widget
+
+1. Navigate to a vehicle page
+2. Scroll to bottom
+3. Look for "Andre søkte også på" section
+4. Verify 5 vehicles are displayed
+5. Click a link to test navigation
+
+### 5. Test Search Console Integration
+
+1. Go to Google Search Console
+2. Use URL Inspection tool
+3. Enter a vehicle page URL
+4. Check indexing status
+5. Request indexing if needed
+
+## Expected Results
+
+### Short-term (1-2 weeks)
+- Vehicle pages start appearing in Search Console
+- Rich snippets begin testing in Google results
+- Social media shares show vehicle-specific previews
+
+### Medium-term (1-3 months)
+- Improved rankings for specific registration numbers
+- More vehicle pages indexed by Google
+- Increased organic traffic to vehicle pages
+- Better click-through rates from search results
+
+### Long-term (3-6 months)
+- Established authority for Norwegian vehicle lookups
+- 20-50% increase in organic search traffic
+- Lower bounce rates due to related vehicle suggestions
+- Consistent growth in indexed vehicle pages
 
 ## Troubleshooting
 
-### Sitemap Not Accessible
-
-**Problem**: `/vehicle-sitemap.xml` returns 404
-
-**Solution**:
-1. Go to WordPress Admin > Settings > Permalinks
-2. Click "Save Changes" to flush rewrite rules
-3. Clear any caching plugins
-4. Test again
-
 ### Meta Tags Not Showing
 
-**Problem**: Meta tags not appearing in page source
+**Problem:** View source shows no vehicle-specific meta tags
 
-**Solution**:
-1. Check if another SEO plugin is overriding (Yoast, RankMath, etc.)
-2. Temporarily disable other SEO plugins
-3. Clear cache (browser, WordPress, CDN)
-4. Check plugin is active: Plugins > Installed Plugins
+**Solutions:**
+1. Check if another SEO plugin is overriding (temporarily disable Rank Math)
+2. Clear all caches (browser, WordPress, CDN)
+3. Verify plugin is activated
+4. Check error logs for PHP errors
 
 ### Structured Data Errors
 
-**Problem**: Google Rich Results Test shows errors
+**Problem:** Google Rich Results Test shows errors
 
-**Solution**:
-1. Test with a vehicle page that has recent lookup data
-2. Ensure vehicle data is cached (do a fresh lookup)
-3. Check for required fields in Vehicle schema
-4. Verify JSON-LD syntax with a validator
+**Solutions:**
+1. Ensure you're testing a vehicle page with recent lookup data
+2. Do a fresh lookup to populate cache
+3. Check that vehicle data includes required fields (make, model)
+4. Validate JSON-LD syntax manually
 
-### Cache Headers Not Applied
+### Related Vehicles Not Showing
 
-**Problem**: Cache headers not showing in browser inspector
+**Problem:** "Andre søkte også på" section missing
 
-**Solution**:
-1. Disable WordPress caching plugins temporarily
-2. Check .htaccess for conflicting headers
-3. Verify you're testing on a vehicle page (`/sok/ABC123`)
-4. Use curl to check headers:
-   ```bash
-   curl -I "https://yourdomain.com/sok/CO11204"
-   ```
+**Solutions:**
+1. Verify you're on a vehicle page (not search page)
+2. Check if there's lookup data in database (need at least 5 vehicles)
+3. Clear cache and reload
+4. Check browser console for JavaScript errors
 
-## Advanced Configuration
+### Page Not Caching
 
-### Custom Cache Duration
+**Problem:** Vehicle pages always load slowly
 
-To modify cache duration, edit `class-vehicle-lookup-performance.php`:
+**Solutions:**
+1. Verify LiteSpeed Cache is active and configured
+2. Check cache status in response headers
+3. Exclude logged-in users from cache
+4. Set appropriate TTL (3600 seconds recommended)
 
-```php
-// Change from 1 hour to 2 hours
-header('Cache-Control: public, max-age=7200, s-maxage=43200');
-```
+## Best Practices
 
-### Sitemap Limit
+### For Site Owners
 
-To change the number of vehicles in sitemap, edit `class-vehicle-lookup-sitemap.php`:
+1. **Regular Monitoring**
+   - Check Search Console weekly for indexing issues
+   - Monitor popular vehicle searches
+   - Review structured data errors monthly
 
-```php
-// Change from 1000 to 5000
-private function get_sitemap_vehicles($limit = 5000)
-```
+2. **Content Quality**
+   - Ensure vehicle data is accurate and complete
+   - Keep database updated with recent lookups
+   - Monitor for any data quality issues
 
-### Meta Description Length
+3. **Performance**
+   - Use LiteSpeed Cache or similar
+   - Enable CDN for better global performance
+   - Monitor page load times monthly
 
-To modify description length, edit `class-vehicle-lookup-seo.php` in the `add_meta_tags()` method.
+### For Developers
 
-## Performance Recommendations
+1. **Extending the Plugin**
+   - Use WordPress hooks to add custom functionality
+   - Don't modify core plugin files
+   - Test changes on staging first
 
-### Server Configuration (.htaccess)
+2. **Custom Schemas**
+   - Add custom structured data via `wp_head` hook
+   - Use priority > 2 to run after our schemas
+   - Validate with Google Rich Results Test
 
-Add these rules to your `.htaccess` file for optimal performance:
-
-```apache
-# Beepi Vehicle Lookup Performance Optimization
-
-<IfModule mod_expires.c>
-    ExpiresActive On
-    
-    # CSS and JavaScript
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    
-    # Images
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-</IfModule>
-
-<IfModule mod_deflate.c>
-    # Compress HTML, CSS, JavaScript, Text, XML
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE text/javascript
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/json
-</IfModule>
-
-<IfModule mod_headers.c>
-    # Add Vary header for proper caching
-    <FilesMatch "\.(css|js|html|htm)$">
-        Header set Vary "Accept-Encoding"
-    </FilesMatch>
-    
-    # Security headers
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-XSS-Protection "1; mode=block"
-</IfModule>
-```
-
-### CDN Integration
-
-For even better performance:
-1. Use a CDN like Cloudflare, BunnyCDN, or KeyCDN
-2. Configure CDN to cache vehicle pages for 12 hours
-3. Set up automatic cache purging when vehicle data updates
-4. Enable HTTP/2 or HTTP/3 on your CDN
-
-### WordPress Caching Plugins
-
-Compatible caching plugins:
-- **WP Super Cache**: Enable page caching for vehicle pages
-- **W3 Total Cache**: Configure browser and page caching
-- **WP Rocket**: Premium option with advanced optimization
-
-**Configuration Tips:**
-- Cache vehicle pages for at least 1 hour
-- Enable minification for CSS and JS
-- Enable lazy loading for images
-- Exclude admin and logged-in users from cache
-
-## Results and Impact
-
-### Expected Improvements
-
-After implementing these optimizations, you should see:
-
-**Search Engine Rankings:**
-- Improved indexing of vehicle pages within 2-4 weeks
-- Better rankings for long-tail keywords (specific reg numbers)
-- Enhanced rich snippets in search results
-- Increased organic traffic by 20-50% over 3 months
-
-**AI Chatbot Visibility:**
-- Better understanding of vehicle content by AI
-- Rich previews when shared in chat applications
-- Accurate information extraction by AI assistants
-
-**Performance:**
-- Faster page load times (target: <2 seconds)
-- Reduced server load through better caching
-- Better scores on PageSpeed Insights (target: 90+)
-
-**User Experience:**
-- Faster navigation between vehicle pages
-- Better social media sharing previews
-- Improved mobile experience
+3. **Performance**
+   - Minimize database queries
+   - Use transient cache for frequently accessed data
+   - Profile page load times regularly
 
 ## Support and Updates
 
-The SEO features are automatically maintained by the plugin. Regular updates will:
+### Documentation
+- **This Guide**: Complete feature documentation
+- **Quick Setup**: `docs/SEO_QUICK_SETUP.md`
+- **Testing Checklist**: `docs/SEO_TESTING_CHECKLIST.md`
+
+### External Resources
+- [Google Rich Results Test](https://search.google.com/test/rich-results)
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+- [Schema.org Validator](https://validator.schema.org/)
+
+### Updates
+The plugin is regularly updated to:
 - Adapt to search engine algorithm changes
-- Add new structured data types as they become available
-- Optimize for new AI platforms and chatbots
-
-For questions or issues, contact the development team or refer to the main plugin documentation.
-
-## Changelog
-
-**Version 7.3.0+**
-- ✅ Added comprehensive SEO meta tags
-- ✅ Implemented structured data (JSON-LD)
-- ✅ Added OpenGraph and Twitter Card support
-- ✅ Created XML sitemap generation
-- ✅ Implemented performance optimizations
-- ✅ Added caching headers and resource hints
-- ✅ Documentation and setup guide
+- Add new structured data types
+- Improve compatibility with popular plugins
+- Optimize performance
 
 ---
 
-*Last Updated: October 2025*
-*Plugin Version: 7.3.0+*
+**Last Updated:** October 2025  
+**Plugin Version:** 7.3.0+  
+**Compatibility:** WordPress 5.5+, PHP 7.4+
