@@ -19,7 +19,7 @@ Manual verification test files and UI design prototypes for the Beepi Vehicle Lo
 
 - [UI Examples](./ui-examples/README.md) - HTML design prototypes for UX exploration
 
-**Note:** UI prototype HTML files in ui-examples/ are design mockups meant to be opened in a browser, not documentation files.
+**Note:** UI prototype HTML files in ui-examples/ are *not test files*; they are design mockups (not automated tests) meant to be opened in a browser.
 
 ---
 
