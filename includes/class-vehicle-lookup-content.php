@@ -298,7 +298,7 @@ class Vehicle_Lookup_Content {
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
         // Get popular vehicles
-        $sql = 'SELECT reg_number, COUNT(*) as lookup_count FROM ' . esc_sql($table_name) . ' WHERE success = 1 AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY reg_number ORDER BY lookup_count DESC LIMIT %d';
+        $sql = "SELECT reg_number, COUNT(*) as lookup_count FROM `{$table_name}` WHERE success = 1 AND lookup_time > DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY reg_number ORDER BY lookup_count DESC LIMIT %d";
         $results = $wpdb->get_results($wpdb->prepare(
             $sql,
             $count
