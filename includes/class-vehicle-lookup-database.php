@@ -15,7 +15,7 @@ class Vehicle_Lookup_Database {
     public function create_table() {
         $charset_collate = $this->wpdb->get_charset_collate();
 
-        $sql = "CREATE TABLE " . esc_sql($this->table_name) . " (
+        $sql = "CREATE TABLE `{$this->table_name}` (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             reg_number varchar(20) NOT NULL,
             ip_address varchar(45) NOT NULL,
@@ -62,14 +62,14 @@ class Vehicle_Lookup_Database {
     private function add_failure_type_column() {
         $column_exists = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SHOW COLUMNS FROM " . esc_sql($this->table_name) . " LIKE %s",
+                "SHOW COLUMNS FROM `{$this->table_name}` LIKE %s",
                 'failure_type'
             )
         );
 
         if (empty($column_exists)) {
             $this->wpdb->query(
-                "ALTER TABLE " . esc_sql($this->table_name) . " 
+                "ALTER TABLE `{$this->table_name}` 
                 ADD COLUMN failure_type varchar(20) DEFAULT NULL AFTER error_message"
             );
         }
@@ -81,14 +81,14 @@ class Vehicle_Lookup_Database {
     private function add_tier_column() {
         $column_exists = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SHOW COLUMNS FROM " . esc_sql($this->table_name) . " LIKE %s",
+                "SHOW COLUMNS FROM `{$this->table_name}` LIKE %s",
                 'tier'
             )
         );
 
         if (empty($column_exists)) {
             $this->wpdb->query(
-                "ALTER TABLE " . esc_sql($this->table_name) . " 
+                "ALTER TABLE `{$this->table_name}` 
                 ADD COLUMN tier varchar(10) DEFAULT 'free' AFTER failure_type"
             );
         }
@@ -100,14 +100,14 @@ class Vehicle_Lookup_Database {
     private function add_response_data_column() {
         $column_exists = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SHOW COLUMNS FROM " . esc_sql($this->table_name) . " LIKE %s",
+                "SHOW COLUMNS FROM `{$this->table_name}` LIKE %s",
                 'response_data'
             )
         );
 
         if (empty($column_exists)) {
             $this->wpdb->query(
-                "ALTER TABLE " . esc_sql($this->table_name) . " 
+                "ALTER TABLE `{$this->table_name}` 
                 ADD COLUMN response_data longtext DEFAULT NULL AFTER cached"
             );
         }
@@ -120,14 +120,14 @@ class Vehicle_Lookup_Database {
         // Check and add error_code column
         $error_code_exists = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SHOW COLUMNS FROM " . esc_sql($this->table_name) . " LIKE %s",
+                "SHOW COLUMNS FROM `{$this->table_name}` LIKE %s",
                 'error_code'
             )
         );
 
         if (empty($error_code_exists)) {
             $this->wpdb->query(
-                "ALTER TABLE " . esc_sql($this->table_name) . " 
+                "ALTER TABLE `{$this->table_name}` 
                 ADD COLUMN error_code varchar(50) DEFAULT NULL AFTER response_data,
                 ADD INDEX idx_error_code (error_code)"
             );
@@ -136,14 +136,14 @@ class Vehicle_Lookup_Database {
         // Check and add correlation_id column
         $correlation_id_exists = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SHOW COLUMNS FROM " . esc_sql($this->table_name) . " LIKE %s",
+                "SHOW COLUMNS FROM `{$this->table_name}` LIKE %s",
                 'correlation_id'
             )
         );
 
         if (empty($correlation_id_exists)) {
             $this->wpdb->query(
-                "ALTER TABLE " . esc_sql($this->table_name) . " 
+                "ALTER TABLE `{$this->table_name}` 
                 ADD COLUMN correlation_id varchar(100) DEFAULT NULL AFTER error_code,
                 ADD INDEX idx_correlation_id (correlation_id)"
             );
@@ -221,7 +221,7 @@ class Vehicle_Lookup_Database {
             SUM(CASE WHEN success = 0 AND failure_type = 'http_error' THEN 1 ELSE 0 END) as http_errors,
             SUM(CASE WHEN success = 0 AND failure_type = 'invalid_plate' THEN 1 ELSE 0 END) as invalid_plates,
             SUM(CASE WHEN success = 0 AND failure_type = 'connection_error' THEN 1 ELSE 0 END) as connection_errors
-        FROM " . esc_sql($this->table_name) . " 
+        FROM `{$this->table_name}` 
         WHERE lookup_time >= %s AND lookup_time <= %s";
 
         return $this->wpdb->get_row(
@@ -239,7 +239,7 @@ class Vehicle_Lookup_Database {
             reg_number,
             COUNT(*) as search_count,
             MAX(lookup_time) as last_searched
-        FROM " . esc_sql($this->table_name) . " 
+        FROM `{$this->table_name}` 
         WHERE lookup_time >= %s AND success = 1
         GROUP BY reg_number 
         ORDER BY search_count DESC 
@@ -270,7 +270,7 @@ class Vehicle_Lookup_Database {
         $start_time = $current_date . ' ' . $hour . ':00:00';
         $end_time = $current_date . ' ' . $hour . ':59:59';
         
-        $sql = "SELECT COUNT(*) FROM " . esc_sql($this->table_name) . " 
+        $sql = "SELECT COUNT(*) FROM `{$this->table_name}` 
         WHERE ip_address = %s AND lookup_time >= %s AND lookup_time <= %s";
 
         return $this->wpdb->get_var(
@@ -290,7 +290,7 @@ class Vehicle_Lookup_Database {
         $start_date = $date . ' 00:00:00';
         $end_date = $date . ' 23:59:59';
         
-        $sql = "SELECT COUNT(*) FROM " . esc_sql($this->table_name) . " 
+        $sql = "SELECT COUNT(*) FROM `{$this->table_name}` 
         WHERE lookup_time >= %s AND lookup_time <= %s AND success = 1";
 
         return $this->wpdb->get_var(
@@ -303,7 +303,7 @@ class Vehicle_Lookup_Database {
      */
     public function get_failed_lookups($limit = 50) {
         $sql = "SELECT reg_number, ip_address, error_message, lookup_time 
-        FROM " . esc_sql($this->table_name) . " 
+        FROM `{$this->table_name}` 
         WHERE success = 0 
         ORDER BY lookup_time DESC 
         LIMIT %d";
@@ -330,7 +330,7 @@ class Vehicle_Lookup_Database {
         
         return $this->wpdb->query(
             $this->wpdb->prepare(
-                "DELETE FROM " . esc_sql($this->table_name) . " WHERE lookup_time < %s",
+                "DELETE FROM `{$this->table_name}` WHERE lookup_time < %s",
                 $cutoff_date
             )
         );
