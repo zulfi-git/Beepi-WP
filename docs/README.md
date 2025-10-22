@@ -11,6 +11,12 @@ Documentation for Beepi Vehicle Lookup WordPress plugin.
 - **[Development Notes](./replit.md)** - Recent changes
 - **[WordPress Integration Guide](./WordPress%20Integration%20Guide.md)** - API integration reference
 
+### SEO Documentation
+- **[SEO Overview](./seo/README.md)** - SEO documentation index
+- **[SEO Setup](./seo/SETUP.md)** - Quick setup guide
+- **[SEO Guide](./seo/GUIDE.md)** - Complete optimization guide
+- **[SEO Testing](./seo/TESTING.md)** - Testing checklist
+
 ### Architecture
 - **[Architecture](./architecture/ARCHITECTURE.md)** - System design and data flows
 - **[Assessment](./architecture/ASSESSMENT.md)** - Current state analysis
@@ -35,12 +41,9 @@ Key fixes:
 
 ### Investigations
 - **[Investigations Index](./investigations/README.md)** - Technical analyses
-- [First Search Treatment](./investigations/FIRST_SEARCH_TREATMENT_INVESTIGATION.md)
-- [Investigation Summary](./investigations/INVESTIGATION_SUMMARY.md)
 
 ### Tests
 - **[Tests Index](./tests/README.md)** - Manual test files
-- All test files converted to Markdown for GitHub browsing
 
 ---
 
@@ -51,9 +54,11 @@ docs/
 ├── README.md                          # This file
 ├── replit.md                          # Development notes
 ├── WordPress Integration Guide.md     # API reference
+├── seo/                               # SEO documentation
 ├── architecture/                      # System design
 ├── refactoring/                       # Improvement plans
 ├── fixes/                             # Bug fixes
 ├── investigations/                    # Technical analyses
+├── removed-features/                  # Deprecated features
 └── tests/                             # Test files
 ```

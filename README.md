@@ -2,7 +2,7 @@
 
 > **Norwegian vehicle registration lookup service with WooCommerce integration**
 
-[![Version](https://img.shields.io/badge/version-7.3.0-blue.svg)](./vehicle-lookup.php)
+[![Version](https://img.shields.io/badge/version-7.4.0-blue.svg)](./vehicle-lookup.php)
 [![WordPress](https://img.shields.io/badge/WordPress-6.x-blue.svg)](https://wordpress.org)
 [![WooCommerce](https://img.shields.io/badge/WooCommerce-8.x-purple.svg)](https://woocommerce.com)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](https://www.php.net)
@@ -21,7 +21,7 @@
 📋 **[Assessment](./docs/architecture/ASSESSMENT.md)** - Current state, strengths, and known issues  
 🔧 **[Refactor Plan](./docs/refactoring/REFACTOR_PLAN.md)** - Detailed improvement roadmap with implementation phases  
 🏗️ **[Architecture](./docs/architecture/ARCHITECTURE.md)** - System diagrams, data flows, and technical details  
-🚀 **[SEO Optimization Guide](./docs/SEO_OPTIMIZATION_GUIDE.md)** - Comprehensive SEO and AI chatbot optimization  
+🚀 **[SEO Optimization](./docs/seo/README.md)** - Comprehensive SEO and AI chatbot optimization  
 📝 **[Development Notes](./docs/replit.md)** - Recent changes and implementation details  
 📜 **[Changelog](./CHANGELOG.md)** - Version history and all notable changes
 

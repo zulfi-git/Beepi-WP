@@ -157,22 +157,13 @@ Every Search:
 
 The investigation has produced three documents in `docs/investigations/`:
 
-1. **FIRST_SEARCH_TREATMENT_INVESTIGATION.md** (29KB)
-   - Comprehensive technical analysis
-   - Detailed code audit
-   - Performance benchmarks
-   - Implementation guidance
+1. **FIRST_SEARCH_TREATMENT_INVESTIGATION.md** - Comprehensive technical analysis with detailed code audit, performance benchmarks, and implementation guidance
 
-2. **QUICK_REFERENCE.md** (4KB)
-   - TL;DR summary
-   - Key findings
-   - Code references
-   - Maintainer guidelines
+2. **INVESTIGATION_SUMMARY.md** (this file) - Executive summary of findings
 
-3. **README.md** (2KB)
-   - Directory overview
-   - How to use investigations
-   - Investigation template
+3. **FIRST_SEARCH_VISUAL_SUMMARY.md** - Visual flowchart and metrics
+
+4. **README.md** - Directory overview and navigation
 
 ---
 
@@ -250,13 +241,13 @@ The "second viewing" problems that prompted this investigation were caused by sp
 
 ## For More Information
 
-- **Full Investigation:** [docs/investigations/FIRST_SEARCH_TREATMENT_INVESTIGATION.md](./docs/investigations/FIRST_SEARCH_TREATMENT_INVESTIGATION.md)
-- **Quick Reference:** [docs/investigations/QUICK_REFERENCE.md](./docs/investigations/QUICK_REFERENCE.md)
+- **Full Investigation:** [FIRST_SEARCH_TREATMENT_INVESTIGATION.md](./FIRST_SEARCH_TREATMENT_INVESTIGATION.md)
+- **Visual Summary:** [FIRST_SEARCH_VISUAL_SUMMARY.md](./FIRST_SEARCH_VISUAL_SUMMARY.md)
 - **Related Fixes:**
-  - [docs/fixes/SECOND_VIEWING_FIX.md](./docs/fixes/SECOND_VIEWING_FIX.md)
-  - [docs/fixes/POLLING_CONFLICT_FIX.md](./docs/fixes/POLLING_CONFLICT_FIX.md)
-  - [docs/fixes/CONSOLE_LOGGING_FIX.md](./docs/fixes/CONSOLE_LOGGING_FIX.md)
-  - [docs/fixes/SELECTOR_FIX_DOCUMENTATION.md](./docs/fixes/SELECTOR_FIX_DOCUMENTATION.md)
+  - [Second Viewing Fix](../fixes/SECOND_VIEWING_FIX.md)
+  - [Polling Conflict Fix](../fixes/POLLING_CONFLICT_FIX.md)
+  - [Console Logging Fix](../fixes/CONSOLE_LOGGING_FIX.md)
+  - [Selector Fix](../fixes/SELECTOR_FIX_DOCUMENTATION.md)
 
 ---
 

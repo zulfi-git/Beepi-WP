@@ -1,6 +1,6 @@
 # Test Files
 
-Manual test files for verification of fixes. All files are in Markdown format for GitHub browsing.
+Manual verification test files and UI design prototypes for the Beepi Vehicle Lookup plugin.
 
 ## Test Files
 
@@ -15,6 +15,12 @@ Manual test files for verification of fixes. All files are in Markdown format fo
 ### Testing Checklists
 - [TESTING_CHECKLIST_v7.0.9.md](./TESTING_CHECKLIST_v7.0.9.md) - Version 7.0.9 checklist
 
+## UI Prototypes
+
+- [UI Examples](./ui-examples/README.md) - HTML design prototypes for UX exploration
+
+**Note:** UI prototype HTML files in ui-examples/ are *not test files*; they are design mockups (not automated tests) meant to be opened in a browser.
+
 ---
 
-**Note:** All HTML test files converted to Markdown in previous version.
+**Last Updated:** 2025-10-22

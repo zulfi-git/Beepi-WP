@@ -269,9 +269,9 @@ add_rewrite_rule('^vehicle-sitemap\.xml$', ...);
 3. `includes/class-vehicle-lookup-performance.php` - 246 lines
 4. `includes/class-vehicle-lookup-content.php` - 403 lines
 5. `includes/class-vehicle-lookup-analytics.php` - 539 lines
-6. `docs/SEO_OPTIMIZATION_GUIDE.md` - 509 lines
-7. `docs/SEO_QUICK_SETUP.md` - 153 lines
-8. `docs/SEO_TESTING_CHECKLIST.md` - 565 lines
+6. `GUIDE.md` - 509 lines
+7. `SETUP.md` - 153 lines
+8. `TESTING.md` - 565 lines
 
 **Total Lines Added:** ~3,163 lines
 
@@ -308,7 +308,7 @@ The following testing should be performed before deployment:
 - [ ] Cross-browser compatibility
 - [ ] Mobile responsiveness
 
-**Testing Checklist:** `docs/SEO_TESTING_CHECKLIST.md`
+**Testing Checklist:** `TESTING.md`
 
 ## Expected Results
 
@@ -429,9 +429,9 @@ The following testing should be performed before deployment:
 ## Support Resources
 
 ### Documentation
-- **Complete Guide:** `docs/SEO_OPTIMIZATION_GUIDE.md`
-- **Quick Setup:** `docs/SEO_QUICK_SETUP.md`
-- **Testing Checklist:** `docs/SEO_TESTING_CHECKLIST.md`
+- **Complete Guide:** `GUIDE.md`
+- **Quick Setup:** `SETUP.md`
+- **Testing Checklist:** `TESTING.md`
 - **Main README:** Updated with SEO features
 
 ### External Tools
