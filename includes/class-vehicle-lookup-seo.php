@@ -83,7 +83,7 @@ class Vehicle_Lookup_SEO {
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
         
         $result = $wpdb->get_row($wpdb->prepare(
-            "SELECT response_data FROM {$table_name} 
+            "SELECT response_data FROM " . esc_sql($table_name) . " 
             WHERE reg_number = %s AND success = 1 AND response_data IS NOT NULL 
             ORDER BY lookup_time DESC LIMIT 1",
             $reg_number

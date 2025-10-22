@@ -321,7 +321,7 @@ class Vehicle_Lookup_Admin_Ajax {
         $table_name = $wpdb->prefix . 'vehicle_lookup_logs';
 
         // Check if table exists first
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
+        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name)) === $table_name;
 
         if (!$table_exists) {
             error_log('Reset analytics failed: Analytics table does not exist');
@@ -332,14 +332,14 @@ class Vehicle_Lookup_Admin_Ajax {
         }
 
         // Get count before deletion for verification
-        $count_before = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
+        $count_before = $wpdb->get_var("SELECT COUNT(*) FROM " . esc_sql($table_name));
 
         // Use DELETE instead of TRUNCATE for better compatibility
-        $result = $wpdb->query("DELETE FROM {$table_name}");
+        $result = $wpdb->query("DELETE FROM " . esc_sql($table_name));
 
         if ($result !== false) {
             // Verify deletion worked
-            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
+            $count_after = $wpdb->get_var("SELECT COUNT(*) FROM " . esc_sql($table_name));
 
             // Clear any cached data
             wp_cache_delete('vehicle_lookup_stats_*', 'vehicle_lookup');
