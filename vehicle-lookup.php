@@ -38,6 +38,8 @@ $required_files = [
     'includes/class-popular-vehicles-shortcode.php',
     'includes/class-order-confirmation-shortcode.php',
     'includes/class-sms-handler.php',
+    'includes/class-vehicle-lookup-seo.php',
+    'includes/class-vehicle-lookup-content.php',
     // Admin classes (Phase 2 refactoring)
     'includes/admin/class-vehicle-lookup-admin-settings.php',
     'includes/admin/class-vehicle-lookup-admin-dashboard.php',
@@ -85,6 +87,18 @@ try {
     if (class_exists('SMS_Handler')) {
         $sms_handler = new SMS_Handler();
         $sms_handler->init();
+    }
+
+    // Initialize SEO handler
+    if (class_exists('Vehicle_Lookup_SEO')) {
+        $seo_handler = new Vehicle_Lookup_SEO();
+        $seo_handler->init();
+    }
+
+    // Initialize content enhancement
+    if (class_exists('Vehicle_Lookup_Content')) {
+        $content_handler = new Vehicle_Lookup_Content();
+        $content_handler->init();
     }
 
     // Initialize admin interface

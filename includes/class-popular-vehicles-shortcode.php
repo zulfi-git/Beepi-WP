@@ -106,7 +106,7 @@ class Popular_Vehicles_Shortcode {
                 reg_number,
                 COUNT(*) as search_count,
                 MAX(lookup_time) as last_searched
-            FROM {$table_name}
+            FROM `{$table_name}`
             WHERE reg_number IS NOT NULL 
             AND reg_number != ''
             AND success = 1
@@ -123,7 +123,7 @@ class Popular_Vehicles_Shortcode {
                     COALESCE(JSON_UNQUOTE(JSON_EXTRACT(response_data, '$.responser[0].kjoretoydata.godkjenning.tekniskGodkjenning.tekniskeData.generelt.merke[0].merke')), ''),
                     ' ',
                     COALESCE(JSON_UNQUOTE(JSON_EXTRACT(response_data, '$.responser[0].kjoretoydata.godkjenning.tekniskGodkjenning.tekniskeData.generelt.handelsbetegnelse[0]')), '')
-                ) FROM {$table_name}
+                ) FROM `{$table_name}`
                 WHERE reg_number = %s
                 AND success = 1 
                 AND response_data IS NOT NULL
