@@ -4,6 +4,20 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
+## [7.4.0] - 2025-10-22
+
+### Changed
+- Version bump to 7.4.0
+
+### Documentation
+- Consolidated SEO documentation into organized /docs/seo/ directory
+- Converted HTML test files to Markdown for GitHub readability
+- Removed outdated housekeeping log (HOUSEKEEPING_v7.0.9.md)
+- Streamlined documentation for single-developer workflow
+- Improved documentation navigation and organization
+
+---
+
 ## [7.3.0] - 2025-10-17
 
 ### Changed
