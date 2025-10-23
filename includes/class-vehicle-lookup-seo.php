@@ -166,7 +166,7 @@ class Vehicle_Lookup_SEO {
         if (empty($reg_number)) {
             echo '<meta name="description" content="Søk etter norsk kjøretøyinformasjon med Beepi. Finn eieropplysninger, tekniske detaljer og markedspriser for alle norske registreringsnummer." />' . "\n";
             echo '<meta name="keywords" content="kjøretøyoppslag, biloppslag, registreringsnummer, eieropplysninger, norge, beepi" />' . "\n";
-            echo '<meta name="robots" content="index, follow" />' . "\n";
+            echo '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />' . "\n";
             return;
         }
         
@@ -216,7 +216,7 @@ class Vehicle_Lookup_SEO {
             );
             echo '<meta name="description" content="' . esc_attr($description) . '" />' . "\n";
             echo '<meta name="keywords" content="' . esc_attr($reg_number) . ', kjøretøyoppslag, biloppslag, eieropplysninger, norge" />' . "\n";
-            echo '<meta name="robots" content="index, follow" />' . "\n";
+            echo '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />' . "\n";
         }
     }
     
