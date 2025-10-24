@@ -2,7 +2,8 @@
 
 > **Purpose:** Design exploration for search results page improvements  
 > **Status:** Assessment only - not for production deployment  
-> **Created:** 2025-10-17
+> **Created:** 2025-10-17  
+> **Last Updated:** 2025-10-24
 
 ## Overview
 
@@ -10,7 +11,35 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 
 ## Files
 
-### 1. Enhanced Layout (`enhanced-layout.html`)
+### 1. Vehicle Card Demo (`vehicle-card-demo.html`)
+**Focus:** Clean, minimal vehicle information card
+
+**Key Features:**
+- Mercedes-Benz three-pointed star logo (SVG)
+- License plate display (DR 82130)
+- Vehicle model information (MERCEDES-BENZ A 250 e 2020)
+- Status badges: Registrert (green), EU-kontroll (blue), Automat (neutral)
+- Rounded card design with subtle shadow
+- Hover effects and smooth transitions
+- Responsive layout for mobile and desktop
+
+**Best For:**
+- Quick vehicle overview
+- Status at-a-glance
+- Clean, professional presentation
+- Reference implementation
+
+**Design Highlights:**
+```css
+- Uses Beepi CSS variables from variables.css
+- Card-based layout with border-radius
+- Color-coded status badges
+- SVG icons for scalability
+- Responsive design with mobile breakpoints
+- Hover effects for interactivity
+```
+
+### 2. Enhanced Layout (`enhanced-layout.html`)
 **Focus:** Modern card-based design with visual hierarchy
 
 **Key Features:**
@@ -35,7 +64,7 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 - Grid-based responsive design
 ```
 
-### 2. Mobile-First Design (`mobile-first-design.html`)
+### 3. Mobile-First Design (`mobile-first-design.html`)
 **Focus:** Thumb-friendly, touch-optimized interface
 
 **Key Features:**
@@ -60,7 +89,7 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 - Safe area insets for modern phones
 ```
 
-### 3. Accessibility-Focused (`accessibility-focused.html`)
+### 4. Accessibility-Focused (`accessibility-focused.html`)
 **Focus:** WCAG 2.1 AA compliance and inclusive design
 
 **Key Features:**
@@ -120,15 +149,16 @@ lighthouse accessibility-focused.html --only-categories=accessibility
 
 ## Comparison Matrix
 
-| Feature | Enhanced Layout | Mobile-First | Accessibility |
-|---------|----------------|--------------|---------------|
-| Visual Appeal | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| Mobile UX | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| Accessibility | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Performance | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Conversion Focus | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| Keyboard Nav | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Screen Reader | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Feature | Vehicle Card Demo | Enhanced Layout | Mobile-First | Accessibility |
+|---------|------------------|-----------------|--------------|---------------|
+| Visual Appeal | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
+| Mobile UX | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| Accessibility | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Performance | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Conversion Focus | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| Keyboard Nav | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Screen Reader | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Simplicity | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 
 ## Key Design Principles Applied
 
