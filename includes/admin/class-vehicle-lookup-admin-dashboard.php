@@ -159,6 +159,19 @@ class Vehicle_Lookup_Admin_Dashboard {
                         </div>
                         
                         <div class="service-item">
+                            <div class="service-logo brreg-logo">
+                                <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/brreg-logo.png'; ?>" alt="Brønnøysundregistrene" width="24" height="24">
+                            </div>
+                            <div class="service-info">
+                                <div class="service-name">Brreg API</div>
+                                <div class="service-status" id="brreg-status">
+                                    <span class="status-light unknown"></span>
+                                    <span class="status-text">Pending...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-item">
                             <div class="service-logo openai-logo">
                                 <img src="<?php echo VEHICLE_LOOKUP_PLUGIN_URL . 'assets/images/open-ai-logo.png'; ?>" alt="OpenAI" width="24" height="24">
                             </div>
