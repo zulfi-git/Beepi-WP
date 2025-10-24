@@ -10,7 +10,48 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 
 ## Files
 
-### 1. Enhanced Layout (`enhanced-layout.html`)
+### 1. Car Intro Widget (`car-intro-widget.html`)
+**Focus:** Compact vehicle information card component
+
+**Key Features:**
+- Small card layout optimized for space efficiency
+- Mercedes-Benz logo with circular frame
+- Registration number as primary identifier
+- Vehicle title with truncation support
+- Status badges (registered, EU control)
+- Transmission type with icon
+- Clean divider between sections
+- Fully responsive design
+
+**Best For:**
+- Widget integrations
+- Compact vehicle displays
+- Card-based layouts
+- Mobile and desktop viewing
+
+**Design Highlights:**
+```css
+- Component-based CSS architecture
+- Inline badges with color coding
+- SVG icons for scalability
+- Flexbox layout system
+- Semantic HTML structure
+- Responsive spacing system
+```
+
+**Data Structure:**
+```javascript
+{
+  logo: "Mercedes-Benz star icon",
+  reg: "DR 82130",
+  title: "MERCEDES-BENZ A 250 e 2020",
+  status: "Registrert",
+  eu: "EU-kontroll (9 mnd igjen)",
+  trans: "Automat"
+}
+```
+
+### 2. Enhanced Layout (`enhanced-layout.html`)
 **Focus:** Modern card-based design with visual hierarchy
 
 **Key Features:**
@@ -35,7 +76,7 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 - Grid-based responsive design
 ```
 
-### 2. Mobile-First Design (`mobile-first-design.html`)
+### 3. Mobile-First Design (`mobile-first-design.html`)
 **Focus:** Thumb-friendly, touch-optimized interface
 
 **Key Features:**
@@ -60,7 +101,7 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 - Safe area insets for modern phones
 ```
 
-### 3. Accessibility-Focused (`accessibility-focused.html`)
+### 4. Accessibility-Focused (`accessibility-focused.html`)
 **Focus:** WCAG 2.1 AA compliance and inclusive design
 
 **Key Features:**
@@ -120,15 +161,16 @@ lighthouse accessibility-focused.html --only-categories=accessibility
 
 ## Comparison Matrix
 
-| Feature | Enhanced Layout | Mobile-First | Accessibility |
-|---------|----------------|--------------|---------------|
-| Visual Appeal | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| Mobile UX | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| Accessibility | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Performance | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Conversion Focus | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| Keyboard Nav | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Screen Reader | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Feature | Car Intro Widget | Enhanced Layout | Mobile-First | Accessibility |
+|---------|------------------|----------------|--------------|---------------|
+| Visual Appeal | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
+| Mobile UX | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| Accessibility | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Performance | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Conversion Focus | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| Keyboard Nav | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Screen Reader | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Compact Size | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
 
 ## Key Design Principles Applied
 
@@ -289,6 +331,7 @@ if (supportsGrid) {
 - **CLS (Cumulative Layout Shift):** < 0.1
 
 ### File Sizes
+- **car-intro-widget.html:** ~7.5KB (uncompressed)
 - **enhanced-layout.html:** ~23KB (uncompressed)
 - **mobile-first-design.html:** ~20KB (uncompressed)
 - **accessibility-focused.html:** ~26KB (uncompressed)
