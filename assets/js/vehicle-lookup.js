@@ -803,8 +803,8 @@ jQuery(document).ready(function($) {
                 const registrertDato = historicalOwner.registrertDato;
                 
                 const ownerName = person ? `${person.fornavn || ''} ${person.etternavn || ''}`.trim() : 'Ukjent eier';
-                const ownerAddress = adresse 
-                    ? `${adresse.adresselinje1 || ''}, ${adresse.postnummer || ''} ${adresse.poststed || ''}`.trim() 
+                const ownerAddress = adresse
+                    ? [adresse.adresselinje1, [adresse.postnummer, adresse.poststed].filter(Boolean).join(' ')].filter(Boolean).join(', ')
                     : '';
                 const formattedDate = registrertDato ? formatDate(registrertDato) : '';
                 
