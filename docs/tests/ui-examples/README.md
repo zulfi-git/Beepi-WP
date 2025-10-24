@@ -42,7 +42,7 @@ This directory contains HTML prototypes demonstrating proposed UI/UX improvement
 **Data Structure:**
 ```javascript
 {
-  logo: "Mercedes-Benz star icon",
+  logo: "Mercedes-Benz three-pointed star SVG",
   reg: "DR 82130",
   title: "MERCEDES-BENZ A 250 e 2020",
   status: "Registrert",
