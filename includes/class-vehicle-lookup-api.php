@@ -6,8 +6,10 @@ class VehicleLookupAPI {
      * 
      * @param string $regNumber Registration number
      * @param bool $includeSummary Whether to start AI summary generation (default: false)
+     * @param string $dtg Optional Date/Time Group for historical owner lookup (ISO 8601 format)
+     * @param bool $includeOwnerHistory Whether to include full owner history timeline (default: false)
      */
-    public function lookup($regNumber, $includeSummary = false) {
+    public function lookup($regNumber, $includeSummary = false, $dtg = null, $includeOwnerHistory = false) {
         $start_time = microtime(true);
         
         // Get worker URL and timeout from admin settings
@@ -19,6 +21,15 @@ class VehicleLookupAPI {
             'registrationNumber' => $regNumber,
             'includeSummary' => $includeSummary
         );
+        
+        // Add optional parameters if provided
+        if ($dtg !== null) {
+            $request_body['dtg'] = $dtg;
+        }
+        
+        if ($includeOwnerHistory) {
+            $request_body['includeOwnerHistory'] = true;
+        }
         
         $response = wp_remote_post($worker_url . '/lookup', array(
             'headers' => array(
