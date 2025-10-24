@@ -123,7 +123,8 @@ class Vehicle_Lookup_Helpers {
             ['Motor og drivverk', '', 'engine-info-table'],
             ['Størrelse og vekt', '', 'size-weight-table'],
             ['Dekk og felg', '', 'tire-info-table'],
-            ['Merknader', '', 'notes-info-table']
+            ['Merknader', '', 'notes-info-table'],
+            ['Eierhistorikk', '', 'eierhistorikk-content']
         ];
 
         $html = '<div class="accordion">';
