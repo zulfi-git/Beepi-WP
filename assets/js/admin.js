@@ -888,23 +888,33 @@ jQuery(document).ready(function($) {
                             const brregOk = $('#brreg-status .status-light').hasClass('ok');
                             const aiSummaryOk = $('#ai-summary-status .status-light').hasClass('ok');
                             const aiSummaryWarning = $('#ai-summary-status .status-light').hasClass('warning');
+                            const aiSummaryError = $('#ai-summary-status .status-light').hasClass('error');
                             
-                            if (cloudflareOk && chatkitOk && vegvesenOk && brregOk && (aiSummaryOk || aiSummaryWarning)) {
+                            // Count healthy core services (excluding AI which is optional)
+                            const coreServicesHealthy = [cloudflareOk, chatkitOk, vegvesenOk, brregOk].filter(Boolean).length;
+                            const totalCoreServices = 4;
+                            
+                            if (coreServicesHealthy === totalCoreServices && (aiSummaryOk || aiSummaryWarning)) {
                                 if (aiSummaryWarning) {
                                     updateOverallStatus('warning', 'AI Features Limited');
                                 } else {
                                     updateOverallStatus('ok', 'All Systems Operational');
                                 }
-                            } else if (cloudflareOk && chatkitOk && vegvesenOk && brregOk) {
+                            } else if (coreServicesHealthy === totalCoreServices && !aiSummaryError) {
+                                // All core services OK, AI is unknown or checking
                                 updateOverallStatus('warning', 'Core Services OK, AI Unknown');
-                            } else if (
-                                [cloudflareOk, chatkitOk, vegvesenOk, brregOk].filter(Boolean).length >= 3
-                            ) {
+                            } else if (coreServicesHealthy >= 3) {
+                                // 3 out of 4 core services healthy - one service down
                                 updateOverallStatus('warning', 'Some Services Degraded');
-                            } else if (
-                                cloudflareOk || chatkitOk || vegvesenOk || brregOk
-                            ) {
-                                updateOverallStatus('error', 'Service Issues Detected');
+                            } else if (coreServicesHealthy >= 2) {
+                                // 2 out of 4 core services healthy - multiple services down
+                                updateOverallStatus('error', 'Multiple Service Issues');
+                            } else if (coreServicesHealthy >= 1) {
+                                // Only 1 core service healthy - critical issues
+                                updateOverallStatus('error', 'Critical Service Issues');
+                            } else {
+                                // No core services healthy
+                                updateOverallStatus('error', 'All Services Down');
                             }
                             
                             // Check circuit breaker state
