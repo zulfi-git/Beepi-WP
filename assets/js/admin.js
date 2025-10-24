@@ -9,15 +9,18 @@ jQuery(document).ready(function($) {
     function checkCloudflareStatus() {
         const cloudflareStatusDiv = $('#cloudflare-status');
         const vegvesenStatusDiv = $('#vegvesen-status');
+        const brregStatusDiv = $('#brreg-status');
         const detailsDiv = $('#api-details');
 
         console.log('Starting health check request...');
 
-        // Set both to checking state
+        // Set all to checking state
         cloudflareStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
         cloudflareStatusDiv.find('.status-text').text('Checking...');
         vegvesenStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
         vegvesenStatusDiv.find('.status-text').text('Pending...');
+        brregStatusDiv.find('.status-light').removeClass('ok error warning unknown').addClass('checking');
+        brregStatusDiv.find('.status-text').text('Pending...');
 
         $.ajax({
             url: vehicleLookupAdmin.ajaxurl,
@@ -42,6 +45,9 @@ jQuery(document).ready(function($) {
                     
                     // Handle Vegvesen API Status
                     updateVegvesenStatus(healthData);
+                    
+                    // Handle Brreg API Status
+                    updateBrregStatus(healthData);
                     
                     // Handle AI Summary Status
                     updateAiSummaryStatus(healthData);
@@ -140,33 +146,35 @@ jQuery(document).ready(function($) {
     function updateVegvesenStatus(healthData) {
         const vegvesenStatusDiv = $('#vegvesen-status');
         
-        if (!healthData.health_data || !healthData.health_data.status) {
+        if (!healthData.health_data || !healthData.health_data.upstream || !healthData.health_data.upstream.vegvesenApi) {
             vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning error').addClass('unknown');
             vegvesenStatusDiv.find('.status-text').text('Unknown');
             return;
         }
 
-        const status = healthData.health_data.status;
+        const vegvesenApi = healthData.health_data.upstream.vegvesenApi;
         let statusClass = 'unknown';
         let statusText = 'Unknown';
 
         // Handle different health states
-        switch(status.toLowerCase()) {
-            case 'healthy':
-                statusClass = 'ok';
-                statusText = 'Healthy';
-                break;
-            case 'degraded':
-                statusClass = 'warning';
-                statusText = 'Degraded';
-                break;
-            case 'unhealthy':
-                statusClass = 'error';
-                statusText = 'Unhealthy';
-                break;
-            default:
-                statusClass = 'warning';
-                statusText = status;
+        if (vegvesenApi.status) {
+            switch(vegvesenApi.status.toLowerCase()) {
+                case 'healthy':
+                    statusClass = 'ok';
+                    statusText = 'Healthy';
+                    break;
+                case 'degraded':
+                    statusClass = 'warning';
+                    statusText = 'Degraded';
+                    break;
+                case 'unhealthy':
+                    statusClass = 'error';
+                    statusText = 'Unhealthy';
+                    break;
+                default:
+                    statusClass = 'warning';
+                    statusText = vegvesenApi.status;
+            }
         }
 
         // Check circuit breaker state for vehicle endpoint
@@ -191,6 +199,48 @@ jQuery(document).ready(function($) {
         
         // Update enhanced dashboard metrics after status update
         updateEnhancedDashboardMetrics(healthData);
+    }
+
+    function updateBrregStatus(healthData) {
+        const brregStatusDiv = $('#brreg-status');
+        
+        if (!healthData.health_data || !healthData.health_data.upstream || !healthData.health_data.upstream.brregApi) {
+            brregStatusDiv.find('.status-light').removeClass('checking ok warning error').addClass('unknown');
+            brregStatusDiv.find('.status-text').text('Unknown');
+            return;
+        }
+
+        const brregApi = healthData.health_data.upstream.brregApi;
+        let statusClass = 'unknown';
+        let statusText = 'Unknown';
+
+        // Handle different health states
+        if (brregApi.status) {
+            switch(brregApi.status.toLowerCase()) {
+                case 'healthy':
+                    statusClass = 'ok';
+                    statusText = 'Healthy';
+                    break;
+                case 'degraded':
+                    statusClass = 'warning';
+                    statusText = 'Degraded';
+                    break;
+                case 'unhealthy':
+                    statusClass = 'error';
+                    statusText = 'Unhealthy';
+                    break;
+                default:
+                    statusClass = 'warning';
+                    statusText = brregApi.status;
+            }
+        }
+
+        if (healthData.cached) {
+            statusText += ' (cached)';
+        }
+
+        brregStatusDiv.find('.status-light').removeClass('checking ok warning error unknown').addClass(statusClass);
+        brregStatusDiv.find('.status-text').text(statusText);
     }
 
     function updateAiSummaryStatus(healthData) {
@@ -364,6 +414,7 @@ jQuery(document).ready(function($) {
     function handleHealthCheckError(response) {
         const cloudflareStatusDiv = $('#cloudflare-status');
         const vegvesenStatusDiv = $('#vegvesen-status');
+        const brregStatusDiv = $('#brreg-status');
         const aiSummaryStatusDiv = $('#ai-summary-status');
         const detailsDiv = $('#api-details');
 
@@ -372,6 +423,9 @@ jQuery(document).ready(function($) {
         
         vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
         vegvesenStatusDiv.find('.status-text').text('Unknown');
+        
+        brregStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+        brregStatusDiv.find('.status-text').text('Unknown');
         
         aiSummaryStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
         aiSummaryStatusDiv.find('.status-text').text('Unknown');
@@ -398,11 +452,13 @@ jQuery(document).ready(function($) {
     function handleHealthCheckNetworkError(xhr, status, error) {
         const cloudflareStatusDiv = $('#cloudflare-status');
         const vegvesenStatusDiv = $('#vegvesen-status');
+        const brregStatusDiv = $('#brreg-status');
         const aiSummaryStatusDiv = $('#ai-summary-status');
         const detailsDiv = $('#api-details');
 
         cloudflareStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('error');
         vegvesenStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
+        brregStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
         aiSummaryStatusDiv.find('.status-light').removeClass('checking ok warning').addClass('unknown');
 
         let errorMessage = 'Connection failed';
@@ -448,6 +504,7 @@ jQuery(document).ready(function($) {
 
         cloudflareStatusDiv.find('.status-text').text(statusText);
         vegvesenStatusDiv.find('.status-text').text('Unknown');
+        brregStatusDiv.find('.status-text').text('Unknown');
         aiSummaryStatusDiv.find('.status-text').text('Unknown');
 
         detailsDiv.html('<div style="color: #dc3232; padding: 10px; border-left: 3px solid #dc3232; background: #fef2f2;">' + 
@@ -828,23 +885,24 @@ jQuery(document).ready(function($) {
                             const cloudflareOk = $('#cloudflare-status .status-light').hasClass('ok');
                             const chatkitOk = $('#chatkit-status .status-light').hasClass('ok');
                             const vegvesenOk = $('#vegvesen-status .status-light').hasClass('ok');
+                            const brregOk = $('#brreg-status .status-light').hasClass('ok');
                             const aiSummaryOk = $('#ai-summary-status .status-light').hasClass('ok');
                             const aiSummaryWarning = $('#ai-summary-status .status-light').hasClass('warning');
                             
-                            if (cloudflareOk && chatkitOk && vegvesenOk && (aiSummaryOk || aiSummaryWarning)) {
+                            if (cloudflareOk && chatkitOk && vegvesenOk && brregOk && (aiSummaryOk || aiSummaryWarning)) {
                                 if (aiSummaryWarning) {
                                     updateOverallStatus('warning', 'AI Features Limited');
                                 } else {
                                     updateOverallStatus('ok', 'All Systems Operational');
                                 }
-                            } else if (cloudflareOk && chatkitOk && vegvesenOk) {
+                            } else if (cloudflareOk && chatkitOk && vegvesenOk && brregOk) {
                                 updateOverallStatus('warning', 'Core Services OK, AI Unknown');
                             } else if (
-                                [cloudflareOk, chatkitOk, vegvesenOk].filter(Boolean).length >= 2
+                                [cloudflareOk, chatkitOk, vegvesenOk, brregOk].filter(Boolean).length >= 3
                             ) {
                                 updateOverallStatus('warning', 'Some Services Degraded');
                             } else if (
-                                cloudflareOk || chatkitOk || vegvesenOk
+                                cloudflareOk || chatkitOk || vegvesenOk || brregOk
                             ) {
                                 updateOverallStatus('error', 'Service Issues Detected');
                             }
