@@ -161,6 +161,8 @@ class Vehicle_Lookup {
 
         $regNumber = isset($_POST['regNumber']) ? Vehicle_Lookup_Helpers::normalize_plate(sanitize_text_field($_POST['regNumber'])) : '';
         $includeSummary = isset($_POST['includeSummary']) ? (bool)$_POST['includeSummary'] : false;
+        $dtg = isset($_POST['dtg']) ? sanitize_text_field($_POST['dtg']) : null;
+        $includeOwnerHistory = isset($_POST['includeOwnerHistory']) ? (bool)$_POST['includeOwnerHistory'] : false;
         $ip_address = $this->access->get_client_ip();
         $start_time = microtime(true);
 
@@ -190,7 +192,7 @@ class Vehicle_Lookup {
         $tier = $this->access->determine_tier($regNumber);
 
         // Make API request (tier handled internally by WordPress)
-        $api_result = $this->api->lookup($regNumber, $includeSummary);
+        $api_result = $this->api->lookup($regNumber, $includeSummary, $dtg, $includeOwnerHistory);
         $response_time = $api_result['response_time'];
         $result = $this->api->process_response($api_result['response'], $regNumber);
 

@@ -318,7 +318,7 @@ jQuery(document).ready(function($) {
 
         // Populate owner history section
         console.log('📜 Populating owner history table...');
-        populateOwnerHistoryTable();
+        populateOwnerHistoryTable(vehicleData);
 
         // No need to manage accordion open/close - all sections are always visible
         $resultsDiv.show();
@@ -350,12 +350,13 @@ jQuery(document).ready(function($) {
 
         setLoadingState(true);
 
-        // Phase 1: Always request AI summary generation for all users
+        // Phase 1: Always request AI summary generation and owner history for all users
         const requestData = {
             action: 'vehicle_lookup',
             nonce: vehicleLookupAjax.nonce,
             regNumber: regNumber,
-            includeSummary: true  // Triggers AI generation in background
+            includeSummary: true,  // Triggers AI generation in background
+            includeOwnerHistory: true  // Request full owner history timeline
         };
 
         // Make AJAX request
@@ -771,8 +772,15 @@ jQuery(document).ready(function($) {
     const $style = $('<style type="text/css"></style>').text(ownerHistoryCss);
     $('head').append($style);
 
+    // Helper function to escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Function to populate the owner history table
-    function populateOwnerHistoryTable() {
+    function populateOwnerHistoryTable(vehicleData) {
         console.log('  → populateOwnerHistoryTable: Starting...');
         const regNumber = normalizePlate($('#regNumber').val());
         const $ownerHistoryDiv = $('#eierhistorikk-content');
@@ -781,43 +789,87 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        // Mock Norwegian owner history data (will be heavily blurred)
-        const mockOwnerHistory = [
-            { period: '2020-2023', owner: 'Kari Nordmann', address: 'Storgata 15, 0101 Oslo' },
-            { period: '2018-2020', owner: 'Lars Hansen', address: 'Bjørnstjerne Bjørnsons gate 45, 4611 Kristiansand' },
-            { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' }
-        ];
+        // Validate vehicleData parameter before accessing properties
+        if (!vehicleData || typeof vehicleData !== 'object') {
+            console.warn('  → populateOwnerHistoryTable: Invalid or missing vehicleData');
+            vehicleData = {};
+        }
 
+        // Check if we have access to owner data
+        const hasAccess = checkOwnerAccessToken(regNumber);
+        const isConfirmationPage = $('.order-confirmation-container').length > 0;
+        
+        // Get owner history from vehicle data if available
+        const ownerHistory = vehicleData.eierhistorikk || [];
+        
         let html = '<div class="owner-history-content">';
 
-        // Blurred content
-        html += '<div class="blurred-owner-data">';
+        // If user has access and owner history is available, show real data
+        if ((hasAccess || isConfirmationPage) && ownerHistory.length > 0) {
+            console.log('  → populateOwnerHistoryTable: Displaying real owner history data');
+            
+            // Display real owner history
+            ownerHistory.forEach(historicalOwner => {
+                const eier = historicalOwner.eier;
+                const person = eier?.person;
+                const adresse = eier?.adresse;
+                const registrertDato = historicalOwner.registrertDato;
+                
+                const ownerName = person ? `${person.fornavn || ''} ${person.etternavn || ''}`.trim() : 'Ukjent eier';
+                const ownerAddress = adresse
+                    ? [adresse.adresselinje1, [adresse.postnummer, adresse.poststed].filter(Boolean).join(' ')].filter(Boolean).join(', ')
+                    : '';
+                const formattedDate = registrertDato ? formatDate(registrertDato) : '';
+                
+                // Escape user-provided data to prevent XSS vulnerabilities
+                const escapedOwnerName = escapeHtml(ownerName);
+                const escapedOwnerAddress = escapeHtml(ownerAddress);
+                const escapedFormattedDate = escapeHtml(formattedDate);
+                
+                html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
+                    <strong>${escapedFormattedDate}:</strong> ${escapedOwnerName}`;
+                if (ownerAddress) {
+                    html += `<br><small style="color: #6b7280;">${escapedOwnerAddress}</small>`;
+                }
+                html += `</div>`;
+            });
+        } else {
+            // Mock Norwegian owner history data (will be heavily blurred)
+            const mockOwnerHistory = [
+                { period: '2020-2023', owner: 'Kari Nordmann', address: 'Storgata 15, 0101 Oslo' },
+                { period: '2018-2020', owner: 'Lars Hansen', address: 'Bjørnstjerne Bjørnsons gate 45, 4611 Kristiansand' },
+                { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' }
+            ];
 
-        mockOwnerHistory.forEach(item => {
-            html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
-                <strong>${item.period}:</strong> ${item.owner}<br>
-                <small style="color: #6b7280;">${item.address}</small>
+            // Blurred content
+            html += '<div class="blurred-owner-data">';
+
+            mockOwnerHistory.forEach(item => {
+                html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
+                    <strong>${item.period}:</strong> ${item.owner}<br>
+                    <small style="color: #6b7280;">${item.address}</small>
+                </div>`;
+            });
+
+            html += '</div>';
+
+            // Premium overlay with dynamic pricing - use same payment as premium tier
+            const premiumProduct = window.vehicleLookupData?.premiumProduct;
+            const regularPrice = premiumProduct?.regular_price || '89';
+            const salePrice = premiumProduct?.sale_price;
+            const productName = premiumProduct?.name || 'Premium Kjøretøyrapport';
+
+            html += `<div class="owner-history-overlay">
+                <h4>🔐 ${productName}</h4>
+                <div class="tier-price">
+                    <span class="regular-price">kr ${regularPrice},-</span>
+                    <span class="sale-price">kr ${salePrice || regularPrice},-</span>
+                </div>
+                <div class="tier-purchase">
+                    ${window.premiumVippsBuyButton || ''}
+                </div>
             </div>`;
-        });
-
-        html += '</div>';
-
-        // Premium overlay with dynamic pricing - use same payment as premium tier
-        const premiumProduct = window.vehicleLookupData?.premiumProduct;
-        const regularPrice = premiumProduct?.regular_price || '89';
-        const salePrice = premiumProduct?.sale_price;
-        const productName = premiumProduct?.name || 'Premium Kjøretøyrapport';
-
-        html += `<div class="owner-history-overlay">
-            <h4>🔐 ${productName}</h4>
-            <div class="tier-price">
-                <span class="regular-price">kr ${regularPrice},-</span>
-                <span class="sale-price">kr ${salePrice || regularPrice},-</span>
-            </div>
-            <div class="tier-purchase">
-                ${window.premiumVippsBuyButton || ''}
-            </div>
-        </div>`;
+        }
 
         html += '</div>';
 
