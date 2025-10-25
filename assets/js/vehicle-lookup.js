@@ -834,15 +834,12 @@ jQuery(document).ready(function($) {
                 html += `</div>`;
             });
         } else {
-            // Mock Norwegian owner history data (will be heavily blurred)
+            // Mock Norwegian owner history data (shown openly)
             const mockOwnerHistory = [
                 { period: '2020-2023', owner: 'Kari Nordmann', address: 'Storgata 15, 0101 Oslo' },
                 { period: '2018-2020', owner: 'Lars Hansen', address: 'Bjørnstjerne Bjørnsons gate 45, 4611 Kristiansand' },
                 { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' }
             ];
-
-            // Blurred content
-            html += '<div class="blurred-owner-data">';
 
             mockOwnerHistory.forEach(item => {
                 html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
@@ -850,25 +847,6 @@ jQuery(document).ready(function($) {
                     <small style="color: #6b7280;">${item.address}</small>
                 </div>`;
             });
-
-            html += '</div>';
-
-            // Premium overlay with dynamic pricing - use same payment as premium tier
-            const premiumProduct = window.vehicleLookupData?.premiumProduct;
-            const regularPrice = premiumProduct?.regular_price || '89';
-            const salePrice = premiumProduct?.sale_price;
-            const productName = premiumProduct?.name || 'Premium Kjøretøyrapport';
-
-            html += `<div class="owner-history-overlay">
-                <h4>🔐 ${productName}</h4>
-                <div class="tier-price">
-                    <span class="regular-price">kr ${regularPrice},-</span>
-                    <span class="sale-price">kr ${salePrice || regularPrice},-</span>
-                </div>
-                <div class="tier-purchase">
-                    ${window.premiumVippsBuyButton || ''}
-                </div>
-            </div>`;
         }
 
         html += '</div>';
