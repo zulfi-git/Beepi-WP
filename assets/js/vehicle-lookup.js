@@ -772,6 +772,13 @@ jQuery(document).ready(function($) {
     const $style = $('<style type="text/css"></style>').text(ownerHistoryCss);
     $('head').append($style);
 
+    // Helper function to escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Function to populate the owner history table
     function populateOwnerHistoryTable(vehicleData) {
         console.log('  → populateOwnerHistoryTable: Starting...');
@@ -782,12 +789,18 @@ jQuery(document).ready(function($) {
             return;
         }
 
+        // Validate vehicleData parameter before accessing properties
+        if (!vehicleData || typeof vehicleData !== 'object') {
+            console.warn('  → populateOwnerHistoryTable: Invalid or missing vehicleData');
+            vehicleData = {};
+        }
+
         // Check if we have access to owner data
         const hasAccess = checkOwnerAccessToken(regNumber);
         const isConfirmationPage = $('.order-confirmation-container').length > 0;
         
         // Get owner history from vehicle data if available
-        const ownerHistory = vehicleData?.eierhistorikk || [];
+        const ownerHistory = vehicleData.eierhistorikk || [];
         
         let html = '<div class="owner-history-content">';
 
@@ -808,10 +821,15 @@ jQuery(document).ready(function($) {
                     : '';
                 const formattedDate = registrertDato ? formatDate(registrertDato) : '';
                 
+                // Escape user-provided data to prevent XSS vulnerabilities
+                const escapedOwnerName = escapeHtml(ownerName);
+                const escapedOwnerAddress = escapeHtml(ownerAddress);
+                const escapedFormattedDate = escapeHtml(formattedDate);
+                
                 html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
-                    <strong>${formattedDate}:</strong> ${ownerName}`;
+                    <strong>${escapedFormattedDate}:</strong> ${escapedOwnerName}`;
                 if (ownerAddress) {
-                    html += `<br><small style="color: #6b7280;">${ownerAddress}</small>`;
+                    html += `<br><small style="color: #6b7280;">${escapedOwnerAddress}</small>`;
                 }
                 html += `</div>`;
             });
