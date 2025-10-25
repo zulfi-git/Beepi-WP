@@ -795,17 +795,13 @@ jQuery(document).ready(function($) {
             vehicleData = {};
         }
 
-        // Check if we have access to owner data
-        const hasAccess = checkOwnerAccessToken(regNumber);
-        const isConfirmationPage = $('.order-confirmation-container').length > 0;
-        
         // Get owner history from vehicle data if available
         const ownerHistory = vehicleData.eierhistorikk || [];
         
         let html = '<div class="owner-history-content">';
 
-        // If user has access and owner history is available, show real data
-        if ((hasAccess || isConfirmationPage) && ownerHistory.length > 0) {
+        // If owner history is available, show real data
+        if (ownerHistory.length > 0) {
             console.log('  → populateOwnerHistoryTable: Displaying real owner history data');
             
             // Display real owner history
@@ -834,19 +830,12 @@ jQuery(document).ready(function($) {
                 html += `</div>`;
             });
         } else {
-            // Mock Norwegian owner history data (shown openly)
-            const mockOwnerHistory = [
-                { period: '2020-2023', owner: 'Kari Nordmann', address: 'Storgata 15, 0101 Oslo' },
-                { period: '2018-2020', owner: 'Lars Hansen', address: 'Bjørnstjerne Bjørnsons gate 45, 4611 Kristiansand' },
-                { period: '2015-2018', owner: 'Inger Solberg', address: 'Kongens gate 23, 7011 Trondheim' }
-            ];
-
-            mockOwnerHistory.forEach(item => {
-                html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 4px;">
-                    <strong>${item.period}:</strong> ${item.owner}<br>
-                    <small style="color: #6b7280;">${item.address}</small>
-                </div>`;
-            });
+            // Show graceful error message when data is not available
+            console.log('  → populateOwnerHistoryTable: No owner history data available');
+            html += `<div style="padding: 1rem; text-align: center; color: #6b7280;">
+                <p style="margin: 0;">⚠️ Eierhistorikk er ikke tilgjengelig for dette kjøretøyet.</p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem;">Dette kan skyldes at dataene ikke er tilgjengelige fra Statens vegvesen.</p>
+            </div>`;
         }
 
         html += '</div>';

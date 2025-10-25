@@ -4,6 +4,20 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
+## [7.5.0] - 2025-10-25
+
+### Fixed
+- Fixed Eierhistorikk (owner history) section displaying dummy/mock data instead of real data
+- Removed fallback to dummy Norwegian owner names and addresses
+- Added graceful error message when owner history data is unavailable from Statens vegvesen
+
+### Changed
+- Simplified owner history display logic to always show real data when available
+- Removed access token check that was preventing real data from being displayed
+- Improved user feedback when owner history data is not available
+
+---
+
 ## [7.4.0] - 2025-10-22
 
 ### Changed
