@@ -73,6 +73,47 @@
     margin: var(--spacing-2xl) auto;
 }
 
+.try-with-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    font-size: var(--font-sm);
+}
+
+.try-with-text {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.try-with-button {
+    background-color: var(--bg-white);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    letter-spacing: 0.05rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-family);
+}
+
+.try-with-button:hover {
+    background-color: var(--primary-navy);
+    color: white;
+    border-color: var(--primary-navy);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.try-with-button:active {
+    transform: translateY(0);
+}
+
+
 .vehicle-results {
     background: white;
     border-radius: var(--border-radius-sm);

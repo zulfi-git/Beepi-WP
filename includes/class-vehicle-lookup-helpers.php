@@ -110,7 +110,7 @@ class Vehicle_Lookup_Helpers {
                 <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
                 <input type="text" id="%s" name="%s" required
                        class="plate-input"
-                       placeholder="CO11204"
+                       placeholder="REGNR"
                        value="%s">
                 <button type="submit" class="plate-search-button" aria-label="Search">
                     <div class="loading-spinner"></div>
