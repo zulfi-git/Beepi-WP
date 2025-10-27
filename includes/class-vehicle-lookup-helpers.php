@@ -25,24 +25,48 @@ class Vehicle_Lookup_Helpers {
     }
     
     /**
-     * Validate Norwegian registration number format
+     * Validate Norwegian registration number with minimal client-side rules
+     * - Check for empty input
+     * - Check for valid characters only (A-Z, ÆØÅ, 0-9)
+     * - Check max length (7 characters after normalization)
+     * 
+     * Note: Norwegian license plates can use A-Z (including ÆØÅ for personalized plates) and digits 0-9.
+     * Backend/worker handles deeper format verification.
+     * 
+     * @param string $regNumber Normalized registration number
+     * @return array Validation result with 'valid' boolean and 'error' message
      */
     public static function validate_registration_number($regNumber) {
-        $valid_patterns = array(
-            '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
-            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
-            '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
-            '/^\d{5}$/',                      // Temporary tourist plates
-            '/^[A-Za-z]\d{3}$/',              // Antique vehicles
-            '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
-        );
-
-        foreach ($valid_patterns as $pattern) {
-            if (preg_match($pattern, $regNumber)) {
-                return true;
-            }
+        // Check if empty
+        if (empty($regNumber) || trim($regNumber) === '') {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan ikke være tomt'
+            );
         }
-        return false;
+
+        // Check for invalid characters (only A-Z, ÆØÅ and digits 0-9)
+        // Personalized Norwegian plates can contain ÆØÅ (e.g., "LØØL")
+        if (!preg_match('/^[A-ZÆØÅ0-9]+$/u', $regNumber)) {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
+            );
+        }
+
+        // Check max length (7 characters)
+        if (mb_strlen($regNumber, 'UTF-8') > 7) {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan ikke være lengre enn 7 tegn'
+            );
+        }
+
+        // All basic checks passed - backend will verify format
+        return array(
+            'valid' => true,
+            'error' => null
+        );
     }
 
     /**

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Norwegian Plate Validation Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .test-case {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #ddd;
+        }
+        .test-case.valid {
+            border-left-color: #28a745;
+        }
+        .test-case.invalid {
+            border-left-color: #dc3545;
+        }
+        .test-input {
+            font-family: monospace;
+            font-weight: bold;
+            color: #333;
+        }
+        .test-result {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .test-result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .input-demo {
+            margin: 20px 0;
+        }
+        .input-demo input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .input-demo input.validation-error {
+            border-color: #dc3545;
+        }
+        .live-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🇳🇴 Norwegian Plate Validation Test</h1>
+        <p>Testing enhanced frontend validation rules for Norwegian registration plates</p>
+
+        <div class="input-demo">
+            <h3>Live Test Input</h3>
+            <p>Try typing various registration numbers to see real-time validation:</p>
+            <input type="text" id="liveInput" placeholder="Type registration number...">
+            <div id="liveFeedback" class="live-feedback"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Cases</h2>
+            <p>Running automated validation tests...</p>
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/normalize-plate.js"></script>
+    <script>
+        // Copy the validation function from vehicle-lookup.js
+        // Validation function (simplified - minimal rules only)
+        function validateRegistrationNumber(regNumber) {
+            // Check if empty
+            if (!regNumber || regNumber.trim() === '') {
+                return {
+                    valid: false,
+                    error: 'Registreringsnummer kan ikke være tomt'
+                };
+            }
+
+            // Check for invalid characters (only A-Z, ÆØÅ and digits 0-9)
+            // Personalized Norwegian plates can contain ÆØÅ (e.g., "LØØL")
+            const invalidChars = /[^A-ZÆØÅ0-9]/;
+            if (invalidChars.test(regNumber)) {
+                return {
+                    valid: false,
+                    error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
+                };
+            }
+
+            // Check max length (7 characters)
+            if (regNumber.length > 7) {
+                return {
+                    valid: false,
+                    error: 'Registreringsnummer kan ikke være lengre enn 7 tegn'
+                };
+            }
+
+            // All basic checks passed - backend will verify format
+            return {
+                valid: true,
+                error: null
+            };
+        }
+
+        // Test cases - simplified to test only basic rules
+        const testCases = [
+            // Valid cases - any combination of A-Z, ÆØÅ and 0-9 up to 7 chars
+            { input: 'AB12345', expected: true, description: '7 chars: 2 letters + 5 digits' },
+            { input: 'CO11204', expected: true, description: '7 chars: standard example' },
+            { input: 'XY1234', expected: true, description: '6 chars: 2 letters + 4 digits' },
+            { input: 'co11204', expected: true, description: 'Lowercase (normalized to uppercase)' },
+            { input: 'AB 12345', expected: true, description: 'With space (space removed by normalization)' },
+            { input: 'EL12345', expected: true, description: '7 chars: electric vehicle format' },
+            { input: 'A1B2C3D', expected: true, description: '7 chars: mixed letters and digits' },
+            { input: 'ABC1234', expected: true, description: '7 chars: 3 letters + 4 digits' },
+            { input: 'A', expected: true, description: '1 char: single letter' },
+            { input: '1', expected: true, description: '1 char: single digit' },
+            { input: 'ABCDEFG', expected: true, description: '7 chars: all letters' },
+            { input: '1234567', expected: true, description: '7 chars: all digits' },
+            { input: 'LØØL', expected: true, description: 'Personalized plate with ÆØÅ' },
+            { input: 'løøl', expected: true, description: 'Personalized plate lowercase (normalized)' },
+            { input: 'ÆØÅ1234', expected: true, description: 'Plate with ÆØÅ and digits' },
+            
+            // Invalid cases - empty
+            { input: '', expected: false, description: 'Empty input', expectedError: 'tomt' },
+            { input: '   ', expected: false, description: 'Whitespace only', expectedError: 'tomt' },
+            
+            // Invalid cases - too long
+            { input: 'AB123456', expected: false, description: 'Too long (8 chars)', expectedError: 'lengre' },
+            { input: 'ABCD1234', expected: false, description: 'Too long (8 chars)', expectedError: 'lengre' },
+            
+            // Invalid cases - invalid characters
+            { input: 'AB-1234', expected: false, description: 'Contains hyphen', expectedError: 'bokstaver' },
+            { input: 'AB!234', expected: false, description: 'Contains special char', expectedError: 'bokstaver' }
+        ];
+
+        // Run tests
+        const resultsDiv = document.getElementById('testResults');
+        let passed = 0;
+        let failed = 0;
+
+        testCases.forEach((testCase, index) => {
+            const normalized = normalizePlate(testCase.input);
+            const result = validateRegistrationNumber(normalized);
+            const testPassed = result.valid === testCase.expected;
+            
+            if (testCase.expected === false && testCase.expectedError) {
+                // For invalid cases, also check if the error message contains expected text
+                const errorMatch = result.error && result.error.includes(testCase.expectedError);
+                if (!errorMatch && !result.valid) {
+                    console.warn(`Test ${index + 1}: Error message mismatch. Expected to contain "${testCase.expectedError}", got "${result.error}"`);
+                }
+            }
+            
+            if (testPassed) passed++;
+            else failed++;
+
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-case ${result.valid ? 'valid' : 'invalid'}`;
+            testDiv.innerHTML = `
+                <div><strong>Test ${index + 1}:</strong> ${testCase.description}</div>
+                <div class="test-input">Input: "${testCase.input}" → Normalized: "${normalized}"</div>
+                <div class="test-result ${testPassed ? 'success' : 'error'}">
+                    ${testPassed ? '✅' : '❌'} 
+                    Expected: ${testCase.expected ? 'VALID' : 'INVALID'}
+                    ${result.error ? `<br>Error: ${result.error}` : ''}
+                    ${!testPassed ? '<br><strong>TEST FAILED!</strong>' : ''}
+                </div>
+            `;
+            resultsDiv.appendChild(testDiv);
+        });
+
+        // Summary
+        const summary = document.createElement('div');
+        summary.className = 'test-section';
+        summary.innerHTML = `
+            <h3>Test Summary</h3>
+            <p><strong>Total:</strong> ${testCases.length} tests</p>
+            <p style="color: #28a745;"><strong>Passed:</strong> ${passed}</p>
+            <p style="color: #dc3545;"><strong>Failed:</strong> ${failed}</p>
+        `;
+        resultsDiv.parentNode.insertBefore(summary, resultsDiv);
+
+        // Live input test
+        const liveInput = document.getElementById('liveInput');
+        const liveFeedback = document.getElementById('liveFeedback');
+
+        liveInput.addEventListener('input', function() {
+            const rawInput = this.value;
+            const normalized = normalizePlate(rawInput);
+            
+            if (rawInput.length > 0) {
+                const validation = validateRegistrationNumber(normalized);
+                
+                if (!validation.valid) {
+                    this.classList.add('validation-error');
+                    liveFeedback.className = 'live-feedback test-result error';
+                    
+                    // Use textContent for user input to prevent XSS
+                    liveFeedback.innerHTML = '<strong>❌ Ugyldig:</strong> <span id="errorMsg"></span><br><small>Normalisert: "<span id="normalizedVal"></span>"</small>';
+                    document.getElementById('errorMsg').textContent = validation.error;
+                    document.getElementById('normalizedVal').textContent = normalized;
+                } else {
+                    this.classList.remove('validation-error');
+                    liveFeedback.className = 'live-feedback test-result success';
+                    
+                    // Use textContent for user input to prevent XSS
+                    liveFeedback.innerHTML = '<strong>✅ Gyldig registreringsnummer</strong><br><small>Normalisert: "<span id="normalizedValOk"></span>"</small>';
+                    document.getElementById('normalizedValOk').textContent = normalized;
+                }
+            } else {
+                this.classList.remove('validation-error');
+                liveFeedback.className = 'live-feedback';
+                liveFeedback.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>

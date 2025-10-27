@@ -171,9 +171,11 @@ class Vehicle_Lookup {
             wp_send_json_error('Vennligst skriv inn et registreringsnummer');
         }
 
-        if (!$this->api->validate_registration_number($regNumber)) {
-            $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Invalid registration number format', null, false, 'validation_error');
-            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
+        // Validate registration number with enhanced rules
+        $validation = $this->api->validate_registration_number($regNumber);
+        if (!$validation['valid']) {
+            $this->db_handler->log_lookup($regNumber, $ip_address, false, 'Invalid registration number: ' . $validation['error'], null, false, 'validation_error');
+            wp_send_json_error($validation['error']);
         }
 
         // Check rate limiting (before quota check)
@@ -250,8 +252,10 @@ class Vehicle_Lookup {
             wp_send_json_error('Vennligst skriv inn et registreringsnummer');
         }
 
-        if (!$this->api->validate_registration_number($regNumber)) {
-            wp_send_json_error('Ugyldig registreringsnummer. Eksempel: AB12345');
+        // Validate registration number with enhanced rules
+        $validation = $this->api->validate_registration_number($regNumber);
+        if (!$validation['valid']) {
+            wp_send_json_error($validation['error']);
         }
 
         // Check rate limiting for polling requests

@@ -156,16 +156,50 @@ jQuery(document).ready(function($) {
         $('#vehicle-lookup-results').before(`<div class="cache-notice ${noticeClass}" title="Datahentingsstatus for dette registreringsnummeret">${noticeText}</div>`);
     }
 
+    /**
+     * Validate Norwegian registration number with minimal client-side rules
+     * - Check for empty input
+     * - Check for valid characters only (A-Z, ÆØÅ, 0-9)
+     * - Check max length (7 characters after normalization)
+     * 
+     * Note: Norwegian license plates can use A-Z (including ÆØÅ for personalized plates) and digits 0-9.
+     * Backend/worker handles deeper format verification.
+     * 
+     * @param {string} regNumber - The normalized registration number
+     * @returns {object} Validation result with success flag and error message
+     */
     function validateRegistrationNumber(regNumber) {
-        const validFormats = [
-            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
-            /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
-            /^CD\d{5}$/,                   // Diplomatic vehicles
-            /^\d{5}$/,                     // Temporary tourist plates
-            /^[A-Z]\d{3}$/,               // Antique vehicles
-            /^[A-Z]{2}\d{3}$/             // Provisional plates
-        ];
-        return validFormats.some(format => format.test(regNumber));
+        // Check if empty
+        if (!regNumber || regNumber.trim() === '') {
+            return {
+                valid: false,
+                error: 'Registreringsnummer kan ikke være tomt'
+            };
+        }
+
+        // Check for invalid characters (only A-Z, ÆØÅ and digits 0-9)
+        // Personalized Norwegian plates can contain ÆØÅ (e.g., "LØØL")
+        const invalidChars = /[^A-ZÆØÅ0-9]/;
+        if (invalidChars.test(regNumber)) {
+            return {
+                valid: false,
+                error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
+            };
+        }
+
+        // Check max length (7 characters)
+        if (regNumber.length > 7) {
+            return {
+                valid: false,
+                error: 'Registreringsnummer kan ikke være lengre enn 7 tegn'
+            };
+        }
+
+        // All basic checks passed - backend will verify format
+        return {
+            valid: true,
+            error: null
+        };
     }
 
     function setLoadingState(isLoading) {
@@ -343,8 +377,10 @@ jQuery(document).ready(function($) {
 
         resetFormState();
 
-        if (!regNumber || !validateRegistrationNumber(regNumber)) {
-            $errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
+        // Validate registration number with enhanced client-side rules
+        const validation = validateRegistrationNumber(regNumber);
+        if (!validation.valid) {
+            $errorDiv.html(validation.error).show();
             return;
         }
 
@@ -506,6 +542,35 @@ jQuery(document).ready(function($) {
                 setLoadingState(false);
             }
         });
+    });
+
+    // Real-time validation on input
+    $('#regNumber').on('input', function() {
+        const rawInput = $(this).val();
+        const normalized = normalizePlate(rawInput);
+        
+        // Find or create the error message element
+        let $errorMsg = $('#regNumber-error');
+        if ($errorMsg.length === 0) {
+            $errorMsg = $('<span id="regNumber-error" class="validation-error-message" style="display:none;color:#d32f2f;font-size:0.95em;margin-left:8px;"></span>');
+            $(this).after($errorMsg);
+        }
+
+        // Only show validation errors after user has entered something
+        if (rawInput.length > 0) {
+            const validation = validateRegistrationNumber(normalized);
+            if (!validation.valid) {
+                // Show inline validation feedback (non-blocking)
+                $(this).addClass('validation-error');
+                $errorMsg.text(validation.error || "Invalid registration number.").show();
+            } else {
+                $(this).removeClass('validation-error');
+                $errorMsg.text('').hide();
+            }
+        } else {
+            $(this).removeClass('validation-error');
+            $errorMsg.text('').hide();
+        }
     });
 
     /**
