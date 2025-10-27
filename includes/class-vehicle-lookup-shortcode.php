@@ -32,6 +32,10 @@ class Vehicle_Lookup_Shortcode {
             <form id="vehicle-lookup-form" class="plate-form">
                 <?php echo $this->render_plate_input($reg_number); ?>
             </form>
+            <div class="try-with-container">
+                <span class="try-with-text">Prøv med:</span>
+                <button type="button" class="try-with-button" id="try-with-btn-lookup" data-reg-number="BU15084">BU15084</button>
+            </div>
         <?php
         return ob_get_clean();
     }
