@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../includes/class-vehicle-lookup-helpers.php';
 
 // Test cases - simplified to test only basic rules, not format patterns
 $testCases = [
-    // Valid cases - any combination of A-Z and 0-9 up to 7 chars
+    // Valid cases - any combination of A-Z, ÆØÅ and 0-9 up to 7 chars
     ['input' => 'AB12345', 'expected' => true, 'description' => '7 chars: 2 letters + 5 digits'],
     ['input' => 'CO11204', 'expected' => true, 'description' => '7 chars: standard example'],
     ['input' => 'XY1234', 'expected' => true, 'description' => '6 chars: 2 letters + 4 digits'],
@@ -21,6 +21,8 @@ $testCases = [
     ['input' => 'A1', 'expected' => true, 'description' => '2 chars'],
     ['input' => 'ABCDEFG', 'expected' => true, 'description' => '7 chars: all letters'],
     ['input' => '1234567', 'expected' => true, 'description' => '7 chars: all digits'],
+    ['input' => 'LØØL', 'expected' => true, 'description' => 'Personalized plate with ÆØÅ'],
+    ['input' => 'ÆØÅ1234', 'expected' => true, 'description' => 'Plate with ÆØÅ and digits'],
     
     // Invalid cases - empty
     ['input' => '', 'expected' => false, 'description' => 'Empty input', 'expectedError' => 'tomt'],
@@ -32,7 +34,6 @@ $testCases = [
     
     // Invalid cases - invalid characters
     ['input' => 'AB-1234', 'expected' => false, 'description' => 'Contains hyphen', 'expectedError' => 'bokstaver'],
-    ['input' => 'ÆØ1234', 'expected' => false, 'description' => 'Contains ÆØÅ', 'expectedError' => 'bokstaver'],
     ['input' => 'AB!234', 'expected' => false, 'description' => 'Contains special char', 'expectedError' => 'bokstaver']
 ];
 

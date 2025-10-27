@@ -17,14 +17,14 @@ Implemented minimal frontend validation for Norwegian registration plates with u
 |-------------|----------------|--------|
 | Input must not be empty | Empty input validation with error message | ✅ |
 | Remove all spaces before validation | Handled by `normalizePlate()` function (automatic) | ✅ |
-| Only accept letters (A-Z) and digits (0–9) | Character validation regex `/^[A-Z0-9]+$/` | ✅ |
+| Only accept Norwegian letters and digits (0–9) | Character validation regex `/^[A-ZÆØÅ0-9]+$/` | ✅ |
 | Max length: 7 characters | Length validation after normalization | ✅ |
 | Reject invalid input before backend | Form submit blocked on validation failure | ✅ |
 | Convert to uppercase before validation | Handled by `normalizePlate()` function (automatic) | ✅ |
 | User-friendly Norwegian error messages | 3 specific error messages in Norwegian | ✅ |
 | Let backend handle format verification | No format patterns in frontend validation | ✅ |
 
-**Note:** Norwegian license plates use only standard Latin letters A-Z (not æøå) and digits 0-9, which is what the validation enforces.
+**Note:** Norwegian license plates can use A-Z (including ÆØÅ for personalized plates, e.g., "LØØL") and digits 0-9. Standard plates use only A-Z, but personalized plates (available since 2017) can include ÆØÅ.
 
 ---
 
@@ -45,12 +45,12 @@ function validateRegistrationNumber(regNumber) {
         };
     }
 
-    // 2. Check for invalid characters (A-Z and 0-9 only)
-    const invalidChars = /[^A-Z0-9]/;
+    // 2. Check for invalid characters (A-Z, ÆØÅ and 0-9)
+    const invalidChars = /[^A-ZÆØÅ0-9]/;
     if (invalidChars.test(regNumber)) {
         return {
             valid: false,
-            error: 'Registreringsnummer kan kun inneholde bokstaver (A-Z) og tall (0-9)'
+            error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
         };
     }
 
@@ -65,15 +65,12 @@ function validateRegistrationNumber(regNumber) {
     // All basic checks passed - backend will verify format
     return { valid: true, error: null };
 }
-
-    return { valid: true, error: null };
-}
 ```
 
 **Features Added:**
 - Real-time input validation with visual feedback
 - Structured validation result with `{valid, error}` object
-- Validation order optimized to catch character errors before length errors
+- Support for Norwegian letters ÆØÅ in personalized plates
 
 ### Backend (PHP)
 
@@ -90,16 +87,18 @@ public static function validate_registration_number($regNumber) {
         );
     }
 
-    // Character validation (only A-Z and 0-9)
-    if (!preg_match('/^[A-Z0-9]+$/', $regNumber)) {
+    // Character validation (A-Z, ÆØÅ and 0-9)
+    if (!preg_match('/^[A-ZÆØÅ0-9]+$/u', $regNumber)) {
         return array(
             'valid' => false,
-            'error' => 'Registreringsnummer kan kun inneholde bokstaver (A-Z) og tall (0-9)'
+            'error' => 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
         );
     }
 
     // Length validation
     if (strlen($regNumber) > 7) {
+    // Length validation (using mb_strlen for UTF-8)
+    if (mb_strlen($regNumber, 'UTF-8') > 7) {
         return array(
             'valid' => false,
             'error' => 'Registreringsnummer kan ikke være lengre enn 7 tegn'
@@ -118,10 +117,10 @@ public static function validate_registration_number($regNumber) {
 | Scenario | Error Message (Norwegian) | Translation |
 |----------|---------------------------|-------------|
 | Empty input | Registreringsnummer kan ikke være tomt | Registration number cannot be empty |
-| Invalid characters | Registreringsnummer kan kun inneholde bokstaver (A-Z) og tall (0-9) | Registration number can only contain letters (A-Z) and numbers (0-9) |
+| Invalid characters | Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9) | Registration number can only contain Norwegian letters (A-Z, ÆØÅ) and numbers (0-9) |
 | Too long | Registreringsnummer kan ikke være lengre enn 7 tegn | Registration number cannot be longer than 7 characters |
 
-**Note:** "bokstaver" (letters) is used instead of "norske bokstaver" (Norwegian letters) because Norwegian plates use only standard A-Z, not æøå.
+**Note:** Norwegian personalized plates (available since 2017) can contain ÆØÅ. Example: "LØØL". Standard plates use only A-Z.
 
 ---
 
@@ -132,10 +131,10 @@ public static function validate_registration_number($regNumber) {
 **JavaScript Test Suite** (`docs/tests/test-validation.js`)
 - 22 test cases covering all scenarios
 - 100% pass rate
-- Tests: valid formats, empty input, too long, invalid chars, wrong formats
+- Tests: valid formats (including ÆØÅ), empty input, too long, invalid chars
 
 **PHP Test Suite** (`docs/tests/test-validation.php`)
-- 20 test cases matching JavaScript tests
+- 19 test cases matching JavaScript tests
 - 100% pass rate
 - Ensures backend-frontend consistency
 
@@ -148,14 +147,14 @@ public static function validate_registration_number($regNumber) {
 
 ```
 JavaScript Tests: ✅ 22/22 passed (100%)
-PHP Tests:        ✅ 20/20 passed (100%)
+PHP Tests:        ✅ 19/19 passed (100%)
 Code Review:      ✅ Passed with no issues
 Security Scan:    ✅ No vulnerabilities found
 ```
 
 ### Test Coverage
 
-**Valid Inputs (any A-Z and 0-9 combination up to 7 chars):**
+**Valid Inputs (any A-Z, ÆØÅ and 0-9 combination up to 7 chars):**
 - ✅ AB12345 (7 chars)
 - ✅ CO11204 (7 chars example)
 - ✅ XY1234 (6 chars)
@@ -165,6 +164,9 @@ Security Scan:    ✅ No vulnerabilities found
 - ✅ A (single char)
 - ✅ ABCDEFG (all letters)
 - ✅ 1234567 (all digits)
+- ✅ LØØL (Personalized plate with ÆØÅ)
+- ✅ løøl (Lowercase ÆØÅ - auto normalized)
+- ✅ ÆØÅ1234 (Plate with ÆØÅ and digits)
 - ✅ co11204 (Lowercase - auto normalized to uppercase)
 - ✅ AB 12345 (With space - auto normalized by removing space)
 
@@ -173,7 +175,6 @@ Security Scan:    ✅ No vulnerabilities found
 - ✅ Whitespace only
 - ✅ AB123456 (Too long - 8 chars)
 - ✅ AB-1234 (Contains hyphen)
-- ✅ ÆØ1234 (Contains ÆØÅ)
 - ✅ AB!234 (Special characters)
 
 ---

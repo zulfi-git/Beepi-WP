@@ -8,20 +8,23 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ### Added
 - Minimal frontend validation for Norwegian registration plates with user-friendly error messages
-- Client-side validation checks: empty input, character whitelist (A-Z, 0-9), max length (7 chars)
+- Client-side validation checks: empty input, character whitelist (A-Z, ÆØÅ, 0-9), max length (7 chars)
 - Real-time input validation feedback for better user experience
+- Support for Norwegian letters ÆØÅ in registration numbers (for personalized plates)
 
 ### Changed
 - Simplified validation to focus on basic rules only (format validation handled by backend)
-- Updated error message: "bokstaver (A-Z)" instead of "norske bokstaver" for clarity
-- Norwegian license plates use only A-Z (not æøå), which matches the validation
+- Updated error message: "norske bokstaver (A-Z, ÆØÅ)" to include all Norwegian letters
+- Norwegian personalized plates can contain ÆØÅ (e.g., "LØØL")
 - Backend/Cloudflare Worker handles deeper format verification
 - Validation now returns structured response with `valid` flag and `error` message
+- Changed from `strlen()` to `mb_strlen()` in PHP to properly count UTF-8 characters
 
 ### Fixed
 - Consistent validation between frontend and backend
 - Inputs failing basic validation are now blocked before being sent to backend
-- Proper handling of multi-byte characters (æøå) in validation
+- Proper handling of Norwegian letters (ÆØÅ) in personalized plates
+- Correct character counting for UTF-8 strings containing ÆØÅ
 
 ---
 

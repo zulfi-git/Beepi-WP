@@ -122,13 +122,13 @@
                 };
             }
 
-            // Check for invalid characters (only A-Z and digits 0-9)
-            // Norwegian plates use only standard Latin letters A-Z, not æøå
-            const invalidChars = /[^A-Z0-9]/;
+            // Check for invalid characters (only A-Z, ÆØÅ and digits 0-9)
+            // Personalized Norwegian plates can contain ÆØÅ (e.g., "LØØL")
+            const invalidChars = /[^A-ZÆØÅ0-9]/;
             if (invalidChars.test(regNumber)) {
                 return {
                     valid: false,
-                    error: 'Registreringsnummer kan kun inneholde bokstaver (A-Z) og tall (0-9)'
+                    error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
                 };
             }
 
@@ -149,7 +149,7 @@
 
         // Test cases - simplified to test only basic rules
         const testCases = [
-            // Valid cases - any combination of A-Z and 0-9 up to 7 chars
+            // Valid cases - any combination of A-Z, ÆØÅ and 0-9 up to 7 chars
             { input: 'AB12345', expected: true, description: '7 chars: 2 letters + 5 digits' },
             { input: 'CO11204', expected: true, description: '7 chars: standard example' },
             { input: 'XY1234', expected: true, description: '6 chars: 2 letters + 4 digits' },
@@ -162,6 +162,9 @@
             { input: '1', expected: true, description: '1 char: single digit' },
             { input: 'ABCDEFG', expected: true, description: '7 chars: all letters' },
             { input: '1234567', expected: true, description: '7 chars: all digits' },
+            { input: 'LØØL', expected: true, description: 'Personalized plate with ÆØÅ' },
+            { input: 'løøl', expected: true, description: 'Personalized plate lowercase (normalized)' },
+            { input: 'ÆØÅ1234', expected: true, description: 'Plate with ÆØÅ and digits' },
             
             // Invalid cases - empty
             { input: '', expected: false, description: 'Empty input', expectedError: 'tomt' },
@@ -173,7 +176,6 @@
             
             // Invalid cases - invalid characters
             { input: 'AB-1234', expected: false, description: 'Contains hyphen', expectedError: 'bokstaver' },
-            { input: 'ÆØ1234', expected: false, description: 'Contains ÆØÅ', expectedError: 'bokstaver' },
             { input: 'AB!234', expected: false, description: 'Contains special char', expectedError: 'bokstaver' }
         ];
 
