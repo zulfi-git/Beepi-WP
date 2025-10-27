@@ -565,18 +565,27 @@ jQuery(document).ready(function($) {
         const rawInput = $(this).val();
         const normalized = normalizePlate(rawInput);
         
+        // Find or create the error message element
+        let $errorMsg = $('#regNumber-error');
+        if ($errorMsg.length === 0) {
+            $errorMsg = $('<span id="regNumber-error" class="validation-error-message" style="display:none;color:#d32f2f;font-size:0.95em;margin-left:8px;"></span>');
+            $(this).after($errorMsg);
+        }
+
         // Only show validation errors after user has entered something
         if (rawInput.length > 0) {
             const validation = validateRegistrationNumber(normalized);
             if (!validation.valid) {
                 // Show inline validation feedback (non-blocking)
                 $(this).addClass('validation-error');
-                // Optionally show a subtle hint (but don't block submission)
+                $errorMsg.text(validation.message || "Invalid registration number.").show();
             } else {
                 $(this).removeClass('validation-error');
+                $errorMsg.text('').hide();
             }
         } else {
             $(this).removeClass('validation-error');
+            $errorMsg.text('').hide();
         }
     });
 
