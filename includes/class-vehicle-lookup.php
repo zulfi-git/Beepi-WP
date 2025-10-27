@@ -134,10 +134,19 @@ class Vehicle_Lookup {
             true
         );
 
+        // Enqueue validation module
+        wp_enqueue_script(
+            'validate-registration-number',
+            VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/validate-registration-number.js',
+            array(),
+            VEHICLE_LOOKUP_VERSION . '.' . time(),
+            true
+        );
+
         wp_enqueue_script(
             'vehicle-lookup-script',
             VEHICLE_LOOKUP_PLUGIN_URL . 'assets/js/vehicle-lookup.js',
-            array('jquery', 'normalize-plate'),
+            array('jquery', 'normalize-plate', 'validate-registration-number'),
             VEHICLE_LOOKUP_VERSION . '.' . time(),
             true
         );

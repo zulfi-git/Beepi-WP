@@ -32,42 +32,7 @@ class Vehicle_Search_Shortcode {
 
         <script>
         jQuery(document).ready(function($) {
-            // normalizePlate is provided globally by normalize-plate.js
-
-            // Minimal validation function (matches vehicle-lookup.js approach)
-            function validateRegistrationNumber(regNumber) {
-                // Check if empty
-                if (!regNumber || regNumber.trim() === '') {
-                    return {
-                        valid: false,
-                        error: 'Registreringsnummer kan ikke være tomt'
-                    };
-                }
-
-                // Check for invalid characters (only A-Z, ÆØÅ and digits 0-9)
-                // Personalized Norwegian plates can contain ÆØÅ (e.g., "LØØL")
-                const invalidChars = /[^A-ZÆØÅ0-9]/;
-                if (invalidChars.test(regNumber)) {
-                    return {
-                        valid: false,
-                        error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z, ÆØÅ) og tall (0-9)'
-                    };
-                }
-
-                // Check max length (7 characters)
-                if (regNumber.length > 7) {
-                    return {
-                        valid: false,
-                        error: 'Registreringsnummer kan ikke være lengre enn 7 tegn'
-                    };
-                }
-
-                // All basic checks passed
-                return {
-                    valid: true,
-                    error: null
-                };
-            }
+            // normalizePlate and validateRegistrationNumber are provided globally
 
             $('#vehicle-search-form').on('submit', function(e) {
                 const regNumber = normalizePlate($('#searchRegNumber').val());
