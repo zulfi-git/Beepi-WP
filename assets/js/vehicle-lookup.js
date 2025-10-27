@@ -282,6 +282,13 @@ jQuery(document).ready(function($) {
         console.log('🎉 Vehicle lookup complete for:', regNumber);
     }
 
+    // Handle try-with button click
+    $('#try-with-btn-lookup').on('click', function() {
+        const regNumber = $(this).data('reg-number');
+        $('#regNumber').val(regNumber);
+        $form.trigger('submit');
+    });
+
     $form.on('submit', function(e) {
         e.preventDefault();
 

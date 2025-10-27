@@ -21,18 +21,32 @@ class Vehicle_Search_Shortcode {
                     <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
                     <input type="text" id="searchRegNumber" name="reg" required
                            class="plate-input"
-                           placeholder="CO11204">
+                           placeholder="REGNR">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <span class="button-text"><?php echo esc_html($atts['button_text']); ?></span>
                     </button>
                 </div>
                 <div id="search-error" class="error-message" style="display: none;"></div>
             </form>
+            <div class="try-with-container">
+                <span class="try-with-text">Prøv med:</span>
+                <button type="button" class="try-with-button" data-reg-number="BU15084">BU15084</button>
+            </div>
         </div>
 
         <script>
         jQuery(document).ready(function($) {
             // normalizePlate and validateRegistrationNumber are provided globally
+
+            // Handle try-with button click
+            $('.try-with-button').on('click', function() {
+                const regNumber = $(this).data('reg-number');
+                $('#searchRegNumber').val(regNumber);
+                
+                // Submit the form immediately - navigate to the result page
+                const baseUrl = '<?php echo $results_page; ?>';
+                window.location.href = baseUrl + '/' + regNumber;
+            });
 
             $('#vehicle-search-form').on('submit', function(e) {
                 const regNumber = normalizePlate($('#searchRegNumber').val());
