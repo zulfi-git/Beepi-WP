@@ -21,8 +21,7 @@ class Vehicle_Search_Shortcode {
                     <div class="plate-flag">🇳🇴<span class="plate-country">N</span></div>
                     <input type="text" id="searchRegNumber" name="reg" required
                            class="plate-input"
-                           placeholder="CO11204"
-                           pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
+                           placeholder="CO11204">
                     <button type="submit" class="plate-search-button" aria-label="Search">
                         <span class="button-text"><?php echo esc_html($atts['button_text']); ?></span>
                     </button>
@@ -33,7 +32,7 @@ class Vehicle_Search_Shortcode {
 
         <script>
         jQuery(document).ready(function($) {
-            // normalizePlate is provided globally by normalize-plate.js
+            // normalizePlate and validateRegistrationNumber are provided globally
 
             $('#vehicle-search-form').on('submit', function(e) {
                 const regNumber = normalizePlate($('#searchRegNumber').val());
@@ -42,20 +41,11 @@ class Vehicle_Search_Shortcode {
                 // Reset error state
                 errorDiv.hide().empty();
                 
-                // Validate Norwegian registration number
-                const validFormats = [
-                    /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles
-                    /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
-                    /^CD\d{5}$/,                   // Diplomatic vehicles
-                    /^\d{5}$/,                     // Temporary tourist plates
-                    /^[A-Z]\d{3}$/,               // Antique vehicles
-                    /^[A-Z]{2}\d{3}$/             // Provisional plates
-                ];
-                
-                const isValid = validFormats.some(format => format.test(regNumber));
-                if (!regNumber || !isValid) {
+                // Validate using minimal client-side validation
+                const validation = validateRegistrationNumber(regNumber);
+                if (!validation.valid) {
                     e.preventDefault();
-                    errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
+                    errorDiv.html(validation.error).show();
                     return false;
                 }
                 

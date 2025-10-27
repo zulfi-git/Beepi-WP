@@ -4,6 +4,22 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
+## [7.5.2] - 2025-10-27
+
+### Fixed
+- Removed HTML5 pattern validation that was blocking valid plates with ÆØÅ characters
+- Fixed mismatch between HTML pattern validation and JavaScript validation
+- Updated PHP `normalize_plate()` to use `mb_strtoupper()` for proper UTF-8 character handling
+- Plates like "LØØL" and "A3364" now work correctly in all search forms
+- Unified validation logic across vehicle_lookup, vehicle_search, and eu_search shortcodes
+
+### Changed
+- All search inputs now rely solely on JavaScript validation (no redundant HTML5 pattern attribute)
+- Consistent validation behavior across all shortcode forms
+- Better support for Norwegian personalized plates with special characters
+
+---
+
 ## [7.5.1] - 2025-10-27
 
 ### Added

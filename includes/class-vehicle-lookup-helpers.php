@@ -21,7 +21,7 @@ class Vehicle_Lookup_Helpers {
         // \p{Z} = all Unicode separator characters (spaces)
         // \p{C} = all Unicode control characters (including zero-width spaces)
         // \s = ASCII whitespace for backwards compatibility
-        return strtoupper(preg_replace('/[\p{Z}\p{C}\s]+/u', '', $plate));
+        return mb_strtoupper(preg_replace('/[\p{Z}\p{C}\s]+/u', '', $plate), 'UTF-8');
     }
     
     /**
@@ -111,8 +111,7 @@ class Vehicle_Lookup_Helpers {
                 <input type="text" id="%s" name="%s" required
                        class="plate-input"
                        placeholder="CO11204"
-                       value="%s"
-                       pattern="([A-Za-z]{2}\d{4,5}|[Ee][KkLlVvBbCcDdEe]\d{5}|[Cc][Dd]\d{5}|\d{5}|[A-Za-z]\d{3}|[A-Za-z]{2}\d{3})">
+                       value="%s">
                 <button type="submit" class="plate-search-button" aria-label="Search">
                     <div class="loading-spinner"></div>
                     <span class="search-icon">🔍</span>
