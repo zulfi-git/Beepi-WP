@@ -562,7 +562,7 @@ jQuery(document).ready(function($) {
             if (!validation.valid) {
                 // Show inline validation feedback (non-blocking)
                 $(this).addClass('validation-error');
-                $errorMsg.text(validation.message || "Invalid registration number.").show();
+                $errorMsg.text(validation.error || "Invalid registration number.").show();
             } else {
                 $(this).removeClass('validation-error');
                 $errorMsg.text('').hide();
