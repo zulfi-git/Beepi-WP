@@ -104,7 +104,6 @@ jQuery(document).ready(function($) {
         $resultsDiv.hide();
         $errorDiv.hide().empty();
         $('.vehicle-tags').remove();
-        $('.cache-notice').remove();
         // Clear AI summary sections to prevent stacking
         $('.ai-summary-section').remove();
         $('.ai-summary-error').remove();
@@ -119,42 +118,7 @@ jQuery(document).ready(function($) {
         console.log('✅ Previous vehicle data cleared');
     }
 
-    function displayCacheNotice(responseData) {
-        console.log('💾 Checking cache status...');
-        // Remove any existing cache notice
-        $('.cache-notice').remove();
 
-        // Check if data includes cache information
-        const cacheTime = responseData.cache_time;
-        const isCached = responseData.is_cached || false;
-
-        console.log('Cache info - isCached:', isCached, 'cacheTime:', cacheTime);
-
-        let noticeText = '';
-        let noticeClass = 'fresh';
-
-        if (isCached && cacheTime) {
-            const cacheDate = new Date(cacheTime);
-            const now = new Date();
-            const diffMinutes = Math.round((now - cacheDate) / (1000 * 60));
-
-            if (diffMinutes < 1) {
-                noticeText = 'Bufret (< 1 min)';
-            } else if (diffMinutes < 60) {
-                noticeText = `Bufret (${diffMinutes} min)`;
-            } else {
-                const diffHours = Math.round(diffMinutes / 60);
-                noticeText = `Bufret (${diffHours}t)`;
-            }
-            noticeClass = 'cached';
-        } else {
-            noticeText = 'Ferske data';
-            noticeClass = 'fresh';
-        }
-
-        // Add cache notice above vehicle-lookup-results
-        $('#vehicle-lookup-results').before(`<div class="cache-notice ${noticeClass}" title="Datahentingsstatus for dette registreringsnummeret">${noticeText}</div>`);
-    }
 
     // validateRegistrationNumber is now provided globally by validate-registration-number.js
 
@@ -275,10 +239,6 @@ jQuery(document).ready(function($) {
         setRegNumberCookie(regNumber);
         displayVehicleHeader(vehicleData, regNumber);
         displayStatusInfo(vehicleData);
-
-        // Show cache status notice
-        displayCacheNotice(response.data);
-        console.log('✅ Cache notice displayed');
 
         // Render AI summary if available (always requested for all users)
         if (response.data.aiSummary) {
