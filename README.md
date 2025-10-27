@@ -2,7 +2,7 @@
 
 > **Norwegian vehicle registration lookup service with WooCommerce integration**
 
-[![Version](https://img.shields.io/badge/version-7.4.0-blue.svg)](./vehicle-lookup.php)
+[![Version](https://img.shields.io/badge/version-7.5.1-blue.svg)](./vehicle-lookup.php)
 [![WordPress](https://img.shields.io/badge/WordPress-6.x-blue.svg)](https://wordpress.org)
 [![WooCommerce](https://img.shields.io/badge/WooCommerce-8.x-purple.svg)](https://woocommerce.com)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](https://www.php.net)
@@ -34,6 +34,7 @@ Beepi Vehicle Lookup enables WordPress/WooCommerce sites to provide Norwegian ve
 ### Core Features
 - ✅ **Vehicle Lookup** - Search by Norwegian registration number
 - ✅ **Plate Normalization** - Automatic uppercase and space removal for consistent lookups
+- ✅ **Enhanced Validation** - Client-side validation with user-friendly Norwegian error messages (max 7 chars, A-Z and 0-9 only)
 - ✅ **Owner Details** - Purchase owner information (5-69 NOK via WooCommerce)
 - ✅ **AI Summaries** - OpenAI-generated vehicle descriptions
 - ✅ **Market Listings** - Current Finn.no marketplace data

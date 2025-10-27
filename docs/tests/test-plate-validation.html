@@ -259,17 +259,18 @@
                 if (!validation.valid) {
                     this.classList.add('validation-error');
                     liveFeedback.className = 'live-feedback test-result error';
-                    liveFeedback.innerHTML = `
-                        <strong>❌ Ugyldig:</strong> ${validation.error}<br>
-                        <small>Normalisert: "${normalized}"</small>
-                    `;
+                    
+                    // Use textContent for user input to prevent XSS
+                    liveFeedback.innerHTML = '<strong>❌ Ugyldig:</strong> <span id="errorMsg"></span><br><small>Normalisert: "<span id="normalizedVal"></span>"</small>';
+                    document.getElementById('errorMsg').textContent = validation.error;
+                    document.getElementById('normalizedVal').textContent = normalized;
                 } else {
                     this.classList.remove('validation-error');
                     liveFeedback.className = 'live-feedback test-result success';
-                    liveFeedback.innerHTML = `
-                        <strong>✅ Gyldig registreringsnummer</strong><br>
-                        <small>Normalisert: "${normalized}"</small>
-                    `;
+                    
+                    // Use textContent for user input to prevent XSS
+                    liveFeedback.innerHTML = '<strong>✅ Gyldig registreringsnummer</strong><br><small>Normalisert: "<span id="normalizedValOk"></span>"</small>';
+                    document.getElementById('normalizedValOk').textContent = normalized;
                 }
             } else {
                 this.classList.remove('validation-error');
