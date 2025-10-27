@@ -156,7 +156,44 @@ jQuery(document).ready(function($) {
         $('#vehicle-lookup-results').before(`<div class="cache-notice ${noticeClass}" title="Datahentingsstatus for dette registreringsnummeret">${noticeText}</div>`);
     }
 
+    /**
+     * Validate Norwegian registration number with client-side rules
+     * - Check for empty input
+     * - Check max length (7 characters after normalization)
+     * - Check for valid Norwegian characters only (A-Z, ÆØÅ, 0-9)
+     * - Check against known Norwegian plate formats
+     * 
+     * @param {string} regNumber - The normalized registration number
+     * @returns {object} Validation result with success flag and error message
+     */
     function validateRegistrationNumber(regNumber) {
+        // Check if empty
+        if (!regNumber || regNumber.trim() === '') {
+            return {
+                valid: false,
+                error: 'Registreringsnummer kan ikke være tomt'
+            };
+        }
+
+        // Check max length (7 characters)
+        if (regNumber.length > 7) {
+            return {
+                valid: false,
+                error: 'Registreringsnummer kan ikke være lengre enn 7 tegn'
+            };
+        }
+
+        // Check for invalid characters (only Norwegian letters A-Z, ÆØÅ and digits 0-9)
+        // Norwegian plates use standard Latin alphabet, not ÆØÅ, but we validate strictly
+        const invalidChars = /[^A-Z0-9]/;
+        if (invalidChars.test(regNumber)) {
+            return {
+                valid: false,
+                error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)'
+            };
+        }
+
+        // Check against valid Norwegian plate formats
         const validFormats = [
             /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
             /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
@@ -165,7 +202,20 @@ jQuery(document).ready(function($) {
             /^[A-Z]\d{3}$/,               // Antique vehicles
             /^[A-Z]{2}\d{3}$/             // Provisional plates
         ];
-        return validFormats.some(format => format.test(regNumber));
+        
+        const isValidFormat = validFormats.some(format => format.test(regNumber));
+        
+        if (!isValidFormat) {
+            return {
+                valid: false,
+                error: 'Ugyldig registreringsnummer format'
+            };
+        }
+
+        return {
+            valid: true,
+            error: null
+        };
     }
 
     function setLoadingState(isLoading) {
@@ -343,8 +393,10 @@ jQuery(document).ready(function($) {
 
         resetFormState();
 
-        if (!regNumber || !validateRegistrationNumber(regNumber)) {
-            $errorDiv.html('Vennligst skriv inn et gyldig norsk registreringsnummer').show();
+        // Validate registration number with enhanced client-side rules
+        const validation = validateRegistrationNumber(regNumber);
+        if (!validation.valid) {
+            $errorDiv.html(validation.error).show();
             return;
         }
 
@@ -506,6 +558,26 @@ jQuery(document).ready(function($) {
                 setLoadingState(false);
             }
         });
+    });
+
+    // Real-time validation on input
+    $('#regNumber').on('input', function() {
+        const rawInput = $(this).val();
+        const normalized = normalizePlate(rawInput);
+        
+        // Only show validation errors after user has entered something
+        if (rawInput.length > 0) {
+            const validation = validateRegistrationNumber(normalized);
+            if (!validation.valid) {
+                // Show inline validation feedback (non-blocking)
+                $(this).addClass('validation-error');
+                // Optionally show a subtle hint (but don't block submission)
+            } else {
+                $(this).removeClass('validation-error');
+            }
+        } else {
+            $(this).removeClass('validation-error');
+        }
     });
 
     /**

@@ -4,6 +4,30 @@ All notable changes, bug fixes, and improvements to the Beepi Vehicle Lookup plu
 
 ---
 
+## [7.5.1] - 2025-10-27
+
+### Added
+- Enhanced frontend validation for Norwegian registration plates with specific error messages
+- Max length validation (7 characters) for registration numbers
+- Norwegian character validation (A-Z and 0-9 only) with user-friendly error messages
+- Real-time input validation feedback for better user experience
+
+### Changed
+- Improved client-side validation in `assets/js/vehicle-lookup.js` with detailed error reporting
+- Enhanced PHP validation in `includes/class-vehicle-lookup-helpers.php` for consistency
+- Updated validation error messages to be more specific in Norwegian:
+  - Empty input: "Registreringsnummer kan ikke være tomt"
+  - Too long: "Registreringsnummer kan ikke være lengre enn 7 tegn"
+  - Invalid characters: "Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)"
+  - Invalid format: "Ugyldig registreringsnummer format"
+- Validation now returns structured response with `valid` flag and `error` message
+
+### Fixed
+- Consistent validation between frontend and backend
+- Inputs failing validation are now properly blocked before being sent to backend
+
+---
+
 ## [7.5.0] - 2025-10-25
 
 ### Fixed

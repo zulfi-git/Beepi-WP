@@ -26,23 +26,68 @@ class Vehicle_Lookup_Helpers {
     
     /**
      * Validate Norwegian registration number format
+     * - Check for empty input
+     * - Check max length (7 characters after normalization)
+     * - Check for valid Norwegian characters only (A-Z, 0-9)
+     * - Check against known Norwegian plate formats
+     * 
+     * @param string $regNumber Normalized registration number
+     * @return array Validation result with 'valid' boolean and 'error' message
      */
     public static function validate_registration_number($regNumber) {
+        // Check if empty
+        if (empty($regNumber) || trim($regNumber) === '') {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan ikke være tomt'
+            );
+        }
+
+        // Check max length (7 characters)
+        if (strlen($regNumber) > 7) {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan ikke være lengre enn 7 tegn'
+            );
+        }
+
+        // Check for invalid characters (only A-Z and 0-9)
+        if (!preg_match('/^[A-Z0-9]+$/', $regNumber)) {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)'
+            );
+        }
+
+        // Check against valid Norwegian plate formats
         $valid_patterns = array(
-            '/^[A-Za-z]{2}\d{4,5}$/',         // Standard vehicles and others
-            '/^[Ee][KkLlVvBbCcDdEe]\d{5}$/',  // Electric vehicles
-            '/^[Cc][Dd]\d{5}$/',              // Diplomatic vehicles
-            '/^\d{5}$/',                      // Temporary tourist plates
-            '/^[A-Za-z]\d{3}$/',              // Antique vehicles
-            '/^[A-Za-z]{2}\d{3}$/'            // Provisional plates
+            '/^[A-Z]{2}\d{4,5}$/',         // Standard vehicles and others
+            '/^E[KLVBCDE]\d{5}$/',         // Electric vehicles
+            '/^CD\d{5}$/',                 // Diplomatic vehicles
+            '/^\d{5}$/',                   // Temporary tourist plates
+            '/^[A-Z]\d{3}$/',              // Antique vehicles
+            '/^[A-Z]{2}\d{3}$/'            // Provisional plates
         );
 
+        $is_valid_format = false;
         foreach ($valid_patterns as $pattern) {
             if (preg_match($pattern, $regNumber)) {
-                return true;
+                $is_valid_format = true;
+                break;
             }
         }
-        return false;
+
+        if (!$is_valid_format) {
+            return array(
+                'valid' => false,
+                'error' => 'Ugyldig registreringsnummer format'
+            );
+        }
+
+        return array(
+            'valid' => true,
+            'error' => null
+        );
     }
 
     /**
