@@ -157,11 +157,13 @@ jQuery(document).ready(function($) {
     }
 
     /**
-     * Validate Norwegian registration number with client-side rules
+     * Validate Norwegian registration number with minimal client-side rules
      * - Check for empty input
-     * - Check for valid Norwegian characters only (A-Z, 0-9)
+     * - Check for valid characters only (A-Z, 0-9)
      * - Check max length (7 characters after normalization)
-     * - Check against known Norwegian plate formats
+     * 
+     * Note: Norwegian license plates only use A-Z (not æøå) and digits 0-9.
+     * Backend/worker handles deeper format verification.
      * 
      * @param {string} regNumber - The normalized registration number
      * @returns {object} Validation result with success flag and error message
@@ -175,17 +177,17 @@ jQuery(document).ready(function($) {
             };
         }
 
-        // Check for invalid characters first (only Norwegian letters A-Z and digits 0-9)
-        // This catches any non-ASCII characters before length check
+        // Check for invalid characters (only A-Z and digits 0-9)
+        // Norwegian plates use only standard Latin letters A-Z, not æøå
         const invalidChars = /[^A-Z0-9]/;
         if (invalidChars.test(regNumber)) {
             return {
                 valid: false,
-                error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)'
+                error: 'Registreringsnummer kan kun inneholde bokstaver (A-Z) og tall (0-9)'
             };
         }
 
-        // Check max length (7 characters) - safe to check now since we know only ASCII
+        // Check max length (7 characters)
         if (regNumber.length > 7) {
             return {
                 valid: false,
@@ -193,25 +195,7 @@ jQuery(document).ready(function($) {
             };
         }
 
-        // Check against valid Norwegian plate formats
-        const validFormats = [
-            /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
-            /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
-            /^CD\d{5}$/,                   // Diplomatic vehicles
-            /^\d{5}$/,                     // Temporary tourist plates
-            /^[A-Z]\d{3}$/,               // Antique vehicles
-            /^[A-Z]{2}\d{3}$/             // Provisional plates
-        ];
-        
-        const isValidFormat = validFormats.some(format => format.test(regNumber));
-        
-        if (!isValidFormat) {
-            return {
-                valid: false,
-                error: 'Ugyldig registreringsnummer format'
-            };
-        }
-
+        // All basic checks passed - backend will verify format
         return {
             valid: true,
             error: null

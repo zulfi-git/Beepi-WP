@@ -7,18 +7,20 @@
 // Include the helper class
 require_once __DIR__ . '/../../includes/class-vehicle-lookup-helpers.php';
 
-// Test cases
+// Test cases - simplified to test only basic rules, not format patterns
 $testCases = [
-    // Valid cases
-    ['input' => 'AB12345', 'expected' => true, 'description' => 'Standard format (2 letters + 5 digits)'],
-    ['input' => 'CO11204', 'expected' => true, 'description' => 'Standard format example'],
-    ['input' => 'XY1234', 'expected' => true, 'description' => 'Standard format (2 letters + 4 digits)'],
-    ['input' => 'EL12345', 'expected' => true, 'description' => 'Electric vehicle format'],
-    ['input' => 'EK12345', 'expected' => true, 'description' => 'Electric vehicle format (EK)'],
-    ['input' => 'CD12345', 'expected' => true, 'description' => 'Diplomatic format'],
-    ['input' => '12345', 'expected' => true, 'description' => 'Temporary tourist format'],
-    ['input' => 'A123', 'expected' => true, 'description' => 'Antique vehicle format'],
-    ['input' => 'AB123', 'expected' => true, 'description' => 'Provisional format'],
+    // Valid cases - any combination of A-Z and 0-9 up to 7 chars
+    ['input' => 'AB12345', 'expected' => true, 'description' => '7 chars: 2 letters + 5 digits'],
+    ['input' => 'CO11204', 'expected' => true, 'description' => '7 chars: standard example'],
+    ['input' => 'XY1234', 'expected' => true, 'description' => '6 chars: 2 letters + 4 digits'],
+    ['input' => 'EL12345', 'expected' => true, 'description' => '7 chars: electric vehicle format'],
+    ['input' => 'A1B2C3D', 'expected' => true, 'description' => '7 chars: mixed letters and digits'],
+    ['input' => 'ABC1234', 'expected' => true, 'description' => '7 chars: 3 letters + 4 digits'],
+    ['input' => 'A', 'expected' => true, 'description' => '1 char: single letter'],
+    ['input' => '1', 'expected' => true, 'description' => '1 char: single digit'],
+    ['input' => 'A1', 'expected' => true, 'description' => '2 chars'],
+    ['input' => 'ABCDEFG', 'expected' => true, 'description' => '7 chars: all letters'],
+    ['input' => '1234567', 'expected' => true, 'description' => '7 chars: all digits'],
     
     // Invalid cases - empty
     ['input' => '', 'expected' => false, 'description' => 'Empty input', 'expectedError' => 'tomt'],
@@ -31,13 +33,7 @@ $testCases = [
     // Invalid cases - invalid characters
     ['input' => 'AB-1234', 'expected' => false, 'description' => 'Contains hyphen', 'expectedError' => 'bokstaver'],
     ['input' => 'ÆØ1234', 'expected' => false, 'description' => 'Contains ÆØÅ', 'expectedError' => 'bokstaver'],
-    ['input' => 'AB!234', 'expected' => false, 'description' => 'Contains special char', 'expectedError' => 'bokstaver'],
-    
-    // Invalid cases - wrong format
-    ['input' => 'A1234', 'expected' => false, 'description' => 'Wrong format (1 letter + 4 digits)', 'expectedError' => 'format'],
-    ['input' => '1234', 'expected' => false, 'description' => 'Wrong format (4 digits)', 'expectedError' => 'format'],
-    ['input' => 'ABCD', 'expected' => false, 'description' => 'Letters only', 'expectedError' => 'format'],
-    ['input' => 'ABC123', 'expected' => false, 'description' => 'Wrong format (3 letters + 3 digits)', 'expectedError' => 'format']
+    ['input' => 'AB!234', 'expected' => false, 'description' => 'Contains special char', 'expectedError' => 'bokstaver']
 ];
 
 // Run tests

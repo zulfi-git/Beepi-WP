@@ -112,6 +112,7 @@
     <script src="../../assets/js/normalize-plate.js"></script>
     <script>
         // Copy the validation function from vehicle-lookup.js
+        // Validation function (simplified - minimal rules only)
         function validateRegistrationNumber(regNumber) {
             // Check if empty
             if (!regNumber || regNumber.trim() === '') {
@@ -121,17 +122,17 @@
                 };
             }
 
-            // Check for invalid characters first (only Norwegian letters A-Z and digits 0-9)
-            // This catches any non-ASCII characters before length check
+            // Check for invalid characters (only A-Z and digits 0-9)
+            // Norwegian plates use only standard Latin letters A-Z, not æøå
             const invalidChars = /[^A-Z0-9]/;
             if (invalidChars.test(regNumber)) {
                 return {
                     valid: false,
-                    error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)'
+                    error: 'Registreringsnummer kan kun inneholde bokstaver (A-Z) og tall (0-9)'
                 };
             }
 
-            // Check max length (7 characters) - safe to check now since we know only ASCII
+            // Check max length (7 characters)
             if (regNumber.length > 7) {
                 return {
                     valid: false,
@@ -139,43 +140,28 @@
                 };
             }
 
-            // Check against valid Norwegian plate formats
-            const validFormats = [
-                /^[A-Z]{2}\d{4,5}$/,           // Standard vehicles and others
-                /^E[KLVBCDE]\d{5}$/,           // Electric vehicles
-                /^CD\d{5}$/,                   // Diplomatic vehicles
-                /^\d{5}$/,                     // Temporary tourist plates
-                /^[A-Z]\d{3}$/,               // Antique vehicles
-                /^[A-Z]{2}\d{3}$/             // Provisional plates
-            ];
-            
-            const isValidFormat = validFormats.some(format => format.test(regNumber));
-            
-            if (!isValidFormat) {
-                return {
-                    valid: false,
-                    error: 'Ugyldig registreringsnummer format'
-                };
-            }
-
+            // All basic checks passed - backend will verify format
             return {
                 valid: true,
                 error: null
             };
         }
 
-        // Test cases
+        // Test cases - simplified to test only basic rules
         const testCases = [
-            // Valid cases
-            { input: 'AB12345', expected: true, description: 'Standard format (2 letters + 5 digits)' },
-            { input: 'CO11204', expected: true, description: 'Standard format example' },
-            { input: 'XY1234', expected: true, description: 'Standard format (2 letters + 4 digits)' },
-            { input: 'EL12345', expected: true, description: 'Electric vehicle format' },
-            { input: 'EK12345', expected: true, description: 'Electric vehicle format (EK)' },
-            { input: 'CD12345', expected: true, description: 'Diplomatic format' },
-            { input: '12345', expected: true, description: 'Temporary tourist format' },
-            { input: 'A123', expected: true, description: 'Antique vehicle format' },
-            { input: 'AB123', expected: true, description: 'Provisional format' },
+            // Valid cases - any combination of A-Z and 0-9 up to 7 chars
+            { input: 'AB12345', expected: true, description: '7 chars: 2 letters + 5 digits' },
+            { input: 'CO11204', expected: true, description: '7 chars: standard example' },
+            { input: 'XY1234', expected: true, description: '6 chars: 2 letters + 4 digits' },
+            { input: 'co11204', expected: true, description: 'Lowercase (normalized to uppercase)' },
+            { input: 'AB 12345', expected: true, description: 'With space (space removed by normalization)' },
+            { input: 'EL12345', expected: true, description: '7 chars: electric vehicle format' },
+            { input: 'A1B2C3D', expected: true, description: '7 chars: mixed letters and digits' },
+            { input: 'ABC1234', expected: true, description: '7 chars: 3 letters + 4 digits' },
+            { input: 'A', expected: true, description: '1 char: single letter' },
+            { input: '1', expected: true, description: '1 char: single digit' },
+            { input: 'ABCDEFG', expected: true, description: '7 chars: all letters' },
+            { input: '1234567', expected: true, description: '7 chars: all digits' },
             
             // Invalid cases - empty
             { input: '', expected: false, description: 'Empty input', expectedError: 'tomt' },
@@ -187,15 +173,8 @@
             
             // Invalid cases - invalid characters
             { input: 'AB-1234', expected: false, description: 'Contains hyphen', expectedError: 'bokstaver' },
-            { input: 'AB 1234', expected: false, description: 'Contains space (after normalization)', expectedError: 'bokstaver' },
             { input: 'ÆØ1234', expected: false, description: 'Contains ÆØÅ', expectedError: 'bokstaver' },
-            { input: 'AB!234', expected: false, description: 'Contains special char', expectedError: 'bokstaver' },
-            
-            // Invalid cases - wrong format
-            { input: 'A1234', expected: false, description: 'Wrong format (1 letter + 4 digits)', expectedError: 'format' },
-            { input: '1234', expected: false, description: 'Wrong format (4 digits)', expectedError: 'format' },
-            { input: 'ABCD', expected: false, description: 'Letters only', expectedError: 'format' },
-            { input: 'ABC123', expected: false, description: 'Wrong format (3 letters + 3 digits)', expectedError: 'format' }
+            { input: 'AB!234', expected: false, description: 'Contains special char', expectedError: 'bokstaver' }
         ];
 
         // Run tests
