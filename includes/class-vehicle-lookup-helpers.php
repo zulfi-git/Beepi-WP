@@ -43,19 +43,20 @@ class Vehicle_Lookup_Helpers {
             );
         }
 
-        // Check max length (7 characters)
-        if (strlen($regNumber) > 7) {
-            return array(
-                'valid' => false,
-                'error' => 'Registreringsnummer kan ikke være lengre enn 7 tegn'
-            );
-        }
-
-        // Check for invalid characters (only A-Z and 0-9)
+        // Check for invalid characters first (only A-Z and 0-9)
+        // This catches multi-byte characters (like ÆØÅ) before length check
         if (!preg_match('/^[A-Z0-9]+$/', $regNumber)) {
             return array(
                 'valid' => false,
                 'error' => 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)'
+            );
+        }
+
+        // Check max length (7 characters) - safe to use strlen now since we know only ASCII
+        if (strlen($regNumber) > 7) {
+            return array(
+                'valid' => false,
+                'error' => 'Registreringsnummer kan ikke være lengre enn 7 tegn'
             );
         }
 

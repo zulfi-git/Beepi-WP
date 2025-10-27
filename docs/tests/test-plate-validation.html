@@ -121,21 +121,21 @@
                 };
             }
 
-            // Check max length (7 characters)
-            if (regNumber.length > 7) {
-                return {
-                    valid: false,
-                    error: 'Registreringsnummer kan ikke være lengre enn 7 tegn'
-                };
-            }
-
-            // Check for invalid characters (only Norwegian letters A-Z, ÆØÅ and digits 0-9)
-            // Norwegian plates use standard Latin alphabet, not ÆØÅ, but we validate strictly
+            // Check for invalid characters first (only Norwegian letters A-Z and digits 0-9)
+            // This catches any non-ASCII characters before length check
             const invalidChars = /[^A-Z0-9]/;
             if (invalidChars.test(regNumber)) {
                 return {
                     valid: false,
                     error: 'Registreringsnummer kan kun inneholde norske bokstaver (A-Z) og tall (0-9)'
+                };
+            }
+
+            // Check max length (7 characters) - safe to check now since we know only ASCII
+            if (regNumber.length > 7) {
+                return {
+                    valid: false,
+                    error: 'Registreringsnummer kan ikke være lengre enn 7 tegn'
                 };
             }
 
