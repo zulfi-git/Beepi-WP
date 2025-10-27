@@ -95,8 +95,6 @@ public static function validate_registration_number($regNumber) {
         );
     }
 
-    // Length validation
-    if (strlen($regNumber) > 7) {
     // Length validation (using mb_strlen for UTF-8)
     if (mb_strlen($regNumber, 'UTF-8') > 7) {
         return array(
