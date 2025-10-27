@@ -18,6 +18,7 @@ class VehicleLookupAPI {
         
         // Build request body using Norwegian field names expected by the Cloudflare Worker API
         // The API expects an array of vehicle lookup objects with Norwegian field names
+        // Note: 'includeSummary' is kept in English as it's a separate API feature (AI summary generation)
         $vehicle_lookup = array(
             'kjennemerke' => $regNumber,
             'includeSummary' => $includeSummary
