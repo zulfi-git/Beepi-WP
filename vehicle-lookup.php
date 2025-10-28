@@ -18,6 +18,7 @@ define('VEHICLE_LOOKUP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VEHICLE_LOOKUP_WORKER_URL', 'https://lookup.beepi.no');
 define('VEHICLE_LOOKUP_VERSION', '7.5.2');
 define('VEHICLE_LOOKUP_RATE_LIMIT', 100); // per hour per IP
+define('VEHICLE_LOOKUP_TEST_REG_NUMBER', 'BU15084'); // Test registration number for "try with" buttons
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
