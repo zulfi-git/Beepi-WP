@@ -12,6 +12,7 @@ class Vehicle_EU_Search_Shortcode {
         ), $atts);
 
         $results_page = esc_url($atts['results_page']);
+        $test_reg_number = defined('VEHICLE_LOOKUP_TEST_REG_NUMBER') ? VEHICLE_LOOKUP_TEST_REG_NUMBER : 'BU15084';
         
         ob_start();
         ?>
@@ -30,7 +31,7 @@ class Vehicle_EU_Search_Shortcode {
             </form>
             <div class="try-with-container">
                 <span class="try-with-text">Prøv med:</span>
-                <button type="button" class="try-with-button" data-reg-number="BU15084">BU15084</button>
+                <button type="button" class="try-with-button" id="try-with-btn-eu" data-reg-number="<?php echo esc_attr($test_reg_number); ?>"><?php echo esc_html($test_reg_number); ?></button>
             </div>
         </div>
 
@@ -38,8 +39,8 @@ class Vehicle_EU_Search_Shortcode {
         jQuery(document).ready(function($) {
             // normalizePlate and validateRegistrationNumber are provided globally
 
-            // Handle try-with button click
-            $('.try-with-button').on('click', function() {
+            // Handle try-with button click - scoped to this form's button
+            $('#try-with-btn-eu').on('click', function() {
                 const regNumber = $(this).data('reg-number');
                 $('#euSearchRegNumber').val(regNumber);
                 

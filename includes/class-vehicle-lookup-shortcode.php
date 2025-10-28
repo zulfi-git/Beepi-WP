@@ -26,6 +26,8 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_form_section($reg_number) {
+        $test_reg_number = defined('VEHICLE_LOOKUP_TEST_REG_NUMBER') ? VEHICLE_LOOKUP_TEST_REG_NUMBER : 'BU15084';
+        
         ob_start();
         ?>
         <div class="vehicle-lookup-container">
@@ -34,7 +36,7 @@ class Vehicle_Lookup_Shortcode {
             </form>
             <div class="try-with-container">
                 <span class="try-with-text">Prøv med:</span>
-                <button type="button" class="try-with-button" id="try-with-btn-lookup" data-reg-number="BU15084">BU15084</button>
+                <button type="button" class="try-with-button" id="try-with-btn-lookup" data-reg-number="<?php echo esc_attr($test_reg_number); ?>"><?php echo esc_html($test_reg_number); ?></button>
             </div>
         <?php
         return ob_get_clean();
