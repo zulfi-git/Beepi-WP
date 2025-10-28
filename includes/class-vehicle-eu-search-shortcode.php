@@ -12,7 +12,7 @@ class Vehicle_EU_Search_Shortcode {
         ), $atts);
 
         $results_page = esc_url($atts['results_page']);
-        $test_reg_number = defined('VEHICLE_LOOKUP_TEST_REG_NUMBER') ? VEHICLE_LOOKUP_TEST_REG_NUMBER : 'BU15084';
+        $test_reg_number = Vehicle_Lookup_Helpers::get_test_reg_number();
         
         ob_start();
         ?>

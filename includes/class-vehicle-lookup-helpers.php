@@ -70,6 +70,15 @@ class Vehicle_Lookup_Helpers {
     }
 
     /**
+     * Get the test registration number from constant or fallback
+     * 
+     * @return string Test registration number
+     */
+    public static function get_test_reg_number() {
+        return defined('VEHICLE_LOOKUP_TEST_REG_NUMBER') ? VEHICLE_LOOKUP_TEST_REG_NUMBER : 'BU15084';
+    }
+
+    /**
      * Extract registration number from URL path or query parameters
      */
     public static function get_reg_from_url() {

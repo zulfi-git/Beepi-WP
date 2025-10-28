@@ -26,7 +26,7 @@ class Vehicle_Lookup_Shortcode {
     }
 
     private function render_form_section($reg_number) {
-        $test_reg_number = defined('VEHICLE_LOOKUP_TEST_REG_NUMBER') ? VEHICLE_LOOKUP_TEST_REG_NUMBER : 'BU15084';
+        $test_reg_number = Vehicle_Lookup_Helpers::get_test_reg_number();
         
         ob_start();
         ?>
