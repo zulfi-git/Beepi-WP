@@ -22,6 +22,14 @@ Documentation for Beepi Vehicle Lookup WordPress plugin.
 - **[Assessment](./architecture/ASSESSMENT.md)** - Current state analysis
 - **[Testing Guide](./architecture/TESTING_GUIDE.md)** - Testing procedures
 
+### UI/UX Design & Feedback
+- **[Mobile-First Feedback Summary](./architecture/MOBILE_FIRST_FEEDBACK_SUMMARY.md)** ⭐ **Start Here** - Quick actions for mobile
+- **[Production UI Feedback](./architecture/PRODUCTION_UI_FEEDBACK.md)** - Detailed mobile-first assessment
+- **[UI/UX Assessment Summary](./architecture/UI_UX_ASSESSMENT_SUMMARY.md)** - Executive overview
+- **[Search Results UX Assessment](./architecture/SEARCH_RESULTS_UX_ASSESSMENT.md)** - Comprehensive analysis (60+ pages)
+- **[UI/UX Implementation Guide](./architecture/UI_UX_IMPLEMENTATION_GUIDE.md)** - Step-by-step technical roadmap
+- **[UI Examples](./tests/ui-examples/)** - HTML prototypes (mobile-first, accessibility, enhanced)
+
 ### Refactoring
 - **[Refactor Plan](./refactoring/REFACTOR_PLAN.md)** - Improvement roadmap
 - **[Admin Refactor](./refactoring/ADMIN_REFACTOR_PLAN.md)** - Admin class split
